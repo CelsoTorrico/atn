@@ -1,0 +1,19 @@
+
+# Lumen Doc: https://lumen.laravel.com/docs/5.7/routing
+# Medools: https://github.com/aryelgois/Medools#primary_key
+# (Wordpress) PasswordHash: https://www.openwall.com/phpass/ 
+
+##Observações
+Diferente do Slim, as classes Requests devem invocadas diretamente nas classes da API, ao invés de ser no construtor de roteamento.
+
+### Semana 1
+✔ @high Definição de Estrutura de Banco de Dados @done(18-11-16 16:57)
+✔ @low  Setup de ambiente de produção @done(18-11-16 16:57)
+✔ @low  Login / Cadastro @done(18-11-16 16:57)
+
+### Semana 2
+☐ Inicio / timeline
+☐ Integração de Redes Sociais no perfil (Login Social)
+☐ Perfil de usuario - Atleta
+
+
