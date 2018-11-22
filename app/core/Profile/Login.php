@@ -4,14 +4,14 @@ namespace Core\Profile;
 
 use Core\Interfaces\LoginInterface as LoginInterface;
 use Core\Database\LoginModel as LoginModel; 
-use Core\Profile\PasswordHash as PasswordHash;
+use Core\Utils\PasswordHash as PasswordHash;
 use Core\Profile\User as User;
-use Closure;
+use Symfony\Component\HttpFoundation\Cookie;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class Login implements LoginInterface{
 
-    private $next;
-    private $request;
     private $model;
     private $userData;
     private $cookieToken;
@@ -20,8 +20,9 @@ class Login implements LoginInterface{
     const _APPCOOKIE_   = 'app_atletas_now';    
     const _USERCOOKIE_  = 'app_atletas_now_user_session'; 
 
-    function __contruct(Closure $next){
-        $this->next = $next;
+    //Construtor da classe
+    function __contruct(){
+    
     }
 
     /* Retorna resposta se logado ou não */
@@ -52,10 +53,7 @@ class Login implements LoginInterface{
         //Verifica se usuário existe no banco, comparando senha
         if( $passwordClass->CheckPassword($login_data['user_pass'], $this->userData['user_pass']) ):
 
-            //Adiciona token cookie
-            $this->cookieToken = $this->setSession();
-            
-            //Retorna objeto User
+            //Retornando string sucesso
             return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]]; 
 
         else:
@@ -67,87 +65,84 @@ class Login implements LoginInterface{
     }
 
     //Login via API's Sociais
-    private function socialLogin():User{
+    public function socialLogin():User{
         
     }
 
     //Registrando cookies e sessão atual
-    protected function setSession(){
+    public function setSession(){
+        //Se sessão inicializada e cookie setado
+        return self::initSession();        
+    }
+
+    //Inicia sessões registrando cookies e dados na var $_SESSION
+    private function initSession():Cookie{
 
         //Gerando hash
-        $cookieToken = password_hash( $this->userData['user_pass'], CRYPT_BLOWFISH);
-
-        //Se sessão inicializada e cookie setado
-        if( $cookieToken ):
-            $this->initSession();
-            return $cookieToken;
-        else:
-            return false;
-        endif;
-
-    }
-
-    //Se usuario deslogado, direciona para tela de login
-    //TODO: Melhorar implementação
-    public function setLogout(){
-
-        if(! $this->isLogged() ){
-            return 'Sessão ainda foi não inicializada.'; //TODO: Melhorar resposta
+        $cookieToken = password_hash($this->userData['user_login'], CRYPT_BLOWFISH);  
+        
+        //Instanciando classe de Cookie
+        $cookie = new Cookie(self::getCookie(), $cookieToken); 
+        
+        //Instancia classe de sessão
+        $user_cookie = new Session();
+        
+        //Verifica se iniciou e adiciona valor
+        if( $user_cookie->start() ){
+            $user_cookie->set(self::userCookie(), $this->userData['user_login']);
         }
 
-        ob_end_clean();
-        session_destroy();
-        setcookie(self::getCookie());
-        setcookie(self::getUserCookie());
-        
-        return response('logout'); 
+        //Retorna classe cookie
+        return ( $cookie && $user_cookie ) ? $cookie : false;
     }
 
-    //Retorna a sessão atual do usuário
-    public function getSession(){ 
-        return $_SESSION['user'];
+
+    //Desloga usuário e todas as sessões atuais
+    public function setLogout(){
+
+        if(! self::isLogged() ){
+            return ['error' =>['login' => 'Sessão ainda foi não inicializada.']]; 
+        }
+
+        //Inicia classe Session
+        $session = new Session();
+        
+        //Limpa a sessão atual
+        $session->clear();
+
     }
 
     //Retorna se usuario está logado
-    public function isLogged(){        
-        if( isset($_SESSION['user']) && is_array($_SESSION['user']) ):
-            return true;
-        else:
-            return false;
-        endif;
+    public static function isLogged():bool{      
+        return ( self::getSession() && self::isCookieValid() )? true : false;
     }
 
-    /*
-        ##### Funções de verificação de login
-        Retorna se usuarios esta logado, sim ou não
-    */
-
-    protected function initSession(){
-        if(!session_status()){
-            ob_start();
-            session_start();
-        }
+    //Retorna a sessão atual do usuário
+    private static function getSession():bool{ 
+        
+        //Instanciando classe de Cookie
+        $session = new Session();
+        
+        //Verifica se existe cookie e retorna
+        return ( $session->has(self::userCookie()) )? true : false; 
+        
     }
 
-    //COOKIES
-
-    public function getCookie(){
-        return $this->cookieToken;
+    //Retorna se cookie está válido 
+    private static function isCookieValid():bool{ 
+        
+        //Retorna cookie da sessão
+        $cookie = (isset($_COOKIE[Login::getCookie()]))? $_COOKIE[Login::getCookie()] : false; 
+        
+        //Verifica se existe cookie e retorna
+        return ( $cookie )? true : false;
     }
 
-    private function isCookieValid(){ 
-        if( isset($_COOKIE[$this->appCookie()]) && password_verify( $_SESSION['user']['user_email'], $_COOKIE[$this->appCookie()]) ):
-            return true;
-        else:
-            return false;
-        endif;
-    }
-
-    private function appCookie(){
+    public static function getCookie(){
         return self::_APPCOOKIE_;
     }
 
-    private function userCookie(){
+    public static function userCookie(){
         return self::_USERCOOKIE_;
     }
 

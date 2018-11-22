@@ -1,8 +1,8 @@
 <?php
 
-namespace Gafp;
+namespace Core\Service;
 
-class Model extends Project{
+class Post {
 
 
     /*###### GET ###### */

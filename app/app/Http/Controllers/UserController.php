@@ -22,7 +22,9 @@ class UserController extends Controller
     }
 
     function get(Request $request, $id){
-        $result = $this->user->get(array('id' => (int) $id));
+        
+        $result = $this->user->get($id);
+        
         return response($result);
     }
 }

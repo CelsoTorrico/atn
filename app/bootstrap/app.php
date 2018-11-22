@@ -1,8 +1,7 @@
 <?php
 
+require_once __DIR__.'/../core/autoload.php';
 require_once __DIR__.'/../vendor/autoload.php';
-
-require_once __DIR__. '/../core/autoload.php'; //carregando core classes App Atletas 2.0 */
 
 try {
     (new Dotenv\Dotenv(__DIR__.'/../'))->load();
@@ -50,6 +49,7 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -61,18 +61,21 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
-//    App\Http\Middleware\ExampleMiddleware::class
-// ]);
-
-//Carrega conexão com BD
-$app->routeMiddleware([
-    aryelgois\Medools\MedooConnection::loadConfig('../core/config.php')
-]);
-
 //Carrega autenticação
 $app->routeMiddleware([
     'authentication' => App\Http\Middleware\Authenticate::class,
+]);
+
+//Habilita sessões
+$app->middleware([
+    \Illuminate\Session\Middleware\StartSession::class,
+]);
+
+//Carregando Middlewares do App
+$app->routeMiddleware([
+    App\Http\Middleware\Core::class,
+    App\Http\Middleware\Cookies::class,
+    aryelgois\Medools\MedooConnection::loadConfig(__DIR__.'/../bootstrap/database.php')
 ]);
 
 /*
@@ -86,9 +89,12 @@ $app->routeMiddleware([
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
-// $app->register(App\Providers\EventServiceProvider::class);
+//COOKIES
+$app->singleton('cookie', function () use ($app) {
+    return $app->loadComponent('session', 'Illuminate\Cookie\CookieServiceProvider', 'cookie');
+});
+
+$app->bind('Illuminate\Contracts\Cookie\QueueingFactory', 'cookie');
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +106,15 @@ $app->routeMiddleware([
 | can respond to, as well as the controllers that may handle them.
 |
 */
+
+$app->bind(\Illuminate\Session\SessionManager::class, function () use ($app) {
+    return new \Illuminate\Session\SessionManager($app);
+});
+
+$app->configure('session');
+
+$app->register(\Illuminate\Session\SessionServiceProvider::class);
+
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',

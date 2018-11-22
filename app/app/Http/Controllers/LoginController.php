@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Core\Profile\Login as Login;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Core\Profile\User;
-
+use App\Http\Middleware\Authenticate;
 
 class LoginController extends Controller
 {
@@ -39,18 +40,9 @@ class LoginController extends Controller
         //Realiza Login e retorna class User
         $response = $this->login->setLogin($request->all());
 
-        //TODO: Melhorar isso, adicionar classes AUTH e COOKIE
-        if(is_a($response, 'Core\Profile\User')):
-            return response($response->id);
-        else:
-            return response($response);
-        endif;
+        //Retorna resposta
+        return response($response)->withCookie($this->login->setSession());
 
-    }
-
-    function logout(){
-        $result = $this->login->setLogout();
-        return $result;
     }
 
     function register(Request $request){
@@ -67,10 +59,19 @@ class LoginController extends Controller
             return response("Falta preencher campos obrigatórios!"); 
         }
         
-        //Realiza Login e retorna class User
-        $response = $this->user->add($request->all());
+        //Realiza cadastro e retorna resultado
+        if( array_key_exists('error', $response = $this->user->add($request->all())) ){
+            return response($response);
+        }
 
-        return response($response);
+        //Realiza o login
+        return $this->login($request);
+        
+    }
+
+    function logout(){
+        $result = $this->login->setLogout();
+        return $result;
     }
 
 }

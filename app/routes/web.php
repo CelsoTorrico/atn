@@ -4,6 +4,8 @@
 /* ########## LOAD ROUTES ########################### */
 
 require_once 'authentication.php';
+require_once 'user.php';
+require_once 'timeline.php';
 
 /*
 |--------------------------------------------------------------------------

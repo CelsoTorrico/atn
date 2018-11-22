@@ -4,20 +4,26 @@ namespace Core\Profile;
 
 use Core\Interfaces\UserInterface as UserInterface;
 use Core\Database\UserModel as UserModel;
-use Core\Profile\PasswordHash as PasswordHash;
-use Closure;
+use Core\Utils\PasswordHash as PasswordHash;
 use Core\Utils\AppValidation as AppValidation;
 use Core\Database\UsermetaModel;
+use Symfony\Component\HttpFoundation\Session\Session;
+
+use Closure;
 
 
 class User{
 
-    private $model;
-    private $metaModel;
-    public $id;
-    public $login;
-    public $email;
+    protected $model; //db user model
+    protected $metaModel; //db usermeta model
+    protected $appVal; //class validation
+    
+    public $ID;
+    public $user_login;
+    public $user_email;
     public $display_name;
+    public $type; //usermeta
+    public $sport; //usermeta
     
     //Contrução da classe
     public function __construct($args = array()){
@@ -28,73 +34,131 @@ class User{
         
         //Verifica se parametros estão presentes
         if(array_key_exists('user_login', $args) 
-        && array_key_exists('user_pass', $args)){
+        && array_key_exists('user_pass', $args))
+        {
 
             $this->get(array(
                 'user_login' => $args['user_login'], 
                 'user_pass' => $args['user_pass']));
         }
+        else{
+            return;
+        }
+    }
+
+    //Retorna usuário atual baseado em ID e Cookie
+    //Para ser acessado fora da classe
+    public static function get_current_user($id = null){
+
+        //Verifica se sessão foi inicializada
+        if(! Login::isLogged()){
+            return null;
+        }
+
+        //Retorna usuário
+        $session = new Session();
+
+        //Verifica se existe sessão ativa
+        if(!$session->has(Login::userCookie())){
+            return null;
+        }
+
+        //Instancia classe User
+        $user = new User();
+
+        //Retorna dados armazenados
+        $data = $session->get(Login::userCookie(), null);
+
+        //Instanciando classe de Cookie
+        $cookie = (isset($_COOKIE[Login::getCookie()]))? $_COOKIE[Login::getCookie()] : false; 
+
+        //Verifica dados do cookie com banco
+        if(!is_null($data) && password_verify($data, $cookie)){
+            
+            //Retorna dados do banco
+            $fields = $user->get([
+                'user_login' => $data
+            ]);
+
+            //Instancia classe para utilização
+            return $user = new User([
+                'user_login' => $fields['user_login'], 
+                'user_pass' => $fields['user_pass']
+            ]);
+        }
+        else{
+            
+            return null;
+        }
+            
     }
 
     /** Adiciona valores as variaveis publicas */
     private function setVars(Array $data){
 
         $valid = array(
-            'ID' => 'ID',
-            'user_login' => 'user_login',
-            'user_email' => 'user_email',
-            'display_name' => 'display_name'
+            'ID'            => 'ID',
+            'user_login'    => 'user_login',
+            'user_email'    => 'user_email',
+            'display_name'  => 'display_name',
+            'type'          => 'type',
+            'sport'         => 'sport',
+            'cpf'           => 'cpf',
+            'city'          => 'city'
         );
 
         foreach ($valid as $key => $value) {
+            if(!array_key_exists($key, $data)){
+                continue;
+            }
             $this->$key = $data[$value];
         }
 
     }
 
     /* Retorna um usuário especifico */
-    public function get( $filter = array() ){
+    public function get( $id ){
+
+        $filter = ['id' => (int) $id];
+        $usermetaFilter = ['user_id' => (int) $id];
         
         //Verifica se existe usuário
         if(!$this->model->load($filter)){
             return "Usuário inexistente."; //TODO: retornar objeto
         }
+
+        //Verifica se existe usuário
+        $usermeta = $this->metaModel->load($usermetaFilter);
         
         //Add valores a variaveis
         $this->setVars($this->model->getData());
 
-        return $this->model->getData();
+        //Add valores a variaveis
+        if($usermeta){
+            $this->setVars($this->metaModel->getData());
+        }
+
+        return [ $this->model->getData(), $this->metaModel->getData() ];
 
     } 
 
     /* Retorna lista de usuários */
     public function getFriends( $filter = array() ){
-        //Invoca função de retornar lista de usuários
-        $friends = new Friends();      
-    } 
-
-    /* Atualizar um único usuário */
-    public function update( $ID, $data ){
         
-        // Retorna id de empresa relacionado ao projeto
-        $result = $this->connect->pdo->add('user',
-            ['company'],
-            ['id' => $ID ]);
-
-        //Se tipo de usuário não foi definido
-        if( !isset($data['type_user']) ){
-            $data['type_user'] = 0;
-        }
-
-        // Se retorno for verdadeiro
-        if($result){
-            return $this->insertMultipleUsers($data, $projectID, $result['company']);    
-        }
+        //Invoca função de retornar lista de usuários
+        $friendsList = new Friends($this->ID, $filter);
+        
+        return $friendsList;      
     } 
 
     /* Addicionar um único usuário */
     public function add($data){
         return $this->register($data);
+    } 
+
+    /* Atualizar um único usuário */
+    public function update( $ID, $data ){
+        
     } 
     
     /* Insere um único usuário */
@@ -103,7 +167,7 @@ class User{
     }
 
     /* Adicionar um novo usuário ou atualizar existente no sistema */
-    protected function register(Array $data){
+    protected function register(Array $data):array{
 
         //Verifica se password está correta
         if( $data['user_pass'] != $data['confirm_pass'] ){
@@ -121,7 +185,7 @@ class User{
         //Converte password em hash
         $filtered['user_pass'] = $this->hashPassword($filtered['user_pass']);
 
-        //DB::User
+        //Colunas válidas
         $userColumns = array(
             'user_login','user_pass','user_email','display_name'
         );
@@ -165,17 +229,6 @@ class User{
                 $this->metaModel = new UsermetaModel();
             }
 
-            //Instanciando classe e Realizando login
-            $login = new Login();
-
-            //Envia dados para método de classe (usado $data['user_pass'] para ser verificado)
-            $loginResponse = $login->setLogin(['user_email' => $filtered['user_email'], 'user_pass' => $data['user_pass']]);
-
-            //Verifica se houve erro login e mostra mensagem
-            if(array_key_exists('error', $loginResponse)){
-                return $loginResponse;
-            }
-
             //Mensagem de sucesso no cadastro
             return ['success' => ['register' => 'Seu cadastro foi realizado com sucesso! Bem Vindo!']];
 
@@ -185,36 +238,10 @@ class User{
             return ['error' => ['register' => 'Houve erro em seu cadastro. Contate nosso administrador.']];
         }
 
-    }
+    }   
 
-    /*Se usuário não tiver acesso finaliza função */
-    function hasPermission($role){
-
-        /*$error = true;
-
-        // Verifica se usuário esta logado
-        if (!$this->isLogged()) {
-            //TODO: Implementar classe Error e adicionar códigos erro
-            $error = '';
-        }
-
-        // Verifica se objeto Erro
-        if (is_a($error, 'Error')) {
-            //TODO: Implementar essa funcionalidade para terminar execucação do código
-            die();
-        }*/
-
-        return true;
-    }
-
-    function notAuthorized(){
-        //TODO: Implementar um mensagem de erro de acesso recusado ao post
-        $response = ("Você não tem acesso para acessar!");
-        return $response;
-    }    
-
-    //TODO: Formatar para PHP
-    protected function verifySentData($data) {
+    //Verifica os dados enviados pelo usuário, faz validação e formata
+    protected function verifySentData($data):array{
         
         //Inicia classe Validação
         $val = $this->appVal;
@@ -227,7 +254,7 @@ class User{
     }
 
     //TODO: Formatar para PHP
-    protected function checkSentData($data) {
+    protected function checkSentData($data):array{
 
         //Inicia classe Validation
         $val = $this->appVal;
@@ -250,13 +277,33 @@ class User{
 
     }
 
-    protected function hashPassword($pass){
+    //Instancia classe PasswordHash e retorna string hashead
+    protected function hashPassword($pass):string{
         
         //Inicia classe de password. Compatibilidade Wordpress
         $passwordHash = new PasswordHash(8, true);
 
         //Hasheando password
         return $passwordHash->HashPassword($pass);
+    }
+
+    /* Se usuário não tiver acesso finaliza função */
+    //TODO: Implementar lógica
+    function hasPermission( $exist = 'ID', Array $data):bool{
+        
+        //Verifica se existe no array
+        if(!array_key_exists($exist, $data)){
+            return false;
+        }
+
+        //Verifica se ID é igual
+        if($data[$exist] != $this->ID){
+            return false;
+        }
+
+        //retorna resultado
+        return true;
+        
     }
 
 }

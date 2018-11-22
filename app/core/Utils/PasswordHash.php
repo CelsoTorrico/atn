@@ -34,7 +34,7 @@
  * @since 2.5.0
  */
 
-namespace Core\Profile;
+namespace Core\Utils;
 
 class PasswordHash {
 	var $itoa64;

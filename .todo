@@ -12,8 +12,15 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ @low  Login / Cadastro @done(18-11-16 16:57)
 
 ### Semana 2
-☐ Inicio / timeline
+✔ Inicio / timeline @done(18-11-22 12:10)
 ☐ Integração de Redes Sociais no perfil (Login Social)
 ☐ Perfil de usuario - Atleta
+
+
+### Estrutural
+☐ Fazer reenviar senha (Esqueci senha)
+☐ Novo e Update de timeline com imagens 
+✔ Fazer validação do cookie (https://lumen.laravel.com/docs/5.7/authorization) a cada requisição via Middleware | Existe classe Symfony para Sessões >> /home/iran/www/desenvolvimento/app-atletasnow-2.0/app/vendor/symfony/http-foundation/Session/Session.php @done(18-11-22 11:35)
+
 
 

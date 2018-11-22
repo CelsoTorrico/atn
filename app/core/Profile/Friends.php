@@ -13,9 +13,74 @@
  */
 
 namespace Core\Profile;
-use Core\Profile\User as User;
 
-class Friends extends User {
+use Core\Database\FollowersModel;
+use Core\Database\UserModel;
+use Core\Database\UsermetaModel;
+
+class Friends {
+
+	private $id;
+	private $model;
+	private $userModel;
+	private $usermetaModel;
+	private $validUsermeta;
+
+	function __construct($id, $filter = array()){
+
+		//Atribui id de usuario corrente
+		$this->ID = $id; 
+		$this->model = new FollowersModel();
+		
+		//List of valid input filters
+        $this->validUsermeta = array(
+            'sport', 'type', 'city', 'state', 'country', 'gender'
+		);
+
+	}
+
+	//Verifica as metadatas válidas
+	private function validFilter(Array $data):array{
+
+		$array = [];
+
+		//Intera sobre array
+        foreach ($this->validUsermeta as $key) {
+			if( array_key_exists($key, $data ) ){
+				$array[$key] = $data[$key];
+			}            
+		}
+		
+		return $array;
+
+	}
+	
+	//Retorna lista de usuários conecatdos
+	public function get():Array{
+		
+		//Carrega array de relacionamentos IDS
+		$response = $this->model->load(['from_id' => $this->ID]);
+
+		if($response){
+			return $this->model->getData();
+		}
+		else{
+			return [];
+		}
+	}
+
+	//Retornar apenas key selecionada em array
+	function onlyKey($data, $only = 'ID'){
+
+		$array = [];
+
+		foreach ($data as $key => $value) {
+			$array[] = $data[$only];
+		}
+
+		return $array;
+	}
+
     
     /** V1 */
     public function following_action( $from_id = 0, $to_id = 0 ) {
@@ -98,24 +163,14 @@ class Friends extends User {
 
 		return $following; 
 	}
-
-    /** /v1 */
-    public function __construct() {
-        
-    }
     
-    //Login normal
-    public function getFriends(){
+    //Login através das redes sociais
+    public function add(){
 
     }
     
     //Login através das redes sociais
-    public function addFriends(){
-
-    }
-    
-    //Login através das redes sociais
-    public function deleteFriends(){
+    public function delete(){
 
     }
 }

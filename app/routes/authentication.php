@@ -1,13 +1,5 @@
 <?php 
 
-/** ######## USER ############ */
-$router->group(['prefix' => 'user', 'middleware' => 'authentication'], function () use ($router) {
-    
-    //Retorna
-    $router->get('/{id}', 'UserController@get');
-
-});
-
 /** ######## AUTH ############ */
 
 //Post credenciais de login

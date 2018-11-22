@@ -1,8 +1,158 @@
 <?php
 
-namespace Gafp;
+namespace Core\Service;
 
-class Project extends Connect{
+class Chat extends Connect{
+
+    /** V1 */
+    protected $user_id = '';
+
+	public function __construct() {
+		$this->user_id = get_current_user_id();
+		add_action( 'wp_ajax_add_room_message', array( $this, 'add_room_message' ) );
+		add_action( 'wp_ajax_search_chat_user', array( $this, 'search_chat_user' ) );
+		add_action( 'wp_ajax_create_chat_room', array( $this, 'create_chat_room' ) );
+		add_action( 'wp_ajax_load_chat_messages', array( $this, 'load_chat_messages' ) );
+	}
+
+	public static function get_current_user_rooms( $user_id = 0 ) {
+		global $wpdb;
+		$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE suser = {$user_id} ORDER BY last_update DESC" );
+
+		return !empty( $rooms ) ? $rooms : false;
+	}
+
+	public static function get_current_user_rooms_bi( $user_id = 0, $limit = 5 ) {
+		global $wpdb;
+		$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE suser = {$user_id} OR fuser = {$user_id} ORDER BY last_update DESC LIMIT {$limit}" );
+
+		return !empty( $rooms ) ? $rooms : false;
+	}
+
+	public static function get_user_rooms( $user_id = 0, $to_id = 0 ) {
+		global $wpdb;
+		if ( $to_id == 0 ){
+			$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE fuser = {$user_id} OR suser = {$user_id} ORDER BY last_update DESC" );
+		} else {
+			$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE (fuser = {$user_id} OR fuser = {$to_id}) AND (suser = {$user_id} OR suser = {$to_id}) ORDER BY last_update DESC" );
+		}
+
+		return !empty( $rooms ) ? $rooms : false;
+	}
+
+	public static function get_room_messages( $room_id = 0, $limit = 50 ) {
+		global $wpdb;
+		$messages = $wpdb->get_results( "SELECT * FROM at_room_messages WHERE room_id = {$room_id} ORDER BY date DESC LIMIT {$limit}" );
+		return !empty( $messages ) ? array_reverse( $messages ) : false;
+	}
+
+	public function add_room_message() {
+		$content = filter_input( INPUT_POST, 'content' );
+		$room_id = filter_input( INPUT_POST, 'room' );
+		
+		$datetime = new DateTimeZone( 'America/Sao_Paulo' );
+		$date = new DateTime(null, $datetime);
+		$dateFormat = $date->format('Y-m-d H:i:s');
+
+		$author_id = get_current_user_id();
+		
+		if ( empty( $content ) || empty( $room_id ) ) return;
+
+		global $wpdb;
+
+		$message = $wpdb->query( "INSERT INTO at_room_messages (room_id, date, content, author_id) VALUES ({$room_id}, '{$dateFormat}', '{$content}', {$author_id})" );
+
+		exit(json_encode( $message ));
+
+	}
+
+	public function load_chat_messages() {
+		$room_id = filter_input( INPUT_POST, 'room_id' );
+
+		$response = (object) array(
+			'status' => false,
+			'room_id' => 0,
+			'messages' => []
+		);
+		
+		if ( empty( $room_id ) ) return;
+
+		$response->room_id = $room_id;
+
+		global $wpdb;
+
+		$messages = $this->get_room_messages( $room_id );
+		$response->status = true;
+		if ( $messages ) {
+			$response->messages = $messages;
+		}
+
+		exit(json_encode( $response ));
+	}
+
+	public function create_chat_room() {
+		$fuser = filter_input( INPUT_POST, 'fuser' );
+		$suser = filter_input( INPUT_POST, 'suser' );
+		$created_date = date( 'Y-m-d H:i:s' );
+
+		$response = (object) array(
+			'status' => false,
+			'room_id' => 0,
+			'messages' => []
+		);
+		
+		if ( empty( $fuser ) || empty( $suser ) ) exit(json_encode($response));
+
+		global $wpdb;
+
+		$already = $this->get_user_rooms( $fuser, $suser );
+
+		if ( empty( $already ) || !$already ) {
+			$room = $wpdb->query( "INSERT INTO at_rooms (fuser, suser, created_date, last_update) 
+			VALUES ('{$fuser}', '{$suser}', '{$created_date}', '{$created_date}')" );
+
+			if ( $room ) {
+				$room_id = $wpdb->get_row( "SELECT MAX(room_id) FROM at_rooms" );
+				$room_id = (array) $room_id;
+				if ( $room_id ) {
+					$response->status = true;
+					$response->room_id = intval( $room_id["MAX(room_id)"] );
+				}
+			}
+		} else {
+			$messages = $this->get_room_messages( $already[0]->room_id );
+			$response->room_id = $already[0]->room_id;
+			$response->status = true;
+			if ( $messages ) {
+				$response->messages = $messages;
+			}
+		}
+
+		exit(json_encode( $response ));
+	}
+
+	public function search_chat_user() {
+		$name = filter_input( INPUT_POST, 'user_name' );
+		
+		if ( empty( $name ) ) return;
+
+		global $wpdb;
+
+		$users = $wpdb->get_results( "SELECT distinct(user_id) FROM at_usermeta WHERE meta_key = 'first_name' and meta_value LIKE '%{$name}%'" );
+		
+		$users = !empty( $users ) ? $users : 0;
+
+		foreach($users as $key => $value) {
+			$user = $users[$key];
+			$first_name = get_user_meta( $user->user_id, 'first_name', true );
+			$last_name = get_user_meta( $user->user_id, 'last_name', true );
+			$users[$key]->name = $first_name . ' ' . $last_name;
+		}
+
+		exit(json_encode( $users ));
+
+	}
+    /** /V1 */
 
     /*###### GET ###### */
 
