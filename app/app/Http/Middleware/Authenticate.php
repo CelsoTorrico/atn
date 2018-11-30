@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Core\Profile\Login as Login;
+use Core\Profile\User;
 use Illuminate\Http\Request;
 
 
@@ -34,13 +34,14 @@ class Authenticate
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
-    {   
-        /** Validação antes de retornar Closure $next */
-        return $next($request);
-    }
-
-    //Verifica se usuário tem permissão de acessar componente
-    function checkAuth($request){
+    {       
+        //Validação antes de retornar Closure $next */
+        $logged = User::get_current_user();
+        if (is_null($logged)) {
+            return ['error' => ['login' => 'Sessão ainda foi não inicializada.']];
+        } else {
+            return $next($request);
+        }
         
     }
     

@@ -5,6 +5,7 @@ namespace Core\Service;
 use Core\Profile\User;
 use Core\Profile\Login;
 use Core\Database\PostModel;
+use Core\Utils\DataConverter;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class Timeline {
@@ -34,12 +35,10 @@ class Timeline {
     }
 
     /* Retorna lista de timeline */
-    function getAll($id = null){
+    function getAll(){
 
-        //Retorna lista de ids
-        if(!is_null($id)){
-            $this->currentUser = User::get_current_user($id);
-        }        
+        //Retorna usuario atual
+        $this->currentUser = User::get_current_user();       
 
         //Retorna classe usuário ou retorna erro
         if( is_null($this->currentUser) ){
@@ -47,17 +46,19 @@ class Timeline {
         }
         
         //Retorna objeto Friends()
-        $friends = $this->currentUser->getFriends();
-        
-        //Retorna lista de usuários
-        $followers = $friends->get();
-        
+        $followers = $this->currentUser->getFriends($this->currentUser->ID);
+
+        //Array para IDS
+        $followersIDS = [];
+
         //Retorna feed de Author
-        $IDS = $friends->onlyKey($followers, 'to_id');
+        foreach ($followers as $object) {
+            $followersIDS = array_merge($followersIDS, DataConverter::onlyObjectParameter($object));
+        }
 
         //TODO: Retorna todos posts de feed baseado nas conexões
-        $response = $this->model->load([
-            'post_author'   =>  $IDS,
+        $response = $this->model->dump([
+            'post_author'   =>  $followersIDS,
             'post_type'     =>  self::type
         ]);
         

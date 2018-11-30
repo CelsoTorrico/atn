@@ -6,16 +6,22 @@ $router->group(['prefix' => 'user', 'middleware' => 'authentication'], function 
     //Retorna
     $router->get('/{id:[0-9]+}', 'UserController@get');
 
-    //Retorna lista de timelines
+    //Retorna
+    $router->get('/pdf/{id:[0-9]+}', 'UserController@getPdf');
+
+    //Retorna lista de usuários
     $router->get('/', 'UserController@getAll');
 
-    //Adiciona timeline
-    $router->post('/', 'UserController@add');
+    //Retorna usuário logado
+    $router->get('/self', 'UserController@getSelf');
 
-    //Atualiza timeline
-    $router->put('/{id:[0-9]+}', 'UserController@update');
+    //Atualizar usuário de posse
+    //TODO: Válido apenas para Instituições(Clube, Confederação e Faculdade)
+    $router->put('/update/{id:[0-9]+}', 'UserController@updateUser');
 
-    //Deleta timeline
+    $router->put('/update', 'UserController@update');
+
+    //Deleta usuário
     $router->delete('/{id:[0-9]+}', 'userController@delete');
 
 });

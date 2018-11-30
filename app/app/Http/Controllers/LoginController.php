@@ -26,14 +26,17 @@ class LoginController extends Controller
     }
 
     function login(Request $request){
+
+        //Campos obrigatórios
+        $require = ['user_email', 'user_pass'];
         
         //Verifica se campos obrigatórios estão presentes
-        if(!$request->has(['user_email', 'user_pass'])){
+        if(!$request->has($require)){
             return response("Campo obrigatório não enviado!"); //TODO: Melhorar resposta json
         }
 
         //Verifica se campos obrigatórios estão presentes
-        if(!$request->filled(['user_email', 'user_pass'])){
+        if(!$request->filled($require)){
             return response("Falta preencher campo!"); //TODO: Melhorar resposta json
         }
         
@@ -47,16 +50,19 @@ class LoginController extends Controller
 
     function register(Request $request){
         
+        //Campos obrigatórios
+        $require = ['type', 'display_name', 'sport', 'user_email', 'user_pass', 'confirm_pass'];
+
         //Verifica se campos obrigatórios estão presentes
-        if(!$request->has(['type', 'display_name', 'sport', 'birthdate', 'user_email', 'user_pass', 'confirm_pass'])){
+        if(!$request->has($require)){
             //TODO: Melhorar resposta json
-            return response("Campos não submetidos! Tente novamente!"); 
+            return response(['error' =>["register", "Campos não submetidos! Tente novamente!"]]); 
         }
 
         //Verifica se campos obrigatórios estão presentes
-        if(!$request->filled(['type', 'display_name', 'sport', 'birthdate', 'user_email', 'user_pass', 'confirm_pass'])){
+        if(!$request->filled($require)){
             //TODO: Melhorar resposta json
-            return response("Falta preencher campos obrigatórios!"); 
+            return response(['error' =>["register", "Falta preencher campos obrigatórios!"]]); 
         }
         
         //Realiza cadastro e retorna resultado

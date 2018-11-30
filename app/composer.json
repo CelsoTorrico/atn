@@ -11,6 +11,7 @@
         "illuminate/session": "^5.7",
         "laravel/lumen-framework": "5.7.*",
         "laravel/socialite": "v3.2.0",
+        "mpdf/mpdf": "^7.1",
         "phpmailer/phpmailer": "^6.0.5",
         "repat/laravel-medoo": "^1.0",
         "vlucas/phpdotenv": "~2.2"

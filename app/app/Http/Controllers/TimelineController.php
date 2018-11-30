@@ -30,7 +30,7 @@ class TimelineController extends Controller
 
     function getAll(Request $request){
         
-        $response = $this->timeline->getAll($id = null);
+        $response = $this->timeline->getAll();
 
         return response()->json( $response );
     }

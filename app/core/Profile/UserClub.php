@@ -3,7 +3,7 @@
 namespace Core\Profile;
 
 
-class Club extends User{
+class UserClub extends User{
 
     
 }

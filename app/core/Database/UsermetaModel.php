@@ -17,7 +17,12 @@ class UsermetaModel extends Medools\Model
         'umeta_id',
         'user_id',
         'meta_key',
-        'meta_value'
+        'meta_value',
+        'visibility'
+    ];
+
+    const OPTIONAL_COLUMNS = [        
+        'visibility'
     ];
 
 }
