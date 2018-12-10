@@ -8,7 +8,7 @@ class LoginModel extends UserModel
 {
 
     const COLUMNS = [
-        'id[Int]',
+        'ID',
         'user_login',
         'user_pass',
         'user_email',

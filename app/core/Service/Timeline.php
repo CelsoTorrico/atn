@@ -4,6 +4,8 @@ namespace Core\Service;
 
 use Core\Profile\User;
 use Core\Profile\Login;
+use Core\Service\Comment;
+
 use Core\Database\PostModel;
 use Core\Utils\DataConverter;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -21,16 +23,29 @@ class Timeline {
     }
 
     /* Retorna timeline por ID */
-    function get($id){
+    function get($id) {
         
         //Query enviando Id de Timeline
         $result = $this->model->load(['ID' => $id]);
 
-        if(!$result){
+        if (!$result) {
             return ['error' => ['timeline' => 'Item não existe.']];
         }
 
-        return $this->model->getData();
+        //Inicializa classe de comentários passando ID do POST
+        $comment = new Comment($this->model->ID);
+
+        //Atribui dados do modelo a variavel como array
+        $timelineData = $this->model->getData();
+
+        //Combina array timeline e comentários
+        $timelineData = array_merge($timelineData, [
+            'list_comments' => $comment->getAll(),
+            'quantity_comments' => $comment->getQuantity()            
+        ]);
+
+        //Retorna array data
+        return $timelineData;
 
     }
 
@@ -57,16 +72,42 @@ class Timeline {
         }
 
         //TODO: Retorna todos posts de feed baseado nas conexões
-        $response = $this->model->dump([
+        $allTimelines = $this->model->getIterator([
             'post_author'   =>  $followersIDS,
             'post_type'     =>  self::type
         ]);
         
         //Retorna resposta
-        if( $response ){
-            return $this->model->getData();
+        if( $allTimelines->count() > 0){
+
+            //Array para retornar dados
+            $timelines = [];
+            
+            foreach ($allTimelines as $item) {
+
+                //Verifica se é valido
+                if ( !$allTimelines->valid() ) {
+                    continue;
+                }
+
+                //Atribui dados do comentário
+                $timelineData = $item->getData();
+
+               //Inicializa classe de comentários passando ID do POST
+                $comment = new Comment($item->ID);
+
+                //Combina array timeline e comentários
+                $timelines[] = array_merge($timelineData, [
+                    'quantity_comments' => $comment->getQuantity()            
+                ]); 
+                
+            }
+
+            //Retorna array de timelines
+            return $timelines;
         } 
         else{
+            //Retorna erro
             return ['error' => ['timeline', 'Nenhum item a exibir.']];
         }   
         
@@ -168,58 +209,63 @@ class Timeline {
         }
     }
 
-    /* Retorna lista de comentários por ID */
-    function getAllComments($id){
+
+    /** Função de adicionar comentário a timeline */
+    function addComment(int $id, $data = ''){
+
+        //Retorna classe usuário ou retorna erro
+        if( is_null($this->currentUser) ){
+            return ['error' => ['comment' => 'Você não tem permissão para comentar.']];
+        }
+
+        //Filtrar inputs e validação de dados
+        $filtered = [
+            'comment_post_ID'    => $id,
+            'comment_content'    => filter_var($data, FILTER_SANITIZE_STRING),
+            'comment_author'     => $this->currentUser->display_name,
+            'user_id'            => $this->currentUser->ID
+        ];  
         
+        if( !$this->model->load(['ID' => $id])){
+            return ['error' => ['comment' => 'Timeline inexistente. Impossível cadastrar um comentário']];        
+        }
+
+        //Inicializa classe de comentário
         $comment = new Comment();
-    }  
 
+        //Retorna informação
+        return $comment->add($filtered);
 
-    /* Função de conversão de data */
-    private function date_conditional($date_array, $date){
-
-        //qtd de horários
-        //'h' = 1 horas, 'd' = 24horas, 'm' = 720horas
-        $qtdConvert = array('h' => 3600, 'd' => 86400, 'm' => 2592000 );
-        $deadline = strtotime($date->format('Y-m-d')); //Converte data final timestamp
-
-        if($date_array['conditional'] == 1){ //Após
-            $dateDefined = ($date_array['qtd'] * $qtdConvert[$date_array['types']['identificador']]);
-            return date_create(date('Y-m-d', $deadline + $dateDefined)); //calculo data atual mais horas definidas
-        }
-        else{ //Antes
-            $dateDefined = ($date_array['qtd'] * $qtdConvert[$date_array['types']['identificador']]);
-            return date_create(date('Y-m-d', $deadline - $dateDefined)); //calculo data atual mais horas definidas
-        }
     }
 
-    private function countStatus($planArray){
+    /** Função de adicionar comentário a timeline */
+    function addResponse(int $comment_ID, $data = ''){
 
-        //Definindo valores padrões
-        $status['warning'] = ['badge' => _WARNING_, 'value' => 0];
-        $status['danger']  = ['badge' => _DANGER_, 'value' => 0];
-        $status['default'] = ['badge' => _PROGRESS_, 'value' => 0];
+        //Retorna classe usuário ou retorna erro
+        if( is_null($this->currentUser) ){
+            return ['error' => ['comment' => 'Você não tem permissão para comentar.']];
+        }
 
-        //Contagem de itens
-        foreach ($planArray as $key => $value) {
-            switch ($value['rules']['msg']) {
-                case _WARNING_:
-                    $status['warning']['value'] = $status['warning']['value'] + 1;
-                    break;
-                case _DANGER_:
-                    $status['danger']['value'] = $status['danger']['value'] + 1;
-                    break;
-                case _PROGRESS_:
-                    $status['default']['value'] = $status['default']['value'] + 1;
-                    break;
-                default:
-                    continue;
-                    break;
-            }
-            
-        }  
+        //Inicializa classe de comentário
+        $comment = new Comment();
 
-        return $status;
+        //Verifica se comentário existe
+        if( !$comment->get($comment_ID) ){
+            return ['error' => ['comment' => 'Comentário inexistente. Impossível cadastrar uma resposta']];        
+        }
+
+        //Filtrar inputs e validação de dados
+        $filtered = [
+            'comment_post_ID'    => $comment->comment_post_ID,
+            'comment_content'    => filter_var($data, FILTER_SANITIZE_STRING),
+            'comment_author'     => $this->currentUser->display_name,
+            'user_id'            => $this->currentUser->ID,
+            'comment_parent'     => $comment_ID
+        ];  
+
+        //Retorna informação
+        return $comment->add($filtered);
+
     }
 
 }

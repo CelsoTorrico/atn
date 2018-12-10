@@ -121,7 +121,8 @@ class AppValidation
             'titulos'   => '([0-9]{1,})',
             'jogos'     => '([0-9]{1,})',
             'derrotas'  => '([0-9]{1,})',
-            'visibility' => '([1-4]{1})'
+            'visibility' => '([1-5]{1})', //ID TYPE USER,
+            'parent_user' => '([0-9]{1,})' //ID USUARIO(PAI)
         );
 
         //Informações Básicas
@@ -130,19 +131,20 @@ class AppValidation
             'posicao',
             'gender'        => '((fe)?male)',    
             'formacao',
-            'howknowus'
+            'howknowus',
+            'social_tokens'
         );
         
         //Estatisticas
         $stats = array(
             'stats', //TODO: Verificar se é string serializada
-            'clubes' //TODO: Deve ser serialize
+            'clubes' //TODO: Deve ser array serializado
         );
 
         $club = array(
             'club_liga',
             'club_sede', 
-            'stats-sports',
+            'stats-sports'
         );
         
         //Endereço
@@ -156,7 +158,7 @@ class AppValidation
 
         $mixed = array(
             'biography',
-            'titulos-conquistas' //TODO: Deve ser serialize
+            'titulos-conquistas' //TODO: Deve ser ARRAY serialize
         );
 
         foreach ($data as $key => $value) {
@@ -196,7 +198,10 @@ class AppValidation
                 $action = $address[$key];
                 $data[$key] = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
                 continue;
-            } else {
+            } elseif(is_array($value)) {
+                $data[$key] = serialize(filter_var_array($value, FILTER_SANITIZE_STRING));
+            } 
+            else {
                 //Filtra as outras variaveis
                 $data[$key] = filter_var($value, FILTER_SANITIZE_STRING);
             }

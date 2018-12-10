@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b29e813124b0a11081a9d17b1df0b11",
+    "content-hash": "23393a4b34af26ffcf0995c9ce5d74bb",
     "packages": [
         {
             "name": "aryelgois/medools",

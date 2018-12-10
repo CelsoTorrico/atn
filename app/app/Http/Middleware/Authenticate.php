@@ -3,8 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Core\Profile\Login;
 use Core\Profile\User;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Cookie;
 
 
 class Authenticate
@@ -35,13 +37,11 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next)
     {       
-        //Validação antes de retornar Closure $next */
-        $logged = User::get_current_user();
-        if (is_null($logged)) {
+        if (!User::get_current_user()) {
             return ['error' => ['login' => 'Sessão ainda foi não inicializada.']];
-        } else {
-            return $next($request);
-        }
+        }       
+        return $next($request);
+        
         
     }
     

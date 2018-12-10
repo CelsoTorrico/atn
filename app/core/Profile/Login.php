@@ -2,30 +2,35 @@
 
 namespace Core\Profile;
 
-use Core\Interfaces\LoginInterface as LoginInterface;
-use Core\Database\LoginModel as LoginModel; 
-use Core\Utils\PasswordHash as PasswordHash;
-use Core\Profile\User as User;
+use Core\Interfaces\LoginInterface;
+use Core\Database\LoginModel; 
+use Core\Utils\PasswordHash;
+use Core\Utils\AppValidation;
+use Core\Profile\User;
 use Symfony\Component\HttpFoundation\Cookie;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Socialite;
 
 class Login implements LoginInterface{
 
     private $model;
     private $userData;
     private $cookieToken;
+    private $session;
+    private $cookie;
 
     /** Cookies */
     const _APPCOOKIE_   = 'app_atletas_now';    
     const _USERCOOKIE_  = 'app_atletas_now_user_session'; 
 
     //Construtor da classe
-    function __contruct(){
-    
+    function __construct(){
+        $this->session  = new Session();
+        $this->cookie   = new Cookie(self::getCookieName());
     }
 
     /* Retorna resposta se logado ou não */
+    //TODO: Implementar validação de TOKEN via Social Login
     function setLogin($data){
 
         $login_data = [];
@@ -38,78 +43,114 @@ class Login implements LoginInterface{
 
         //Verifica se existe usuário
         if(!$this->model->load($login_data)){
-            return "Usuário inexistente."; //TODO: retornar objeto
+            return ['error' => ['login' => 'Usuário inexistente.']];
         }
 
         //Retorna dados localizados
         $this->userData = $this->model->getData();
 
-        //aplicando filtro de string
-        $login_data['user_pass'] = filter_var($data['user_pass'], FILTER_SANITIZE_STRING);
-        
-        //Instanciando classe de verificação de passwords Wordpress = (8, true)
-        $passwordClass = new PasswordHash(8, true);
-        
-        //Verifica se usuário existe no banco, comparando senha
-        if( $passwordClass->CheckPassword($login_data['user_pass'], $this->userData['user_pass']) ):
+        //Verifica tipo de login
+        if (!isset($data['token']) && empty($data['token'])) {
+            
+            //aplicando filtro de string
+            $login_data['user_pass'] = filter_var($data['user_pass'], FILTER_SANITIZE_STRING);
 
+            //Instanciando classe de verificação de passwords Wordpress = (8, true)
+            $passwordClass = new PasswordHash(8, true);
+
+            //Comparação de senhas
+            $sessionAuth = $passwordClass->CheckPassword($login_data['user_pass'], $this->userData['user_pass']);
+
+            //Gerando hash
+            $this->cookieToken = [
+                'token' => password_hash($this->userData['user_login'], CRYPT_BLOWFISH),
+                'expire' => 5115774
+            ];
+
+        } else{
+            //Executa login social
+            $sessionAuth = $this->socialLogin($data);
+        }
+        
+        if($sessionAuth):
             //Retornando string sucesso
             return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]]; 
-
         else:
             //Retorna string erro
-            return ['error' => ["login", "Seu acesso não foi aprovado."]]; //TODO: retornar objeto
-
+            return ['error' => ["login", "Seu acesso não foi aprovado."]]; 
         endif;
         
     }
 
     //Login via API's Sociais
-    public function socialLogin():User{
+    public function setSocialLogin(array $userData){
+
+        //Verifica se existem dados válidos
+        if(!count($userData) <= 0 && !array_key_exists('user_email', $userData)){
+            return ['error' => ['login' => 'Houve um erro em sua autenticação via Facebook. Tente mais tarde.']];
+        }
+        
+        //Verifica se classe já esta instanciada na variavel
+        if(!is_a($this->model, 'Core\Database\LoginModel')){
+            $this->model = new LoginModel();
+            $this->model->load(['user_email' => $userData['user_email']]);
+        }
+        else{
+            $this->model->getInstance(['user_email' => $userData['user_email']]);
+        }
+
+        //Verificar se usuário é existente
+        if ($this->model->isFresh()) {
+            //Se não, retornar false
+            return false;
+        } 
+        
+        //Nova classe usuário
+        $user = new User(); 
+
+        //Atribui ID usuario
+        $user->ID = $this->model->ID; 
+        
+        //Atribui valor de token se existir
+        $socialToken = ($meta = $user->getSocialToken())? 
+        unserialize($meta['meta_value']): false;
+
+        //Retorna dados localizados
+        $this->userData = $this->model->getData();
+
+        //Atribui valor do token
+        $this->cookieToken = $socialToken;
+        
+        if($socialToken):
+            //Retornando string sucesso
+            return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]]; 
+        else:
+            //Retorna string erro
+            return ['error' => ["login", "Seu acesso não foi aprovado."]];
+        endif;
         
     }
 
     //Registrando cookies e sessão atual
     public function setSession(){
         //Se sessão inicializada e cookie setado
-        return self::initSession();        
+        return self::startSession();        
     }
 
     //Inicia sessões registrando cookies e dados na var $_SESSION
-    private function initSession():Cookie{
-
-        //Gerando hash
-        $cookieToken = password_hash($this->userData['user_login'], CRYPT_BLOWFISH);  
+    private function startSession():Cookie{
         
-        //Instanciando classe de Cookie
-        $cookie = new Cookie(self::getCookie(), $cookieToken); 
-        
-        //Instancia classe de sessão
-        $user_cookie = new Session();
+        //Instanciando classe de Cookie     
+        $this->cookie = new Cookie(self::getCookieName(), $this->cookieToken['token'], $this->cookieToken['expire']); 
         
         //Verifica se iniciou e adiciona valor
-        if( $user_cookie->start() ){
-            $user_cookie->set(self::userCookie(), $this->userData['user_login']);
+        if ( !$this->session->isStarted() ) {
+            $this->session->start();
+            $this->session->set(self::userCookieName(), $this->userData['user_login']);
         }
 
         //Retorna classe cookie
-        return ( $cookie && $user_cookie ) ? $cookie : false;
-    }
-
-
-    //Desloga usuário e todas as sessões atuais
-    public function setLogout(){
-
-        if(! self::isLogged() ){
-            return ['error' =>['login' => 'Sessão ainda foi não inicializada.']]; 
-        }
-
-        //Inicia classe Session
-        $session = new Session();
-        
-        //Limpa a sessão atual
-        $session->clear();
-
+        return $this->cookie;
     }
 
     //Retorna se usuario está logado
@@ -119,30 +160,51 @@ class Login implements LoginInterface{
 
     //Retorna a sessão atual do usuário
     private static function getSession():bool{ 
-        
-        //Instanciando classe de Cookie
-        $session = new Session();
-        
-        //Verifica se existe cookie e retorna
-        return ( $session->has(self::userCookie()) )? true : false; 
-        
+        //Retorna sessão
+        $session = (new Login)->session->has(self::userCookieName());
+
+        //Retorna se sessão foi inicializada
+        return $session;         
+    }
+
+    //Retorna objeto Session()
+    public static function getSessionInstance(){
+        return (new Login)->session;
     }
 
     //Retorna se cookie está válido 
     private static function isCookieValid():bool{ 
         
         //Retorna cookie da sessão
-        $cookie = (isset($_COOKIE[Login::getCookie()]))? $_COOKIE[Login::getCookie()] : false; 
+        $cookie = (new Login)->cookie->getName(); 
         
         //Verifica se existe cookie e retorna
         return ( $cookie )? true : false;
     }
 
-    public static function getCookie(){
+    //Retorna objeto Cookie()
+    public static function getCookieInstance(){
+        return (new Login)->cookie;
+    }
+
+    //Desloga usuário e todas as sessões atuais
+    public function setLogout(){
+
+        if(! self::isLogged() ){
+            return ['error' =>['login' => 'Sessão ainda foi não inicializada.']]; 
+        }
+        
+        //Limpa a sessão atual
+        $this->session->clear();
+        $this->session->save();
+
+    }
+
+    public static function getCookieName(){
         return self::_APPCOOKIE_;
     }
 
-    public static function userCookie(){
+    public static function userCookieName(){
         return self::_USERCOOKIE_;
     }
 

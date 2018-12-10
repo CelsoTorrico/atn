@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Core\Service\Timeline as Timeline;
+
 use Closure;
 
 class TimelineController extends Controller
@@ -76,6 +77,50 @@ class TimelineController extends Controller
 
     function delete(Request $request, $id){
         return response($this->timeline->delete($id));
+    }
+
+    /** Comentários */
+
+    function addComment(Request $request, $id){
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->has('comment_content')){
+            //TODO: Melhorar resposta json
+            return response("Campo obrigatório não submetido! Tente novamente!"); 
+        }
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->filled('comment_content') ){
+            //TODO: Melhorar resposta json
+            return response("Falta preencher campos obrigatórios!"); 
+        }
+
+        //Envia dados submetidos
+        $response = $this->timeline->addComment($id, $request->input('comment_content'));
+        
+        //Resposta da adicão
+        return response()->json($response);
+    }
+
+    function addResponse(Request $request, $comment_ID){
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->has('comment_content')){
+            //TODO: Melhorar resposta json
+            return response("Campo obrigatório não submetido! Tente novamente!"); 
+        }
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->filled('comment_content') ){
+            //TODO: Melhorar resposta json
+            return response("Falta preencher campos obrigatórios!"); 
+        }
+
+        //Envia dados submetidos
+        $response = $this->timeline->addResponse($comment_ID, $request->input('comment_content'));
+        
+        //Resposta da adicão
+        return response()->json($response);
     }
 
 }

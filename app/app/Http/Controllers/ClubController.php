@@ -7,7 +7,7 @@ use Core\Profile\Login;
 use Core\Profile\User;
 use Closure;
 
-class UserController extends Controller
+class ClubController extends Controller
 {
 
     protected $user;
@@ -82,14 +82,5 @@ class UserController extends Controller
         return response()->json($result);
 
     }
-
-    //TODO: Verifica esse redirecionamento e fazer funcionar
-    //TODO: Criar um controller especifico para este tipo de usuário
-    function updateUser(Request $request, $id){
-        //Permissão para fazer update de usuário
-        if(!is_a($this->user, 'Core/Profile/UserClub::class')){
-
-        }
-
-    }
+    
 }

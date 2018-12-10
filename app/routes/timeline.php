@@ -13,6 +13,12 @@ $router->group(['prefix' => 'timeline', 'middleware' => 'authentication'], funct
     //Adiciona timeline
     $router->post('/', 'TimelineController@add');
 
+    //Adiciona comentários timeline
+    $router->post('/{id:[0-9]+}', 'TimelineController@addComment');
+
+    //Adiciona comentários timeline
+    $router->post('/comment/{id:[0-9]+}', 'TimelineController@addResponse');
+
     //Atualiza timeline
     $router->put('/{id:[0-9]+}', 'TimelineController@update');
 

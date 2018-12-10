@@ -21,14 +21,15 @@ class User{
     protected $usertypeModel; //db usertype
     protected $sportModel; //db sport
     protected $appVal; //class validation
+    protected $socialLogin = FALSE;
     
     public $ID; //id
     public $user_login; //username
-    private $_user_email; //email
-    public  $display_name; //Nome real
+    public $display_name; //Nome real
     public $type; //tipo de usuário
     public $sport; //sports praticante
     public $metadata; //metadados genericos
+    private $_user_email; //email
     
     //Contrução da classe
     public function __construct($args = array()) {
@@ -63,24 +64,27 @@ class User{
         }
 
         //Retorna usuário
-        $session = new Session();
+        $session = Login::getSessionInstance();
+
+        //Retorna dados armazenados
+        $data = $session->get(Login::userCookieName());
 
         //Verifica se existe sessão ativa
-        if (!$session->has(Login::userCookie())) {
+        if ( is_null($data) ) {
             return null;
         }
 
-        //Retorna dados armazenados
-        $data = $session->get(Login::userCookie(), null);
-
         //Instanciando classe de Cookie
-        $cookie = (isset($_COOKIE[Login::getCookie()]))? $_COOKIE[Login::getCookie()] : false; 
+        $cookie = Login::getCookieInstance(); 
 
         //Verifica dados do cookie com banco
-        if (!is_null($data) && password_verify($data, $cookie)) {
+        if ($cookie->getMaxAge() < time() ) {
+
+            $string = $cookie->getMaxAge();
 
             //Retorna dados do banco
             $user = new UserModel();
+            
             $isExist = $user->load([
                 'user_login' => $data
             ]);
@@ -149,27 +153,82 @@ class User{
 
     } 
 
-    /** Retorna dados do usuário em formato PDF */
-    public function getUserPdf($id){
-        
-        //Carrega dados do usuário
-        $userData = $this->get($id);
+    /** Retorna dados de estatistica */
+    public function getStats(){
 
+        if( !in_array($this->type['ID'], [1, 3, 4, 5])) {
+            return [];
+        }
+        
+        //Campos gerais de estatisticas
+        $statsGerais = [
+            'empates','vitorias', 'titulos', 'jogos', 'derrotas', 'titulos-conquistas'
+        ];
+
+        //Array de numeros
+        $numeros  = [];
+        $porcento = [];
+
+        //Percorre array para trazer dados gerais
+        foreach ($statsGerais as $value) {            
+            if ( array_key_exists($value, $this->metadata)) {
+                $numeros[$value] = $this->metadata[$value]['value'];
+            }
+        }
+
+        //Retorna dados e soma atribuindo total
+        $total = array_sum(array_only($numeros, ['vitorias', 'empates', 'derrotas']));
+        
+        //Faz calculo para exibir aproveitamento em porcentagem
+        if ( is_int($total) && isset($numeros['jogos']) && $total == (int) $numeros['jogos'] ) {
+            $umcento = ($total / 100);
+            $porcento = [
+                'vitorias' => $numeros['vitorias'] * $umcento.'%',
+                'empates'  => $numeros['empates']  * $umcento.'%',
+                'derrotas' => $numeros['derrotas'] * $umcento.'%'
+            ];
+        }
+
+        //Nome do esporte de estatisticas
+        $sport_name = isset($this->metadata['stats-sports']['value'])? $this->metadata['stats-sports']['value'] : '';
+
+        //Dados de estatisticas registrados
+        $stats = isset($this->metadata['stats']['value'])? $this->metadata['stats']['value'] : [];
+        
+        //Monstando array de dados
+        $mainSport = [
+            'sport_general'         => $numeros,
+            'sport_name'            => $sport_name,
+            'sport_performance'     => [
+                'stats'         => $stats,
+                'average_match' => $porcento
+            ]
+        ];
+
+        //Retornando array de dados estatisticos
+        return $mainSport;
+
+    }
+
+    /** Retorna dados do usuário em formato PDF */
+    public function getUserPdf(){
+        
         //Se houver erro retorna
-        if( array_key_exists('error', $userData)){
-            return $userData;
+        //TODO: Melhorar
+        if( is_null(User::get_current_user())){
+            return ['error'=> ['user' => 'Você não tem permissão para esta ação.']];
         }
 
         //Carreg classe de composição de PDFS e especifica caminho de download
         $mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ .'/public/pdf']);
         
         //Adicionando conteúdo inicial do arquivo
-        $html = '<h1>' . $userData->display_name . '</h1>';
+        $html = '<h1>' . $this->display_name . '</h1>';
         
         //Verifica se usuário tem metadata para imprimir
         //TODO: Verifica tradução e formatação dos campos
-        if( is_array($userData->metadata) ){
-            foreach ($userData->metadata as $key => $value) {
+        if( is_array($this->metadata) ){
+            foreach ($this->metadata as $key => $value) {
                 $html .= $key. ':';
                 $html .= $value['value'];
                 $html .= '<br />';
@@ -180,11 +239,12 @@ class User{
         $mpdf->WriteHTML($html);
 
         //Definindo nome do arquivo
-        $filename = 'resume-'. strtolower($userData->user_login) .'.pdf';
+        $filename = 'resume-'. strtolower($this->user_login) .'.pdf';
         
         //Gera arquivo e forma de submeter
         $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
 
+        //Retorna string com caminho do arquivo
         return __DIR__ .'/public/pdf/' . $filename;
     }
 
@@ -207,16 +267,21 @@ class User{
         return $this->register($data, $this->ID);
     } 
     
-    /* Insere um único usuário */
-    function delete( $userID ){ 
-        return $this->register($id);
+    /* Desativa único usuário */
+    function delete(){ 
+        return $this->desregister();
     }
 
     /* Adicionar um novo usuário ou atualizar existente no sistema */
     protected function register(Array $data, $id = null):array{
 
-        //Se for null, necessário senhas ser confirmada
-        if(is_null($id)){
+        //Se existir um token via social login
+        if(is_null($id) && array_key_exists('token', $data) && !empty($data['token'])){
+            $isUpdate = FALSE;
+            $this->socialLogin = TRUE;
+        }
+        //Se for null, necessário senha serem confirmadas
+        elseif(is_null($id)){
             //Verifica se password está correta
             if( $data['user_pass'] != $data['confirm_pass'] ){
                 return ['error' => ['confirm_pass' => 'Confirme a senha corretamente.']];
@@ -242,6 +307,22 @@ class User{
         if(array_key_exists('user_pass', $filtered)){
             //Converte password em hash
             $filtered['user_pass'] = $this->hashPassword($filtered['user_pass']);
+        }
+
+        //Se o tipo de inclusão for registrar um usuaŕio via social login
+        if ($this->socialLogin && !$isUpdate) {
+            
+            //Registra token de login/registro social
+            $filtered['social_tokens'] = [
+                'token'     =>  $data['token'],
+                'expire'    =>  $data['expires']
+            ];
+
+            //Atribui avatar ao metadado do perfil
+            $filtered['profile_img'] = $data['avatar'];
+
+            //Registra user_pass vazia
+            $filtered['user_pass'] = '';
         }
 
         //Colunas válidas
@@ -286,7 +367,9 @@ class User{
 
             //Se for novo usuário usa valor enviado
             if( is_null($getType = $this->_getType($primaryKey)) ){
-                $type = $filtered['type'];
+                //Se não definido usa valor padrão 1
+                $type = (isset($filtered['type']) 
+                && !empty($filtered['type']))? $filtered['type'] : 1;
             }   
             else{   
                 //Se for update, pega dados do banco             
@@ -353,7 +436,20 @@ class User{
             return ['error' => ['register' => 'Houve erro em seu cadastro. Contate nosso administrador.']];
         }
 
-    }   
+    }  
+    
+    //Função de desregistrar usuário atual
+    protected function desregister(){
+
+        //TODO: DEFINIR USER_STATUS == 1
+        //SIGNIFICA USUÁRIO DESATIVADO
+
+    }
+
+    /** Retorna token armazenado no banco */
+    public function getSocialToken(){
+        return $this->loadSocialToken();
+    }
 
     /** 
      *  Retorna metadados do usuário
@@ -432,7 +528,8 @@ class User{
         $type = new UsermetaModel();
 
         //Verifica se existe metadado 'type'
-        if(! $type->load(['user_id' => $ID, 'meta_key' => 'type'])){
+        if(!$typeExist = $type->load(['user_id' => $ID, 'meta_key' => 'type'])){
+            
             $capabilities = $type->getInstance(['user_id' => $ID, 'meta_key' => 'at_capabilities']);
         }
         
@@ -446,8 +543,6 @@ class User{
                     $type->meta_value = $value;
                 }
             }
-        } else {
-            return null;
         }
 
         //Instancia Modelo de Classe 
@@ -489,7 +584,7 @@ class User{
     private static function typeUserClass($userModel){
 
         //Se usuário tiver dados definidos atribui classe respectiva
-        if (!is_object($userModel)) {
+        if (!is_a($userModel, 'Core\Database\UserModel')) {
             return ['error' => ['type' => 'Impossível determinar o tipo de usuário dessa conta. Contate o administrador.']];
         }
 
@@ -643,7 +738,7 @@ class User{
 
     }
 
-    /** Define array de campos necessŕios para determinado tipo de perfil */
+    /** Define array de campos necessários para determinado tipo de perfil */
     private function onlyUsermetaValid($typeUser = 1):array{
 
         //Colunas Gerais'
@@ -654,7 +749,7 @@ class User{
 
         //Compartilhado entre Atleta e Profissional do Esporte
         if(in_array($typeUser, [1, 2])){
-            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'clubes', 'formacao', 'cursos']);
+            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'clubes', 'formacao', 'cursos', 'social_tokens']);
         }
 
         //Compartilhado entre Faculdade e Clube
@@ -705,6 +800,14 @@ class User{
 
     protected function getID(){
         return $this->ID;
+    }
+
+    private function loadSocialToken(){
+        $model = new UsermetaModel();
+        if (!$model->load(['user_id' => $this->ID, 'meta_key' => 'social_tokens'])){
+            return false;
+        }
+        return $model->getData();
     }
 
 }

@@ -14,7 +14,7 @@ return [
     |            "memcached", "redis", "array"
     |
     */
-    'driver' => env('SESSION_DRIVER', 'file'),
+    'driver' => env('SESSION_DRIVER', 'cookie'),
     /*
     |--------------------------------------------------------------------------
     | Session Lifetime

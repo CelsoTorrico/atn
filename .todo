@@ -14,27 +14,48 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Login/Cadastro - Implementar variação com CNPJ @done(18-11-29 12:58)
 
 ### Semana 2
-✔ Inicio / timeline @done(18-11-22 12:10)
-☐ Integração de Redes Sociais no perfil (Login Social) (Aguardando API)
+✔ Inicio / timeline @done(18-11-22 12:10) | Status 95% 
+✔ @high Integração de Redes Sociais no perfil (Login Social) @done(18-12-09 21:47)
 ✔ Perfil de usuario - Atleta @done(18-11-29 01:59)
 
 ### Semana 3
-✔ Perfil de Usuário - Instituição @done(18-11-29 02:00)
+☐ @high Perfil de Usuário - Instituição | Status 65%
 ✔ Perfil de usuário -  Profissional @done(18-11-29 02:00)
-✔ Download de CV - usuário @done(18-11-29 17:22)
+☐ @low Download de CV - usuário | Status 95%
 
 ### Semana 4
-☐ Estatisticas - Atleta
-☐ Edição de perfil - Todos
-☐ Privacidade de perfil/conteudo (segurança da plataforma)
+✔ Estatisticas - Atleta @done(18-12-04 19:29)
+☐ @low Edição de perfil - Todos | Status => 50%
+☐ @low Privacidade de perfil / conteudo (segurança da plataforma) | Status => 50%
 
+### Semana 5
+☐ Certificação de usuario
+☐ Networking entre atletas/instituições/profissionais
+☐ Sugestões de amigos - Perfil
 
-### Estrutural
-☐ Semana 1 - Ao se cadastrar mostrar mensagem de cadastro, no momento está de login
-☐ Semana 2 - Fazer reenviar senha (Esqueci senha)
-☐ Semana 2 - Novo e Update de timeline com imagens
-☐ Semana 3 - Perfil Instituição - criação de usuários 'admin' e 'meus-atletas' 
-☐ Semana 3 - Estrutura o conteúdo de forma visualmente organizado
+### Semana 6
+☐ Clubes Favoritos
+☐ Atletas Favoritos
+☐ Permissões de usuario - Instituição/usuario master
+
+### Semana 7
+☐ Aprenda - Area de videos - Padrão
+☐ Aprenda - Area de videos - Premium
+
+### Semana 8
+☐ Chat 
+☐ Mensagens
+☐ Busca  Geral da Plataforma
+
+### Pequenos Acertos
+☐ Semana 1 - Login/Cadastro -> Ao se cadastrar mostrar mensagem de cadastro, no momento está de login
+☐ Semana 2 - Login -> Fazer reenviar senha (Esqueci senha)
+☐ Semana 2 - Login Social -> Validação de cookies
+✔ Semana 2 - Comentários em timelines @done(18-12-06 15:56)
+☐ Semana 2 - Timeline -> Novo e Update de timeline com imagens
+✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
+☐ Semana 3 - Perfil Instituição -> criação de usuários 'admin' e 'meus-atletas' 
+☐ Semana 3 - Download CV (PDF) -> Estruturar o conteúdo de forma visualmente organizado (Precisamos de um modelo de arquivo)
 ✔ Semana 3 - Fazer validação de usuário logado em requisições @done(18-11-27 19:12)
 ✔ Semana 3 - Quando solicitado um usuário, fazer update de view @done(18-11-27 19:11)
 ✔ Fazer validação do cookie (https://lumen.laravel.com/docs/5.7/authorization) a cada requisição via Middleware | Existe classe Symfony para Sessões >> /home/iran/www/desenvolvimento/app-atletasnow-2.0/app/vendor/symfony/http-foundation/Session/Session.php @done(18-11-22 11:35)

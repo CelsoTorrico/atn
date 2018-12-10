@@ -24,9 +24,14 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-$app->withFacades();
+config(require(__DIR__.'/../app/config/session.php'));  //Sessões
+config(require(__DIR__.'/../app/config/services.php')); //API Socialize
 
-$app->withEloquent();
+$app->withFacades(TRUE, [
+    'Laravel\Socialite\Facades\Socialite' => 'Socialite'
+]);
+
+//$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -73,9 +78,7 @@ $app->middleware([
 
 //Carregando Middlewares do App
 $app->routeMiddleware([
-    App\Http\Middleware\Core::class,
-    App\Http\Middleware\Cookies::class,
-    aryelgois\Medools\MedooConnection::loadConfig(__DIR__.'/../bootstrap/database.php')
+    aryelgois\Medools\MedooConnection::loadConfig(__DIR__.'/../app/config/database.php')
 ]);
 
 /*
@@ -111,10 +114,8 @@ $app->bind(\Illuminate\Session\SessionManager::class, function () use ($app) {
     return new \Illuminate\Session\SessionManager($app);
 });
 
-$app->configure('session');
-
-$app->register(\Illuminate\Session\SessionServiceProvider::class);
-
+$app->register(\Illuminate\Session\SessionServiceProvider::class); 
+$app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',

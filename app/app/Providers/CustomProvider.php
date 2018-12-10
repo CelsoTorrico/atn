@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class AppCoreServiceProvider extends ServiceProvider
+
+class CustomServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -13,8 +14,9 @@ class AppCoreServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('\Core\Login', function ($app) {
-            return new App();
+        $this->app->singleton(NameClass::class, function ($app) {
+            return new NameClass();
         });
     }
+
 }
