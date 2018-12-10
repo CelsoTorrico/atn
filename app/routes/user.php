@@ -12,11 +12,24 @@ $router->group(['prefix' => 'user', 'middleware' => 'authentication'], function 
     //Retorna usuário logado
     $router->get('/self', 'UserController@getSelf');
 
+    //INSTITUTE
     $router->group(['prefix' => 'self'], function() use ($router){
-        //INSTITUTE USER
+        
         //Atualizar usuário de posse
-        //TODO: Válido apenas para Instituições(Clube, Confederação e Faculdade)
+        $router->get('/user', 'ClubController@getAll');
+
+        //Atualizar usuário de posse
+        $router->get('/user/{id:[0-9]+}', 'ClubController@get');
+
+        //Atualizar usuário de posse
+        $router->post('/user', 'ClubController@add');
+
+        //Atualizar usuário de posse
         $router->put('/update/{id:[0-9]+}', 'ClubController@update');
+
+        //Atualizar usuário de posse
+        $router->delete('/user/{id:[0-9]+}', 'ClubController@delete');
+
     });
 
     //Retorna estatisticas do usuário logado

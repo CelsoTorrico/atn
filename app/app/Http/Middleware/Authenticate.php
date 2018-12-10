@@ -37,9 +37,10 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next)
     {       
-        if (!User::get_current_user()) {
+        if (!$class = User::get_current_user()) {
             return ['error' => ['login' => 'Sessão ainda foi não inicializada.']];
-        }       
+        }     
+
         return $next($request);
         
         

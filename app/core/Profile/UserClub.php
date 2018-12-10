@@ -3,30 +3,42 @@
 namespace Core\Profile;
 use Core\Database\PrivatemetaModel;
 use Core\Database\UsermetaModel;
+use Core\Database\UserModel;
 
 class UserClub extends User{
 
-    protected $max_user;
-    protected $my_users;
+    protected $private;
+    protected $userModel;
+    protected $metaModel;
 
     function __construct(){
         
         //Retorna lista de usuários de propriedade
-        $this->metaModel = new UsermetaModel();
+        //$this->metaModel = new UsermetaModel();
 
-        //quantidade máxima de usuários a gerenciar
-        $this->private = new PrivatemetaModel();
+        //privatemetadados para retornar qtd de usuários permitidos
+        $this->private = new PrivatemetaModel(['usertype' => $this->type]);
 
     }
 
-    public function getClubUsers(){
+    public function getUsers(){
         
-        //Retorna lista de usuários de propriedade
-        $this->metaModel->getInstance();
-        $this->metaModel->load(['parent_user' => $this->ID]);
+        //Carregando metadados de usuários
+        $users = $this->metaModel->getIterator(['parent_user' => $this->ID, 'limit' => $this->private->meta_value]);
 
-        //quantidade máxima de usuários a gerenciar
-        $this->private->load(['usertype' => $this->type]);
+        //Retorna se houve erro ou nenhum usuário
+        if(!is_array($users) || count($users) <= 0){
+            return ['error' => ['users' => 'Nenhum usuário a exibir.']];
+        }
+
+        //Percorre array de usuários
+		foreach ($users as $key => $value) {
+            
+        }
+
+    }
+
+    public function getUser(){
 
     }
 

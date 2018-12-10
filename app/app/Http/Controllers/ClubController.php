@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Core\Profile\Login;
-use Core\Profile\User;
+use Core\Profile\UserClub;
 use Closure;
 
 class ClubController extends Controller
 {
 
-    protected $user;
+    protected $club;
     
     /**
      * Create a new controller instance.
@@ -19,13 +19,13 @@ class ClubController extends Controller
      */
     public function __construct()
     {
-        $this->user = User::get_current_user();
+        $this->club = UserClub::get_current_user();
     }
 
-    function get(Request $request, $id) {
+    function getUser($id) {
 
         $id = (int) $id;
-        
+
         $result = $this->user->get($id);
 
         //Se usuário da query é current_user, não contabilizar view
@@ -51,9 +51,9 @@ class ClubController extends Controller
         }
     }
 
-    function getAll(Request $request) {
+    function getAll() {
         
-        $result = $this->user->getFriends();
+        $result = $this->club->getUsers();
         
         return response()->json($result);
     }

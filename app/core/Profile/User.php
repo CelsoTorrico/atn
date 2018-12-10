@@ -95,6 +95,7 @@ class User{
             }
 
             //Retorna classe determinada por tipo de usuário
+            $class = self::typeUserClass($user);
             return self::typeUserClass($user);
 
         } else {
@@ -581,14 +582,15 @@ class User{
     /**
      * @param $userModel object class UserModel()
      */
-    private static function typeUserClass($userModel){
+    private static function typeUserClass(UserModel $userModel){
 
         //Se usuário tiver dados definidos atribui classe respectiva
         if (!is_a($userModel, 'Core\Database\UserModel')) {
             return ['error' => ['type' => 'Impossível determinar o tipo de usuário dessa conta. Contate o administrador.']];
         }
 
-        if( is_null($type = (new User)->_getType($userModel->ID))){
+        //Verifica tipo de ID de usuário
+        if (is_null($type = (new self)->_getType($userModel->ID))) {
             return ['error' => ['type' => 'Tipo de usuário inexistente. Contate o administrador.']];
         }
 
@@ -601,15 +603,21 @@ class User{
         ];
 
         //Se tipo de usuário não estiver dentro do estabelecido
-        if(!array_key_exists($type['ID'], $typeClass)){
+        if (!array_key_exists($type['ID'], $typeClass)) {
             return ['error' => ['type' => 'Tipo de usuário inexistente. Contate o administrador.']];
         }
 
+        //Atribui ID do tipo de usuário
+        $typeID = (int) $type['ID'];
+
         //Instancia classe para utilização
-        return new $typeClass[$type['ID']]([
+        $class = new $typeClass[$typeID]([
             'user_login'    => $userModel->user_login, 
-            'user_pass'     => $userModel->user_pass
+            'user_email'    => $userModel->user_email
         ]);
+
+        //Retorna class
+        return $class;
     }
 
     /** Adiciona valores as variaveis publicas */

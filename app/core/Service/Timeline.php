@@ -63,6 +63,11 @@ class Timeline {
         //Retorna objeto Friends()
         $followers = $this->currentUser->getFriends($this->currentUser->ID);
 
+        //Retorna erro se não existe conexão
+        if (array_key_exists('error', $followers)) {
+            return $followers;
+        }
+
         //Array para IDS
         $followersIDS = [];
 
