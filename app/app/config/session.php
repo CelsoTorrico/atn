@@ -37,7 +37,7 @@ return [
     | automatically by Laravel and you can use the Session like normal.
     |
     */
-    'encrypt' => false,
+    'encrypt' => true,
     /*
     |--------------------------------------------------------------------------
     | Session File Location
@@ -105,7 +105,7 @@ return [
     */
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        Str::slug(env('APPCOOKIE', 'laravel'), '_').'_session'
     ),
     /*
     |--------------------------------------------------------------------------
@@ -128,7 +128,7 @@ return [
     | available to in your application. A sensible default has been set.
     |
     */
-    'domain' => env('SESSION_DOMAIN', null),
+    'domain' => env('APP_PATH', null),
     /*
     |--------------------------------------------------------------------------
     | HTTPS Only Cookies

@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Str;
 /** Login Social Credentials */
 return [
     'services' => [

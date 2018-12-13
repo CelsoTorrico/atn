@@ -2,7 +2,7 @@
 
 /*########## TIMELINE ###############*/
 
-$router->group(['prefix' => 'timeline', 'middleware' => 'authentication'], function () use ($router) {
+$router->group(['prefix' => 'timeline'], function () use ($router) {
 
     //Retorna único
     $router->get('/{id:[0-9]+}', 'TimelineController@get');

@@ -17,11 +17,12 @@ class UserController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(User $user)
     {
-        $this->user = User::get_current_user();
+        $this->user = $user;
     }
 
+    /**  */
     function get(Request $request, $id) {
 
         $id = (int) $id;
@@ -37,7 +38,7 @@ class UserController extends Controller
         return response()->json($result);
     }
 
-    function getPdf(Request $request) {
+    function getPdf() {
 
         $result = $this->user->getUserPdf();
 
@@ -67,10 +68,10 @@ class UserController extends Controller
         return response()->json($this->user->getStats());
     }
 
-    function update(Request $request, $id){
+    function update(Request $request){
 
         //Somente permissão de atualização de proprio perfil
-        if( $id == $this->user->ID ){
+        if( !is_null($this->user->ID) ){
             //incrementado qtd view
             $result = $this->user->update($request->all());
         }  
@@ -83,13 +84,36 @@ class UserController extends Controller
 
     }
 
-    //TODO: Verifica esse redirecionamento e fazer funcionar
-    //TODO: Criar um controller especifico para este tipo de usuário
-    function updateUser(Request $request, $id){
-        //Permissão para fazer update de usuário
-        if(!is_a($this->user, 'Core/Profile/UserClub::class')){
-
+    function delete(){
+        
+        //Somente permissão de atualização de proprio perfil
+        if( !is_null($this->user->ID) ){
+            //Desativa o usuário
+            $result = $this->user->delete();
+        }  
+        else{
+            //Retorna erro
+            $result = ['error' => ['delete', 'Você não pode desativar esse perfil.']];
         }
+        
+        return response()->json($result);
 
     }
+
+    function reactive(){
+        
+        //Somente permissão de atualização de proprio perfil
+        if( !is_null($this->user->ID) ){
+            //Desativa o usuário
+            $result = $this->user->reactivate();
+        }  
+        else{
+            //Retorna erro
+            $result = ['error' => ['delete', 'Você não pode reativar esse perfil.']];
+        }
+        
+        return response()->json($result);
+
+    }
+
 }

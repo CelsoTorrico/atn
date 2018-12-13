@@ -7,8 +7,9 @@ use Core\Database\LoginModel;
 use Core\Utils\PasswordHash;
 use Core\Utils\AppValidation;
 use Core\Profile\User;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Illuminate\Http\Request;
+use Illuminate\Auth\GenericUser as AppUser;
+use Illuminate\Contracts\Auth\Factory as Auth;
 use Socialite;
 
 class Login implements LoginInterface{
@@ -19,18 +20,12 @@ class Login implements LoginInterface{
     private $session;
     private $cookie;
 
-    /** Cookies */
-    const _APPCOOKIE_   = 'app_atletas_now';    
-    const _USERCOOKIE_  = 'app_atletas_now_user_session'; 
-
     //Construtor da classe
-    function __construct(){
-        $this->session  = new Session();
-        $this->cookie   = new Cookie(self::getCookieName());
+    function __construct(Auth $auth){
+        $this->auth = $auth;
     }
 
     /* Retorna resposta se logado ou não */
-    //TODO: Implementar validação de TOKEN via Social Login
     function setLogin($data){
 
         $login_data = [];
@@ -62,10 +57,7 @@ class Login implements LoginInterface{
             $sessionAuth = $passwordClass->CheckPassword($login_data['user_pass'], $this->userData['user_pass']);
 
             //Gerando hash
-            $this->cookieToken = [
-                'token' => password_hash($this->userData['user_login'], CRYPT_BLOWFISH),
-                'expire' => 5115774
-            ];
+            $this->cookieToken = password_hash($this->userData['user_login'], CRYPT_BLOWFISH);
 
         } else{
             //Executa login social
@@ -131,81 +123,38 @@ class Login implements LoginInterface{
         
     }
 
-    //Registrando cookies e sessão atual
-    public function setSession(){
-        //Se sessão inicializada e cookie setado
-        return self::startSession();        
-    }
-
-    //Inicia sessões registrando cookies e dados na var $_SESSION
-    private function startSession():Cookie{
-        
-        //Instanciando classe de Cookie     
-        $this->cookie = new Cookie(self::getCookieName(), $this->cookieToken['token'], $this->cookieToken['expire']); 
-        
-        //Verifica se iniciou e adiciona valor
-        if ( !$this->session->isStarted() ) {
-            $this->session->start();
-            $this->session->set(self::userCookieName(), $this->userData['user_login']);
-        }
-
-        //Retorna classe cookie
-        return $this->cookie;
-    }
-
     //Retorna se usuario está logado
-    public static function isLogged():bool{      
-        return ( self::getSession() && self::isCookieValid() )? true : false;
-    }
-
-    //Retorna a sessão atual do usuário
-    private static function getSession():bool{ 
-        //Retorna sessão
-        $session = (new Login)->session->has(self::userCookieName());
-
-        //Retorna se sessão foi inicializada
-        return $session;         
-    }
-
-    //Retorna objeto Session()
-    public static function getSessionInstance(){
-        return (new Login)->session;
-    }
-
-    //Retorna se cookie está válido 
-    private static function isCookieValid():bool{ 
-        
-        //Retorna cookie da sessão
-        $cookie = (new Login)->cookie->getName(); 
-        
-        //Verifica se existe cookie e retorna
-        return ( $cookie )? true : false;
-    }
-
-    //Retorna objeto Cookie()
-    public static function getCookieInstance(){
-        return (new Login)->cookie;
+    public static function isLogged():bool{
+        return true;
     }
 
     //Desloga usuário e todas as sessões atuais
     public function setLogout(){
 
-        if(! self::isLogged() ){
+        //Verifica se está logado
+        /*if(! self::isLogged() ){
             return ['error' =>['login' => 'Sessão ainda foi não inicializada.']]; 
-        }
-        
-        //Limpa a sessão atual
-        $this->session->clear();
-        $this->session->save();
+        }*/
 
     }
 
     public static function getCookieName(){
-        return self::_APPCOOKIE_;
+        return env('APPCOOKIE');
     }
 
-    public static function userCookieName(){
-        return self::_USERCOOKIE_;
+    public static function getUserCookieName(){
+        return env('USERCOOKIE');
+    }
+
+    public function getToken(){
+        return $this->cookieToken;
+    }
+
+    public function getUser(){
+        return [
+            'name'       => $this->userData['user_login'], 
+            'user_email' => $this->userData['user_email']
+        ];
     }
 
 }

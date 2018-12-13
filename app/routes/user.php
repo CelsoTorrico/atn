@@ -1,7 +1,7 @@
 <?php 
 
 /** ######## USER ############ */
-$router->group(['prefix' => 'user', 'middleware' => 'authentication'], function () use ($router) {
+$router->group(['prefix' => 'user'], function () use ($router) {
     
     //Retorna
     $router->get('/{id:[0-9]+}', 'UserController@get');
@@ -14,21 +14,21 @@ $router->group(['prefix' => 'user', 'middleware' => 'authentication'], function 
 
     //INSTITUTE
     $router->group(['prefix' => 'self'], function() use ($router){
-        
-        //Atualizar usuário de posse
-        $router->get('/user', 'ClubController@getAll');
 
         //Atualizar usuário de posse
-        $router->get('/user/{id:[0-9]+}', 'ClubController@get');
+        $router->get('/club_user', 'ClubController@getAll');
 
         //Atualizar usuário de posse
-        $router->post('/user', 'ClubController@add');
+        $router->post('/club_user', 'ClubController@addClubUser');
 
         //Atualizar usuário de posse
-        $router->put('/update/{id:[0-9]+}', 'ClubController@update');
+        $router->put('/club_user/{id:[0-9]+}', 'ClubController@updateUser');
 
-        //Atualizar usuário de posse
-        $router->delete('/user/{id:[0-9]+}', 'ClubController@delete');
+        //Deletar usuário de posse
+        $router->delete('/club_user/{id:[0-9]+}', 'ClubController@deleteUser');
+
+        //Reativar usuário de posse
+        $router->put('/club_user/active/{id:[0-9]+}', 'ClubController@activeUser');
 
     });
 
@@ -42,6 +42,9 @@ $router->group(['prefix' => 'user', 'middleware' => 'authentication'], function 
     $router->put('/update', 'UserController@update');
 
     //Deleta usuário
-    $router->delete('/{id:[0-9]+}', 'userController@delete');
+    $router->delete('/delete', 'UserController@delete');
+
+    //Reativar usuário de posse
+    $router->put('/reactive', 'UserController@reactive');
 
 });

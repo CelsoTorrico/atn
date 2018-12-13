@@ -54,57 +54,6 @@ class User{
         }
     }
 
-    //Retorna usuário atual baseado em ID e Cookie
-    //Para ser acessado fora da classe
-    public static function get_current_user($id = null) { 
-
-        //Verifica se sessão foi inicializada
-        if (! Login::isLogged()) {
-            return null;
-        }
-
-        //Retorna usuário
-        $session = Login::getSessionInstance();
-
-        //Retorna dados armazenados
-        $data = $session->get(Login::userCookieName());
-
-        //Verifica se existe sessão ativa
-        if ( is_null($data) ) {
-            return null;
-        }
-
-        //Instanciando classe de Cookie
-        $cookie = Login::getCookieInstance(); 
-
-        //Verifica dados do cookie com banco
-        if ($cookie->getMaxAge() < time() ) {
-
-            $string = $cookie->getMaxAge();
-
-            //Retorna dados do banco
-            $user = new UserModel();
-            
-            $isExist = $user->load([
-                'user_login' => $data
-            ]);
-
-            //Verifica se usuário ainda existe
-            if(!$isExist){
-                return null;
-            }
-
-            //Retorna classe determinada por tipo de usuário
-            $class = self::typeUserClass($user);
-            return self::typeUserClass($user);
-
-        } else {
-            
-            return null;
-        }
-            
-    }
-
     /**
      * Retorna dados de usuário único por ID
      * @since 2.0
@@ -114,7 +63,7 @@ class User{
     public function get( int $id ) {
 
         //Filtro
-        $filter = ['ID' => $id];
+        $filter = ['ID' => $id, 'user_status' => 0];
 
         //Verifica se existe usuário
         if (!$this->model->load($filter)) {
@@ -214,12 +163,6 @@ class User{
     /** Retorna dados do usuário em formato PDF */
     public function getUserPdf(){
         
-        //Se houver erro retorna
-        //TODO: Melhorar
-        if( is_null(User::get_current_user())){
-            return ['error'=> ['user' => 'Você não tem permissão para esta ação.']];
-        }
-
         //Carreg classe de composição de PDFS e especifica caminho de download
         $mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ .'/public/pdf']);
         
@@ -270,19 +213,24 @@ class User{
     
     /* Desativa único usuário */
     function delete(){ 
-        return $this->desregister();
+        return $this->desregister($this->ID);
+    }
+
+    /** Reativar perfil inativo */
+    function reactivate(){
+        return $this->activateRegister($this->ID);
     }
 
     /* Adicionar um novo usuário ou atualizar existente no sistema */
     protected function register(Array $data, $id = null):array{
 
         //Se existir um token via social login
-        if(is_null($id) && array_key_exists('token', $data) && !empty($data['token'])){
-            $isUpdate = FALSE;
+        if(array_key_exists('token', $data) && !empty($data['token'])){
             $this->socialLogin = TRUE;
         }
+
         //Se for null, necessário senha serem confirmadas
-        elseif(is_null($id)){
+        if(is_null($id)){
             //Verifica se password está correta
             if( $data['user_pass'] != $data['confirm_pass'] ){
                 return ['error' => ['confirm_pass' => 'Confirme a senha corretamente.']];
@@ -310,22 +258,6 @@ class User{
             $filtered['user_pass'] = $this->hashPassword($filtered['user_pass']);
         }
 
-        //Se o tipo de inclusão for registrar um usuaŕio via social login
-        if ($this->socialLogin && !$isUpdate) {
-            
-            //Registra token de login/registro social
-            $filtered['social_tokens'] = [
-                'token'     =>  $data['token'],
-                'expire'    =>  $data['expires']
-            ];
-
-            //Atribui avatar ao metadado do perfil
-            $filtered['profile_img'] = $data['avatar'];
-
-            //Registra user_pass vazia
-            $filtered['user_pass'] = '';
-        }
-
         //Colunas válidas
         $userColumns = array(
             'user_login','user_pass','user_email','display_name'
@@ -346,7 +278,8 @@ class User{
         }
         else{
             /** New Register  */
-            
+            $this->model = new UserModel();
+
             //Preenche colunas com valores
             $this->model->fill(array_only($filtered, $userColumns)); 
 
@@ -440,10 +373,47 @@ class User{
     }  
     
     //Função de desregistrar usuário atual
-    protected function desregister(){
+    protected function desregister(int $id){
 
-        //TODO: DEFINIR USER_STATUS == 1
-        //SIGNIFICA USUÁRIO DESATIVADO
+        //Intancia objeto User
+        if($this)
+        $user = new self();
+        
+        //Retorna dados do usuário
+        $user = $user->get($id);
+
+        //Atualiza valor no banco de dados 
+        $response = $user->model->delete();
+        
+        if ($response) {
+            //Mensagem de sucesso no cadastro   
+            return ['success' => ['delete' => 'Perfil foi inativado!']];
+        } else {
+            //Mensagem de erro no cadastro
+            return ['error' => ['register' => 'Houve erro ao inativar perfil. Contate nosso administrador.']];
+        }
+
+    }
+
+    //Função para reativar um usuário atual
+    protected function activateRegister(int $id){
+        
+        //Intancia objeto User
+        $user = new self();
+
+        //Carrega modelo de usuário
+        $user->model = new UserModel(['ID' => $id]);
+
+        //Atualiza valor no banco de dados 
+        $response = $user->model->undelete();
+        
+        if ($response) {
+            //Mensagem de sucesso no cadastro   
+            return ['success' => ['register' => 'Perfil foi reativado!']];
+        } else {
+            //Mensagem de erro no cadastro
+            return ['error' => ['register' => 'Houve erro ao reativar perfil. Contate nosso administrador.']];
+        }
 
     }
 
@@ -533,6 +503,11 @@ class User{
             
             $capabilities = $type->getInstance(['user_id' => $ID, 'meta_key' => 'at_capabilities']);
         }
+
+        //Se nenhum dado existe no banco, retorna null
+        if (!$typeExist && is_null($capabilities)) {
+            return null;
+        }
         
         //Habilitando compatibilidade com definição de tipo de usuário da v1.0
         if(isset($capabilities) && is_object($capabilities)){
@@ -612,8 +587,8 @@ class User{
 
         //Instancia classe para utilização
         $class = new $typeClass[$typeID]([
-            'user_login'    => $userModel->user_login, 
-            'user_email'    => $userModel->user_email
+            'user_login'   => $userModel->user_login, 
+            'user_pass'    => $userModel->user_pass
         ]);
 
         //Retorna class
@@ -746,6 +721,12 @@ class User{
 
     }
 
+    //Retorna status do usuário
+    public function getStatus(){
+        $status = $this->model->user_status;
+        return $status;
+    } 
+    
     /** Define array de campos necessários para determinado tipo de perfil */
     private function onlyUsermetaValid($typeUser = 1):array{
 
@@ -757,7 +738,7 @@ class User{
 
         //Compartilhado entre Atleta e Profissional do Esporte
         if(in_array($typeUser, [1, 2])){
-            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'clubes', 'formacao', 'cursos', 'social_tokens']);
+            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'clubes', 'formacao', 'cursos', 'social_tokens', 'parent_user']);
         }
 
         //Compartilhado entre Faculdade e Clube
@@ -798,18 +779,22 @@ class User{
 
     } 
 
+    //Keys formatados como array
     private static function getArrayUsermeta(){
         return ['my-videos', 'titulos-conquistas', 'eventos', 'cursos'];
     }
 
+    //Keys formatados como json
     private static function getJsonUsermeta(){
         return ['stats', 'formacao', 'meus-atletas'];
     }
 
+    //Retorna ID
     protected function getID(){
         return $this->ID;
     }
 
+    //Carrega via banco o token armazenado, se existir
     private function loadSocialToken(){
         $model = new UsermetaModel();
         if (!$model->load(['user_id' => $this->ID, 'meta_key' => 'social_tokens'])){

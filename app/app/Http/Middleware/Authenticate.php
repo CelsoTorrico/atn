@@ -3,11 +3,14 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Contracts\Auth\Factory as Auth;
+use App\Http\Controllers\LoginController;
+//use Symfony\Component\HttpFoundation\Cookie;
+
 use Core\Profile\Login;
 use Core\Profile\User;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Cookie;
-
 
 class Authenticate
 {
@@ -17,6 +20,7 @@ class Authenticate
      * @var \Illuminate\Contracts\Auth\Factory
      */
     protected $auth;
+    protected $loginControl;
 
     /**
      * Create a new middleware instance.
@@ -24,8 +28,13 @@ class Authenticate
      * @param  \Illuminate\Contracts\Auth\Factory  $auth
      * @return void
      */
-    public function __construct(){}
-    
+    public function __construct(Auth $auth, LoginController $login){
+        
+        $this->auth = $auth;
+        $this->loginControl = $login;
+
+    }
+        
 
     /**
      * Handle an incoming request.
@@ -35,14 +44,38 @@ class Authenticate
      * @param  string|null  $guard
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $guard = null)
     {       
-        if (!$class = User::get_current_user()) {
-            return ['error' => ['login' => 'Sessão ainda foi não inicializada.']];
-        }     
 
-        return $next($request);
-        
+        //Se usuário estiver com perfil desativado, permitir requisição
+        if ($request->is('login')) {
+
+            $control = $this->loginControl;
+
+            //Post credenciais de login
+            $msg = $control->login($request);
+
+            //Se houve erro retorna resultado
+            if( array_key_exists('error', $msg) ){
+                return $response($msg);
+            }
+
+            //Instancia classe Response
+            $response = new Response($msg);
+
+            //Seta cookie de sessão
+            $cookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_PATH'), false);            
+
+            //Retorna mensagem juntamente com cookie 
+            return $response->withCookie($cookie);
+            
+        }
+
+        if ($this->auth->guard($guard)->guest()) {
+            return response('Unauthorized.', 401);
+        }
+
+        return $next($request);        
         
     }
     

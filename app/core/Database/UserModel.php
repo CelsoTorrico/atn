@@ -19,18 +19,23 @@ class UserModel extends Medools\Model
         'user_pass',
         'user_email',
         'display_name',
-        'user_registered'
+        'user_registered',
+        'user_status'
     ];
 
     const OPTIONAL_COLUMNS = [
         'user_nicename',
         'user_url',
         'user_activation_key',
-        'user_status'
+        'user_status' => 0
     ];
 
     const STAMP_COLUMNS = [
         'user_registered' => 'datetime'
     ];
+
+    const SOFT_DELETE = 'user_status';
+
+    const SOFT_DELETE_MODE = 'deleted';
 
 }

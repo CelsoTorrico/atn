@@ -7,7 +7,7 @@ use aryelgois\Medools;
 
 class PrivatemetaModel extends Medools\Model
 {
-    const TABLE = 'usertype';
+    const TABLE = 'privatemeta';
 
     const PRIMARY_KEY = ['ID'];
 

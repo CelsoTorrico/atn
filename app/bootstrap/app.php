@@ -24,7 +24,7 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-config(require(__DIR__.'/../app/config/session.php'));  //Sessões
+//config(require(__DIR__.'/../app/config/session.php'));  //Sessões
 config(require(__DIR__.'/../app/config/services.php')); //API Socialize
 
 $app->withFacades(TRUE, [
@@ -54,6 +54,11 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+$app->singleton('cookie', function () use ($app) {
+    return $app->loadComponent('session', 'Illuminate\Cookie\CookieServiceProvider', 'cookie');
+});
+
+$app->bind('Illuminate\Contracts\Cookie\QueueingFactory', 'cookie');
 
 /*
 |--------------------------------------------------------------------------
@@ -67,13 +72,8 @@ $app->singleton(
 */
 
 //Carrega autenticação
-$app->routeMiddleware([
-    'authentication' => App\Http\Middleware\Authenticate::class,
-]);
-
-//Habilita sessões
 $app->middleware([
-    \Illuminate\Session\Middleware\StartSession::class,
+    App\Http\Middleware\Authenticate::class
 ]);
 
 //Carregando Middlewares do App
@@ -92,12 +92,16 @@ $app->routeMiddleware([
 |
 */
 
-//COOKIES
-$app->singleton('cookie', function () use ($app) {
-    return $app->loadComponent('session', 'Illuminate\Cookie\CookieServiceProvider', 'cookie');
-});
+//Service provider de authorização
+$app->register(App\Providers\AuthServiceProvider::class);
 
-$app->bind('Illuminate\Contracts\Cookie\QueueingFactory', 'cookie');
+//Service provider de cookie
+$app->register(Illuminate\Cookie\CookieServiceProvider::class);
+
+//$app->register(\Illuminate\Session\SessionServiceProvider::class); 
+//Service provider Socialite
+$app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -109,13 +113,6 @@ $app->bind('Illuminate\Contracts\Cookie\QueueingFactory', 'cookie');
 | can respond to, as well as the controllers that may handle them.
 |
 */
-
-$app->bind(\Illuminate\Session\SessionManager::class, function () use ($app) {
-    return new \Illuminate\Session\SessionManager($app);
-});
-
-$app->register(\Illuminate\Session\SessionServiceProvider::class); 
-$app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',

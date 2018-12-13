@@ -126,22 +126,19 @@ class LoginController extends Controller
         
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has($require)){
-            return response("Campo obrigatório não enviado!"); //TODO: Melhorar resposta json
+            return response(['error' => ['login' => "Campo obrigatório não enviado!"]]); //TODO: Melhorar resposta json
         }
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->filled($require)){
-            return response("Falta preencher campo!"); //TODO: Melhorar resposta json
+            return response(['error' => ['login' => "Falta preencher campo!"]]); //TODO: Melhorar resposta json
         }
         
         //Realiza Login e retorna class User
         $response = $this->login->setLogin($request->all());
         
-        //Atribui classe Cookie
-        $cookie = $this->login->setSession();
-        
-        //Retorna resposta
-        return response($response)->withCookie($cookie);
+        //Inicializa sessão atribuindo retornando GenericUser
+        return $response;
 
     }
 
@@ -173,11 +170,15 @@ class LoginController extends Controller
         
     }
 
-
     /** Logout */
     function logout(){
         $result = $this->login->setLogout();
         return response()->json($result);
+    }
+
+    //Retorna token na classe 'Login'
+    public function getToken(){
+        return $this->login->getToken();
     }
 
 }

@@ -19,7 +19,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Perfil de usuario - Atleta @done(18-11-29 01:59)
 
 ### Semana 3
-☐ @high Perfil de Usuário - Instituição | Status 65%
+☐ @high Perfil de Usuário - Instituição | Status 85%
 ✔ Perfil de usuário -  Profissional @done(18-11-29 02:00)
 ☐ @low Download de CV - usuário | Status 95%
 
@@ -54,7 +54,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 2 - Comentários em timelines @done(18-12-06 15:56)
 ☐ Semana 2 - Timeline -> Novo e Update de timeline com imagens
 ✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
-☐ Semana 3 - Perfil Instituição -> criação de usuários 'admin' e 'meus-atletas' 
+✔ Semana 3 - Perfil Instituição -> deletar e atualizar @done(17-12-12 16:00)
 ☐ Semana 3 - Download CV (PDF) -> Estruturar o conteúdo de forma visualmente organizado (Precisamos de um modelo de arquivo)
 ✔ Semana 3 - Fazer validação de usuário logado em requisições @done(18-11-27 19:12)
 ✔ Semana 3 - Quando solicitado um usuário, fazer update de view @done(18-11-27 19:11)
