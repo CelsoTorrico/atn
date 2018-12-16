@@ -9,10 +9,25 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //Retorna lista de usuários
     $router->get('/', 'UserController@getAll');
 
+    //Atualiza usuário
+    $router->put('/update', 'UserController@update');
+
+    //Deleta usuário
+    $router->delete('/delete', 'UserController@delete');
+
     //Retorna usuário logado
     $router->get('/self', 'UserController@getSelf');
 
-    //INSTITUTE
+    //Download de PDF
+    $router->get('/pdf', 'UserController@getPdf');
+
+    //Retorna estatisticas do usuário logado
+    $router->get('/stats', 'UserController@getStats');
+
+    //Reativar usuário de posse
+    $router->put('/reactive', 'UserController@reactive');
+
+    //CLUBES e CONFEDERAÇÔES
     $router->group(['prefix' => 'self'], function() use ($router){
 
         //Atualizar usuário de posse
@@ -32,19 +47,11 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
     });
 
-    //Retorna estatisticas do usuário logado
-    $router->get('/stats', 'UserController@getStats');
+    //LISTAGEM DE CLUBES PARA ALIMENTAR CAMPOS DE CADASTRO
+    $router->get('/clubs', 'ClubController@listClubs');
 
-    //Retorna
-    $router->get('/pdf', 'UserController@getPdf');
+    //LISTAGEM DE ESPORTES PARA ALIMENTAR CAMPOS DE CADASTRO
+    $router->get('/sports', 'SportController@getAll');
 
-    //
-    $router->put('/update', 'UserController@update');
-
-    //Deleta usuário
-    $router->delete('/delete', 'UserController@delete');
-
-    //Reativar usuário de posse
-    $router->put('/reactive', 'UserController@reactive');
 
 });

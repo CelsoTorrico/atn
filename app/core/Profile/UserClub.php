@@ -4,6 +4,8 @@ namespace Core\Profile;
 use Core\Database\PrivatemetaModel;
 use Core\Database\UsermetaModel;
 use Core\Database\UserModel;
+use Core\Database\ListClubModel;
+use Core\Service\Notify;
 
 class UserClub extends User{
 
@@ -148,7 +150,75 @@ class UserClub extends User{
 
         //Retorna resposta
         return $response;
+    }
 
+    //Função a ser invocada estaticamente para verificar se clube existe como usuário na plataforma
+    public static function getAllClubs():array{
+
+        //Instanciando modelo e data a retornar
+        $clubMeta = new ListClubModel();
+        $clubs = $clubMeta->getIterator(['meta_key' => 'type', 'meta_value' => ['4','5']]);
+
+        //Se não existir usuário, retorna array vazio
+        if( $clubs->count() <= 0){
+            return [];
+        }
+
+        $clubList = [];
+
+        foreach ($clubs as $club) {
+            
+            //Verifica se é valido
+            if ( !$clubs->valid() ) {
+                continue;
+            }
+            
+            //Atribui dados do comentário
+            $currentData = $club->toArray();
+            $clubList[] = [
+                'ID' => $club->umeta_id,
+                'display_name' => $club->user_id->display_name
+            ];
+
+        }
+
+        return $clubList;        
+
+    }   
+
+    /** 
+     * Verifica a existência de clube e envia notificação
+     * @param $clubID  int ou string
+    */
+    public static function isClubExist( int $clubID, int $user_id ):bool{
+
+        //Verifica se houve envio correto para verificação
+        if($clubID == 0) {
+            return false;
+        }
+
+        //Instanciando modelo e data a retornar
+        $clubMeta = new ListClubModel();
+        $response = $clubMeta->load(['user_id' => $clubID , 'meta_key' => 'type', 'meta_value' => ['4']]);
+
+        //Verifica se existe e retorna boolean
+        if(!$response){
+            //Retorna dados do usuário
+            $user = (new UserClub)->get($user_id);
+            
+            //TODO: Verifica qual vai ser o texto para a notificação
+            $content = ['msg' => `
+                Esta pessoa informou que já foi atleta da instituição, você confirma essa informação?
+            `];
+
+            //Atribui perfil de usuário a mensagem
+            $content = array_merge($content, $user );
+
+            //Envia notificação
+            $notify = Notify::add($content, 3, $clubID, $user_id);
+        }
+
+        return true;
     }
 
     //Retorna máximo de usuários a manipular

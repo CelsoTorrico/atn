@@ -17,9 +17,10 @@ class UserController extends Controller
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(User $user, Request $request)
     {
-        $this->user = $user;
+        //Atribui usuário do contexto
+        $this->user = $request->user();
     }
 
     /**  */

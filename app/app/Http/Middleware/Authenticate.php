@@ -6,8 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Symfony\Component\HttpFoundation\Cookie;
 use App\Http\Controllers\LoginController;
-//use Symfony\Component\HttpFoundation\Cookie;
 
 use Core\Profile\Login;
 use Core\Profile\User;
@@ -21,6 +21,7 @@ class Authenticate
      */
     protected $auth;
     protected $loginControl;
+    protected $sessionCookie; 
 
     /**
      * Create a new middleware instance.
@@ -35,7 +36,6 @@ class Authenticate
 
     }
         
-
     /**
      * Handle an incoming request.
      *
@@ -55,24 +55,37 @@ class Authenticate
             //Post credenciais de login
             $msg = $control->login($request);
 
+            //Retorna dados de usuário encontrado
+            $userData = $control->getUserData();
+
             //Se houve erro retorna resultado
             if( array_key_exists('error', $msg) ){
-                return $response($msg);
+                return $next($msg);
             }
 
-            //Instancia classe Response
-            $response = new Response($msg);
-
             //Seta cookie de sessão
-            $cookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_PATH'), false);            
+            $this->sessionCookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_PATH'), false);  
+
+            //Atribui a variavel
+            $tokenDatabase = $this->sessionCookie;
+
+            //Insere o token em string e insere no banco;
+            $success = $control->insertToken($userData['ID'], $tokenDatabase->__toString());
 
             //Retorna mensagem juntamente com cookie 
-            return $response->withCookie($cookie);
+            return $next($request)->withCookie($this->sessionCookie);
             
         }
 
+        //Permitir listagem de clubes ou listagem de esportes
+        if ($request->is('user/clubs') || $request->is('user/sports')) {
+            //Retorna mensagem juntamente com cookie 
+            return $next($request);            
+        }
+
+        //Se usuário não está autenticado
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+            return response(['error' => ['login' => 'Acesso não autorizado.']], 401);
         }
 
         return $next($request);        

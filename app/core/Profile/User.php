@@ -2,10 +2,10 @@
 
 namespace Core\Profile;
 
+use Illuminate\Auth\GenericUser;
 use Core\Interfaces\UserInterface as UserInterface;
 use Core\Utils\PasswordHash as PasswordHash;
 use Core\Utils\AppValidation as AppValidation;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Core\Database\UserModel as UserModel;
 use Core\Database\UsermetaModel;
 use Core\Database\UsertypeModel;
@@ -14,7 +14,7 @@ use Core\Database\SportModel;
 use Closure;
 use aryelgois\Medools\ModelIterator;
 
-class User{
+class User extends GenericUser{
 
     protected $model; //db user model
     protected $metaModel; //db usermeta model
@@ -198,7 +198,7 @@ class User{
         //Invoca função de retornar lista de usuários
         $friendsList = new Friends($this->ID, $filter);
         
-        return $friendsList->get();      
+        return $friendsList->get();    
     } 
 
     /* Addicionar um único usuário */
@@ -358,7 +358,15 @@ class User{
                     //Salva dado e retorna ID de resultado
                     $usermetaID['create'][$key] = ($meta->save())? $meta->getPrimaryKey() : false;
 
-                }               
+                }     
+                
+                /** Verifica se houve sucesso na inclusão dos dados e executa função
+                 * de enviar notificação ao clube
+                 */
+                if (($usermetaID['update']['clubes'] || $usermetaID['create']['clubes']) && $meta->meta_key == 'clubes') {
+
+                    UserClub::isClubExist($meta->meta_value, $primaryKey['ID']);
+                }                
 
             }
 
@@ -557,7 +565,7 @@ class User{
     /**
      * @param $userModel object class UserModel()
      */
-    private static function typeUserClass(UserModel $userModel){
+    public static function typeUserClass(UserModel $userModel){
 
         //Se usuário tiver dados definidos atribui classe respectiva
         if (!is_a($userModel, 'Core\Database\UserModel')) {
@@ -732,13 +740,12 @@ class User{
 
         //Colunas Gerais'
         $usermeta = array(
-            'type', 'sport', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'telefone',
-            'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography'
+            'type', 'sport', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'session_tokens'
         );
 
         //Compartilhado entre Atleta e Profissional do Esporte
         if(in_array($typeUser, [1, 2])){
-            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'clubes', 'formacao', 'cursos', 'social_tokens', 'parent_user']);
+            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'clubes', 'formacao', 'cursos', 'parent_user']);
         }
 
         //Compartilhado entre Faculdade e Clube

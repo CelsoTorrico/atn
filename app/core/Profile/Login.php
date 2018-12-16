@@ -3,7 +3,8 @@
 namespace Core\Profile;
 
 use Core\Interfaces\LoginInterface;
-use Core\Database\LoginModel; 
+use Core\Database\LoginModel;
+use Core\Database\UsermetaModel; 
 use Core\Utils\PasswordHash;
 use Core\Utils\AppValidation;
 use Core\Profile\User;
@@ -25,51 +26,61 @@ class Login implements LoginInterface{
         $this->auth = $auth;
     }
 
-    /* Retorna resposta se logado ou não */
+    /* Realiza o login verificando existencia de usuário
+    *   E inserindo token no BD
+     */
     function setLogin($data){
 
-        $login_data = [];
+        //Se tem token atribuido juntamente com dados
+        if (isset($data['token']) && !empty($data['token'])) {
+            //Executa login social
+            return $this->socialLogin($data);            
+        }
 
         //aplicando filtro de string
-        $login_data['user_email'] = filter_var($data['user_email'], FILTER_SANITIZE_EMAIL); 
+        $data['user_email'] = filter_var($data['user_email'], FILTER_SANITIZE_EMAIL); 
 
         //Instancia LoginModel para verificar existencia de usuário via user_login
         $this->model = new LoginModel();
 
-        //Verifica se existe usuário
-        if(!$this->model->load($login_data)){
+        //Verifica se existe usuário, passando array de dados
+        if (!$this->model->load(['user_email' => $data['user_email']])) {
             return ['error' => ['login' => 'Usuário inexistente.']];
         }
 
         //Retorna dados localizados
         $this->userData = $this->model->getData();
 
-        //Verifica tipo de login
-        if (!isset($data['token']) && empty($data['token'])) {
-            
-            //aplicando filtro de string
-            $login_data['user_pass'] = filter_var($data['user_pass'], FILTER_SANITIZE_STRING);
+        //aplicando filtro de string
+        $data['user_pass'] = filter_var($data['user_pass'], FILTER_SANITIZE_STRING);
 
-            //Instanciando classe de verificação de passwords Wordpress = (8, true)
-            $passwordClass = new PasswordHash(8, true);
+        //Instanciando classe de verificação de passwords Wordpress = (8, true)
+        $passwordClass = new PasswordHash(8, true);
 
-            //Comparação de senhas
-            $sessionAuth = $passwordClass->CheckPassword($login_data['user_pass'], $this->userData['user_pass']);
+        //Comparação de senhas
+        $sessionAuth = $passwordClass->CheckPassword($data['user_pass'], $this->userData['user_pass']);
 
-            //Gerando hash
-            $this->cookieToken = password_hash($this->userData['user_login'], CRYPT_BLOWFISH);
+        if(!$sessionAuth){
+            //Retorna string erro
+            return ['error' => ["login", "Email ou senha não conferem. Tente novamente."]]; 
+        }
 
-        } else{
-            //Executa login social
-            $sessionAuth = $this->socialLogin($data);
+        //Gerando hash para token utilizando ArgonDriver
+        $hash = app('hash')->make($this->userData['user_login']);
+        $this->cookieToken = $hash;
+
+        //Verifica se hash ocorreu com sucesso
+        if (!$response = app('hash')->check($this->userData['user_login'], $this->cookieToken)) { 
+            //Retorna string erro
+            return ['error' => ["login", "Email ou senha não conferem. Tente novamente."]]; 
         }
         
-        if($sessionAuth):
+        if($response):
             //Retornando string sucesso
             return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]]; 
         else:
             //Retorna string erro
-            return ['error' => ["login", "Seu acesso não foi aprovado."]]; 
+            return ['error' => ["login", "Seu acesso não foi permitido."]]; 
         endif;
         
     }
@@ -79,7 +90,7 @@ class Login implements LoginInterface{
 
         //Verifica se existem dados válidos
         if(!count($userData) <= 0 && !array_key_exists('user_email', $userData)){
-            return ['error' => ['login' => 'Houve um erro em sua autenticação via Facebook. Tente mais tarde.']];
+            return ['error' => ['login' => 'Houve um erro em sua autenticação via Login Social. Tente mais tarde.']];
         }
         
         //Verifica se classe já esta instanciada na variavel
@@ -97,35 +108,49 @@ class Login implements LoginInterface{
             return false;
         } 
         
-        //Nova classe usuário
-        $user = new User(); 
-
-        //Atribui ID usuario
-        $user->ID = $this->model->ID; 
+        //Registra o token no banco e retorna resultado
+        $insertSuccess = insertToken($this->model->ID, $this->cookieToken);
         
-        //Atribui valor de token se existir
-        $socialToken = ($meta = $user->getSocialToken())? 
-        unserialize($meta['meta_value']): false;
-
-        //Retorna dados localizados
-        $this->userData = $this->model->getData();
-
-        //Atribui valor do token
-        $this->cookieToken = $socialToken;
-        
-        if($socialToken):
+        if($insertSuccess):
             //Retornando string sucesso
             return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]]; 
         else:
             //Retorna string erro
-            return ['error' => ["login", "Seu acesso não foi aprovado."]];
+            return ['error' => ["login", "Seu acesso não foi permitido."]];
         endif;
         
     }
 
-    //Retorna se usuario está logado
-    public static function isLogged():bool{
-        return true;
+    public function insertToken(int $id, string $token){
+        
+        //Inicializa modelo
+        $metaModel = new UsermetaModel();
+        
+        //Carrega metadados para inserção
+        $metaModel->load(['user_id' => $id, 'meta_key' => 'session_tokens']);
+
+        //Cria novos atributos e valores para salvar
+        $data = [
+            'user_id'       => $id,
+            'meta_key'      => 'session_tokens',
+            'meta_value'    => serialize($token),
+            'visibility'    => -1
+        ];
+
+        //Preenche modelo com dados
+        $metaModel->fill($data);
+
+        //Se atributo já existir
+        if($metaModel->isFresh()){
+            $response = $metaModel->save();
+        }
+        else{
+            $response = $metaModel->update([
+                'user_id', 'meta_key', 'meta_value', 'visibility']);
+        }
+
+        return $response;
+        
     }
 
     //Desloga usuário e todas as sessões atuais
@@ -150,11 +175,8 @@ class Login implements LoginInterface{
         return $this->cookieToken;
     }
 
-    public function getUser(){
-        return [
-            'name'       => $this->userData['user_login'], 
-            'user_email' => $this->userData['user_email']
-        ];
+    public function getUserData(){
+        return $this->userData;
     }
 
 }

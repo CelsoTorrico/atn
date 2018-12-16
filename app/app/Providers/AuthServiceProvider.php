@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Core\Profile\Login;
 use Core\Profile\User;
+use Core\Database\UserModel;
+use Core\Database\UsermetaModel;
 use Symfony\Component\HttpFoundation\Cookie;
 
 use Illuminate\Support\Facades\Gate;
@@ -64,16 +66,19 @@ class AuthServiceProvider extends ServiceProvider
         $this->app['auth']->viaRequest('api', function ($request) {
 
             //Carrega classe existente de logon anterior
-            $cookie = app('cookie')->queued(env('APPCOOKIE'));
+            //$cookie = app('cookie')->queued(env('APPCOOKIE'));
+            if ( !$request->hasCookie(env('APPCOOKIE')) ) {
+                $user = null;
+            } else {
+                //Retorna cookie enviado
+                $cookie = $request->header('cookie');
 
-            //Carrega classe de usuário existente ou null
-            //$user = $this->get_current_user($cookie);
+                //Carrega classe de usuário existente ou null
+                $user = $this->get_current_user($cookie);
+            }            
 
-            if (is_null($cookie)) {
-                return null;
-            }
-
-            return $cookie;
+            //Retorna usuário
+            return $user;
 
         });
 
@@ -81,32 +86,30 @@ class AuthServiceProvider extends ServiceProvider
 
 
     //Retorna usuário atual através de Cookie
-    protected function get_current_user(Cookie $cookie) { 
+    protected function get_current_user(string $cookie) { 
+
+        $cookieObj = Cookie::fromString($cookie);
 
         //Verifica cookie ainda é válido
-        if ($cookie->getMaxAge() > time() ) {
+        if ($cookieObj->getMaxAge() > time() ) {
             return null;
         }
 
         //Retorna dados armazenados
-        $user = new User();
-
-        //Verifica se existe sessão ativa
-        if ( is_null($user) ) {
-            return null;
-        }
+        $usermeta = new UsermetaModel();
         
-        $isExist = $user->model->load([
-            'user_login' => $data
+        $isExist = $usermeta->load([
+            'meta_key'      => 'session_tokens',
+            'meta_value[~]' =>  '%'. (string) str_replace(['%', '.'],['\\%', '\\.'],$cookieObj->getValue()) . '%'
         ]);
 
         //Verifica cookie é valido
-        if (!$isExist || $cookie != $user->model->token ) {
+        if (!$isExist) {
             return null;
         }
 
         //Retorna classe determinada por tipo de usuário
-        $class = User::typeUserClass($user->model);
+        $class = User::typeUserClass(new UserModel(['ID' => $usermeta->user_id]));
         
         //Retorna classe
         return $class;

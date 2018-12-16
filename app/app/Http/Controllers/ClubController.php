@@ -17,11 +17,11 @@ class ClubController extends Controller
      *
      * @return void
      */
-    public function __construct(UserClub $userclub)
+    public function __construct(Request $request)
     {
         //Verifica se classe de usuário corresponde a necessária
         //execução dos métodos
-        $this->club = $this->isClass($userclub);
+        $this->club = $this->isClass($request->user());
     }
 
     //Retorna lista de usuário que pertencem ao usuario master
@@ -116,6 +116,17 @@ class ClubController extends Controller
         
         //Retorna resposta
         return response()->json($result);
+    }
+
+    //Retorna Lista de clubes para alimentar selects
+    function listClubs(){
+
+        //Atualizando perfil
+        $result = UserClub::getAllClubs();
+        
+        //Retorna resposta
+        return response()->json($result);
+
     }
 
     /** Verifica se a classe é do tipo UserClub */

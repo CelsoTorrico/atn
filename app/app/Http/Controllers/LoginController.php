@@ -134,11 +134,11 @@ class LoginController extends Controller
             return response(['error' => ['login' => "Falta preencher campo!"]]); //TODO: Melhorar resposta json
         }
         
-        //Realiza Login e retorna class User
+        //Realiza Login e resposta
         $response = $this->login->setLogin($request->all());
         
         //Inicializa sessão atribuindo retornando GenericUser
-        return $response;
+        return response($response);
 
     }
 
@@ -179,6 +179,16 @@ class LoginController extends Controller
     //Retorna token na classe 'Login'
     public function getToken(){
         return $this->login->getToken();
+    }
+
+    //Retorna token na classe 'Login'
+    public function insertToken($id, $token){
+        return $this->login->insertToken($id, $token);
+    }
+
+    //Retorna token na classe 'Login'
+    public function getUserData(){
+        return $this->login->getUserData();
     }
 
 }

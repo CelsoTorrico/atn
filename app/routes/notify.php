@@ -2,7 +2,7 @@
 
 /*########## Notify ###############*/
 
-$router->group(['prefix' => 'sport'], function () use ($router) {
+$router->group(['prefix' => 'notify'], function () use ($router) {
 
     //Retorna único
     $router->get('/{id:[0-9]+}', 'NotifyController@get');
@@ -15,5 +15,8 @@ $router->group(['prefix' => 'sport'], function () use ($router) {
 
     //Deleta Notify
     $router->delete('/{id:[0-9]+}', 'NotifyController@delete');
+
+    //Adiciona comentários Notify
+    $router->post('/approve/{id:[0-9]+}', 'NotifyController@approve');
 
 });

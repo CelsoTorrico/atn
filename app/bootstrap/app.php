@@ -102,6 +102,9 @@ $app->register(Illuminate\Cookie\CookieServiceProvider::class);
 //Service provider Socialite
 $app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
 
+//Serviço de hashear strings
+$app->register(Illuminate\Hashing\HashServiceProvider::class);
+
 
 /*
 |--------------------------------------------------------------------------
