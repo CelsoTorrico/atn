@@ -78,7 +78,7 @@ class Authenticate
         }
 
         //Permitir listagem de clubes ou listagem de esportes
-        if ($request->is('user/clubs') || $request->is('user/sports')) {
+        if ($request->is('user/clubs') || $request->is('user/sports') || $request->is('register')) {
             //Retorna mensagem juntamente com cookie 
             return $next($request);            
         }

@@ -321,52 +321,8 @@ class User extends GenericUser{
                     continue;
                 }
 
-                $meta = $this->metaModel->getInstance(['user_id' => $primaryKey['ID'],'meta_key' => $key]);
-
-                //Se for update atributos
-                if (!is_null($meta) && !$meta->isFresh()) {
-                    
-                    //Atribui valor ao meta_value
-                    $meta->meta_value = $value['value'];
-
-                    //Verifica se visibilidade foi definida e add novo valor
-                    if(isset($value['visibility'])){
-                        $meta->visibility = $this->appVal->check_user_inputs('visibility', $value['visibility']);
-                    }
-                    
-                    //Faz update e retorna ID de resultado
-                    $usermetaID['update'][$key] = ($meta->update([$key])) ? $meta->getPrimaryKey() : false;
-
-                } else {
-                    //Cria novos atributos e valores para salvar
-                    $metaData = [];
-                    $metaData['user_id']    = $primaryKey['ID'];
-                    $metaData['meta_key']   = $key;
-                    $metaData['meta_value'] = $value;
-
-                    //Verifica se visibilidade foi definida e add novo valor
-                    if( is_array($value) && isset($value['visibility'])){
-                        $metaData['visibility'] = $this->appVal->check_user_inputs('visibility', $value['visibility']);
-                    }
-
-                    //Instancia novo modelo
-                    $meta = new UsermetaModel();
-
-                    //Atribui atributos no modelo
-                    $meta->fill($metaData);
-                    
-                    //Salva dado e retorna ID de resultado
-                    $usermetaID['create'][$key] = ($meta->save())? $meta->getPrimaryKey() : false;
-
-                }     
-                
-                /** Verifica se houve sucesso na inclusão dos dados e executa função
-                 * de enviar notificação ao clube
-                 */
-                if (($usermetaID['update']['clubes'] || $usermetaID['create']['clubes']) && $meta->meta_key == 'clubes') {
-
-                    UserClub::isClubExist($meta->meta_value, $primaryKey['ID']);
-                }                
+                //Registra usermetas enviados
+                $usermetaID[] = $this->register_usermeta($key, $value, $primaryKey['ID']);
 
             }
 
@@ -379,6 +335,64 @@ class User extends GenericUser{
         }
 
     }  
+
+    /** Registra usermeta baseado nos parametros */
+    private function register_usermeta($meta_key, $meta_value, $user_id) {
+
+        $meta = $this->metaModel->getInstance(['user_id' => $user_id,'meta_key' => $meta_key]);
+
+        //Enviar notificação para clube e adicionar marcador
+        if(is_array($meta_value) && $meta_key == 'clubes') {
+            foreach ($meta_value as $item) {
+                //Atribui marcação
+                $meta_value[] = $item . $this->sendNotifyClub($item, $user_id);
+            }
+        }
+
+        //Se for update atributos
+        if (!is_null($meta) && !$meta->isFresh()) {
+            
+            //Atribui valor ao meta_value
+            $meta->meta_value = $meta_value['value'];
+
+            //Verifica se visibilidade foi definida e add novo valor
+            if(isset($meta_value['visibility'])){
+                $meta->visibility = $this->appVal->check_user_inputs('visibility', $meta_value['visibility']);
+            }
+            
+            //Faz update e retorna ID de resultado
+            $saveResult = [
+                $meta->meta_key => ($meta->update([$key])) ? $meta->getPrimaryKey() : false
+            ];
+
+        } else {
+            //Cria novos atributos e valores para salvar
+            $metaData = [];
+            $metaData['user_id']    = $user_id;
+            $metaData['meta_key']   = $meta_key;
+            $metaData['meta_value'] = $meta_value;
+
+            //Verifica se visibilidade foi definida e add novo valor
+            if( is_array($meta_value) && isset($meta_value['visibility'])){
+                $metaData['visibility'] = $this->appVal->check_user_inputs('visibility', $meta_value['visibility']);
+            }
+
+            //Instancia novo modelo
+            $meta = new UsermetaModel();
+
+            //Atribui atributos no modelo
+            $meta->fill($metaData);
+            
+            //Salva dado e retorna ID de resultado
+            $saveResult = [
+                $meta->meta_key => ($meta->save())? $meta->getPrimaryKey() : false
+            ];
+
+        } 
+
+        return $saveResult;
+
+    }
     
     //Função de desregistrar usuário atual
     protected function desregister(int $id){
@@ -733,6 +747,21 @@ class User extends GenericUser{
     public function getStatus(){
         $status = $this->model->user_status;
         return $status;
+    } 
+
+    /** Verifica se houve sucesso na inclusão dos dados e executa função
+     * de enviar notificação ao clube
+     */
+    private function sendNotifyClub(int $clubID, int $user_id) {
+        //@param id clube, id usuário registrado
+        $response = UserClub::isClubExist($clubID, $user_id);
+        if (!$response){
+            return;
+        } 
+
+        //Retorna marcação de informação não verificada
+        return '[notVerified]';
+        
     } 
     
     /** Define array de campos necessários para determinado tipo de perfil */

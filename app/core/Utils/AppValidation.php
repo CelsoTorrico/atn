@@ -99,8 +99,7 @@ class AppValidation
 
         $important = array(
             'type'          => '[1-4]{1}',
-            'display_name'  => '[\sa-zA-Zéêáâãíóôõúûü]+', 
-            'sport'         => '[0-9]{1,}',
+            'display_name'  => '[\sa-zA-Zéêáâãíóôõúûü]+',
             'user_pass'     => FILTER_SANITIZE_STRING,
             'user_email'    => FILTER_VALIDATE_EMAIL, 
             'cpf'           => array('validation', 'cpf'), 
@@ -131,22 +130,11 @@ class AppValidation
             'posicao',
             'gender'        => '((fe)?male)',    
             'formacao',
+            'biography',
             'howknowus',
-            'social_tokens'
-        );
-        
-        //Estatisticas
-        $stats = array(
-            'stats', //TODO: Verificar se é string serializada
-            'clubes' //TODO: Deve ser array serializado
+            'social_tokens',
         );
 
-        $club = array(
-            'club_liga',
-            'club_sede', 
-            'stats-sports'
-        );
-        
         //Endereço
         $address = array(
             'address',
@@ -155,25 +143,44 @@ class AppValidation
             'country'   => '[a-zA-Z\s]+',
             'neighbornhood' => '[0-9a-zA-Z\s]+',
         );
-
-        $mixed = array(
-            'biography',
-            'titulos-conquistas' //TODO: Deve ser ARRAY serialize
+        
+        //Estatisticas
+        $array = array(
+            'stats'     => '[0-9]{1,}', 
+            'clubes'    => '[0-9]{1,}',
+            'sport'     => '[0-9]{1,}',
+            'club_liga',
+            'club_sede', 
+            'stats-sports',
+            'titulos-conquistas',
         );
 
         foreach ($data as $key => $value) {
+
+            //Se campo for na forma de array
+            if (array_key_exists($key, $array)) {
+                $action = $array[$key];
+                //Percorre array fazendo validação
+                foreach ($value as $item) {
+                    $data[$key][] = (preg_match('/'.$action.'/', $item, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
+                }                
+                continue;
+            }
             
             //Percorre array e executa metodos de filtragem
             if (array_key_exists($key, $important)) {
                 $action = $important[$key];
                 
                 if(is_array($action)){
+                    //Executa métodos especificos de validação
                     $data[$key] = $this->load($action, $value);
                 } 
                 elseif(is_string($action)){
+                    //Executa regular expression para validar
                     $data[$key] = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
                 }
                 else{
+                    //Filtra o dado
                     $data[$key] = filter_var($value, $action);
                 }                
                 continue;
@@ -182,6 +189,7 @@ class AppValidation
             //Percorre array e executa expressões regulares
             if (array_key_exists($key, $validFormat)) {
                 $action = $validFormat[$key];
+                //Executa regular expression para validação
                 $data[$key] = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
                 continue;
             }
@@ -189,6 +197,7 @@ class AppValidation
             //Percorre array e executa expressões regulares
             if (array_key_exists($key, $user)) {                
                 $action = $user[$key];
+                //Executa regular expression para validação
                 $data[$key] = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
                 continue;
             }
@@ -196,13 +205,12 @@ class AppValidation
             //Percorre array e executa expressões regulares
             if (array_key_exists($key, $address)) {                
                 $action = $address[$key];
+                //Executa regular expression para validação
                 $data[$key] = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
                 continue;
-            } elseif(is_array($value)) {
-                $data[$key] = serialize(filter_var_array($value, FILTER_SANITIZE_STRING));
             } 
             else {
-                //Filtra as outras variaveis
+                //Filtra outros dados com padrão de validação
                 $data[$key] = filter_var($value, FILTER_SANITIZE_STRING);
             }
 

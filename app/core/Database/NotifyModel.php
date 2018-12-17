@@ -16,10 +16,16 @@ class NotifyModel extends Medools\Model
     const COLUMNS = [
         'ID',
         'type',
-        'content',
-        'read' => 0,
+        'approve',
+        'read',
         'user_id',
         'from_id',
+        'date'
+    ];
+
+    const OPTIONAL_COLUMNS = [
+        'approve',
+        'read'
     ];
 
     const STAMP_COLUMNS = [

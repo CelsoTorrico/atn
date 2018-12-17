@@ -29,7 +29,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ☐ @low Privacidade de perfil / conteudo (segurança da plataforma) | Status => 60%
 
 ### Semana 5
-☐ Certificação de usuario | Status 65%
+☐ Certificação de usuario | Status 95%
 ☐ Networking entre atletas/instituições/profissionais | Status 30%
 ☐ Sugestões de amigos - Perfil | Status 25%
 
@@ -57,8 +57,9 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
 ✔ Semana 3 - Perfil Instituição -> deletar e atualizar @done(17-12-12 16:00)
 ☐ Semana 3 - Download CV (PDF) -> Estruturar o conteúdo de forma visualmente organizado (Precisamos de um modelo de arquivo)
-☐ Semana 5 - Implementar notificação quando usuário cadastrar clube existente como usuário
-☐ Semana 5 - Sistema de Notificações
+✔ Semana 5 - Implementar notificação quando usuário cadastrar clube existente como usuário @done(18-12-16 23:10)
+☐ Semana 5 - Corrigir inserção de dados [notVerified] Arquivo 'User.php:755'
+☐ Semana 5 - Sistema de Notificações Completo
 ✔ Semana 3 - Fazer validação de usuário logado em requisições @done(18-11-27 19:12)
 ✔ Semana 3 - Quando solicitado um usuário, fazer update de view @done(18-11-27 19:11)
 ✔ Fazer validação do cookie (https://lumen.laravel.com/docs/5.7/authorization) a cada requisição via Middleware | Existe classe Symfony para Sessões >> /home/iran/www/desenvolvimento/app-atletasnow-2.0/app/vendor/symfony/http-foundation/Session/Session.php @done(18-11-22 11:35)
