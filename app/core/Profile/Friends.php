@@ -22,22 +22,65 @@ class Friends {
 
 	private $ID;
 	private $model;
-	private $userModel;
-	private $usermetaModel;
 	private $validUsermeta;
 	private $onlyKey;
+	private $onlyIDS;
+	private $filter;
 
-	function __construct($id, $filter = array()){
+	/**
+	 * @param $id = Id do usuário
+	 * @param $filter = Filtragem de usuário através de parametros adicionais
+	 * @param $only_ids = Define de deve retornar apenas array de ID'S
+	 */
+	function __construct($id = null, $filter = array(), $only_ids = false){
 
 		//Atribui id de usuario corrente
 		$this->ID = $id; 
+		$this->filter = $filter;
+		$this->onlyIDS = $only_ids;
 		$this->model = new FollowersModel();
 		
 		//List of valid input filters
-        $this->validUsermeta = array(
-            'ID', 'sport', 'type', 'city', 'state', 'country', 'gender'
-		);
+        $this->validUsermeta = ['sport', 'clubes', 'type', 'city', 'state'];
 
+	}
+	
+	//Retorna lista de usuários conecatdos
+	public function get():Array{
+		
+		//Define parametros de busca de perfis
+		$filter = array_merge(
+			$this->validFilter($this->filter), 
+			(!is_null($this->ID))? ['from_id' => $this->ID] : array()
+		); 
+
+		//Carrega array de relacionamentos IDS
+		$friends = $this->model->getIterator($filter);
+		$listFriends = [];
+
+		foreach ($friends as $user ){
+
+			//Verifica se é válido
+			if (!$friends->valid()) {
+				continue;
+			}
+			
+			//Retorna apenas ids de usuário
+			if ($this->onlyIDS) {
+				$listFriends[] = $user->to_id;
+				continue;
+			}
+
+			//Retorna dados completos dos usuários
+			$listFriends[] = $this->getFollowerData($user->getData());
+
+		}
+
+		if (count($listFriends) > 0) {
+			return $listFriends;
+		} else {
+			return ['error' => ['followers' => 'Você não tem nenhuma conexão.' ]];
+		}
 	}
 
 	//Verifica as metadatas válidas
@@ -55,35 +98,18 @@ class Friends {
 		return $array;
 
 	}
-	
-	//Retorna lista de usuários conecatdos
-	public function get():Array{
-		
-		//Carrega array de relacionamentos IDS
-		$response = $this->model->dump(['from_id' => $this->ID]);
-
-		if(is_array($response) && count($response) > 0){
-			return $this->getFollowerData($response);
-		}
-		else{
-			return ['error' => ['followers' => 'Você não tem nenhuma conexão.' ]];
-		}
-	}
 
 	//Retorna dados dos followers
-	private function getFollowerData($UserArray){
+	private function getFollowerData($userData){
 
-		$array = [];
-
-		foreach ($UserArray as $value) {
-			if( array_key_exists('to_id', $value)){
-				$user = new User();
-				$array[] = $user->get($value['to_id']);
-				continue;
-			}
+		//Verifica se existe campo requirido
+		if( !array_key_exists('to_id', $userData)){
+			return;
 		}
 
-		return $array;
+		//Instancia classe e retorna dados
+		$user = new User();
+		return $user->get($userData['to_id']);
 
 	}
     

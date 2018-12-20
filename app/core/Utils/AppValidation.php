@@ -144,7 +144,7 @@ class AppValidation
             'neighbornhood' => '[0-9a-zA-Z\s]+',
         );
         
-        //Estatisticas
+        //Array de dados
         $array = array(
             'stats'     => '[0-9]{1,}', 
             'clubes'    => '[0-9]{1,}',
@@ -159,11 +159,19 @@ class AppValidation
 
             //Se campo for na forma de array
             if (array_key_exists($key, $array)) {
+                
+                //Inicializando var
                 $action = $array[$key];
-                //Percorre array fazendo validação
+                $checkedItem = [];
+                
+                //Percorre array fazendo validação e converte string em int
                 foreach ($value as $item) {
-                    $data[$key][] = (preg_match('/'.$action.'/', $item, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
-                }                
+                    $checkedItem[] = (preg_match('/'.$action.'/', $item, $match )) ? (int) filter_var($match[0], FILTER_SANITIZE_NUMBER_INT) : (string) filter_var($item, FILTER_SANITIZE_STRING);
+                } 
+                
+                //Atribuindo valor a key respectiva
+                $data[$key] = $checkedItem;
+
                 continue;
             }
             

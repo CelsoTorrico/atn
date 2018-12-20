@@ -3,6 +3,7 @@
 namespace Core\Service;
 
 use Core\Database\CommentModel;
+use Core\Database\PostModel;
 
 class Comment {
 
@@ -166,6 +167,16 @@ class Comment {
 
         //SE resultado for true, continua execução
         if($result){
+            
+            //Modelo de timeline
+            $post = new PostModel(['ID' => $data['comment_post_ID']]);
+            
+            //Intanciando notificação
+            $notify = new Notify($this->model->user_id);
+            
+            //Adicionando notificação
+            $r = $notify->add(6, $post->post_author, $this->model->user_id);
+            
             //Mensagem de sucesso no cadastro
             return ['success' => ['comment' => 'Comentário realizado com sucesso!']];
         }

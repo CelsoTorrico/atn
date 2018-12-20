@@ -17,71 +17,24 @@ class NotifyController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
-        $this->notify = new Notify();
+        $this->notify = new Notify($request->user());
     }
 
-    function get(Request $request, $id){
-
-        $response = $this->notify->get($id);
-        
+    /** Retorna lista de notificações */
+    function get(){
+        $response = $this->notify->get();
         return response()->json($response);
     }
 
-    function getAll(Request $request){
-        
-        $response = $this->notify->getAll();
-
-        return response()->json( $response );
-    }
-
-    function add(Request $request){
-
-        //Verifica se campos obrigatórios estão presentes
-        if(!$request->has('post_content')){
-            //TODO: Melhorar resposta json
-            return response("Campo obrigatório não submetido! Tente novamente!"); 
-        }
-
-        //Verifica se campos obrigatórios estão presentes
-        if(!$request->filled('post_content') ){
-            //TODO: Melhorar resposta json
-            return response("Falta preencher campos obrigatórios!"); 
-        }
-
-        $response = $this->notify->add($request->input('post_content'));
-        
-        return response()->json($response);
-    }
-
-    function update(Request $request, $id){
-
-        //Verifica se campos obrigatórios estão presentes
-        if(!$request->has('post_content')){
-            //TODO: Melhorar resposta json
-            return response("Campo obrigatório não submetido! Tente novamente!"); 
-        }
-
-        //Verifica se campos obrigatórios estão presentes
-        if(!$request->filled('post_content') ){
-            //TODO: Melhorar resposta json
-            return response("Falta preencher campos obrigatórios!"); 
-        }
-
-        //Executa methodo da classe
-        $response = $this->notify->update($request->input('post_content'), $id);
-        
-        return response()->json($response);
-    }
-
-    function delete(Request $request, $id){
+    /** Esconder notificação */
+    function delete($id){
         return response($this->notify->delete($id));
     }
 
     /** Aprovação de requisição */
-
-    function approve(Request $request, $id, $from_id){
+    function approve(Request $request, $id){
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has('confirm') || !$request->filled('confirm')){
@@ -89,12 +42,16 @@ class NotifyController extends Controller
             return response(['error' => ['notify' => 'Confirmação não foi enviada! Tente novamente!']]); 
         }
 
-        if(!is_bool($request->input('confirme'))){
+        //Armazenando request
+        $bool = intval($request->input('confirm'));
+
+        //Se resposta enviada não for boolean
+        if($bool > 1){
             return response(['error' => ['notify' => 'Resposta não permitida!']]);
         }
 
         //Envia dados submetidos
-        $response = $this->notify->approveNotify($id, (boolean) $request->input('confirm'));
+        $response = $this->notify->approveNotify($id, $bool);
         
         //Resposta da adicão
         return response()->json($response);

@@ -16,10 +16,15 @@ class Timeline {
     protected $currentUser;
     const type = 'timeline';
 
-    public function __construct(){
+    public function __construct($user){
         
         $this->model = new PostModel();
-        $this->currentUser = User::get_current_user();
+        $this->currentUser = $user;
+
+        //Retorna classe usuário ou retorna erro
+        if( is_null($this->currentUser) ){
+            return ['error' => ['comment' => 'Você não tem permissão para comentar.']];
+        }
     }
 
     /* Retorna timeline por ID */
@@ -50,18 +55,10 @@ class Timeline {
     }
 
     /* Retorna lista de timeline */
-    function getAll(){
-
-        //Retorna usuario atual
-        $this->currentUser = User::get_current_user();       
-
-        //Retorna classe usuário ou retorna erro
-        if( is_null($this->currentUser) ){
-            return ['error' => ['timeline' => 'Você não tem permissão.']];
-        }
+    function getAll(){     
         
         //Retorna objeto Friends()
-        $followers = $this->currentUser->getFriends($this->currentUser->ID);
+        $followers = $this->currentUser->getFriends();
 
         //Retorna erro se não existe conexão
         if (array_key_exists('error', $followers)) {
@@ -135,11 +132,6 @@ class Timeline {
 
     private function register($data, $postID = null){
 
-        //Retorna classe usuário ou retorna erro
-        if( is_null($this->currentUser) ){
-            return ['error' => ['timeline' => 'Você não tem permissão.']];
-        }
-
         //Filtrar inputs e validação de dados
         $filtered = [];
         $filtered['post_content']   = filter_var($data, FILTER_SANITIZE_STRING);
@@ -188,11 +180,6 @@ class Timeline {
 
     private function deregister($ID){
 
-        //Retorna classe usuário ou retorna erro
-        if( is_null($this->currentUser) ){
-            return ['error' => ['timeline' => 'Você não tem permissão.']];
-        }
-
         //Preenche colunas com valores
         if(!$this->model->load(['ID' => $ID, 'post_author' => $this->currentUser->ID])){
             return ['error' => ['timeline' => 'O registro da atualização não existe.']];
@@ -217,11 +204,6 @@ class Timeline {
 
     /** Função de adicionar comentário a timeline */
     function addComment(int $id, $data = ''){
-
-        //Retorna classe usuário ou retorna erro
-        if( is_null($this->currentUser) ){
-            return ['error' => ['comment' => 'Você não tem permissão para comentar.']];
-        }
 
         //Filtrar inputs e validação de dados
         $filtered = [

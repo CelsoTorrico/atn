@@ -7,6 +7,7 @@ require_once 'authentication.php';
 require_once 'user.php';
 require_once 'timeline.php';
 require_once 'notify.php';
+require_once 'follow.php';
 
 /*
 |--------------------------------------------------------------------------

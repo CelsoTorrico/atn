@@ -28,12 +28,14 @@ class User extends GenericUser{
     public $display_name; //Nome real
     public $type; //tipo de usuário
     public $sport; //sports praticante
+    public $clubs; //sports praticante
     public $metadata; //metadados genericos
     private $_user_email; //email
     
     //Contrução da classe
     public function __construct($args = array()) {
 
+        //Inicializa modelos e classes
         $this->model = new UserModel();
         $this->appVal = new AppValidation();
         
@@ -85,13 +87,13 @@ class User extends GenericUser{
             unset($this->metadata);
         }
 
-        //Verifica se existe metado tipo
+        //Verifica se existe metadado tipo
         if (!is_null($type = $this->_getType($id))) {
             //Add valores a variaveis encontrados as variaveis da classe
             $this->setVars(['type' => $type]);
         }
 
-        //Verifica se existe metado de esporte
+        //Verifica se existe metadado de esporte
         if (is_array($usermeta) && array_key_exists('sport', $usermeta)) {
             //Retorna lista de esportes
             $sport = $this->_getSport();
@@ -99,11 +101,20 @@ class User extends GenericUser{
             $this->setVars(['sport' => $sport]);
         }
 
+        //Verifica se existe metadado de clubes
+        if (is_array($usermeta) && array_key_exists('clubes', $usermeta)) {
+            //Retorna lista de esportes
+            $clubs = $this->_getClubs($usermeta['clubes']);
+            //Add valores a variaveis encontrados as variaveis da classe
+            $this->setVars(['clubs' => $clubs]);
+        }
+
         return $this;
 
     } 
 
     /** Retorna dados de estatistica */
+    //TODO: Reestruturar esse método, invocar classe STATS
     public function getStats(){
 
         if( !in_array($this->type['ID'], [1, 3, 4, 5])) {
@@ -157,6 +168,80 @@ class User extends GenericUser{
 
         //Retornando array de dados estatisticos
         return $mainSport;
+
+    }
+
+    public function getFriendsSuggestions(){
+
+        /*if( !in_array($this->type['ID'], [1, 3, 4, 5])) {
+            return [];
+        }*/
+        
+        //Atributos de comparação
+        $atributes = ['type', 'sport','clubs', 'metadata'];
+
+        //Conta o máximo de atributos
+        $countAttr = count($atributes) - 1;
+
+        //Retorna usermeta do usuário de maneira randomica
+        $selectedAttr = $atributes[rand(0, $countAttr)];
+
+        //Verifica se usuário tem a propriedade definida
+        while ( !property_exists($this, $selectedAttr) || is_null($this->$selectedAttr)) {
+            //Retorna usermeta do usuário de maneira randomica
+            $selectedAttr = $atributes[rand(0, $countAttr)];
+        }
+
+        //Se for metadado escolhido, procurar valor randômico
+        if ($selectedAttr == 'metadata') {
+            
+            //Keys utilizáveis
+            $metadata = ['city', 'state', 'neighbornhood', 'titulos-conquistas'];
+
+            //Conta o máximo de atributos
+            $countKeys = count($this->metadata) - 1;
+
+            //Retorna usermeta do usuário de maneira randomica
+            $userData = [$selectedAttr => $this->metadata[$metadata[rand(0, $countKeys)]]];
+        }
+        else{
+            //Retorna a data seleciona randomicamente
+            $userData = [$selectedAttr => $this->$selectedAttr];
+        }    
+
+        //Fazendo query de resultados
+        $metaModel = new UsermetaModel();
+        $query = ['meta_key' => $selectedAttr];
+
+        //Montando query baseado no quantidade de dados
+        foreach ($userData as $key => $value) {
+           if (!in_array($key, ['type', 'sport', 'sport_name', 'value', 'ID'])) 
+           {    continue;   }
+
+           if (is_string($value)) {
+                $query = array_merge($query, ['AND' => ['meta_value[~]' => '%'.$value.'%']]);
+                continue;
+           }
+
+           foreach ($value as $key => $item) {
+               
+                if ($key == 0){
+                    $query = array_merge($query, ['AND' => ['meta_value[~]' => '%'.$item.'%']]);
+                    continue;
+               } 
+            
+               $query['AND'][] = ['OR' => ['meta_value[~]' => '%'.$item.'%']];
+
+           }
+        }
+        
+        $metaModel->load(['meta_value[~]' => '%%']);
+
+        $myFriends = new Friends([], true);
+        $listIDS = $myFriends->get();
+        
+        //Retornando array de dados estatisticos
+        return $users;
 
     }
 
@@ -337,16 +422,25 @@ class User extends GenericUser{
     }  
 
     /** Registra usermeta baseado nos parametros */
-    private function register_usermeta($meta_key, $meta_value, $user_id) {
+    private function register_usermeta($meta_key, $meta_value, $user_id, $check = true) {
 
+        //Retorna instancia de modelo
         $meta = $this->metaModel->getInstance(['user_id' => $user_id,'meta_key' => $meta_key]);
 
         //Enviar notificação para clube e adicionar marcador
-        if(is_array($meta_value) && $meta_key == 'clubes') {
+        if($check && is_array($meta_value) && $meta_key == 'clubes') {
+            
+            //Inicializa array local
+            $itemTagged = [];
+            
+            //Percorre e verifica existencia de clube
             foreach ($meta_value as $item) {
                 //Atribui marcação
-                $meta_value[] = $item . $this->sendNotifyClub($item, $user_id);
+                $itemTagged[] = (is_int($item))? ['ID' => $item, 'certify' => $this->sendNotifyClub($item, $user_id)]: ['club_name' => $item];
             }
+
+            //Atribui a var para continuar execução
+            $meta_value = $itemTagged;
         }
 
         //Se for update atributos
@@ -354,23 +448,28 @@ class User extends GenericUser{
             
             //Atribui valor ao meta_value
             $meta->meta_value = $meta_value['value'];
+            
+            //Array de campos a ser atualizado
+            $fields = ['meta_value'];
 
             //Verifica se visibilidade foi definida e add novo valor
             if(isset($meta_value['visibility'])){
                 $meta->visibility = $this->appVal->check_user_inputs('visibility', $meta_value['visibility']);
+                $fields[] = 'visibility';
             }
             
             //Faz update e retorna ID de resultado
             $saveResult = [
-                $meta->meta_key => ($meta->update([$key])) ? $meta->getPrimaryKey() : false
+                $meta->meta_key => ($meta->update($fields)) ? $meta->getPrimaryKey() : false
             ];
 
         } else {
             //Cria novos atributos e valores para salvar
-            $metaData = [];
-            $metaData['user_id']    = $user_id;
-            $metaData['meta_key']   = $meta_key;
-            $metaData['meta_value'] = $meta_value;
+            $metaData = [
+                'user_id'    => $user_id,
+                'meta_key'   => $meta_key,
+                'meta_value' => $meta_value
+            ];            
 
             //Verifica se visibilidade foi definida e add novo valor
             if( is_array($meta_value) && isset($meta_value['visibility'])){
@@ -479,25 +578,31 @@ class User extends GenericUser{
 
         foreach ($result as $value) {
             
-            //Atribui meta_key atual
-            $metakey = $value['meta_key'];
+            //Atribui variaveis locais
+            $meta_key   = $value['meta_key'];
+            $meta_value = $value['meta_value'];
 
             //Verifica permissão do atributo de perfil
             if(!$this->hasPermission($value) || empty($value['meta_value'])) {
                 continue;
             }
 
-            //Percorre array de dados e formata para exibição no frontend
-            if (in_array($metakey, $is_array) ) {
-                $formated[$metakey]['value'] = json_decode($value['meta_value']);
-            } elseif (in_array($metakey, $is_json) && !empty($value['meta_value'])) {
-                $formated[$metakey]['value'] = unserialize($value['meta_value']);
+            //Em formato ARRAY
+            if (in_array($meta_key, $is_array) ) {
+                $addValue = json_decode($meta_value);
+            //Em formato JSON
+            } elseif (in_array($meta_key, $is_json) && !empty($meta_value)) {
+                $addValue = ($uns = @unserialize($meta_value)) ? $uns : $meta_value;
+            //Outros formatos
             } else {
-                $formated[$metakey]['value'] = $value['meta_value'];
+                $addValue = $meta_value;
             }
 
             //Retorna visibilidade
-            $formated[$metakey]['visibility'] = $value['visibility'];
+            $addVisibility = $value['visibility'];
+
+            $formated[$meta_key]['value'] = $addValue;
+            $formated[$meta_key]['visibility'] = $addVisibility;
         }
 
         return $formated;
@@ -567,13 +672,69 @@ class User extends GenericUser{
         }
 
         //Instancia Modelo de Classe, 
-        $this->sportModel = new SportModel(); 
+        $model = new SportModel(); 
 
-        if (! $result = $this->sportModel->dump(['ID' => $this->sport['value']])) {
+        //Unserializar array de esportes
+        $sportIDS = $this->sport['value'];
+
+        //Retorna dados
+        if (! $result = $model->dump(['ID' => $sportIDS])) {
             return null;
         }
 
         return $result;
+    }
+
+    /** 
+     *  Retorna esportes do usuário
+     *  
+     * @since 2.0
+     * 
+     * @return mixed
+     */
+    private function _getClubs($clubs) {
+        
+        if (is_null($clubs) || !is_array($clubs['value']) || (is_array($clubs['value']) && count($clubs['value']) <= 0 ) ) {
+            return null;
+        }
+
+        //Array de Clubes
+        $ids = []; 
+        $clubItens = [];
+
+        //Percorre array
+        foreach($clubs['value'] as $item){            
+            //Se for array atribui valor
+            if(is_array($item) && key_exists('ID', $item)){
+                //Adiciona ID ao array
+                $ids[] = $item['ID'];
+            }
+        };
+        
+        //Instancia Modelo de Classe, 
+        $model = new UserModel(); 
+
+        //Verifica se há resultados e retorna objeto
+        $allclubs = $model->getIterator(['ID' => $ids]);
+
+        //Percorre array de clubes
+        foreach ($allclubs as $key => $item) {
+            
+            //Verifica se item é valido
+            if(!$allclubs->valid()){
+                continue;
+            }
+            
+            //Reestrutura array com dados do clube
+            $clubs['value'][$key] = array_merge(
+                ['club_name' => $item->display_name],
+                $clubs['value'][$key]);
+            
+
+        }            
+        
+        //Retorna array  
+        return $clubs['value'];
     }
 
     /**
@@ -625,7 +786,8 @@ class User extends GenericUser{
             'user_login'    => 'user_login',
             'display_name'  => 'display_name',
             'type'          => 'type',
-            'sport'         => 'sport'
+            'sport'         => 'sport',
+            'clubs'         => 'clubs'
         );
 
         foreach ($valid as $key => $value) {
@@ -743,6 +905,41 @@ class User extends GenericUser{
 
     }
 
+    //Função para atualizar certificação de clube
+    public static function updateClubCertify(int $user_id, int $club_id, bool $confirm){
+        
+        //Instanciando a classe modelo
+        $userData = new UsermetaModel(['meta_key' => 'clubes', 'user_id' => $user_id]);
+
+        //decodificando dados em array
+        $meta_value = unserialize($userData->meta_value);
+
+        //Verifica se usuário tem clubes atribuidos
+        if(is_null($userData) || !is_object($userData) || count($meta_value) <= 0) {
+            return ['error' => ['certify' => 'Não foi encontrado nenhum clube no usuário pata verificação']];
+        }
+
+        //Selo a ser atribuido ao perfil do usuário
+        $certify = ($confirm)? env("CLUBE_VERIFICADO") : env("CLUBE_REPROVADO");
+
+        //Procurar clube em array de dados
+        foreach ($meta_value as $key => $value) {
+            if (is_array($value) && key_exists('ID', $value) && $value['ID'] == $club_id) {
+                $meta_value[$key]['certify'] = $certify;
+                break;
+            }
+        }
+
+        //Instanciando classe e atribuindo modelo de dados
+        $user = new User();
+        $user->metaModel = $userData;
+        
+        //Função de adicionar metadados de usuário
+        $response = $user->register_usermeta('clubes', ['value' => $meta_value], $user_id, false);
+
+        return $response;
+    }
+
     //Retorna status do usuário
     public function getStatus(){
         $status = $this->model->user_status;
@@ -753,14 +950,13 @@ class User extends GenericUser{
      * de enviar notificação ao clube
      */
     private function sendNotifyClub(int $clubID, int $user_id) {
-        //@param id clube, id usuário registrado
         $response = UserClub::isClubExist($clubID, $user_id);
         if (!$response){
             return;
         } 
 
         //Retorna marcação de informação não verificada
-        return '[notVerified]';
+        return env('CLUBE_NAO_VERIFICADO');
         
     } 
     
@@ -769,12 +965,12 @@ class User extends GenericUser{
 
         //Colunas Gerais'
         $usermeta = array(
-            'type', 'sport', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'session_tokens'
+            'type', 'sport', 'clubes', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'session_tokens'
         );
 
         //Compartilhado entre Atleta e Profissional do Esporte
         if(in_array($typeUser, [1, 2])){
-            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'clubes', 'formacao', 'cursos', 'parent_user']);
+            $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'formacao', 'cursos', 'parent_user']);
         }
 
         //Compartilhado entre Faculdade e Clube
@@ -822,7 +1018,7 @@ class User extends GenericUser{
 
     //Keys formatados como json
     private static function getJsonUsermeta(){
-        return ['stats', 'formacao', 'meus-atletas'];
+        return ['stats', 'formacao', 'meus-atletas', 'sport', 'clubes'];
     }
 
     //Retorna ID

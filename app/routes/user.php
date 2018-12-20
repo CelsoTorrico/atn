@@ -24,6 +24,9 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //Retorna estatisticas do usuário logado
     $router->get('/stats', 'UserController@getStats');
 
+    //Retorna estatisticas do usuário logado
+    $router->get('/suggestions', 'UserController@getSuggestions');
+
     //Reativar usuário de posse
     $router->put('/reactive', 'UserController@reactive');
 

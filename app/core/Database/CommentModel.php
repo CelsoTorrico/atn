@@ -31,4 +31,11 @@ class CommentModel extends Medools\Model
         'comment_date' => 'datetime'
     ];
 
+    const FOREIGN_KEY = [
+        'comment_post_ID' => [
+            'Core\Database\PostModel',
+            'ID'
+        ]
+    ];
+
 }

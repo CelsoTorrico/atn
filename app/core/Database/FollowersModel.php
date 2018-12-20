@@ -16,7 +16,24 @@ class FollowersModel extends Medools\Model
     const COLUMNS = [
         'ID',
         'from_id',
-        'to_id'
+        'to_id',
+        'has_block',
+        'date'
+    ];
+
+    const STAMP_COLUMNS = [
+        'date' => 'datetime'
+    ];
+
+    const OPTIONAL_COLUMNS = [
+        'has_block'
+    ];
+
+    const FOREIGN_KEY = [
+        'to_id' => [
+            'Core\Database\UserModel',
+            'ID'
+        ]
     ];
 
 }

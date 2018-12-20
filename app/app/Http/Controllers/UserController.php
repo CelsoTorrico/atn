@@ -64,9 +64,14 @@ class UserController extends Controller
         return response()->json($this->user);
     }
 
-    function getStats(Request $request) {
+    function getStats() {
         
         return response()->json($this->user->getStats());
+    }
+
+    function getSuggestions() {
+        
+        return response()->json($this->user->getFriendsSuggestions());
     }
 
     function update(Request $request){

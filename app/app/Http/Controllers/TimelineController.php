@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Core\Service\Timeline as Timeline;
+use Core\Profile\User;
 
 use Closure;
 
@@ -17,9 +18,9 @@ class TimelineController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
-        $this->timeline = new Timeline();
+        $this->timeline = new Timeline($request->user());
     }
 
     function get(Request $request, $id){

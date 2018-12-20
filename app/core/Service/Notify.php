@@ -3,9 +3,8 @@
 namespace Core\Service;
 
 use Core\Profile\User;
-use Core\Profile\Login;
+use Core\Profile\UserClub;
 use Core\Database\NotifyModel;
-use Core\Utils\DataConverter;
 
 class Notify {
 
@@ -13,46 +12,30 @@ class Notify {
     protected $currentUser;
     protected $types;
 
-    public function __construct(){
+    public function __construct($user){
         
         //Instanciando classe de modelo
         $this->model = new NotifyModel();
+        $this->currentUser = $user;
 
         //Tipos de notificações
-        $this->types = [0 => 'admin', 1 => 'friends', 3 => 'approve'];
-    
-    }
-
-    /* Retorna notify por ID */
-    function get($id) {
-        
-        //Query enviando Id de notify
-        $result = $this->model->load(['ID' => $id]);
-
-        if (!$result) {
-            return ['error' => ['notify' => 'Item não existe.']];
-        }
-
-        //Atribui dados do modelo a variavel como array
-        $notifyData = $this->model->getData();
-
-        //Retorna array data
-        return $notifyData;
-
-    }
-
-    /* Retorna lista de notify */
-    function getAll(){
+        $this->types = [0 => 'admin', 1 => 'friends', 3 => 'approve', 4 => 'follow', 5 => 'block', 6 => 'comment'];
 
         //Retorna classe usuário ou retorna erro
         if( is_null($this->currentUser) ){
             return ['error' => ['notify' => 'Você não tem permissão.']];
         }
+    
+    }
+
+    /* Retorna lista de notify */
+    function get(){
 
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
-            'user_id'   =>  $this->currentUser->ID,
-            'read'      =>  0
+            'from_id'   =>  $this->currentUser->ID,
+            'read'      =>  0,
+            'ORDER'     => ['date' => 'DESC']
         ]);
         
         //Retorna resposta
@@ -72,7 +55,7 @@ class Notify {
                 $notifyData = $item->getData();
 
                 //Combina array notify e comentários
-                $notifys[] =$notifyData; 
+                $notifys[] = $this->defineTypeContent($notifyData); 
                 
             }
 
@@ -87,15 +70,20 @@ class Notify {
     }  
 
     /* Adiciona um item de notify */
-    public static function add($type, $toID, $fromID ){
-        return (new self)->register($type, $toID, $fromID);
+    public function add($type, $toID, $fromID ) {
+
+        //Executa função registro
+        return $this->register($type, $toID, $fromID);
     }
 
     /* Deletar um plano */
     function delete( $ID ){
+
+        //Executa função de desregistrar
         return $this->deregister($ID);        
     }
 
+    /** Registra uma notificação para usuário */
     private function register(int $type = 0, int $toID, int $fromID) {
 
         //Filtrar inputs e validação de dados
@@ -103,24 +91,23 @@ class Notify {
             'type'      => (array_key_exists($type, $this->types)) ? $type : 0,
             'user_id'   => $toID,
             'from_id'   => $fromID
-        ];        
+        ];   
+        
+        //Inicializa modelo
+        $model = new NotifyModel();
 
         //Preenche colunas com valores
-        $this->model->fill($notify); 
+        $model->fill($notify); 
 
         //Salva novo registro no banco
-        $result = $this->model->save();
+        $result = $model->save();
 
         //SE resultado for true, continua execução
         return $result;
     }
 
+    /** Desregistra(oculta) uma notificação  */
     private function deregister($notifyID){
-
-        //Retorna classe usuário ou retorna erro
-        if( is_null($this->currentUser) ){
-            return ['error' => ['notify' => 'Você não acesso a essa notificação.']];
-        }
 
         //Preenche colunas com valores
         if(!$this->model->load(['ID' => $notifyID, 'user_id' => $this->currentUser->ID])){
@@ -132,10 +119,8 @@ class Notify {
 
         //SE resultado for true, continua execução
         if($result){
-
             //Mensagem de sucesso no cadastro
-            return ['success' => ['notify' => 'Atualização lida!']];
-
+            return ['success' => ['notify' => 'Atualização Lida!']];
         }
         else{
             //Mensagem de erro no cadastro
@@ -145,37 +130,60 @@ class Notify {
 
 
     /** Função de aprovar notificação */
-    public function approveNotify(int $id, int $from_id, bool $confirm){
+    public function approveNotify(int $id, bool $confirm){
 
-        //Verifica se existe e já marca como lida
-        $exist = (new self)->deregister($id);
+        //Verificar se existe notificação 
+        $exist = $this->model->load(['ID' => $id]);
 
-        //Se houve erro retorna
-        if (!array_key_exists('success', $exist)) {
-            return $exist;
+        //Para execução
+        if(!$exist){
+            return ['erro' => ['approve' => 'Notificação não existe.']];
         }
 
-        //Retorna informação
-        $user = new User();
+        //Verifica se existe e já marca como lida
+        $deregisterResponse = $this->deregister($id);
 
-        $user = $user->get($id);
+        //Se houve erro retorna
+        if (!array_key_exists('success', $deregisterResponse)) {
+            return $deregisterResponse;
+        }
 
-        return $User->add($filtered);
+        //Retorna dados da notificação
+        $notify = $this->model->getData();
+
+        //Retorna informação de usuário
+        $response = User::updateClubCertify($notify['from_id'], $notify['user_id'], $confirm);
+
+        //Se resultado for true, continua execução
+        if($response){
+            //Mensagem de sucesso no cadastro
+            return ['success' => ['approve_notify' => 'Confirmação Enviada!']];
+        }
+        else{
+            //Mensagem de erro no cadastro
+            return ['error' => ['approve_notify' => 'Houve erro ao marcar notificação como lida! Tente novamente mais tarde.']];
+        }
 
     }
 
     //Faz checkagem para imprimir a formatação de conteúdo de acordo com tipo de notificação
-    private function defineTypeContent(int $type, int $fromID) {
+    private function defineTypeContent(array $notify) {
 
         //Se tipo não permitido retornar false
-        if (!array_key_exists($type, $this->types)) {
+        if (!array_key_exists($type = $notify['type'], $this->types)) {
             return false;
         }
 
         switch ($type) {
             case 3:
-                $response = $this->approveContent($fromID);
-                break;            
+                $response = $this->approveContent($notify);
+                break;  
+            case 4:
+                $response = $this->followContent($notify);
+                break; 
+            case 6:
+                $response = $this->commentContent($notify);
+                break; 
             default:
                 $response = '';
                 break;
@@ -185,15 +193,52 @@ class Notify {
     }
 
     //Formatação de notificação para aprovação de perfil
-    private function approveContent($fromID){
+    private function followContent(array $notify){
 
         //Retorna dados do usuário
-        $user = (new User)->get($$fromID);
+        $user = (new User)->get($notify['from_id']);
 
         //Pegar estilo da notificação
         $content = [
-            "message" => "O usuário " . $user->display_name . " te adicionou como um clube no qual ele já fez parte da equipe. Você pode confirmar ou recusar essa informação, visulize as informações do perfil e defina se a informação é verdadeira.",
-            "user_profile" => $user
+            "ID"            => $notify['ID'],
+            "message"       => "O usuário " . $user->display_name . " começou a te seguir.",
+            "user_profile"  => $user
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    //Formatação de notificação para aprovação de perfil
+    private function approveContent(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->get($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify['ID'],
+            "message"       => "O usuário " . $user->display_name . " te adicionou como um clube no qual ele já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize as informações do perfil e defina se a informação é verdadeira.",
+            "user_profile"  => $user
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    //Formatação de notificação para aprovação de perfil
+    private function commentContent(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->get($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify['ID'],
+            "message"       => "O usuário " . $user->display_name . " comentou em sua publicação.",
+            "user_profile"  => $user
         ];
         
         //Retorna notificação

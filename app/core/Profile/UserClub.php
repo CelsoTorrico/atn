@@ -6,41 +6,79 @@ use Core\Database\UsermetaModel;
 use Core\Database\UserModel;
 use Core\Database\ListClubModel;
 use Core\Service\Notify;
+use Core\Utils\AppValidation as AppValidation;
 
 class UserClub extends User{
 
-    protected $max_users;
-    protected $current_users;
+    public    $max_users;
+    public    $current_users;
     protected $userModel;
     protected $metaModel;
+    protected $privatemeta;
     protected $fixedParam;
     const     TYPE_CHILD = 2;
 
-    private function _initClasses(){
+    //Override função da parent class para atribuir parametros especificos
+    public function __construct($args = array()) {
+
+        //Inicializa modelos e classes
+        $this->model        = new UserModel();
+        $this->appVal       = new AppValidation();
+        $this->privatemeta  = new PrivatemetaModel();
+
+        //Retorna instancia do usuario
+        return $this->selfUserInstance($args);
+        
+    }
+
+    /** Retorna dados de usuário em contexto */
+    private function selfUserInstance($args = array()) {
+        
+        //Verifica se parametros estão presentes
+        if (array_key_exists('user_login', $args) 
+        && array_key_exists('user_pass', $args)) {
+
+            //Carrega respectivo user no banco
+            if ($this->model->load(['user_login' => $args['user_login'], 'user_pass' => $args['user_pass']])) {
+                //Retorna array de dados
+                $user = $this->model->getData(); 
+                //Verifica se há dados
+                if (!is_array($user) || count($user)<=0)  return null;
+                //Instanciando classe user
+                $userClass = $this->get($user['ID']);
+                //Inicia atributos únicos dessa classe
+                $this->_initClasses($userClass); 
+                //Retorna usuário
+                return $userClass;
+            } else {
+                return null;
+            } 
+
+        } else {
+            return null;
+        }
+    }
+
+    /** Função para inicializar classes e variaveis */
+    private function _initClasses(object $user) {
 
         //parent_user => Id do clube
         //type => tipo de usuario profissional do esporte
         $this->fixedParam = [
             'meta_key'      => 'parent_user',
-            'meta_value'    => (int) $this->ID,
-            /*'AND' => [
-                'meta_key'      => 'type',
-                'meta_value'    => self::TYPE_CHILD
-            ]*/                    
+            'meta_value'    => $user->ID                  
         ];
 
         //Retornar numero de usuários cadastrados
         $this->current_users = $this->_currentNumUsers();
 
         //Retornar qtd maximo de usuários permitidos
-        $this->max_users = $this->_getMaxUsers();
+        $this->max_users = $this->_getMaxUsers($user->type);
 
     }
 
-    public function getUsers(){
-
-        //Inicializa valores padrões
-        $this->_initClasses();
+    /** Retorna todos os usuários pertencentes ao clube */
+    public function getUsers() {
         
         //Retorna se houve erro ou nenhum usuário
         if(count($this->current_users['ids']) <= 0){
@@ -52,13 +90,16 @@ class UserClub extends User{
 
         //Percorre array atribuindo usuário
         foreach ($this->current_users['ids'] as $id) {
+            //Inicializa a classe de usuário filho
+            $user = new parent;
+            
             //Se houve erro, por causa de usuário inativado
-            if (array_key_exists('error', $user = $this->get($id))) {
+            if (array_key_exists('error', $item = $user->get($id))) {
                 continue;
             }
 
             //Atribui usuário
-            $users[] = $user;
+            $users[] = $item;
         }
 
         //Retorna se houve erro ou nenhum usuário
@@ -72,10 +113,7 @@ class UserClub extends User{
     }
 
     /** Adicionar usuário pertecente a usuário pai = instituto */
-    public function addUser(Array $data){
-
-        //Inicializa classes
-        $this->_initClasses();
+    public function addUser(Array $data) {
 
         //Define parametros de dados para inserção
         $userData = array_merge($data, ['parent_user' => $this->ID, 'type' => self::TYPE_CHILD]);
@@ -95,10 +133,7 @@ class UserClub extends User{
     }
 
     /** Atualizar usuário com pertence a propriedade */
-    public function updateUser(Array $data, $id){
-        
-        //Inicializa classes
-        $this->_initClasses();
+    public function updateUser(Array $data, $id) {
 
         //Somente perfis com propriedade
         if(!in_array($id, $this->current_users['ids']) ){
@@ -114,10 +149,7 @@ class UserClub extends User{
     }
 
     /** Desativar um usuário */
-    public function deleteUser($id){
-
-        //Inicializa classes
-        $this->_initClasses();
+    public function deleteUser($id) {
 
         //Somente perfis com propriedade
         if (!in_array($id, $this->current_users['ids'])) {
@@ -134,10 +166,7 @@ class UserClub extends User{
     }
 
     /** Reativar um usuário */
-    public function activeUser($id){
-
-        //Inicializa classes
-        $this->_initClasses();
+    public function activeUser($id) {
 
         //Somente perfis com propriedade
         if (!in_array($id, $this->current_users['ids'])) {
@@ -152,8 +181,8 @@ class UserClub extends User{
         return $response;
     }
 
-    //Função a ser invocada estaticamente para verificar se clube existe como usuário na plataforma
-    public static function getAllClubs():array{
+    /** Função a ser invocada estaticamente para verificar se clube existe como usuário na plataforma */
+    public static function getAllClubs():array {
 
         //Instanciando modelo e data a retornar
         $clubMeta = new ListClubModel();
@@ -188,9 +217,10 @@ class UserClub extends User{
 
     /** 
      * Verifica a existência de clube e envia notificação
-     * @param $clubID  int ou string
+     * @param $clubID   int => Id do clube
+     * @param $user_id  int => Id do usuário
     */
-    public static function isClubExist( int $clubID, int $user_id ):bool{
+    public static function isClubExist( int $clubID, int $user_id ):bool {
 
         //Verifica se houve envio correto para verificação
         if($clubID == 0) {
@@ -199,20 +229,24 @@ class UserClub extends User{
 
         //Instanciando modelo e data a retornar
         $clubMeta = new ListClubModel();
-        $response = $clubMeta->load(['user_id' => $clubID , 'meta_key' => 'type', 'meta_value' => ['4']]);
+        $response = $clubMeta->load([
+            'user_id' => $clubID , 
+            'meta_key' => 'type', 
+            'meta_value' => ['4']]);
 
         //Verifica se existe e retorna boolean
         if($response){
-
             //Envia notificação
-            $response = Notify::add(3, $clubID, $user_id);
+            $currentUser = new UserClub();
+            $notify = new Notify($currentUser->get($clubID));
+            $response = $notify->add(3, $clubID, $user_id);
         }
 
         return $response;
     }
 
-    //Retorna máximo de usuários a manipular
-    private function _currentNumUsers(){
+    /** Retorna máximo de usuários a manipular */
+    private function _currentNumUsers() {
         
         //Retorna numero de usuários
         $model = new UsermetaModel();
@@ -233,7 +267,6 @@ class UserClub extends User{
             
             //Atribui IDS de usuários
             $userIDS[] = $user->user_id;
-
         }
 
         $currentUsers = array_merge([
@@ -244,11 +277,11 @@ class UserClub extends User{
         return $currentUsers;
     }
 
-    //Retorna máximo de usuários a manipular
-    private function _getMaxUsers(){
+    /** Retorna máximo de usuários a manipular */
+    private function _getMaxUsers($type) {
         //privatemetadados para retornar qtd de usuários permitidos
-        $max = new PrivatemetaModel(['usertype' => $this->type['ID'], 'meta_key' => 'max_users']);
-        return ($max->meta_value) ? (int) $max->meta_value : null;
+        $max = $this->privatemeta->load(['usertype' => $type['ID'], 'meta_key' => 'max_users']);
+        return ($max) ? (int) $this->privatemeta->meta_value : null;
     }
 
 }
