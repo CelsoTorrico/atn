@@ -7,15 +7,15 @@ $router->group(['prefix' => 'login'], function () use ($router) {
     $router->post('/', 'LoginController@login');
 
     //SOCIAL LOGIN
-    $router->group(['prefix' => 'facebook'], function() use ($router){
+    $router->group(['prefix' => 'facebook'], function() use ($router) {
         $router->get('/',  'LoginController@facebookProvider');
-        $router->get('/authorized',  'LoginController@facebookCallback');
-    });
+        $router->get('/authorized',  'LoginController@socialCallback');
+    }); //facebook
 
-    $router->group(['prefix' => 'google'], function() use ($router){
+    $router->group(['prefix' => 'google'], function() use ($router) {
         $router->get('/',  'LoginController@googleProvider');
-        $router->get('/authorized',  'LoginController@googleCallback');
-    });
+        $router->get('/authorized',  'LoginController@socialCallback');
+    }); //google
 
 });
 

@@ -86,7 +86,7 @@ class Login implements LoginInterface{
     }
 
     //Login via API's Sociais
-    public function setSocialLogin(array $userData){
+    private function socialLogin(array $userData){
 
         //Verifica se existem dados válidos
         if(!count($userData) <= 0 && !array_key_exists('user_email', $userData)){
@@ -106,18 +106,16 @@ class Login implements LoginInterface{
         if ($this->model->isFresh()) {
             //Se não, retornar false
             return false;
-        } 
+        }      
         
-        //Registra o token no banco e retorna resultado
-        $insertSuccess = insertToken($this->model->ID, $this->cookieToken);
+        //Retorna dados localizados
+        $this->userData = $this->model->getData();
+
+        //Armazena dados de token social em array
+        $this->cookieToken = array($userData['token'], $userData['expires']);
         
-        if($insertSuccess):
-            //Retornando string sucesso
-            return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]]; 
-        else:
-            //Retorna string erro
-            return ['error' => ["login", "Seu acesso não foi permitido."]];
-        endif;
+        //Retornando string sucesso
+        return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]];
         
     }
 

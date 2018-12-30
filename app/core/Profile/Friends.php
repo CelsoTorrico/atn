@@ -28,11 +28,11 @@ class Friends {
 	private $filter;
 
 	/**
-	 * @param $id = Id do usuário
-	 * @param $filter = Filtragem de usuário através de parametros adicionais
-	 * @param $only_ids = Define de deve retornar apenas array de ID'S
+	 * @param int $id = Id do usuário
+	 * @param array $filter = Filtragem de usuário através de parametros adicionais
+	 * @param bool $only_ids = Define de deve retornar apenas array de ID'S
 	 */
-	function __construct($id = null, $filter = array(), $only_ids = false){
+	function __construct(int $id = null, array $filter = array(), bool $only_ids = false){
 
 		//Atribui id de usuario corrente
 		$this->ID = $id; 

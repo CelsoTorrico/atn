@@ -5,6 +5,9 @@
 $router->group(['prefix' => 'timeline'], function () use ($router) {
 
     //Retorna único
+    $router->get('/visibility', 'TimelineController@getVisibility');
+
+    //Retorna único
     $router->get('/{id:[0-9]+}', 'TimelineController@get');
 
     //Retorna lista de timelines

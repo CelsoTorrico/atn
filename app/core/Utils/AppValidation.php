@@ -4,12 +4,15 @@ namespace Core\Utils;
 
 use aryelgois\Utils\Validation;
 use aryelgois\Utils\Format;
+use stdClass;
 
 
 class AppValidation
 {
     protected $valid;
     protected $format;
+
+    const OBJECT_VAR = '';
 
     const STATES = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
@@ -105,7 +108,8 @@ class AppValidation
             'cpf'           => array('validation', 'cpf'), 
             'cnpj'          => array('validation', 'cnpj'),
             'club_site'     => FILTER_VALIDATE_URL,
-            'my-videos'     => FILTER_VALIDATE_URL
+            'my-videos'     => FILTER_VALIDATE_URL,
+            'profile_img'   => new StdClass()
         );
 
         //Expressõe regulares
@@ -163,15 +167,10 @@ class AppValidation
                 //Inicializando var
                 $action = $array[$key];
                 $checkedItem = [];
-                
-                //Percorre array fazendo validação e converte string em int
-                foreach ($value as $item) {
-                    $checkedItem[] = (preg_match('/'.$action.'/', $item, $match )) ? (int) filter_var($match[0], FILTER_SANITIZE_NUMBER_INT) : (string) filter_var($item, FILTER_SANITIZE_STRING);
-                } 
-                
-                //Atribuindo valor a key respectiva
-                $data[$key] = $checkedItem;
 
+                //Percorre array fazendo validação e converte string em int
+                //Atribuindo valor a key respectiva
+                $data[$key] = $this->sanitizeItem($value, $action);                
                 continue;
             }
             
@@ -186,6 +185,10 @@ class AppValidation
                 elseif(is_string($action)){
                     //Executa regular expression para validar
                     $data[$key] = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
+                }
+                elseif(is_object($action)){
+                    //Se for upload de imagem retornar classe
+                    $data[$key] = $value;
                 }
                 else{
                     //Filtra o dado
@@ -210,7 +213,7 @@ class AppValidation
                 continue;
             }
 
-            //Percorre array e executa expressões regulares
+            //Percorre array e executa expressões regula    res
             if (array_key_exists($key, $address)) {                
                 $action = $address[$key];
                 //Executa regular expression para validação
@@ -259,14 +262,17 @@ class AppValidation
 
         }
 
-        //Se $isUpdate é false, cria um usuário de login baseado no email 
+        //Se $isUpdate é false, cria um usuário de login baseado no email e formata display_name
         if(!$isUpdate){
             //Criando user_login
             $data['user_login'] = $this->create_user_login($data['user_email']);
         }
 
-        //Formatando display_name
-        $data['display_name'] = ucwords($data['display_name']);
+        //Se display_name for setado para criação ou alteração
+        if (isset($data['display_name']) && !empty($data['display_name'])) {
+            //Formatando display_name
+            $data['display_name'] = ucwords($data['display_name']);
+        }
 
         //Verifica qtd de erros e retorna
         if (count($errorMsg) > 0) {
@@ -291,6 +297,26 @@ class AppValidation
     protected function create_user_login($data) {
         preg_match('/(.+)@/', $data, $match);
         return '@'. $match[1];
+    }
+
+    //Sanitar item
+    private function sanitizeItem (array $value, string $action) {
+        
+        $sanitized = [];
+
+        foreach ($value as $key => $item) {
+            
+            //Se for array reutiliza função
+            if (is_array($item)) {
+                $sanitized[$key] = $this->sanitizeItem($item, $action);
+                continue;
+            }
+
+            //Executar regex e filtros
+            $sanitized[$key] = (preg_match('/'.$action.'/', $item, $match )) ? (int) filter_var($match[0], FILTER_SANITIZE_NUMBER_INT) : (string) filter_var($item, FILTER_SANITIZE_STRING);
+        } 
+
+        return $sanitized;
     }
 
 }

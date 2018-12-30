@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Core\Service\Timeline as Timeline;
+use Core\Service\Learn;
 use Core\Profile\User;
 
 use Closure;
 
-class TimelineController extends Controller
+class LearnController extends Controller
 {
 
-    protected $timeline;
+    protected $learn;
     
     /**
      * Create a new controller instance.
@@ -20,26 +20,26 @@ class TimelineController extends Controller
      */
     public function __construct(Request $request)
     {
-        $this->timeline = new Timeline($request->user());
+        $this->learn = new Learn($request->user());
     }
 
     function get($id){
 
-        $response = $this->timeline->get($id);
+        $response = $this->learn->get($id);
         
         return response()->json($response);
     }
 
     function getAll(){
         
-        $response = $this->timeline->getAll();
+        $response = $this->learn->getAll();
 
         return response()->json( $response );
     }
 
     function getVisibility(){
 
-        $response = $this->timeline->getVisibilityFields();
+        $response = $this->learn->getVisibilityFields();
         
         return response()->json($response);
     }
@@ -72,7 +72,7 @@ class TimelineController extends Controller
             $data['post_image'] = $file;
         }
 
-        $response = $this->timeline->add($data);
+        $response = $this->learn->add($data);
         
         return response()->json($response);
     }
@@ -92,13 +92,13 @@ class TimelineController extends Controller
         }
 
         //Executa methodo da classe
-        $response = $this->timeline->update($request->input('post_content'), $id);
+        $response = $this->learn->update($request->input('post_content'), $id);
         
         return response()->json($response);
     }
 
     function delete(Request $request, $id){
-        return response($this->timeline->delete($id));
+        return response($this->learn->delete($id));
     }
 
     /** Comentários */
@@ -118,7 +118,7 @@ class TimelineController extends Controller
         }
 
         //Envia dados submetidos
-        $response = $this->timeline->addComment($id, $request->input('comment_content'));
+        $response = $this->learn->addComment($id, $request->input('comment_content'));
         
         //Resposta da adicão
         return response()->json($response);
@@ -139,7 +139,7 @@ class TimelineController extends Controller
         }
 
         //Envia dados submetidos
-        $response = $this->timeline->addResponse($comment_ID, $request->input('comment_content'));
+        $response = $this->learn->addResponse($comment_ID, $request->input('comment_content'));
         
         //Resposta da adicão
         return response()->json($response);

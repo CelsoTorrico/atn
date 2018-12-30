@@ -6,10 +6,12 @@ use Illuminate\Auth\GenericUser;
 use Core\Interfaces\UserInterface as UserInterface;
 use Core\Utils\PasswordHash as PasswordHash;
 use Core\Utils\AppValidation as AppValidation;
+use Core\Utils\FileUpload;
 use Core\Database\UserModel as UserModel;
 use Core\Database\UsermetaModel;
 use Core\Database\UsertypeModel;
 use Core\Database\SportModel;
+use Core\Service\UserStats;
 
 use Closure;
 use aryelgois\Medools\ModelIterator;
@@ -104,7 +106,7 @@ class User extends GenericUser{
         //Verifica se existe metadado de clubes
         if (is_array($usermeta) && array_key_exists('clubes', $usermeta)) {
             //Retorna lista de esportes
-            $clubs = $this->_getClubs($usermeta['clubes']);
+            $clubs = $this->_getClubs();
             //Add valores a variaveis encontrados as variaveis da classe
             $this->setVars(['clubs' => $clubs]);
         }
@@ -114,134 +116,171 @@ class User extends GenericUser{
     } 
 
     /** Retorna dados de estatistica */
-    //TODO: Reestruturar esse método, invocar classe STATS
     public function getStats(){
-
-        if( !in_array($this->type['ID'], [1, 3, 4, 5])) {
-            return [];
-        }
         
         //Campos gerais de estatisticas
-        $statsGerais = [
-            'empates','vitorias', 'titulos', 'jogos', 'derrotas', 'titulos-conquistas'
-        ];
-
-        //Array de numeros
-        $numeros  = [];
-        $porcento = [];
-
-        //Percorre array para trazer dados gerais
-        foreach ($statsGerais as $value) {            
-            if ( array_key_exists($value, $this->metadata)) {
-                $numeros[$value] = $this->metadata[$value]['value'];
-            }
-        }
-
-        //Retorna dados e soma atribuindo total
-        $total = array_sum(array_only($numeros, ['vitorias', 'empates', 'derrotas']));
+        $stats = new UserStats($this->metadata, $this->type['ID'], $this->sport);
         
-        //Faz calculo para exibir aproveitamento em porcentagem
-        if ( is_int($total) && isset($numeros['jogos']) && $total == (int) $numeros['jogos'] ) {
-            $umcento = ($total / 100);
-            $porcento = [
-                'vitorias' => $numeros['vitorias'] * $umcento.'%',
-                'empates'  => $numeros['empates']  * $umcento.'%',
-                'derrotas' => $numeros['derrotas'] * $umcento.'%'
-            ];
-        }
+        //Setando estatisticas do banco
+        $stats->setStats();
 
-        //Nome do esporte de estatisticas
-        $sport_name = isset($this->metadata['stats-sports']['value'])? $this->metadata['stats-sports']['value'] : '';
-
-        //Dados de estatisticas registrados
-        $stats = isset($this->metadata['stats']['value'])? $this->metadata['stats']['value'] : [];
-        
-        //Monstando array de dados
-        $mainSport = [
-            'sport_general'         => $numeros,
-            'sport_name'            => $sport_name,
-            'sport_performance'     => [
-                'stats'         => $stats,
-                'average_match' => $porcento
-            ]
-        ];
-
-        //Retornando array de dados estatisticos
-        return $mainSport;
+        //Retorna dados
+        return $stats->get();
 
     }
 
+    /** REtorna usuários com relevancia ao perfil logado 
+     *  TODO: Fazer validação de somente mostrar usuários com os 2 critérios
+    */
     public function getFriendsSuggestions(){
 
-        /*if( !in_array($this->type['ID'], [1, 3, 4, 5])) {
-            return [];
-        }*/
-        
         //Atributos de comparação
-        $atributes = ['type', 'sport','clubs', 'metadata'];
+        $atributes  = ['type', 'sport','clubs', 'metadata'];
+        $random     = array_rand($atributes, 2);
+        $users      = ['success' => ['criterio' => []]];
+        $query      = [];
+        
+        //Inicializa modelo
+        $metaModel = new UsermetaModel();
 
-        //Conta o máximo de atributos
-        $countAttr = count($atributes) - 1;
+        //Retornando lista de usuários já conectados
+        $friendsList = $this->getFriends([], true);
+
+        //Monta query dois parametros, melhorar correspondência
+        foreach ($random as $key => $value) {
+
+            //Atribui propriedade atual
+            $k = $atributes[$value];
+
+            //Verifica se usuário tem a propriedade definida e com algum valor
+            while ( !property_exists($this, $k) || is_null($this->$k)) {
+                //Verifica a diferença de keys já usadas
+                $ignore = array_diff_key($atributes, $random);  
+                //Reatribui propriedade que exista e contenha valor
+                $k = $atributes[array_rand($ignore)];
+            }
+
+            //Executa função para montagem de query
+            $fn = $this->friendsSuggestionsLogic($k);
+
+            //Limitar em 20 usuários por vez
+            $fn['LIMIT'] = 20;
+
+            //Adiciona criterio de sugestão
+            $users['success']['criterio'][] = $fn['meta_key'][0];
+
+            //Merge arrays de query
+            $found = $metaModel->getIterator($fn);
+            
+            //Atribuir apenas ids
+            foreach($found as $i) {
+                
+                //Se atual não é valido
+                if(!$found->valid()){
+                    continue;
+                }
+                
+                //Se já conectado ou for mesmo que usuário atual, ir proximo
+                if (in_array($i->user_id, $friendsList) || $i->user_id == $this->ID) {
+                    continue;
+                }
+
+                //Atribui ID ao array
+                $query[$key][] = $i->user_id;
+                $user = new self();
+                $users[] = $user->get($i->user_id);  
+
+            }
+        }  
+
+        //Verifica se houve alguma inserção de ids
+        if(isset($query[0]) && isset($query[1]) && count($query[1]) > 0){
+            
+            //Verifica se algum usuário possui os 2 critérios
+            $a = array_intersect($query[0], $query[1]);
+
+            //Se não usuário repete
+            if(count($a) == 0) {
+                return;
+            }
+
+            //Rearranja ordem para usuários com 2 critérios
+            //TODO: Arrumar essa função
+            array_unshift($users, $a);
+        }
+        
+        //Retornando array de dados estatisticos
+        return $users;
+
+    }
+
+    private function friendsSuggestionsLogic(string $randomKey):array {
+
+        //Query var a ser montada
+        $query = [];
 
         //Retorna usermeta do usuário de maneira randomica
-        $selectedAttr = $atributes[rand(0, $countAttr)];
-
-        //Verifica se usuário tem a propriedade definida
-        while ( !property_exists($this, $selectedAttr) || is_null($this->$selectedAttr)) {
-            //Retorna usermeta do usuário de maneira randomica
-            $selectedAttr = $atributes[rand(0, $countAttr)];
-        }
+        $selectedAttr = $randomKey;
 
         //Se for metadado escolhido, procurar valor randômico
         if ($selectedAttr == 'metadata') {
             
             //Keys utilizáveis
-            $metadata = ['city', 'state', 'neighbornhood', 'titulos-conquistas'];
+            $metadata = ['city', 'neighbornhood'];
+            $k = array_rand(array_flip($metadata));
+            $i=0;
 
-            //Conta o máximo de atributos
-            $countKeys = count($this->metadata) - 1;
+            //Verifica se usuário tem a propriedade definida e com algum valor
+            while ( !array_key_exists($k, $this->metadata) || is_null($this->metadata[$k])) {
+                //Reatribui propriedade que exista e contenha valor
+                $k = array_rand(array_flip($metadata));
+                $i++;
+            }
 
             //Retorna usermeta do usuário de maneira randomica
-            $userData = [$selectedAttr => $this->metadata[$metadata[rand(0, $countKeys)]]];
+            $userData = [$k => $this->metadata[$k]];
         }
         else{
             //Retorna a data seleciona randomicamente
             $userData = [$selectedAttr => $this->$selectedAttr];
         }    
 
-        //Fazendo query de resultados
-        $metaModel = new UsermetaModel();
-        $query = ['meta_key' => $selectedAttr];
-
         //Montando query baseado no quantidade de dados
         foreach ($userData as $key => $value) {
-           if (!in_array($key, ['type', 'sport', 'sport_name', 'value', 'ID'])) 
-           {    continue;   }
-
-           if (is_string($value)) {
-                $query = array_merge($query, ['AND' => ['meta_value[~]' => '%'.$value.'%']]);
+           
+            //Se valor for nulo
+            if (is_null($value)) {
                 continue;
-           }
+            }
 
-           foreach ($value as $key => $item) {
-               
-                if ($key == 0){
-                    $query = array_merge($query, ['AND' => ['meta_value[~]' => '%'.$item.'%']]);
-                    continue;
-               } 
-            
-               $query['AND'][] = ['OR' => ['meta_value[~]' => '%'.$item.'%']];
+            //Adiciona key
+            $composing = ['meta_key' => [$key]];
 
-           }
+            //Se valor for array
+            foreach ($value as $i => $v) {    
+                
+                //Se for array atribui chave com ID
+                if (is_array($v)) {
+                    $v = $v['ID'];
+                }
+                
+                //Se for nenhum desse tipo, retorna
+                if (!in_array($i, ['value', 'ID'])) 
+                {    continue;   }
+
+                //Removendo espaços no inicio e fim da string
+                $v = preg_replace('/(^\s|\s$)/', '', $v);
+
+                //Adiciona meta_value
+                ($i != 'ID')?  $composing['meta_value[~]'] = ['%'.$v.'%'] :  $composing['meta_value'] = [$v]; 
+
+                //Merge arrays
+                $query = array_merge($query, $composing);
+
+            }
         }
-        
-        $metaModel->load(['meta_value[~]' => '%%']);
 
-        $myFriends = new Friends([], true);
-        $listIDS = $myFriends->get();
-        
-        //Retornando array de dados estatisticos
-        return $users;
+        return $query;  
 
     }
 
@@ -278,10 +317,10 @@ class User extends GenericUser{
     }
 
     /* Retorna lista de usuários */
-    public function getFriends( $filter = array() ){
+    public function getFriends( array $filter = array(), bool $onlyIDS = false ){
 
         //Invoca função de retornar lista de usuários
-        $friendsList = new Friends($this->ID, $filter);
+        $friendsList = new Friends($this->ID, $filter, $onlyIDS);
         
         return $friendsList->get();    
     } 
@@ -324,7 +363,7 @@ class User extends GenericUser{
         }
         else{
             $isUpdate = TRUE;
-        }        
+        }  
 
         //Filtrar inputs e validação de dados
         $checked = $this->verifySentData($data);
@@ -351,6 +390,21 @@ class User extends GenericUser{
         //Verifica se usuário já existe no banco de atualiza
         if (!is_null($id) && $this->model->load(['ID' => $id])) {
             /** Update Register */
+
+            //Verifica se existe objeto para upload
+            if (isset($filtered['profile_img']) && is_a($filtered['profile_img'], 'Illuminate\Http\UploadedFile')) {
+
+                $file = $filtered['profile_img'];
+
+                //Inicializa classe de upload
+                $upload = new FileUpload($id, null, $file, 'profile_img');
+
+                //Enviar arquivo e insere no banco
+                if ($upload->insertFile()) {
+                    //Remove key de imagem do array usermeta, para não tentar gravar novamente
+                    unset($filtered['profile_img']);
+                }         
+            }
             
             //Preenche array com dados enviados
             $userData = array_only($filtered, $userColumns);
@@ -432,6 +486,11 @@ class User extends GenericUser{
             
             //Inicializa array local
             $itemTagged = [];
+
+            //Se for update de perfil, key 'value1 setada antes dos dados
+            if (array_key_exists('value', $meta_value)) {
+                $meta_value = $meta_value['value'];
+            }
             
             //Percorre e verifica existencia de clube
             foreach ($meta_value as $item) {
@@ -440,7 +499,23 @@ class User extends GenericUser{
             }
 
             //Atribui a var para continuar execução
-            $meta_value = $itemTagged;
+            unset($meta_value);
+            $meta_value = ['value' => $itemTagged];
+        }
+
+        //Enviar notificação para clube e adicionar marcador
+        if(is_array($meta_value) && $meta_key == 'stats') {
+            
+            //Campos gerais de estatisticas
+            $stats = new UserStats($this->metadata, $this->type['ID'], $this->sport);
+            
+            //Setando estatisticas do banco
+            $stats->arrangeStatsToUpdate($meta_value);
+
+            //Retorna estatisticas formatada corretamente para inserir
+            unset($meta_value);
+            $meta_value = $stats->getStatsToUpdate();
+
         }
 
         //Se for update atributos
@@ -589,7 +664,7 @@ class User extends GenericUser{
 
             //Em formato ARRAY
             if (in_array($meta_key, $is_array) ) {
-                $addValue = json_decode($meta_value);
+                $addValue = json_decode(utf8_encode($meta_value));
             //Em formato JSON
             } elseif (in_array($meta_key, $is_json) && !empty($meta_value)) {
                 $addValue = ($uns = @unserialize($meta_value)) ? $uns : $meta_value;
@@ -675,10 +750,26 @@ class User extends GenericUser{
         $model = new SportModel(); 
 
         //Unserializar array de esportes
-        $sportIDS = $this->sport['value'];
+        $sportValue = $this->sport['value'];
+
+        //Verifica se dado armazenado é array ou string com nome do esporte (v2.0)
+        //Se for array de ids
+        if(is_array($sportValue)) {
+            $result = $model->dump(['ID' => $sportValue]);
+        //Se retornado uma string de array serializado
+        } elseif ( preg_match('/^a\:[0-9]+\:{/', $sportValue)) {
+            $sportValue = unserialize($sportValue);
+            $result = $model->dump(['ID' => $sportValue]);
+        //Verifica se esta armazenado id único
+        } elseif ( preg_match('/[0-9]+/', $sportValue)) {
+            $result = $model->dump(['ID' => $sportValue]);
+        //Verifica esporte através do nome
+        } else {
+            $result = $model->dump(['sport_name' => $sportValue]);
+        }
 
         //Retorna dados
-        if (! $result = $model->dump(['ID' => $sportIDS])) {
+        if (! $result ) {
             return null;
         }
 
@@ -692,30 +783,45 @@ class User extends GenericUser{
      * 
      * @return mixed
      */
-    private function _getClubs($clubs) {
-        
-        if (is_null($clubs) || !is_array($clubs['value']) || (is_array($clubs['value']) && count($clubs['value']) <= 0 ) ) {
+    private function _getClubs($clubs=null) {
+
+        //verifica se existe clubes definidos via metadata
+        if (is_null($clubs) && isset($this->metadata['clubes']) && count($this->metadata['clubes']) > 0){
+            $clubs = $this->metadata['clubes'];
+        }
+
+        //Se nulo retorna
+        if (is_null($clubs)) {
             return null;
         }
 
         //Array de Clubes
         $ids = []; 
-        $clubItens = [];
 
-        //Percorre array
-        foreach($clubs['value'] as $item){            
-            //Se for array atribui valor
-            if(is_array($item) && key_exists('ID', $item)){
-                //Adiciona ID ao array
-                $ids[] = $item['ID'];
-            }
-        };
+        //Se for array de clubes (v2.0)
+        if (is_array($clubs['value'])) {
+            //Percorre array
+            foreach($clubs['value'] as $item){            
+                //Se for array atribui valor
+                if(is_array($item) && key_exists('ID', $item)){
+                    //Adiciona ID ao array
+                    $ids[] = $item['ID'];
+                }
+            };
+        } else{
+            $ids[] = $clubs['value'];
+        }        
         
         //Instancia Modelo de Classe, 
         $model = new UserModel(); 
 
         //Verifica se há resultados e retorna objeto
         $allclubs = $model->getIterator(['ID' => $ids]);
+
+        //Se nenhum clube foi encontrado
+        if ($allclubs->count() <= 0) {
+            return null;
+        }
 
         //Percorre array de clubes
         foreach ($allclubs as $key => $item) {
@@ -726,10 +832,18 @@ class User extends GenericUser{
             }
             
             //Reestrutura array com dados do clube
-            $clubs['value'][$key] = array_merge(
-                ['club_name' => $item->display_name],
-                $clubs['value'][$key]);
-            
+            if (is_array($clubs['value'])) {
+                $clubs['value'][$key] = array_merge(
+                    ['club_name' => $item->display_name],
+                    $clubs['value'][$key]);
+            }
+            else{
+                $clubs['value'] = [
+                    [   'ID' => (int) $clubs['value'],
+                        'club_name' => $item->display_name
+                    ]
+                ];
+            }
 
         }            
         

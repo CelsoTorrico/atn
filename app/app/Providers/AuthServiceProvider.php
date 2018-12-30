@@ -36,33 +36,6 @@ class AuthServiceProvider extends ServiceProvider
         // should return either a User instance or null. You're free to obtain
         // the User instance via an API token or any other method necessary.
 
-        /*
-        //Se valor for nulo, sessão não foi inicializada
-        //No caso, de cookie e sessão inválida
-        if ( is_null($response = User::get_current_user()) ) {
-            return ['error' => ['login' => 'Sessão não foi inicializada.']];
-        } 
-
-        //Se for array de erros, retorna erro
-        if (array_key_exists('error', $response)) {
-            return $response;
-        }      
-        
-        //Se perfil está inativado, somente permitir requisição de reativação
-        if( $response->getStatus() == 1) {
-
-            //Resposta padrão para perfis inativados
-            $response = ['error' => ['login' => 'Perfil inativado, para poder realizar ações na plataforma é necessário reativa-lo.']];
-
-            //Se usuário estiver com perfil desativado, permitir requisição
-            if($request->path() == 'user/reactive' && $request->isMethod('PUT')){
-                $response = $next($request);
-            }
-
-            return $response;
-
-        }*/
-
         $this->app['auth']->viaRequest('api', function ($request) {
 
             //Carrega classe existente de logon anterior

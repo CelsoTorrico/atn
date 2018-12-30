@@ -3,6 +3,7 @@
 # Medools: https://github.com/aryelgois/Medools#primary_key
 # mPDF: https://mpdf.github.io/reference/mpdf-functions/output.html
 # (Wordpress) PasswordHash: https://www.openwall.com/phpass/ 
+# PHP Image Cache: composer require nielse63/phpimagecache
 
 ##Observações
 Diferente do Slim, as classes Requests devem invocadas diretamente nas classes da API, ao invés de ser no construtor de roteamento.
@@ -10,13 +11,13 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ### Semana 1
 ✔ @high Definição de Estrutura de Banco de Dados @done(18-11-16 16:57)
 ✔ @low  Setup de ambiente de produção @done(18-11-16 16:57)
-✔ @low  Login / Cadastro @done(18-11-16 16:57) (*Setar cookies e lista de sports & clubes)
+✔ @low  Login / Cadastro @done(18-11-16 16:57)
 ✔ Login/Cadastro - Implementar variação com CNPJ @done(18-11-29 12:58)
 
 ### Semana 2
-✔ Inicio / timeline @done(18-11-22 12:10) | Status 95% (*Verificar Imagens)
-✔ @high Integração de Redes Sociais no perfil (Login Social) @done(18-12-09 21:47)
-✔ Perfil de usuario - Atleta @done(18-11-29 01:59)
+✔ Inicio / timeline @done(18-11-22 12:10) | Status 95% (*Verificar Imagens) 
+✔ @high Integração de Redes Sociais no perfil (Login Social) @done(18-12-09 21:47) 
+✔ Perfil de usuario - Atleta @done(18-11-29 01:59) 
 
 ### Semana 3
 ✔ @high Perfil de Usuário - Instituição | Status 100% @done(18-12-18 14:56)
@@ -24,39 +25,44 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ☐ @low Download de CV - usuário | Status 95% (*Falta html)
 
 ### Semana 4
-☐ @low Estatisticas - Atleta | Status 90% (Seguir planilha de estatísticas)
-☐ @low Edição de perfil - Todos | Status => 80%
-☐ @low Privacidade de perfil / conteudo (segurança da plataforma) | Status => 60%
+✔ @low Estatisticas - Atleta | Status 100% @done(18-12-29 17:33)
+☐ @low Edição de perfil - Todos | Status => 95%
+☐ @high Privacidade de perfil / conteudo (segurança da plataforma) | Status => 80%
 
 ### Semana 5
 ✔ Certificação de usuario | Status 100% @done(18-12-19 19:39)
 ☐ Networking entre atletas/instituições/profissionais | Status 80%
-☐ Sugestões de amigos - Perfil | Status 60%
+✔ Sugestões de amigos - Perfil | Status 100% @done(18-12-29 03:37)
 
 ### Semana 6
-☐ Clubes Favoritos | 50%
-☐ Atletas Favoritos | 50%
-☐ Permissões de usuario - Instituição/usuario master | Status 60%
+✔ Clubes Favoritos | 100% @done(18-12-20 19:51)
+✔ Atletas Favoritos | 100% @done(18-12-20 19:51)
+☐ Permissões de usuario - Instituição/usuario master | Status 90%
 
 ### Semana 7
-☐ Aprenda - Area de videos - Padrão
-☐ Aprenda - Area de videos - Premium
+☐ @low Aprenda - Area de videos - Padrão  | Status 65% (Classe extendida, verificar upload de links de vídeos)
+☐ @low Aprenda - Area de videos - Premium | Status 65%
 
 ### Semana 8
 ☐ Chat
 ☐ Mensagens
-☐ Busca  Geral da Plataforma
+☐ Busca Geral da Plataforma
 
 ### Pequenos Acertos
 ☐ Semana 1 - Login/Cadastro -> Mensagem de cadastro, no momento está de login
+☐ Semana 1 - Ao se cadastrar setar o cookie para login automático (Authenticate.php)
 ✔ Semana 1 - Retornar listagem de esportes/clubes @done(18-12-16 12:11)
 ☐ Semana 2 - Login -> Fazer reenviar senha (Esqueci senha)
 ✔ Semana 2 - Login Social -> Validação de cookies @done(18-12-13 12:59)
 ✔ Semana 2 - Comentários em timelines @done(18-12-06 15:56)
-☐ Semana 2 - Timeline -> Novo e Update de timeline com imagens
+✔ Semana 2 - Timeline -> Novo e Update de timeline com imagens @done(18-12-27 01:27)
+☐ Semana 2 - Timeline -> Definir público de publicação (Publico, atleta, profissional e clubes)
 ✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
 ✔ Semana 3 - Perfil Instituição -> deletar e atualizar @done(17-12-12 16:00)
 ☐ Semana 3 - Download CV (PDF) -> Estruturar o conteúdo de forma visualmente organizado (Precisamos de um modelo de arquivo)
+☐ Semana 4 - Edição de Perfil, quando campo estiver vazio enviar notificação ao usuário
+☐ Semana 5 - Sugestões de Amigos | Arrumar ordenação de usuários 2 critérios
+☐ Semana 5 - Compressão de imagens via classe PHP
 ✔ Semana 5 - Implementar notificação quando usuário cadastrar clube existente como usuário @done(18-12-16 23:10)
 ✔ Semana 5 - Corrigir inserção de dados [notVerified] Arquivo 'User.php:755' @done(18-12-19 19:39)
 ✔ Semana 5 - Sistema de Notificações Completo @done(18-12-19 19:38)

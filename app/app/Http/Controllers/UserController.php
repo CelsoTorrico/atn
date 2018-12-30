@@ -77,14 +77,16 @@ class UserController extends Controller
     function update(Request $request){
 
         //Somente permissão de atualização de proprio perfil
-        if( !is_null($this->user->ID) ){
-            //incrementado qtd view
-            $result = $this->user->update($request->all());
-        }  
-        else{
+        if( !is_null($this->user) ){
             //Retorna erro
             $result = ['error' => ['update', 'Você não pode modificar esse perfil.']];
-        }
+        } 
+
+        //Atribui dados enviados a var
+        $data = $request->all();        
+
+        //incrementado qtd view
+        $result = $this->user->update($data);
         
         return response()->json($result);
 

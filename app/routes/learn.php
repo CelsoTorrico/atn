@@ -1,63 +1,31 @@
 <?php
 
-use \Psr\Http\Message\ServerRequestInterface as Request;
-use \Psr\Http\Message\ResponseInterface as Response;
-use Slim\Http\UploadedFile as UploadedFile;
+/*########## LEARN / APRENDA ###############*/
 
-/*##### BUSINESS ROUTES ############# */
+$router->group(['prefix' => 'learn'], function () use ($router) {
 
-//Retorna um projeto especifica
-$router->get('business/{id}', function (Request $request, Response $response, $args){     
-    //Variaveis
-    $id = $request->getAttribute('id');
-    return $response->withJson($this->project->getProject( $this->user, $id ));
+    //Retorna único
+    $router->get('/visibility', 'LearnController@getVisibility');
 
-})->setName('Project');
+    //Retorna único
+    $router->get('/{id:[0-9]+}', 'LearnController@get');
 
-//Adiciona um projeto
-$router->put('/projects/{id}', function (Request $request, Response $response, $args){     
-    //Variaveis
-    $id = $request->getAttribute('id');
-    $data = $request->getParsedBody();
-    return $response->withJson($this->project->updateProject( $this->user, $id, $data ));
+    //Retorna lista de Learns
+    $router->get('/', 'LearnController@getAll');
 
-})->setName('Update Project');
+    //Adiciona Learn
+    $router->post('/', 'LearnController@add');
 
-//Reordenando lista de projetos ordenados
-$router->get('/business/', function (Request $request, Response $response){    
-    return $response->withJson($this->project->getListProjects( $this->user ));
-})->setName('projects');
+    //Adiciona comentários Learn
+    $router->post('/{id:[0-9]+}', 'LearnController@addComment');
 
-//Retorna campos especificos de projectos
-$router->get('/projects/fields/{wichData}', function (Request $request, Response $response){    
-    $wichData = $request->getAttribute('wichData');
-    return $response->withJson($this->project->getProjectFields( $this->user, $wichData ));
-})->setName('projects');
+    //Adiciona comentários Learn
+    $router->post('/comment/{id:[0-9]+}', 'LearnController@addResponse');
 
-//Deleta projeto
-$router->delete('/projects/delete/{id}', function (Request $request, Response $response, $args){    
-    $id = $request->getAttribute('id');
-    return $response->withJson($this->model->deleteProject( $this->user, $id ));
+    //Atualiza Learn
+    $router->put('/{id:[0-9]+}', 'LearnController@update');
 
-})->setName('Delete Project');
+    //Deleta Learn
+    $router->delete('/{id:[0-9]+}', 'LearnController@delete');
 
-//Adicionar campos de novos projetos
-$router->post('/projects/fields[/{wichData}]', function (Request $request, Response $response, $args) {
-
-    $directory = $this->get('upload_directory'); //Definindo diretório para upload
-    $upFiles = $request->getUploadedFiles(); //Pega arquivo submetido
-    $data = $request->getParsedBody(); //Pega dados submetidos via POST
-
-    //Se não tiver arquivo de upload, adiciona os dados padrão
-    if(count($upFiles) > 0): 
-        $data['uploadFile'] = $upFiles;
-    endif;
-    
-    //Executa função determinada pela váriavel e retorna json de resultado
-    return $response->withJson(
-        $this->project->addProjectFields( 
-            $this->user,
-            $request->getAttribute('wichData'), 
-            $data));
-    
 });

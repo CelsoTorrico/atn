@@ -10,7 +10,8 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->get('/', 'UserController@getAll');
 
     //Atualiza usuário
-    $router->put('/update', 'UserController@update');
+    $router->put('/update', 'UserController@update'); //Para atualizações sem arquivos
+    $router->post('/update', 'UserController@update'); //Para atualização de conteúdo de texto
 
     //Deleta usuário
     $router->delete('/delete', 'UserController@delete');

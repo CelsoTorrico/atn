@@ -5,21 +5,23 @@ namespace Core\Service;
 use Core\Profile\User;
 use Core\Profile\Login;
 use Core\Service\Comment;
+use Core\Utils\FileUpload;
 
 use Core\Database\PostModel;
-use Core\Utils\DataConverter;
-use Symfony\Component\HttpFoundation\Cookie;
+use Core\Database\PostmetaModel;
 
 class Timeline {
 
     protected $model;
     protected $currentUser;
-    const type = 'timeline';
+    protected $followers;
+    const TYPE = 'timeline';
 
     public function __construct($user){
         
         $this->model = new PostModel();
         $this->currentUser = $user;
+        $this->followers = $user->getFriends([], true);
 
         //Retorna classe usuário ou retorna erro
         if( is_null($this->currentUser) ){
@@ -33,8 +35,14 @@ class Timeline {
         //Query enviando Id de Timeline
         $result = $this->model->load(['ID' => $id]);
 
+        //Verifica se post existe
         if (!$result) {
             return ['error' => ['timeline' => 'Item não existe.']];
+        }
+
+        //Verifica se usuário tem permissão de enxergar post
+        if (!$this->isVisibility()) {
+            return ['error' => ['timeline' => 'Você não tem permissão para ver este post.']];
         }
 
         //Inicializa classe de comentários passando ID do POST
@@ -49,6 +57,11 @@ class Timeline {
             'quantity_comments' => $comment->getQuantity()            
         ]);
 
+        //Se item tiver foto anexada
+        if ($attach = $this->model->getInstance(['post_parent' => $id, 'post_type' => 'attachment'])) {
+            $timelineData['attachment'] = $attach->guid;
+        }
+
         //Retorna array data
         return $timelineData;
 
@@ -56,27 +69,13 @@ class Timeline {
 
     /* Retorna lista de timeline */
     function getAll(){     
-        
-        //Retorna objeto Friends()
-        $followers = $this->currentUser->getFriends();
 
-        //Retorna erro se não existe conexão
-        if (array_key_exists('error', $followers)) {
-            return $followers;
-        }
-
-        //Array para IDS
-        $followersIDS = [];
-
-        //Retorna feed de Author
-        foreach ($followers as $object) {
-            $followersIDS = array_merge($followersIDS, DataConverter::onlyObjectParameter($object));
-        }
+        $followers = $this->followers;
 
         //TODO: Retorna todos posts de feed baseado nas conexões
         $allTimelines = $this->model->getIterator([
-            'post_author'   =>  $followersIDS,
-            'post_type'     =>  self::type
+            'post_author'   =>  $followers,
+            'post_type'     =>  static::TYPE
         ]);
         
         //Retorna resposta
@@ -102,6 +101,11 @@ class Timeline {
                 $timelines[] = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity()            
                 ]); 
+
+                //Se item tiver foto anexada
+                if ($attach = $this->model->getInstance(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
+                    $timelines['attachment'] = $attach->guid;
+                }
                 
             }
 
@@ -134,9 +138,9 @@ class Timeline {
 
         //Filtrar inputs e validação de dados
         $filtered = [];
-        $filtered['post_content']   = filter_var($data, FILTER_SANITIZE_STRING);
+        $filtered['post_content']   = filter_var($data['post_content'], FILTER_SANITIZE_STRING);
         $filtered['post_author']    = $this->currentUser->ID;
-        $filtered['post_type']      = self::type;
+        $filtered['post_type']      = static::TYPE;
 
         //Verifica ID
         if( !is_null($postID) )
@@ -166,7 +170,48 @@ class Timeline {
         }
 
         //SE resultado for true, continua execução
-        if($result){
+        if ($result) {
+
+            //Pega id da última inserção
+            $lastInsert = $this->model->getPrimaryKey();
+
+            //Se enviado tipo de visibilidade de post
+            if(isset($data['post_visibility'])) {
+
+                $visibility = (int) $data['post_visibility'];
+
+                //Tipos de visibilidades do usuário
+                $levels = $this->getVisibilityLevels();
+
+                if (!array_search($visibility, $levels)) {
+                    return;
+                }
+
+                //Inicializando modelo
+                $postmeta = new PostmetaModel();
+                
+                $postmeta->fill([
+                    'post_id'       => $lastInsert['ID'],
+                    'meta_key'      => 'post_visibility',
+                    'meta_value'    => $visibility
+                ]);
+
+                //Atribui valor de visibilidade ao post
+                $postmeta->save();
+
+            }
+
+            //Verifica se existe objeto para upload
+            if (isset($data['post_image']) && is_a($data['post_image'], 'Symfony\Component\HttpFoundation\File\UploadedFile')) {
+
+                $file = $data['post_image'];
+
+                //Inicializa classe de upload
+                $upload = new FileUpload($this->currentUser->ID, $lastInsert['ID'], $file);
+
+                //Enviar arquivo e insere no banco
+                $upload->insertFile();           
+            }
 
             //Mensagem de sucesso no cadastro
             return ['success' => ['register' => 'Atualização realizada com sucesso!']];
@@ -252,6 +297,71 @@ class Timeline {
 
         //Retorna informação
         return $comment->add($filtered);
+
+    }
+
+    /** Verifica a visibilidade do conteúdo */
+    private function isVisibility():bool{
+        
+        //Retorna visibilidade definida
+        $visibility = new PostmetaModel();
+
+        //Se autor post é mesmo usuário que quer visualizar
+        if ($this->model->post_author == $this->currentUser->ID) {
+            return true;
+        }
+
+        //Se não estiver nenhuma definição o post é público por definição 
+        if (!$visibility->load(['post_id' => $this->model->ID, 'meta_key' => 'post_visibility'])
+        || $visibility->meta_value == 0) {
+            return true;            
+        }
+
+        //Se for 1: Post privado, apenas seguidores podem ver
+        if ($visibility->meta_value == 1) {
+            return in_array($this->model->post_author, $this->followers);
+        }
+
+        //Se for maior que 1: Visualizaçõa definida por pertencer a um club
+        //TODO: Verificar essa implementação
+        if ($visibility->meta_value > 1) {
+            
+            $check = false;
+            
+            foreach ($this->currentUser->clubs as $key => $value) {
+                if ($value['ID'] == $visibility->meta_value) {
+                    $check = true;
+                    break;
+                }
+            }
+
+            return $check;
+        }        
+
+    }
+
+    /** Retorna os levels de visibilidades de post */
+    public function getVisibilityFields(){
+        return $this->getVisibilityLevels();
+    }
+
+    /** Define e retorna os levels de visibilidades de post */
+    private function  getVisibilityLevels() {
+        
+        //Tipo de visualização
+        $levels = [
+            'Público' => 0,
+            'Privado' => 1
+        ];
+
+        //Se usuário for pertecente a um clube
+        if ($this->currentUser->type['ID'] == 2) {
+            foreach ($this->currentUser->clubs as $key => $value) {
+                $levels[$value['club_name']] = $value['ID'];
+            } 
+        }
+
+        return $levels;
 
     }
 

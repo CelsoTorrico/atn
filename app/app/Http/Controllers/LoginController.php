@@ -28,22 +28,23 @@ class LoginController extends Controller
         $this->facebookAPI  = config('facebook'); //API Socialize
     }
 
-    /** SOCIALITE: Facebook */
-    public function facebookProvider()
+    /** SOCIALITE: Facebook & GOOGLE */
+
+    /**
+     * @param string $driver = [facebook|google] 
+     * */
+    public function socialProvider($driver)
     {
-        return Socialite::driver('facebook')->stateless()->redirect();
+        return Socialite::driver($driver)->stateless()->redirect();
     }
 
-    /** SOCIALITE: Google */
-    public function googleProvider()
-    {
-        return Socialite::driver('google')->stateless()->redirect();
-    }
-
-    public function facebookCallback()
+    /**
+     * @param string $driver = [facebook|google] 
+     * */
+    public function socialCallback($driver)
     {
         //Retorna dados do usuário através da API
-        $user = Socialite::driver('facebook')->stateless()->user();
+        $user = Socialite::driver($driver)->stateless()->user();
 
         //Verifica se retorno é objeto
         if (!is_a($user, 'Laravel\Socialite\Two\User')) {
@@ -61,62 +62,18 @@ class LoginController extends Controller
         ];  
 
         //Executa função de verificação de login social
-        if (!$auth = $this->login->setSocialLogin($userData)) {
+        if (!$auth = $this->login->setLogin($userData)) {
             
             //Se usuário não existir na base de dados, redireciona ao registro 
             //juntamente com os dados
             return response()->json(array_only($userData, ['success' => ['social-register' => ['display_name', 'user_email']]]));
         }
         
-        //Realiza Login e retorna class User
-        $response = $this->login->setSocialLogin($userData);
-
-        //Atribui classe Cookie
-        $cookie = $this->login->setSession();
-        
         //Retorna resposta
-        return response($response)->withCookie($cookie);
+        return response($auth);
         
     }
-
-    public function googleCallback()
-    {
-        //Retorna dados do usuário através da API
-        $user = Socialite::driver('google')->stateless()->user();
-
-        //Verifica se retorno é objeto
-        if (!is_a($user, 'Laravel\Socialite\Two\User')) {
-            return ['error' => ['login' => 'Houve um erro em sua autenticação via Google. Tente mais tarde.']];
-        }
-        
-        //Adicionando dados importantes
-        $userData = [
-            'id'            => $user->id,
-            'display_name'  => $user->name,
-            'user_email'    => $user->email,
-            'token'         => $user->token,
-            'expires'       => $user->expiresIn,
-            'avatar'        => $user->avatar
-        ];  
-
-        //Executa função de verificação de login social
-        if (!$auth = $this->login->setSocialLogin($userData)) {
-            
-            //Se usuário não existir na base de dados, redireciona ao registro 
-            //juntamente com os dados
-            return response()->json(array_only($userData, ['success' => ['social-register' => ['display_name', 'user_email']]]));
-        }
-        
-        //Realiza Login e retorna class User
-        $response = $this->login->setSocialLogin($userData);
-
-        //Atribui classe Cookie
-        $cookie = $this->login->setSession();
-        
-        //Retorna resposta
-        return response($response)->withCookie($cookie);
-
-    }
+    /** FIM SOCIALITE */
 
     /** Login */
     function login(Request $request){
