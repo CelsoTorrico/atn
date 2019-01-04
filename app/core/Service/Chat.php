@@ -2,703 +2,310 @@
 
 namespace Core\Service;
 
-class Chat extends Connect{
+use Core\Profile\User;
+use Core\Service\Follow;
+use Core\Utils\FileUpload;
+use Core\Database\ChatRoomModel;
+use Core\Database\ChatMessagesModel;
 
-    /** V1 */
-    protected $user_id = '';
+class Chat {
 
-	public function __construct() {
-		$this->user_id = get_current_user_id();
-		add_action( 'wp_ajax_add_room_message', array( $this, 'add_room_message' ) );
-		add_action( 'wp_ajax_search_chat_user', array( $this, 'search_chat_user' ) );
-		add_action( 'wp_ajax_create_chat_room', array( $this, 'create_chat_room' ) );
-		add_action( 'wp_ajax_load_chat_messages', array( $this, 'load_chat_messages' ) );
-	}
+    protected $currentUser;
+    protected $room;
+    protected $messages;
+    protected $following;
 
-	public static function get_current_user_rooms( $user_id = 0 ) {
-		global $wpdb;
-		$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE suser = {$user_id} ORDER BY last_update DESC" );
-
-		return !empty( $rooms ) ? $rooms : false;
-	}
-
-	public static function get_current_user_rooms_bi( $user_id = 0, $limit = 5 ) {
-		global $wpdb;
-		$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE suser = {$user_id} OR fuser = {$user_id} ORDER BY last_update DESC LIMIT {$limit}" );
-
-		return !empty( $rooms ) ? $rooms : false;
-	}
-
-	public static function get_user_rooms( $user_id = 0, $to_id = 0 ) {
-		global $wpdb;
-		if ( $to_id == 0 ){
-			$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE fuser = {$user_id} OR suser = {$user_id} ORDER BY last_update DESC" );
-		} else {
-			$rooms = $wpdb->get_results( "SELECT * FROM at_rooms WHERE (fuser = {$user_id} OR fuser = {$to_id}) AND (suser = {$user_id} OR suser = {$to_id}) ORDER BY last_update DESC" );
-		}
-
-		return !empty( $rooms ) ? $rooms : false;
-	}
-
-	public static function get_room_messages( $room_id = 0, $limit = 50 ) {
-		global $wpdb;
-		$messages = $wpdb->get_results( "SELECT * FROM at_room_messages WHERE room_id = {$room_id} ORDER BY date DESC LIMIT {$limit}" );
-		return !empty( $messages ) ? array_reverse( $messages ) : false;
-	}
-
-	public function add_room_message() {
-		$content = filter_input( INPUT_POST, 'content' );
-		$room_id = filter_input( INPUT_POST, 'room' );
-		
-		$datetime = new DateTimeZone( 'America/Sao_Paulo' );
-		$date = new DateTime(null, $datetime);
-		$dateFormat = $date->format('Y-m-d H:i:s');
-
-		$author_id = get_current_user_id();
-		
-		if ( empty( $content ) || empty( $room_id ) ) return;
-
-		global $wpdb;
-
-		$message = $wpdb->query( "INSERT INTO at_room_messages (room_id, date, content, author_id) VALUES ({$room_id}, '{$dateFormat}', '{$content}', {$author_id})" );
-
-		exit(json_encode( $message ));
-
-	}
-
-	public function load_chat_messages() {
-		$room_id = filter_input( INPUT_POST, 'room_id' );
-
-		$response = (object) array(
-			'status' => false,
-			'room_id' => 0,
-			'messages' => []
-		);
-		
-		if ( empty( $room_id ) ) return;
-
-		$response->room_id = $room_id;
-
-		global $wpdb;
-
-		$messages = $this->get_room_messages( $room_id );
-		$response->status = true;
-		if ( $messages ) {
-			$response->messages = $messages;
-		}
-
-		exit(json_encode( $response ));
-	}
-
-	public function create_chat_room() {
-		$fuser = filter_input( INPUT_POST, 'fuser' );
-		$suser = filter_input( INPUT_POST, 'suser' );
-		$created_date = date( 'Y-m-d H:i:s' );
-
-		$response = (object) array(
-			'status' => false,
-			'room_id' => 0,
-			'messages' => []
-		);
-		
-		if ( empty( $fuser ) || empty( $suser ) ) exit(json_encode($response));
-
-		global $wpdb;
-
-		$already = $this->get_user_rooms( $fuser, $suser );
-
-		if ( empty( $already ) || !$already ) {
-			$room = $wpdb->query( "INSERT INTO at_rooms (fuser, suser, created_date, last_update) 
-			VALUES ('{$fuser}', '{$suser}', '{$created_date}', '{$created_date}')" );
-
-			if ( $room ) {
-				$room_id = $wpdb->get_row( "SELECT MAX(room_id) FROM at_rooms" );
-				$room_id = (array) $room_id;
-				if ( $room_id ) {
-					$response->status = true;
-					$response->room_id = intval( $room_id["MAX(room_id)"] );
-				}
-			}
-		} else {
-			$messages = $this->get_room_messages( $already[0]->room_id );
-			$response->room_id = $already[0]->room_id;
-			$response->status = true;
-			if ( $messages ) {
-				$response->messages = $messages;
-			}
-		}
-
-		exit(json_encode( $response ));
-	}
-
-	public function search_chat_user() {
-		$name = filter_input( INPUT_POST, 'user_name' );
-		
-		if ( empty( $name ) ) return;
-
-		global $wpdb;
-
-		$users = $wpdb->get_results( "SELECT distinct(user_id) FROM at_usermeta WHERE meta_key = 'first_name' and meta_value LIKE '%{$name}%'" );
-		
-		$users = !empty( $users ) ? $users : 0;
-
-		foreach($users as $key => $value) {
-			$user = $users[$key];
-			$first_name = get_user_meta( $user->user_id, 'first_name', true );
-			$last_name = get_user_meta( $user->user_id, 'last_name', true );
-			$users[$key]->name = $first_name . ' ' . $last_name;
-		}
-
-		exit(json_encode( $users ));
-
-	}
-    /** /V1 */
-
-    /*###### GET ###### */
-
-    /* Retorna lista de projetos */
-    function getListProjects( \Gafp\User $user ){
+    public function __construct($user){
         
-        $this->user_has_access($user);
+        //Instancinando classes
+        $this->currentUser  = $user;
+        $this->room         = new ChatRoomModel();
+        $this->messages     = new ChatMessagesModel();    
+        
+        //Define followers e retorna IDs
+        $follow = new Follow($user);
+        $this->following = $follow->getFollowing(true);
 
-        //Query
-        $result = $this->pdo->select('project', [
-            '[>]company'    => ['company' => 'id'],
-            '[>]model'      => ['model' => 'id']           
-        ],[
-            'project.id', 'project.date_created', 'project.responsibles[Object]',
-            'project.approvers[Object]', 'company.name(company)', 'model.name(model)'
-        ],[
-            'ORDER'  =>  ['project.date_created' => 'DESC']
-        ]);
-
-        foreach ($result as $key => $value) {
-           //Se houver responsáveis, adicionar ao array
-            if( isset($value['responsibles']) && count($value['responsibles']) > 0 ){   
-                $result[$key]['responsibles'] = $user->getUsers(['id' => $value['responsibles']]);
-            }
-
-            if( isset($value['approvers']) && count($value['approvers']) > 0 ){   
-                $result[$key]['approvers'] = $user->getUsers(['id' => $value['approvers']]);
-            }
+        //Retorna classe usuário ou retorna erro
+        if( is_null($this->currentUser) ){
+            return ['error' => ['chat' => 'Você não tem permissão para chat.']];
         }
-        
-        return $this->data_return($result);
-
     }
 
-    /* Retorna projeto por ID */
-    function getProject( \Gafp\User $user, $ID){
-        
-        $this->user_has_access($user);
-       
-        $result = $this->pdo->get('project', [
-            '[>]company'    => ['company' => 'id'],
-            '[>]model'      => ['model' => 'id']         
-        ],[
-            'company.id(company)','model.id(model)', 
-            'project.id','project.responsibles[Object]','project.approvers[Object]',
-            'project.date_plan','project.date_approver','project.date_max'
-        ],[
-            'project.id'  =>  $ID
-        ]);
+    /* Abre uma room nova ou existente */
+    function getRoom($suser_id) {
 
-        //Retorna todos os usuários do projeto
-        $result['users'] = $user->getUsers(['project' => $ID]);
-
-        return $this->data_return($result);
-    }
-
-    /* Retorna lista de projetos */
-    function getResponsibleProject( \Gafp\User $user, $projectID, $ID){
-        
-        $this->user_has_access($user); //permissão
-        //Query do projeto
-        $result = $this->pdo->get('project', ['responsibles[Object]'],['id' => $projectID]);
-        //Verifica se retornou array de resultado
-        if($result <= 0 || !$result['responsibles']){
-            return false;
-        }
-        
-        //Procura id do usuário no array
-        $found = array_search( strval($ID), $result['responsibles'], false);
-        //Verifica resultado é diferente de booleano
-        return (!is_bool($found) && $found !== false)? true : false;  //Se encontrou true
-        
-    }
-
-    /* Retorna valores para campos relativos a projetos */
-    function getProjectFields(\Gafp\User $user, $field = ""){
-
-        $this->user_has_access($user);
-
-        switch ($field) {
-            case 'company':
-                $result = $this->pdo->select('company',[
-                    'id', 'name'
-                ]);
-                break;
-            case 'area':
-                $result = $this->pdo->select('area',[
-                    'id', 'name'
-                ]);
-                break;
-            case 'user':
-                $result = $this->pdo->select('users',[
-                    'id', 'username'
-                ]);
-                break;
-            case 'model':
-                $result = $this->pdo->select('model',[
-                    'id', 'name'
-                ]);
-                break;
-            case 'approver':
-                $result = $this->pdo->select('approver',[
-                    'id', 'name'
-                ]);
-                break;            
-            default:
-                $result = [];
-                break;
+        //Se usuários não estão conectados
+        if(!$this->isConnected($suser_id)){
+            return ['error' => ['chat' => 'Vocês não estão conectados. Impossível enviar mensagem a esse usuário.']];
         }
 
-        return $this->data_return($result);
+        //Instancia classe de usuário
+        $user = new User();
 
-    }
-
-    /*####### ADD ######## */
-
-    /* Adiciona um novo projeto */
-    function addProject($data, \Gafp\User $user){
-        
-        $this->user_has_access($user);
-
-        //Percorre array de data e executa função para atribuir
-        foreach ($data as $key => $value) {
-            $add_data[$key] = $this->addProjectFields($user, $key, $value);
+        //Se ao retornar usuário vir erro de usuário inexistente
+        if (array_key_exists('error', $room_user = $user->get($suser_id))) {
+            return ['error' => ['chat' => 'Usuário inexistente. Impossível enviar mensagem.']];
         }
 
-        //Insere os dados obtidos anteriormente
-        $result = $this->pdo->insert('project', $add_data);
-
-        $idResult = $result->id();
+        //Array de room
+        $roomData = ['fuser' => $this->currentUser->ID, 'suser' => $suser_id];
         
-        //Se resultado for false encerra função
-        if(!$this->data_return_insert($idResult))
-            return false;
-        
-        //Retorna dados de usuário
-        $newItem = $this->getProject($user, $idResult);
-        return $newItem; 
+        //Verifica se existe uma room existente
+        $room = $this->room->load($roomData);
 
-    }
-
-    //Adicionando campos na base basedo nas colunas
-    function addProjectFields( \Gafp\User $user, $type_field, $data){
-        
-        $this->user_has_access($user); //Verifica permissão
-
-        $defaultColumns = array('company', 'model', 'users', 'final'); //tipos permitidos
-        
-        //Se for diferente do defido, retorna acesso não autorizado
-        if( !in_array($type_field, $defaultColumns) )
-                return 'Access Not Authorized.';
-        
-        //Definindo a função a ser executada
-        $func = 'addProject_' . $type_field . '_FieldData';
-
-        //retorna resultado
-        return $this->$func($user, $data);
-
-    }
-
-    //Função para inserir empresas, verifica se existe e insere ou retorna
-    private function addProject_company_FieldData($user = '', $data){
-        
-        $input = filter_var($data['company'], FILTER_SANITIZE_STRING);
-        
-        //Verifica se dado já existe e define função a exec
-        if( $this->pdo->has('company',['name' => $input]) )
-        {
-            //Insere um novo valor
-            $result = $this->pdo->get('company',
-            ['id'],['name' => $input]);
-            return $this->data_return_insert($result); //retorna (array) 'id' 
-        }
-        else{
-            //Insere um novo valor
-            $result = $this->pdo->insert('company',[
-                'name' => $input
-            ]);
-            return $this->data_return_insert($this->pdo->id()); //retorna (int) id
-        }        
-    }
-
-    //Função para selecionar modelos existentes
-    private function addProject_model_FieldData($user = '', $data){
-
-        $input = filter_var($data['model']['id'], FILTER_SANITIZE_STRING);
-        
-        //Verifica se dado já existe e define função a exec
-        if( $this->pdo->has('model',['id' => $input]) )
-        {
-            //Pega valor
-            $result = $this->pdo->get('model',
-            ['id'],['id' => $input]);
-            return $this->data_return_insert($result); //retorna (array) 'id 
+        //Verifica se room existe
+        if ($this->room->isFresh() && !$room) {
+            //Preenche modelo
+            $this->room->fill($roomData);            
+            //Cria uma nova room
+            $this->room->save();
         } 
-                 
-    }
 
-    //Função que adiciona usuários ao projeto
-    private function addProject_users_FieldData($user, $data){
+        //ID Room
+        $result = $this->room->getPrimaryKey();
 
-        //Define o id da empresa a inserir os usuários
-        //Se id não tiver defindo, adiciona um novo item a tabela
-        if(isset($data['company']) && $data['company'] != 0){
-            //Atribui ID de projeto
-            $company = $data['company'];
-        }
-        else{
-            //Atribui ID de projeto
-            $company = $this->addProject_company_FieldData($user, $data);
-        }
-
-        //Define o id do projeto a inserir os usuários
-        //Se id não tiver defindo, adiciona um novo item a tabela
-        if(isset($data['project']) && $data['project'] != 0){
-            //Atribui ID de projeto
-            $project = $data['project'];
-        }
-        else{
-            //Executa query adicionando dados prévios ao projeto
-            $this->pdo->insert('project',[
-                'company' => $company
-            ]);
-
-            //Retorna o ID do projeto criado
-            $project = $this->pdo->id();
-        }  
+        //Retorna todas as mensagens
+        $messages = $this->getMessages($result['room_id']);
         
-        $file = $data['uploadFile']['file']->file; //Arquivo enviado para variavel
-        $result = []; //Inicializa array
-
-        $filetype = \PHPExcel_IOFactory::identify($file);//Identifica arquivo
-        $objReader = \PHPExcel_IOFactory::createReader($filetype); //inicializa classe de leitura
-        $xl = $objReader->load($file); //carrega as informações do arquivo
-        $objWorksheet = $xl->getActiveSheet(); //carrega apenas as informação das tabelas
-        $lastColumn = $objWorksheet->getHighestColumn(); //aponta para primeira coluna do documento
-        
-        //Definindo as colunas válidas
-        $validColumns = ['username', 'email', 'password', 'area', 'leader', 'type_user'];
-        //Pega a primeira linha para usar 
-        $columnNames = $objWorksheet->rangeToArray('A1:'. $lastColumn.'1'); 
-        //Verifica se as colunas do documento é permitida
-        foreach ($columnNames[0] as $key => $value) {
-            if(! in_array($value, $validColumns)){
-                $result['error'][] = "Coluna de dados '" . $value . "'não permitida para cadastro";
-            }
-        }
-        
-        //Se houver erros, encerrar execução
-        if( !empty($result['error']) )
-            return $result;
-
-        $result['success'] = false;
-        //Intera sobre o número de linhas no arquivo de upload
-        foreach($objWorksheet->getRowIterator() as $rowIndex => $row) {
-            //Ignora primeira linha
-            if($rowIndex == 1){
-                continue;
-            }
-            //Convert the cell data from this row to an array of values
-            $arrayRow = $objWorksheet->rangeToArray('A'.$rowIndex.':'.$lastColumn.$rowIndex);
-            //Combinamos os dois arrays para definir keys e values em um só
-            $currentData = array_combine($columnNames[0], $arrayRow[0]);
-            //Executa função de adicionar usuário
-            $response = $user->insertMultipleUsers($currentData, $project, $company);
-            //Verifica se houve algum erro e interrompe upload
-            if(empty($response) || is_null($response)){
-                $result['error'][]= "Houve algum problema na linha'" . $rowIndex . "', não foi possível inserir ou atualizar os usuários.";
-                break;
-            }
-            else{
-                $result['success'] = true;
-            }            
-        }
-
-        //Se houve sucesso na inserção
-        if($result['success']){
-
-            //ID do projeto
-            $projectID = $project;
-            //ID da empresa
-            $companyID = $company;
-
-            //Retorna lista de usuários do projeto
-            $userList = $user->getUsers(
-                ['project' => $projectID, 
-                'type_user[!~]' => 'superuser']);            
-
-            //Retorna lista de usuários junto com ID do projeto
-            return array('users' => $userList, 'project' => $projectID, 'company' => $companyID); 
-        }
-        else{ //Retorna erros adquiridos no looping
-            $result['error'][] = "Houve algum problema na linha '" . $rowIndex . "', não foi possível inserir ou atualizar os usuários.";
-            return $result;
-        }
-        
-    }
-
-    //Última etapa na inserção de um novo projeto
-    private function addProject_final_FieldData($user = '', $data){
-        
-        $result = $this->updateProject($user, null, $data);
-        
-        //Retorna resultado
-        if( $result && !is_null($result)){
-            return array(
-            'type' => 'success', 
-            'msg' => 'Projeto criado com sucesso!');
-        }
-        else{
-            return array(
-            'type' => 'danger', 
-            'msg' => 'Houve algum problema na criação do projeto, tente novamente.');
-        }
-    }
-
-    //Atualizar um projeto
-    function updateProject(\Gafp\User $user, $ID, $data){
-        
-        $columnToSerialize = ['responsibles', 'approvers']; //colunas a serializar
-        $project_data = []; //Array
-
-        //Prepara as informações para inserção no banco
-        foreach ($data as $key => $value) {
-            //aplicando filtro de string
-            if( in_array($key, $columnToSerialize) ):                
-                $project_data[$key] = serialize(filter_var_array($value, FILTER_SANITIZE_STRING));
-            elseif( $key == ('project' || 'model') ):
-                $project_data[$key] = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
-            else:
-                $project_data[$key] = ($key == 'password')? password_hash(filter_var($value, FILTER_SANITIZE_STRING), PASSWORD_DEFAULT) : filter_var($value, FILTER_SANITIZE_STRING);
-            endif;            
-        }
-
-        //Se $ID não foi definido ao invocar método, adiciona id vindo de $data
-        if( is_null($ID) ){
-            $ID = isset($project_data['project'])? $project_data['project'] : false;
-        }
-
-        //Se $ID não for vdd,termina método
-        if(!$ID){
-            return false;
-            die();
-        }
-        
-        //Query de inserção
-        $result = $this->pdo->update('project',
-        [   
-            'model' => $project_data['model'],
-            'responsibles' => $project_data['responsibles'],
-            'approvers' => $project_data['approvers'],
-            'date_plan' => $this->data_converter_to_insert($data['date_plan']),
-            'date_approver' => $this->data_converter_to_insert($data['date_approver']),
-            'date_max' => $this->data_converter_to_insert($data['date_max'])
-        ],
-        ['id' => $ID]);
-
-        //Retorna resultado
-        if(isset($result) && !is_null($result)){
-            return array(
-            'type' => 'success', 
-            'msg' => (isset($data['new']) && $data['new'] == true)? 'Projeto criado com sucesso!' : 'Projeto atualizado com sucesso!'
-            );
-        }
-        else{
-            return array(
-            'type' => 'danger', 
-            'msg' => (isset($data['new']) && $data['new'] == true)? 'Houve um problema na criação do projeto, tente novamente.' : 'Houve algum problema na atualização do projeto, tente novamente.'
-            );
-        }
-    }
-
-    /* Deletar um modelo */
-    function deleteProject( \Gafp\User $user,  $ID){
-        
-        $this->user_has_access($user); //Verifica permissão
-
-        //Contruindo Query
-        $result = $this->pdo->delete('project',['id' => $ID ]);
-        
-        //Retorna resultado
-        if(is_object($result) && $result){
-            return array('type' => 'success', 'msg' => 'Projeto deletado.');
-        }
-        else{
-            return array('type' => 'danger', 'msg' => 'Não foi possível deletar o projeto. Tente novamente.');
-        }
-    }
-
-
-    //////// Definições do projeto
-
-    //Retorna regra do projeto
-    function getRuleProject(\Gafp\User $user, $ID ){
-        
-        $this->user_has_access($user); //Verifica permissão
-
-        //Verifica se existe registro do projeto no banco
-        if( $this->pdo->has('rule_define',['project' => $ID ]) ){
-            //Pega regras cadastradas
-            $result = $this->pdo->get('rule_define',['rules[Object]'],['project' => $ID]); 
-        }
-        else{
-            $result = false;
-        }    
-        
-        //Retorna resultado
-        if(is_array($result) && $result){
-            return $result;
-        }
+        //Retorna mensagens
+        return $messages;
 
     }
 
-    //Adiciona ou atualiza regras do projeto
-    function updateRuleProject(\Gafp\User $user, $ID, $data ){
+    /** Retorna todas as mensagens baseado em IDS */
+    private function getMessages(int $room_id, int $limit = 12) {
 
-        $this->user_has_access($user); //Verifica permissão
-
-        foreach ($data as $key => $value) {
-            $value['types'] = filter_var_array($value['types'], FILTER_SANITIZE_STRING);
-            $value['qtd'] = filter_var($value['qtd'], FILTER_SANITIZE_NUMBER_INT);
+        if (!$room = $this->isAccessRoom($room_id)) {
+            //Retorna erro
+            return ['error' => ['room', 'Você não pode acessar mensagens nesta conversa.']];
         }
 
-        //Verifica se existe registro do projeto no banco
-        if( $this->pdo->has('rule_define',['project' => $ID ]) ){
-            //Atualizando a linha
-            $result = $this->pdo->update('rule_define',[
-                'rules' => serialize($data)
-            ],['project' => $ID]);
+        //Retorna mensagens da room ordenando de data menor para mais recente
+        //TODO: Fazer paginação de mensagens
+        $messages = $this->messages->getIterator([
+            'room_id' => $room_id, 
+            'LIMIT' => $limit,
+            'ORDER' => ['date' => 'DESC']
+        ]);
+
+        //Retorna se não existir nenhuma mensagem
+        if ($messages->count() <= 0) {
+            return ['error' => ['chat' => 'Nenhuma mensagem nesta conversa.']];
         }
-        else{
-            //Criando uma nova linha
-            $result = $this->pdo->insert('rule_define',[
-                'project' => $ID,
-                'rules' => serialize($data)
-            ]);
-        }  
+
+        $allmessages = [];
         
-        //Retorna resultado
-        if(is_object($result) && $result){
-            return array('type' => 'success', 'msg' => 'Regras atualizadas.');
-        }
-        else{
-            return array('type' => 'danger', 'msg' => 'Não foi possível atualizar as regras. Tente novamente.');
+        //Mensagens do chat
+        foreach ($messages as $item) {
+
+            $allmessages[] = [
+                'message_id' => $item->message_id,
+                'date'       => $item->date,
+                'content'    => ($item->read == 1)? '(Mensagem Apagada)' : $item->content,
+                'author_id'  => $item->author_id
+            ];
         }
 
-    }   
+        //Retorna mensagens
+        return $allmessages;
 
-    //Retorna msg de email cadastrado
-    function getMail(\Gafp\User $user, $id, $type ){        
-        $this->user_has_access($user); //Verifica permissão
-        //Insere dados no banco
-        $result = $this->pdo->get('emails',['message'],['type'=> $type, 'project' => $id] );
-        //Retorna resultado
-        if(is_array($result) && $result){
-            return $result;
+    }  
+    
+    function getLastMessage(int $room_id) {
+        
+        if (!$room = $this->isAccessRoom($room_id)) {
+            //Retorna erro
+            return ['error' => ['room', 'Você não pode acessar mensagens nesta conversa.']];
         }
+
+        //Retorna todas as mensagens
+        $messages = $this->getMessages($room_id, 1);
+        
+        //Retorna mensagens
+        return $messages;
+
     }
 
-    //Adiciona ou atualiza regras do projeto
-    function sendMail(\Gafp\User $user, \PHPMailer\PHPMailer\PHPMailer $mail,  $data ){
+    /* Retorna lista de timeline */
+    function getAllRooms() {     
+
+        //Retorna lista de rooms
+        $allRooms = $this->room->getIterator([
+            'fuser'  =>  $this->currentUser->ID
+        ]);
         
-        $this->user_has_access($user); //Verifica permissão
+        //Retorna resposta
+        if( $allRooms->count() > 0){
 
-        $project = filter_var($data['project'], FILTER_SANITIZE_NUMBER_INT); 
-        $msg    = filter_var($data['msg'], FILTER_SANITIZE_STRING);
-        $type   = filter_var($data['type'], FILTER_SANITIZE_STRING);
+            //Array para retornar dados
+            $rooms = [];
+            
+            foreach ($allRooms as $item) {
 
-        //Se dados não forem em formato de array
-        if( !is_array($data) && !isset($data['email'] )){
-            return;
-        }
+                //Verifica se é valido
+                if ( !$allRooms->valid() ) {
+                    continue;
+                }
 
-        //Adiciona os e-mails dos usuários selecionados
-        if( isset($data['users']) && count($data['users']) > 0 ){
-            foreach ($data['users'] as $key => $value) {
-                //Adiciona o usuário ao recipiente de email
-                $mail->addAddress($value['email'], $value['username']);
-            }
-        }
-
-        //Adiciona e-mail de usuário selecionado alguma área
-        if( isset($data['areas']) && count($data['areas']) > 0 ){
-            //Percorre array e traz usuários das áreas selecionadas
-            foreach ($data['areas'] as $key => $value) {
-                $userList = $user->getUsers([
-                    'area[~]' => $value
-                ]);
-            }
-            //Se não houver usuários
-            if(count($userList) <= 0 ){
-                return;
-            }
-            //Adiciona os usuários ao PHPMailer
-            foreach ($userList as $key => $value) {
-                //Adiciona o usuário ao recipiente de email
-                $mail->addAddress($value['email'], $value['username']);
-            }
-        }
-
-        //Adiciona a mensagem no banco do projeto para envio futuros
-        if( isset($data['msg']) && !empty($msg) ){
-            if( $this->pdo->has('emails',['project' => $project, 'type' => $type ]) ){
-                //Atualiza os dados no banco
-                $result = $this->pdo->update('emails',
-                [   'type' => $type,
-                    'message' => $msg
-                ],
-                [   'project' => $project,
-                    'type'  => $type    ]);
-            }
-            else{
-                //Insere dados no banco
-                $result = $this->pdo->insert('emails',
-                [  'project' => $project,
-                   'type' => $type,
-                   'message' => $msg
-                ]);
-            }            
-        }
-
-        //Definições PHPMailer
-        $mail->isSMTP();                                      
-        $mail->Host = _HOST_;  
-        $mail->SMTPAuth = true;                               
-        $mail->Username = _USER_EMAIL_;                 
-        $mail->Password = _USER_PASS_;                           
-        $mail->SMTPSecure = _SMTP_SECURE_;                            
-        $mail->Port = _PORT_;
-        $mail->setFrom('from@example.com', 'Mailer');
-        $mail->setLanguage('pt_br');
-
-        //Content
-        $mail->isHTML(true);  // Formato do E-mail
-        $mail->Subject = ($type == 'charge')? 'Cobrança' : 'Boas-Vindas'; //Assunto
-        $mail->Body    = $msg; //Mensagem html
-        $mail->AltBody = $msg; //Mensagem plain-text
+                //Retorna dados da room
+                $messages = $this->messages->getIterator(['room_id' => $item->room_id ]);
                 
-        //Retorna resultado
-        if($mail->send()){
-            return array('type' => 'success', 'msg' => 'E-mail enviado com sucesso.');
+                //Instancia classe de usuário
+                $user = new User();
+
+                //Se ao retornar usuário vir erro de usuário inexistente
+                if (array_key_exists('error', $room_user = $user->get($item->suser))) {
+                    continue;
+                }
+
+                //Combina array timeline e comentários
+                $rooms[] =  [
+                    'room_id'           => $item->room_id,
+                    'user'              => $user->get($item->suser),
+                    'quantity_messages' => $messages->count(),
+                    'last_update'       => $item->last_update         
+                ];
+                
+            }
+
+            //Retorna array de timelines
+            return $rooms;
+        } 
+        else{
+            //Retorna erro
+            return ['error' => ['rooms', 'Nenhuma conversa existente.']];
+        }   
+        
+    }  
+
+    /* Adiciona um item de timeline */
+    function add( $data ) {
+        return $this->register($data);
+    }
+
+    /* Deletar um plano */
+    function delete( $ID ) {
+        return $this->deregister($ID);        
+    }
+
+    private function register(array $data) {
+
+        if (!$room = $this->isAccessRoom($data['chat_room'])) {
+            //Retorna erro
+            return ['error' => ['room', 'Você não pode enviar mensagens nesta conversa.']];
+        }
+
+        //Filtrar inputs e validação de dados
+        $content = [
+            'room_id'       => filter_var($data['chat_room'], FILTER_SANITIZE_NUMBER_INT),
+            'content'       => filter_var($data['chat_content'], FILTER_SANITIZE_STRING),
+            'author_id'     => $this->currentUser->ID
+        ];
+        
+        //Preenche colunas com valores
+        $this->messages->fill($content); 
+
+        //Salva novo registro no banco
+        $result = $this->messages->save();
+
+        //SE resultado for true, continua execução
+        if ($result) {
+
+            //Pega id da última inserção
+            $lastInsert = $this->messages->getPrimaryKey();
+
+            //Verificar quem esta recebendo mensagem
+            $toUser = ('fuser' == array_search($this->currentUser->ID, $room))? $room['suser'] : $room['fuser'];
+
+            //Registra notificação para seguido
+            $notify = new Notify($this->currentUser);
+            $notify->add(7, $toUser, $this->currentUser->ID);
+
+            //Verifica se existe objeto para upload
+            if (isset($data['chat_image']) && is_a($data['chat_image'], 'Symfony\Component\HttpFoundation\File\UploadedFile')) {
+
+                $file = $data['chat_image'];
+
+                //Inicializa classe de upload
+                $upload = new FileUpload($this->currentUser->ID, $lastInsert['ID'], $file);
+
+                //Enviar arquivo e insere no banco
+                $upload->insertFile();           
+            }
+
+            //Mensagem de sucesso no cadastro
+            return ['success' => ['chat' => 'Mensagem Enviada!']];
+
         }
         else{
-            return array('type' => 'danger', 'msg' => 'Não foi possível enviar o e-mail. Tente novamente.');
+            //Mensagem de erro no cadastro
+            return ['error' => ['chat' => 'Houve erro no envio! Tente novamente mais tarde.']];
+        }
+    }
+
+    private function deregister($ID){
+
+        //Preenche colunas com valores
+        if(!$this->messages->load(['message_id' => $ID, 'author_id' => $this->currentUser->ID])){
+            return ['error' => ['chat' => 'O registro da mensagem não existe.']];
+        }; 
+
+        //Salva os dados no banco
+        $result = $this->messages->delete();
+
+        //SE resultado for true, continua execução
+        if($result){
+
+            //Mensagem de sucesso no cadastro
+            return ['success' => ['chat' => 'Mensagem deletada!']];
+
+        }
+        else{
+            //Mensagem de erro no cadastro
+            return ['error' => ['chat' => 'Houve erro ao deletar mensagem! Tente novamente mais tarde.']];
+        }
+    }
+
+
+    /**
+     * Verifica em lista de conexão se usuário existe
+     * 
+     * @param int $user Id de usuário a verificar 
+     * @since 2.0
+     * @return boolean
+     */
+    function isConnected(int $suser):bool{
+        
+        //Verifica se usuários estão conectados
+        if (in_array($suser, $this->following)) {
+            return true;
+        } else {
+            return false;
         }
 
     }
+
+    /** */
+    function isAccessRoom($room_id) {
+        
+        //Verificar se usuários podem enviar mensagem na conversa
+        $hasAccess = $this->room->getInstance([
+            'room_id' => $room_id,
+            'OR' => [
+                'fuser' => $this->currentUser->ID,
+                'suser' => $this->currentUser->ID,
+            ]
+        ]);
+
+        if (!$room = $hasAccess->getData()) {
+            //Retorna erro
+            return false;
+        } else {
+            //Retorna dados da room
+            return $room;
+        }
+    }
+    
 
 }

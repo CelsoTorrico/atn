@@ -7,6 +7,7 @@ use Core\Interfaces\UserInterface as UserInterface;
 use Core\Utils\PasswordHash as PasswordHash;
 use Core\Utils\AppValidation as AppValidation;
 use Core\Utils\FileUpload;
+use Core\Utils\SendEmail;
 use Core\Database\UserModel as UserModel;
 use Core\Database\UsermetaModel;
 use Core\Database\UsertypeModel;
@@ -32,7 +33,7 @@ class User extends GenericUser{
     public $sport; //sports praticante
     public $clubs; //sports praticante
     public $metadata; //metadados genericos
-    private $_user_email; //email
+    private $user_email; //email
     
     //Contrução da classe
     public function __construct($args = array()) {
@@ -324,6 +325,127 @@ class User extends GenericUser{
         
         return $friendsList->get();    
     } 
+
+    /** Realiza busca de usuários baseado em parametros */
+    public function searchUsers(array $search, int $page = 0) {
+
+        //Busca em user
+        $personal   = ['display_name'];
+
+        //Campos de busca em usermeta
+        $isMeta     = ['type','city','state','neighbornhood','gender','formacao'];
+
+        //Campos usermeta em array
+        $isMetaArray = ['clubs','sport'];
+
+        //Instancia modelo usermeta
+        $usermeta = new UsermetaModel();
+
+        //Variavel para montar query
+        $where  = [];
+
+        //Intera sobre array executando função
+        foreach($search as $k => $v) {
+
+            //para próximo se vazio
+            if (empty($v)) {
+                continue;
+            }
+
+            //Busca por dados pessoais
+            if (in_array($k, $personal)) {                
+                //Adiciona a query
+                $content = ['users.'.$k.'[~]' => '%'.$v.'%'];
+            }
+
+            //Busca em usermetas
+            if (in_array($k, $isMeta)) {
+                
+                //Adiciona a query
+                $content = [
+                    'usermeta.meta_key'              => $k,
+                    'usermeta.meta_value[~]'         => '%'.$v.'%'
+                ];
+            }
+
+            //Busca em usermetas como array
+            if (in_array($k, $isMetaArray)) {
+
+                if ($k == 'clubs') {
+                    $regex = 's\:[0-9]+\:\"'.$v.'["\[]';
+                    $k = 'clubes';
+                } else {
+                    $regex = 'i\:'.$v.'\;';
+                }
+                
+                //Adiciona a query
+                $content = [
+                    'usermeta.meta_key'              => $k,
+                    'usermeta.meta_value[REGEXP]'    => $regex                 
+                ]; 
+            }
+
+            //Define os conteúdos de forma estruturada em query
+            if (!count($where)>0) {
+                $where['AND'] = $content;
+            } else {
+                $where['AND']['AND #'.$k] = $content;
+            }
+            
+            continue;
+
+        }
+
+        //Acesso direto a classe Medoo
+        $db = $usermeta->getDatabase();
+
+        //Qtd de itens por página
+        $perPage = 24;
+
+        //A partir de qual item contar
+        $initPageCount = ($page <= 1)? $page = 0 : ($page * $perPage) - $perPage;
+
+        //Paginação de membros
+        $limit = [$initPageCount, $perPage];
+
+        //Define o limite de posts
+        $where = array_merge($where,  ['LIMIT' => $limit]);
+
+        //Executa query
+        $result = $db->select('users',[
+            '[>]usermeta' => ['ID' => 'user_id']
+        ],[
+            'users.ID'
+        ], $where);
+
+        //Inicializa array
+        $users = [];
+
+        //Se foi encontrado algum usuário
+        if (count($result) > 0) {
+
+            $repeteadID = [];
+
+            //Percorre array de dados
+            foreach ($result as $key => $value) {
+                
+                if (in_array($value['ID'], $repeteadID)){
+                    continue;
+                }
+
+                $user = new self();
+                //TODO: Definir uma nova função que retorne apenas dados baseados para listagem
+                $users[] = $user->get($value['ID']);
+                $repeteadID[] = $value['ID'];
+            }
+
+        } else {
+            $users = ['error' => ['search' => 'Nenhum usuário encontrado.']];
+        }    
+        
+        return $users;
+
+    }
 
     /* Addicionar um único usuário */
     public function add($data){
@@ -618,6 +740,24 @@ class User extends GenericUser{
         return $this->loadSocialToken();
     }
 
+    /** Enviar e-mail para usuário de contexto */
+    public function sendEmail(int $user_id, array $data) {
+
+        //Classe de usuário
+        $user = new self();
+        $user = $user->get($user_id);
+
+        //Instanciando classe de envio de email e parametros
+        $email = new SendEmail();
+        $email->setFromName($this->display_name);
+        $email->setToEmail(['email' => $user->user_email, 'name' => $user->display_name]);
+        $email->setSubject($this->display_name . ' enviou uma mensagem para você | AtletasNow');
+        $email->setContent($data['message_content']);
+
+        //Executando disparo
+        return $email->send();
+    } 
+
     /** 
      *  Retorna metadados do usuário
      *  
@@ -901,7 +1041,8 @@ class User extends GenericUser{
             'display_name'  => 'display_name',
             'type'          => 'type',
             'sport'         => 'sport',
-            'clubs'         => 'clubs'
+            'clubs'         => 'clubs',
+            'user_email'    => 'user_email'
         );
 
         foreach ($valid as $key => $value) {

@@ -4,6 +4,7 @@
 # mPDF: https://mpdf.github.io/reference/mpdf-functions/output.html
 # (Wordpress) PasswordHash: https://www.openwall.com/phpass/ 
 # PHP Image Cache: composer require nielse63/phpimagecache
+# Chat: Duas bibliotecas https://github.com/musonza e https://github.com/gerardojbaez/messenger
 
 ##Observações
 Diferente do Slim, as classes Requests devem invocadas diretamente nas classes da API, ao invés de ser no construtor de roteamento.
@@ -26,12 +27,12 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 
 ### Semana 4
 ✔ @low Estatisticas - Atleta | Status 100% @done(18-12-29 17:33)
-☐ @low Edição de perfil - Todos | Status => 95%
+✔ @low Edição de perfil - Todos | Status => 100% @done(18-12-31 18:14)
 ☐ @high Privacidade de perfil / conteudo (segurança da plataforma) | Status => 80%
 
 ### Semana 5
 ✔ Certificação de usuario | Status 100% @done(18-12-19 19:39)
-☐ Networking entre atletas/instituições/profissionais | Status 80%
+☐ Networking entre atletas/instituições/profissionais | Status 90%
 ✔ Sugestões de amigos - Perfil | Status 100% @done(18-12-29 03:37)
 
 ### Semana 6
@@ -40,13 +41,13 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ☐ Permissões de usuario - Instituição/usuario master | Status 90%
 
 ### Semana 7
-☐ @low Aprenda - Area de videos - Padrão  | Status 65% (Classe extendida, verificar upload de links de vídeos)
-☐ @low Aprenda - Area de videos - Premium | Status 65%
+☐ @low Aprenda - Area de videos - Padrão  | Status 85%
+☐ @low Aprenda - Area de videos - Premium | Status 85%
 
 ### Semana 8
-☐ Chat
-☐ Mensagens
-☐ Busca Geral da Plataforma
+☐ Chat | status 85% (Verificar sincronismo mensagens)
+☐ Mensagens | Status 90%
+☐ Busca Geral da Plataforma | Status 95%
 
 ### Pequenos Acertos
 ☐ Semana 1 - Login/Cadastro -> Mensagem de cadastro, no momento está de login

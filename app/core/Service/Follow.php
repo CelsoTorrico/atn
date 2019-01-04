@@ -13,10 +13,10 @@ class Follow {
     protected $model;
     protected $currentUser;
 
-    public function __construct(Request $request){
+    public function __construct($user){
         
         $this->model = new FollowersModel();
-        $this->currentUser = $request->user();
+        $this->currentUser = $user;
 
         //Retorna classe usuário ou retorna erro
         if( is_null($this->currentUser) ){
@@ -26,7 +26,7 @@ class Follow {
     }
 
     /** Retornar todos os seguidores */
-    public function getFollowers(){
+    public function getFollowers($only_ids = false){
 
         //Filtrar inputs e validação de dados
         $followData = [
@@ -37,7 +37,6 @@ class Follow {
         //Insere dados no modelo
         $followers = $this->model->getIterator($followData);
         $listUsers = [];
-        $user = new User();
 
         //Iterar sobre os seguidores
         foreach ($followers as $item) {
@@ -48,9 +47,42 @@ class Follow {
             
             //Retorna dados
             $item = $item->getData();
-
+            //Instanciando classe de usuário
+            $user = new User();
             //Atribui dados de usuário ao array
-            $listUsers[] = $user->get($item['to_id']);
+            $listUsers[] = ($only_ids)? $item['to_id'] : $user->get($item['to_id']);
+        }       
+
+        return $listUsers;
+
+    }
+
+    /** Retornar quem sigo */
+    public function getFollowing($only_ids = false){
+
+        //Filtrar inputs e validação de dados
+        $followData = [
+            'to_id'     => $this->currentUser->ID,
+            'has_block' => 0
+        ];
+
+        //Insere dados no modelo
+        $followers = $this->model->getIterator($followData);
+        $listUsers = [];
+
+        //Iterar sobre os seguidores
+        foreach ($followers as $item) {
+            
+            if (!$followers->valid()) {
+                continue;
+            }
+            
+            //Retorna dados
+            $item = $item->getData();
+            //Instanciando classe de usuário
+            $user = new User();
+            //Atribui dados de usuário ao array
+            $listUsers[] = ($only_ids)? $item['from_id'] : $user->get($item['from_id']);
         }       
 
         return $listUsers;
@@ -67,8 +99,8 @@ class Follow {
 
         //Filtrar inputs e validação de dados
         $followData = [
-            'to_id'   => $user_id,
-            'from_id'     => $this->currentUser->ID
+            'from_id'   => $user_id,
+            'to_id'     => $this->currentUser->ID
         ];
 
         //Insere dados no modelo

@@ -3,7 +3,6 @@
 namespace Core\Service;
 
 use Core\Profile\User;
-use Core\Profile\Login;
 use Core\Service\Comment;
 use Core\Utils\FileUpload;
 
@@ -14,14 +13,17 @@ class Timeline {
 
     protected $model;
     protected $currentUser;
-    protected $followers;
+    protected $following;
     const TYPE = 'timeline';
 
     public function __construct($user){
         
         $this->model = new PostModel();
         $this->currentUser = $user;
-        $this->followers = $user->getFriends([], true);
+
+        //Define following e retorna IDs
+        $follow = new Follow($user);
+        $this->following = $follow->getFollowing(true);
 
         //Retorna classe usuário ou retorna erro
         if( is_null($this->currentUser) ){
@@ -70,11 +72,11 @@ class Timeline {
     /* Retorna lista de timeline */
     function getAll(){     
 
-        $followers = $this->followers;
+        $following = $this->following;
 
         //TODO: Retorna todos posts de feed baseado nas conexões
         $allTimelines = $this->model->getIterator([
-            'post_author'   =>  $followers,
+            'post_author'   =>  $following,
             'post_type'     =>  static::TYPE
         ]);
         
@@ -84,7 +86,7 @@ class Timeline {
             //Array para retornar dados
             $timelines = [];
             
-            foreach ($allTimelines as $item) {
+            foreach ($allTimelines as $key => $item) {
 
                 //Verifica se é valido
                 if ( !$allTimelines->valid() ) {
@@ -98,13 +100,13 @@ class Timeline {
                 $comment = new Comment($item->ID);
 
                 //Combina array timeline e comentários
-                $timelines[] = array_merge($timelineData, [
+                $timelines[$key] = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity()            
                 ]); 
 
                 //Se item tiver foto anexada
                 if ($attach = $this->model->getInstance(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
-                    $timelines['attachment'] = $attach->guid;
+                    $timelines[$key]['attachment'] = $attach->guid;
                 }
                 
             }
@@ -137,10 +139,11 @@ class Timeline {
     private function register($data, $postID = null){
 
         //Filtrar inputs e validação de dados
-        $filtered = [];
-        $filtered['post_content']   = filter_var($data['post_content'], FILTER_SANITIZE_STRING);
-        $filtered['post_author']    = $this->currentUser->ID;
-        $filtered['post_type']      = static::TYPE;
+        $filtered = [
+            'post_content'  => filter_var($data['post_content'], FILTER_SANITIZE_STRING),
+            'post_author'   => $this->currentUser->ID,
+            'post_type'     => static::TYPE
+        ];        
 
         //Verifica ID
         if( !is_null($postID) )
@@ -319,7 +322,7 @@ class Timeline {
 
         //Se for 1: Post privado, apenas seguidores podem ver
         if ($visibility->meta_value == 1) {
-            return in_array($this->model->post_author, $this->followers);
+            return in_array($this->model->post_author, $this->following);
         }
 
         //Se for maior que 1: Visualizaçõa definida por pertencer a um club

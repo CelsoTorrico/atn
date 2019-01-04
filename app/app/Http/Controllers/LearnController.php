@@ -53,23 +53,25 @@ class LearnController extends Controller
         }
 
         //Atribui conteúdo a variável
+        //O ideal é ser um conteúdo estruturado em html
         $data = ['post_content' => $request->input('post_content')];
 
         //Se foi definido a visibilidade do post
         if ($request->has('post_visibility') && $request->filled('post_visibility')) {
-
             //Atribui a variavel
             $data['post_visibility'] = (int) $request->input('post_visibility');
         }
 
         //Atribui imagem se tiver upload
         if ($request->hasFile('post_image') && $request->file('post_image')->isValid()) {
-
             //Atribui fn a var
-            $file = $request->file('post_image');
+            $data['post_image'] = $request->file('post_image');
+        }
 
-            //Atribui caminho a variavel
-            $data['post_image'] = $file;
+        //Atribui URL de Video ao Post
+        if ($request->has('post_video_url') && $request->filled('post_video_url')) {
+            //Atribui fn a var
+            $data['post_video_url'] = (string) $request->input('post_video_url');
         }
 
         $response = $this->learn->add($data);

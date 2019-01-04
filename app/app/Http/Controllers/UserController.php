@@ -24,7 +24,7 @@ class UserController extends Controller
     }
 
     /**  */
-    function get(Request $request, $id) {
+    function get($id) {
 
         $id = (int) $id;
         
@@ -36,6 +36,7 @@ class UserController extends Controller
             $this->user->increaseView($id);
         }  
         
+        //retorna resultado
         return response()->json($result);
     }
 
@@ -53,24 +54,25 @@ class UserController extends Controller
         }
     }
 
-    function getAll(Request $request) {
-        
+    function getAll() {
+        //Executa metodo que traz lista de usuarios
         $result = $this->user->getFriends();
-        
+        //retorna resultado
         return response()->json($result);
     }
 
-    function getSelf(Request $request) {
+    function getSelf() {
+        //retorna resultado
         return response()->json($this->user);
     }
 
     function getStats() {
-        
+        //retorna resultado
         return response()->json($this->user->getStats());
     }
 
-    function getSuggestions() {
-        
+    function getSuggestions() {        
+        //retorna resultado
         return response()->json($this->user->getFriendsSuggestions());
     }
 
@@ -88,6 +90,7 @@ class UserController extends Controller
         //incrementado qtd view
         $result = $this->user->update($data);
         
+        //retorna resultado
         return response()->json($result);
 
     }
@@ -104,6 +107,7 @@ class UserController extends Controller
             $result = ['error' => ['delete', 'Você não pode desativar esse perfil.']];
         }
         
+        //retorna resultado
         return response()->json($result);
 
     }
@@ -120,8 +124,33 @@ class UserController extends Controller
             $result = ['error' => ['delete', 'Você não pode reativar esse perfil.']];
         }
         
+        //retorna resultado
         return response()->json($result);
 
+    }
+
+    function sendMessage(Request $request, int $id) {
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->has('message_content') || !$request->filled('message_content')){
+            //TODO: Melhorar resposta json
+            return response("Campo obrigatório não submetido! Tente novamente!"); 
+        }
+
+        //Atribui conteúdo a variável
+        $data = ['message_content' => $request->input('message_content')];
+
+        //Executa metodo de envio de mensagem
+        $response = $this->user->sendEmail($id, $data);
+        
+        //retorna resultado
+        return response()->json($response);
+
+    }
+
+    function search (Request $request, int $page) {
+        //retorna resultado
+        return response()->json($this->user->searchUsers($request->all(), $page));
     }
 
 }

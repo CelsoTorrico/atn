@@ -37,4 +37,11 @@ class PostModel extends Medools\Model
         'post_modified' => 'auto'
     ];
 
+    const FOREIGN_KEY = [
+        'ID' => [
+            'Core\Database\PostmetaModel',
+            'post_id'
+        ]
+    ];
+
 }

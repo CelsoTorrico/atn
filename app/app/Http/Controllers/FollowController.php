@@ -19,7 +19,7 @@ class FollowController extends Controller
      */
     public function __construct(Request $request)
     {
-        $this->follow = new Follow($request);
+        $this->follow = new Follow($request->user());
     }
 
     /** Retorna todos seguidores */

@@ -19,7 +19,7 @@ class Notify {
         $this->currentUser = $user;
 
         //Tipos de notificações
-        $this->types = [0 => 'admin', 1 => 'friends', 3 => 'approve', 4 => 'follow', 5 => 'block', 6 => 'comment'];
+        $this->types = [0 => 'admin', 1 => 'friends', 3 => 'approve', 4 => 'follow', 5 => 'block', 6 => 'comment', 7 => 'message'];
 
         //Retorna classe usuário ou retorna erro
         if( is_null($this->currentUser) ){
@@ -184,6 +184,9 @@ class Notify {
             case 6:
                 $response = $this->commentContent($notify);
                 break; 
+            case 7:
+                $response = $this->messageContent($notify);
+                break; 
             default:
                 $response = '';
                 break;
@@ -238,6 +241,24 @@ class Notify {
         $content = [
             "ID"            => $notify['ID'],
             "message"       => "O usuário " . $user->display_name . " comentou em sua publicação.",
+            "user_profile"  => $user
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    //Formatação de notificação para aprovação de perfil
+    private function messageContent(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->get($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify['ID'],
+            "message"       => $user->display_name . " te enviou uma mensagem.",
             "user_profile"  => $user
         ];
         

@@ -13,7 +13,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->put('/update', 'UserController@update'); //Para atualizações sem arquivos
     $router->post('/update', 'UserController@update'); //Para atualização de conteúdo de texto
 
-    //Deleta usuário
+    //Desativar perfil de usuário
     $router->delete('/delete', 'UserController@delete');
 
     //Retorna usuário logado
@@ -25,11 +25,17 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //Retorna estatisticas do usuário logado
     $router->get('/stats', 'UserController@getStats');
 
-    //Retorna estatisticas do usuário logado
+    //Retorna sugestões de usuários a seguir
     $router->get('/suggestions', 'UserController@getSuggestions');
 
-    //Reativar usuário de posse
+    //Reativar perfil de usuário
     $router->put('/reactive', 'UserController@reactive');
+
+    //Envia mensagem de e-mail a usuário
+    $router->post('/message/{id:[0-9]+}', 'UserController@sendMessage');
+
+    //Envia mensagem de e-mail a usuário
+    $router->post('/search[/{page:[0-9]+}]', 'UserController@search');
 
     //CLUBES e CONFEDERAÇÔES
     $router->group(['prefix' => 'self'], function() use ($router){
