@@ -44,7 +44,7 @@ class Chat {
         $user = new User();
 
         //Se ao retornar usuário vir erro de usuário inexistente
-        if (array_key_exists('error', $room_user = $user->get($suser_id))) {
+        if (array_key_exists('error', $room_user = $user->getMinProfile($suser_id))) {
             return ['error' => ['chat' => 'Usuário inexistente. Impossível enviar mensagem.']];
         }
 
@@ -155,14 +155,14 @@ class Chat {
                 $user = new User();
 
                 //Se ao retornar usuário vir erro de usuário inexistente
-                if (array_key_exists('error', $room_user = $user->get($item->suser))) {
+                if (array_key_exists('error', $room_user = $user->getMinProfile($item->suser))) {
                     continue;
                 }
 
                 //Combina array timeline e comentários
                 $rooms[] =  [
                     'room_id'           => $item->room_id,
-                    'user'              => $user->get($item->suser),
+                    'user'              => $user->getMinProfile($item->suser),
                     'quantity_messages' => $messages->count(),
                     'last_update'       => $item->last_update         
                 ];

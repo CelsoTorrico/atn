@@ -58,8 +58,17 @@ class Sport {
         if (count($allsports) <= 0){
             return [];
         }
+
+        //Array de esportes
+        $allSportsArray = [];
+
+        //Adicionando valores em forma de array sem indice
+        foreach ($allsports as $key => $value) {
+            $allSportsArray[] = [$value['ID'], $value['sport_name']];
+        }
        
-        return $allsports;
+        //Retorna
+        return $allSportsArray;
         
     }  
 

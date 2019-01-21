@@ -71,9 +71,10 @@ $app->bind('Illuminate\Contracts\Cookie\QueueingFactory', 'cookie');
 |
 */
 
-//Carrega autenticação
+//Carrega middleware (auth e cors)
 $app->middleware([
-    App\Http\Middleware\Authenticate::class
+    App\Http\Middleware\Authenticate::class,
+    App\Http\Middleware\Cors::class,
 ]);
 
 //Carregando Middlewares do App

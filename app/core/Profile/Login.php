@@ -29,7 +29,7 @@ class Login implements LoginInterface{
     /* Realiza o login verificando existencia de usuário
     *   E inserindo token no BD
      */
-    function setLogin($data){
+    function setLogin($data) {
 
         //Se tem token atribuido juntamente com dados
         if (isset($data['token']) && !empty($data['token'])) {
@@ -62,25 +62,29 @@ class Login implements LoginInterface{
 
         if(!$sessionAuth){
             //Retorna string erro
-            return ['error' => ["login", "Email ou senha não conferem. Tente novamente."]]; 
+            return ['error' => ["login" => "Email ou senha não conferem. Tente novamente."]]; 
         }
 
         //Gerando hash para token utilizando ArgonDriver
-        $hash = app('hash')->make($this->userData['user_login']);
+        $bcrypt = app('hash')->createBcryptDriver();
+        $hash   = $bcrypt->make($this->userData['user_login']);
         $this->cookieToken = $hash;
 
         //Verifica se hash ocorreu com sucesso
         if (!$response = app('hash')->check($this->userData['user_login'], $this->cookieToken)) { 
             //Retorna string erro
-            return ['error' => ["login", "Email ou senha não conferem. Tente novamente."]]; 
+            return ['error' => ["login" => "Email ou senha não conferem. Tente novamente."]]; 
         }
+
+        /*$this->cookieToken = $passwordClass->HashPassword($this->userData['user_login']);
+        $response = $passwordClass->CheckPassword($this->userData['user_login'], $this->cookieToken);*/
         
         if($response):
             //Retornando string sucesso
-            return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]]; 
+            return ['success' => ["login" => "Login realizado com sucesso! Bem Vindo."]]; 
         else:
             //Retorna string erro
-            return ['error' => ["login", "Seu acesso não foi permitido."]]; 
+            return ['error' => ["login" => "Seu acesso não foi permitido."]]; 
         endif;
         
     }
@@ -115,7 +119,7 @@ class Login implements LoginInterface{
         $this->cookieToken = array($userData['token'], $userData['expires']);
         
         //Retornando string sucesso
-        return ['success' => ["login", "Login realizado com sucesso! Bem Vindo."]];
+        return ['success' => ["login" => "Login realizado com sucesso! Bem Vindo."]];
         
     }
 
@@ -123,15 +127,18 @@ class Login implements LoginInterface{
         
         //Inicializa modelo
         $metaModel = new UsermetaModel();
+
+        //Serializando para inserção no bd
+        $tokenSerialized = serialize($token);
         
-        //Carrega metadados para inserção
+        //Carrega metadados para inserção ou atualizando existente
         $metaModel->load(['user_id' => $id, 'meta_key' => 'session_tokens']);
 
         //Cria novos atributos e valores para salvar
         $data = [
             'user_id'       => $id,
             'meta_key'      => 'session_tokens',
-            'meta_value'    => serialize($token),
+            'meta_value'    => $tokenSerialized,
             'visibility'    => -1
         ];
 
@@ -159,6 +166,10 @@ class Login implements LoginInterface{
             return ['error' =>['login' => 'Sessão ainda foi não inicializada.']]; 
         }*/
 
+    }
+
+    private function completeProfileNotify() {
+        
     }
 
     public static function getCookieName(){

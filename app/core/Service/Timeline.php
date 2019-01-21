@@ -59,6 +59,9 @@ class Timeline {
             'quantity_comments' => $comment->getQuantity()            
         ]);
 
+        //Adiciona dados básico do autor do post timeline
+        $timelineData['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
+
         //Se item tiver foto anexada
         if ($attach = $this->model->getInstance(['post_parent' => $id, 'post_type' => 'attachment'])) {
             $timelineData['attachment'] = $attach->guid;
@@ -103,6 +106,9 @@ class Timeline {
                 $timelines[$key] = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity()            
                 ]); 
+
+                //Adiciona dados básico do autor do post timeline
+                $timelines[$key]['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
 
                 //Se item tiver foto anexada
                 if ($attach = $this->model->getInstance(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {

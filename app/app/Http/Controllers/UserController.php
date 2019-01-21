@@ -66,6 +66,11 @@ class UserController extends Controller
         return response()->json($this->user);
     }
 
+    function getSelfDash() {
+        //retorna resultado
+        return response()->json($this->user->getMinProfile());
+    }
+
     function getStats() {
         //retorna resultado
         return response()->json($this->user->getStats());

@@ -199,12 +199,12 @@ class Notify {
     private function followContent(array $notify){
 
         //Retorna dados do usuário
-        $user = (new User)->get($notify['from_id']);
+        $user = (new User)->getMinProfile($notify['from_id']);
 
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify['ID'],
-            "message"       => "O usuário " . $user->display_name . " começou a te seguir.",
+            "message"       => "O usuário " . $user['display_name'] . " começou a te seguir.",
             "user_profile"  => $user
         ];
         
@@ -217,12 +217,12 @@ class Notify {
     private function approveContent(array $notify){
 
         //Retorna dados do usuário
-        $user = (new User)->get($notify['from_id']);
+        $user = (new User)->getMinProfile($notify['from_id']);
 
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify['ID'],
-            "message"       => "O usuário " . $user->display_name . " te adicionou como um clube no qual ele já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize as informações do perfil e defina se a informação é verdadeira.",
+            "message"       => "O usuário " . $user['display_name'] . " te adicionou como um clube no qual ele já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize as informações do perfil e defina se a informação é verdadeira.",
             "user_profile"  => $user
         ];
         
@@ -235,12 +235,12 @@ class Notify {
     private function commentContent(array $notify){
 
         //Retorna dados do usuário
-        $user = (new User)->get($notify['from_id']);
+        $user = (new User)->getMinProfile($notify['from_id']);
 
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify['ID'],
-            "message"       => "O usuário " . $user->display_name . " comentou em sua publicação.",
+            "message"       => "O usuário " . $user['display_name'] . " comentou em sua publicação.",
             "user_profile"  => $user
         ];
         
@@ -253,12 +253,12 @@ class Notify {
     private function messageContent(array $notify){
 
         //Retorna dados do usuário
-        $user = (new User)->get($notify['from_id']);
+        $user = (new User)->getMinProfile($notify['from_id']);
 
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify['ID'],
-            "message"       => $user->display_name . " te enviou uma mensagem.",
+            "message"       => $user['display_name'] . " te enviou uma mensagem.",
             "user_profile"  => $user
         ];
         

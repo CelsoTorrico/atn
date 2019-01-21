@@ -59,10 +59,15 @@ class Favorite {
             $user = new User();
 
             //Atribui dados de usuário ao array
-            $currentFavorite = $user->get($item['to_id']);
+            $currentFavorite = $user->getMinProfile($item['to_id'], ['type']);
 
             //ID de tipo de usuário
-            $type = (int) $currentFavorite->type['ID'];
+            if (!array_key_exists('type', $currentFavorite)){
+                $type = $user->getUserType($currentFavorite['ID']);
+            }
+            else{
+                $type = (int) $currentFavorite['type'];
+            }            
 
             //Atribui favoritos em respectiva lista
             switch ($type) {

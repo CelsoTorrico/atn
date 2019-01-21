@@ -48,37 +48,47 @@ class Authenticate
     {       
 
         //Se usuário estiver com perfil desativado, permitir requisição
-        if ($request->method() == 'POST' && $request->is('login')) {
+        if (in_array($request->method(), ['POST', 'OPTIONS']) 
+            && ($request->is('login')|| $request->is('register'))) {
 
-            $control = $this->loginControl;
+                //Path
+                $uri = $request->path();  
 
-            //Post credenciais de login
-            $msg = $control->login($request);
+                //Login Controller
+                $control = $this->loginControl;
 
-            //Retorna dados de usuário encontrado
-            $userData = $control->getUserData();
+                //Post credenciais de login
+                $msg = ($uri == 'login')? $control->login($request) : $control->register($request);
 
-            //Se houve erro retorna resultado
-            if( array_key_exists('error', $msg) ){
-                return $next($msg);
-            }
+                //Retorna dados de usuário encontrado
+                $userData = $control->getUserData();
 
-            //Seta cookie de sessão
-            $this->sessionCookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_PATH'), false);  
+                //Decodifica json
+                $c = json_decode($msg->getContent(), true);
+                
+                //Verifica se existe erro e retorna
+                if (key_exists('error', $c)) {
+                    //Se houve erro retorna resultado
+                    return $next($request);
+                }
 
-            //Atribui a variavel
-            $tokenDatabase = $this->sessionCookie;
+                //Seta cookie de sessão
+                $this->sessionCookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_DOMAIN'), false);  
 
-            //Insere o token em string e insere no banco;
-            $success = $control->insertToken($userData['ID'], $tokenDatabase->__toString());
+                //Atribui a variavel
+                $tokenDatabase = $this->sessionCookie;
 
-            //Retorna mensagem juntamente com cookie 
-            return $next($request)->withCookie($this->sessionCookie);
+                //Insere o token em string e insere no banco;
+                $success = $control->insertToken($userData['ID'], $tokenDatabase->__toString());
+
+                //Retorna mensagem juntamente com cookie 
+                return response($c)->withCookie($this->sessionCookie);
             
         }
 
         //Após validação de usuário social login, logar através de cookie
-        if ($request->method() == 'GET' && $request->is('login')) {
+        if ($request->method() == 'GET' && $request->is('login')) {            
+            //Retorna requisição
             return $request;
         }
 
@@ -153,7 +163,7 @@ class Authenticate
         }
 
         //Permitir listagem de clubes ou listagem de esportes
-        if ($request->is('user/clubs') || $request->is('user/sports') || $request->is('register')) {
+        if ($request->is('user/clubs') || $request->is('user/sports')) {
             //Retorna mensagem juntamente com cookie 
             return $next($request);            
         }

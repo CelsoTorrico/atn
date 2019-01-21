@@ -19,6 +19,9 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //Retorna usuário logado
     $router->get('/self', 'UserController@getSelf');
 
+    //Retorna usuário logado
+    $router->get('/dashboard', 'UserController@getSelfDash');
+
     //Download de PDF
     $router->get('/pdf', 'UserController@getPdf');
 

@@ -119,7 +119,7 @@ class Friends {
 
 		//Instancia classe e retorna dados
 		$user = new User();
-		return $user->get($userData['to_id']);
+		return $user->getMinProfile($userData['to_id']);
 
 	}
     

@@ -116,6 +116,54 @@ class User extends GenericUser{
 
     } 
 
+    /**
+     * Retorna dados de usuário único por ID
+     * @since 2.0
+     * 
+     * @return mixed
+     */
+    public function getMinProfile( int $id=null, $usermeta = [] ) {
+
+        if(!is_null($id)){
+            //Filtro
+            $filter = ['ID' => $id, 'user_status' => 0];
+
+            //Retorna instancia de modelo User
+            $userData = $this->model->getInstance($filter);
+
+        } else{
+            //Atribuindo dados do usuário corrente
+            $userData = $this->model;
+            $id = $this->model->ID;
+        }
+
+        //Verifica se existe usuário
+        if (!$userData) {
+            return ['error' => ['user', "Usuário inexistente."]];
+        }
+
+        //Retorna dados do usuário
+        $userData = [
+            'ID' => $userData->ID,
+            'display_name' => $userData->display_name
+        ];
+
+        //metadado default
+        $usermetaDefault = ['profile_img'];
+
+        //Se necessário incluir mais usermetadados
+        if (count($usermeta) > 0) { 
+            $usermetaDefault = array_merge($usermeta, $usermetaDefault);
+        }
+        
+        //Adicione usermeta profile_img e mais se setado
+        $userData = array_merge($userData, $this->_getUsermeta($id, $usermetaDefault));
+
+        //Retorna dados
+        return $userData;
+
+    } 
+
     /** Retorna dados de estatistica */
     public function getStats(){
         
@@ -189,7 +237,7 @@ class User extends GenericUser{
                 //Atribui ID ao array
                 $query[$key][] = $i->user_id;
                 $user = new self();
-                $users[] = $user->get($i->user_id);  
+                $users[] = $user->getMinProfile($i->user_id);  
 
             }
         }  
@@ -261,7 +309,7 @@ class User extends GenericUser{
             foreach ($value as $i => $v) {    
                 
                 //Se for array atribui chave com ID
-                if (is_array($v)) {
+                if (is_array($v) && isset($v['ID'])) {
                     $v = $v['ID'];
                 }
                 
@@ -435,7 +483,7 @@ class User extends GenericUser{
 
                 $user = new self();
                 //TODO: Definir uma nova função que retorne apenas dados baseados para listagem
-                $users[] = $user->get($value['ID']);
+                $users[] = $user->getMinProfile($value['ID']);
                 $repeteadID[] = $value['ID'];
             }
 
@@ -446,6 +494,12 @@ class User extends GenericUser{
         return $users;
 
     }
+
+    /** Retorna Tipo de usuário */
+    public function getUserType($ID) {
+        return $this->_getType($ID = null);
+    }
+
 
     /* Addicionar um único usuário */
     public function add($data){
@@ -765,14 +819,16 @@ class User extends GenericUser{
      * 
      * @return mixed
      */
-    private function _getUsermeta($ID) {
+    private function _getUsermeta($ID, $only = '') {
 
         if (is_null($ID) || empty($ID) ) {
             return null;
         }
 
         //Campos válidos
-        $only = $this->onlyUsermetaValid();
+        if (is_string($only) && empty($only)) {
+            $only = $this->onlyUsermetaValid();
+        }
 
         //Instancia classe de modelo passando filtro
         $metadata = new UsermetaModel();
@@ -782,7 +838,7 @@ class User extends GenericUser{
 
         //Se array estiver vazio retorna nulo
         if (count($result) <= 0 ) {
-            return null;
+            return [];
         }
 
         //campos que estão formatados como serializados
@@ -1073,6 +1129,11 @@ class User extends GenericUser{
 
         //Executa função de checar inputs
         $checked = $val->check_filtered_inputs($data, $isUpdate);
+
+        //Se houver algum campo inválidado
+        if (array_key_exists('error', $checked)) {
+            return $checked;
+        }
 
         //Se for update de perfil, finaliza execução
         if($isUpdate){

@@ -50,7 +50,7 @@ class Follow {
             //Instanciando classe de usuário
             $user = new User();
             //Atribui dados de usuário ao array
-            $listUsers[] = ($only_ids)? $item['to_id'] : $user->get($item['to_id']);
+            $listUsers[] = ($only_ids)? $item['to_id'] : $user->getMinProfile($item['to_id']);
         }       
 
         return $listUsers;
@@ -82,7 +82,7 @@ class Follow {
             //Instanciando classe de usuário
             $user = new User();
             //Atribui dados de usuário ao array
-            $listUsers[] = ($only_ids)? $item['from_id'] : $user->get($item['from_id']);
+            $listUsers[] = ($only_ids)? $item['from_id'] : $user->getMinProfile($item['from_id']);
         }       
 
         return $listUsers;

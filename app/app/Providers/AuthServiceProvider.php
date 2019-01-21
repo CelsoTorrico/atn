@@ -44,7 +44,8 @@ class AuthServiceProvider extends ServiceProvider
                 $user = null;
             } else {
                 //Retorna cookie enviado
-                $cookie = $request->header('cookie');
+                $cookie = ['header' => $request->header('cookie')];
+                $cookie['token'] = $request->cookie(env('APPCOOKIE'));
 
                 //Carrega classe de usuário existente ou null
                 $user = $this->get_current_user($cookie);
@@ -59,25 +60,37 @@ class AuthServiceProvider extends ServiceProvider
 
 
     //Retorna usuário atual através de Cookie
-    protected function get_current_user(string $cookie) { 
-
-        $cookieObj = Cookie::fromString($cookie);
-
-        //Verifica cookie ainda é válido
-        if ($cookieObj->getMaxAge() > time() ) {
-            return null;
-        }
+    protected function get_current_user(array $cookie) { 
 
         //Retorna dados armazenados
         $usermeta = new UsermetaModel();
+
+        //Divide string
+        preg_match('/app_atletas_now\=([^;]+)/', $cookie['header'], $token);
+
+        //Token não encontrado
+        if(count($token) <= 0){
+            return null;
+        }
+
+        //Token escapado
+        $search   = '%'.$token[1].'%';
         
+        //Retorna dados do banco
         $isExist = $usermeta->load([
             'meta_key'      => 'session_tokens',
-            'meta_value[~]' =>  '%'. (string) str_replace(['%', '.'],['\\%', '\\.'],$cookieObj->getValue()) . '%'
+            'meta_value[~]' => $search
         ]);
 
-        //Verifica cookie é valido
+        //Verifica resultado é verdadeiro
         if (!$isExist) {
+            return null;
+        }
+
+        $cookieObj = Cookie::fromString(unserialize($usermeta->meta_value));
+
+        //Verifica cookie ainda é válido
+        if ($cookieObj->getMaxAge() > time() ) {
             return null;
         }
 
