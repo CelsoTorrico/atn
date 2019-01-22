@@ -24,7 +24,7 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-//config(require(__DIR__.'/../app/config/session.php'));  //Sessões
+config(require(__DIR__.'/../app/config/app.php'));  //Sessões
 config(require(__DIR__.'/../app/config/services.php')); //API Socialize
 
 $app->withFacades(TRUE, [
