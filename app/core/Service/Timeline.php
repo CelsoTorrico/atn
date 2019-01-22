@@ -188,12 +188,17 @@ class Timeline {
             if(isset($data['post_visibility'])) {
 
                 $visibility = (int) $data['post_visibility'];
+                $visibilityInsert = 0;
 
                 //Tipos de visibilidades do usuário
                 $levels = $this->getVisibilityLevels();
 
-                if (!array_search($visibility, $levels)) {
-                    return;
+                //Verifica se visibilidade definida é válido para usuário
+                foreach ($levels as $key => $value) {
+                    if( $value['value'] == $visibility){
+                        $visibilityInsert = $value['value'];
+                        break;
+                    }                        
                 }
 
                 //Inicializando modelo
@@ -202,7 +207,7 @@ class Timeline {
                 $postmeta->fill([
                     'post_id'       => $lastInsert['ID'],
                     'meta_key'      => 'post_visibility',
-                    'meta_value'    => $visibility
+                    'meta_value'    => $visibilityInsert
                 ]);
 
                 //Atribui valor de visibilidade ao post
@@ -223,12 +228,12 @@ class Timeline {
             }
 
             //Mensagem de sucesso no cadastro
-            return ['success' => ['register' => 'Atualização realizada com sucesso!']];
+            return ['success' => ['timeline' => 'Atualização realizada com sucesso!']];
 
         }
         else{
             //Mensagem de erro no cadastro
-            return ['error' => ['register' => 'Houve erro na atualização! Tente novamente mais tarde.']];
+            return ['error' => ['timeline' => 'Houve erro na atualização! Tente novamente mais tarde.']];
         }
     }
 
@@ -251,7 +256,7 @@ class Timeline {
         }
         else{
             //Mensagem de erro no cadastro
-            return ['error' => ['register' => 'Houve erro ao deletar atualização! Tente novamente mais tarde.']];
+            return ['error' => ['timeline' => 'Houve erro ao deletar atualização! Tente novamente mais tarde.']];
         }
     }
 
@@ -359,14 +364,14 @@ class Timeline {
         
         //Tipo de visualização
         $levels = [
-            'Público' => 0,
-            'Privado' => 1
+            ['option' => 'Público', 'value' => 0],
+            ['option' => 'Privado', 'value' => 1]
         ];
 
         //Se usuário for pertecente a um clube
         if ($this->currentUser->type['ID'] == 2) {
             foreach ($this->currentUser->clubs as $key => $value) {
-                $levels[$value['club_name']] = $value['ID'];
+                $levels[] = ['option' => $value['club_name'], 'value' => $value['ID']];
             } 
         }
 
