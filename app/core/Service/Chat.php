@@ -49,7 +49,10 @@ class Chat {
         }
 
         //Array de room
-        $roomData = ['fuser' => $this->currentUser->ID, 'suser' => $suser_id];
+        $roomData = [
+            'fuser' => $this->currentUser->ID, 
+            'suser' => $suser_id
+        ];
         
         //Verifica se existe uma room existente
         $room = $this->room->load($roomData);
@@ -62,11 +65,11 @@ class Chat {
             $this->room->save();
         } 
 
-        //ID Room
-        $result = $this->room->getPrimaryKey();
+        //Dados da Room
+        $result = $this->room->getData();
 
-        //Retorna todas as mensagens
-        $messages = $this->getMessages($result['room_id']);
+        //Retorna todas as mensagens baseado no usuário
+        $messages = $this->getMessages($result);
         
         //Retorna mensagens
         return $messages;
@@ -74,19 +77,28 @@ class Chat {
     }
 
     /** Retorna todas as mensagens baseado em IDS */
-    private function getMessages(int $room_id, int $limit = 12) {
+    private function getMessages(array $room, int $paged = 0) {
 
-        if (!$room = $this->isAccessRoom($room_id)) {
+        if (!$room = $this->isAccessRoom($room['suser'])) {
             //Retorna erro
             return ['error' => ['room', 'Você não pode acessar mensagens nesta conversa.']];
         }
 
+        //Qtd de itens por página
+        $perPage = 12;
+
+        //A partir de qual item contar
+        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
+
+        //Paginação de timeline
+        $limit = [$initPageCount, $perPage];
+
         //Retorna mensagens da room ordenando de data menor para mais recente
         //TODO: Fazer paginação de mensagens
         $messages = $this->messages->getIterator([
-            'room_id' => $room_id, 
-            'LIMIT' => $limit,
-            'ORDER' => ['date' => 'DESC']
+            'room_id'   => $room['room_id'], 
+            'LIMIT'     => $limit,
+            'ORDER'     => ['date' => 'DESC']
         ]);
 
         //Retorna se não existir nenhuma mensagem
@@ -99,11 +111,15 @@ class Chat {
         //Mensagens do chat
         foreach ($messages as $item) {
 
+            //Instancia classe de usuário
+            $user = new User();
+
             $allmessages[] = [
                 'message_id' => $item->message_id,
                 'date'       => $item->date,
                 'content'    => ($item->read == 1)? '(Mensagem Apagada)' : $item->content,
-                'author_id'  => $item->author_id
+                'author'     => $user->getMinProfile($item->author_id),
+                'viewer'     => ($item->author_id == $this->currentUser->ID)? true : false
             ];
         }
 
@@ -112,15 +128,15 @@ class Chat {
 
     }  
     
-    function getLastMessage(int $room_id) {
+    function getLastMessage(int $suser) {
         
-        if (!$room = $this->isAccessRoom($room_id)) {
+        if (!$room = $this->isAccessRoom($suser)) {
             //Retorna erro
             return ['error' => ['room', 'Você não pode acessar mensagens nesta conversa.']];
         }
 
         //Retorna todas as mensagens
-        $messages = $this->getMessages($room_id, 1);
+        $messages = $this->getRoom($room_id);
         
         //Retorna mensagens
         return $messages;
@@ -191,14 +207,14 @@ class Chat {
 
     private function register(array $data) {
 
-        if (!$room = $this->isAccessRoom($data['chat_room'])) {
+        if (!$room = $this->isAccessRoom($data['suser'])) {
             //Retorna erro
             return ['error' => ['room', 'Você não pode enviar mensagens nesta conversa.']];
         }
 
         //Filtrar inputs e validação de dados
         $content = [
-            'room_id'       => filter_var($data['chat_room'], FILTER_SANITIZE_NUMBER_INT),
+            'room_id'       => filter_var($room['room_id'], FILTER_SANITIZE_NUMBER_INT),
             'content'       => filter_var($data['chat_content'], FILTER_SANITIZE_STRING),
             'author_id'     => $this->currentUser->ID
         ];
@@ -286,16 +302,16 @@ class Chat {
 
     }
 
-    /** */
-    function isAccessRoom($room_id) {
+    /** Verifica o acesso a sala de conversa */
+    function isAccessRoom($suser) {
+
+        //Ids válidos para verificação
+        $ids = [$this->currentUser->ID, $suser];
         
         //Verificar se usuários podem enviar mensagem na conversa
         $hasAccess = $this->room->getInstance([
-            'room_id' => $room_id,
-            'OR' => [
-                'fuser' => $this->currentUser->ID,
-                'suser' => $this->currentUser->ID,
-            ]
+            'fuser' => $ids,
+            'suser' => $ids           
         ]);
 
         if (!$room = $hasAccess->getData()) {

@@ -95,10 +95,10 @@ class AuthServiceProvider extends ServiceProvider
         }
 
         //Retorna classe determinada por tipo de usuário
-        $class = User::typeUserClass(new UserModel(['ID' => $usermeta->user_id]));
+        $userClass = User::typeUserClass(new UserModel(['ID' => $usermeta->user_id]));
         
         //Retorna classe
-        return $class;
+        return $userClass;
             
     }
 

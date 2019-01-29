@@ -1,0 +1,72 @@
+<ion-content class="page-initial login">
+  <ion-grid fixed>
+
+    <ion-item>
+        <ion-img width="275" height="38" src="assets/img/atletasnow-logotipo.svg" id="main-logo" class="img-center" title="AtletasNOW"></ion-img>
+    </ion-item>    
+    
+    <form #loginForm="ngForm" name='form' (ngSubmit)="doLogin(loginForm); $event.preventDefault()">
+      <ion-list>
+
+        <ion-item>
+          <ion-label fixed>{{ 'EMAIL' | translate }}</ion-label>
+          <ion-input type="email" [(ngModel)]="account.user_email" name="user_email" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label fixed>{{ 'PASSWORD' | translate }}</ion-label>
+          <ion-input type="password" [(ngModel)]="account.user_pass" name="user_pass" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-row>
+                <ion-col>
+                    <button color="danger" ion-button block>{{ 'LOGIN_BUTTON' | translate }}</button>
+                </ion-col>
+                <ion-col>
+                    <a (click)='goToRegister()' color="light" ion-button block outline>{{ 'REGISTER_BUTTON' | translate }}</a>
+                </ion-col>         
+              </ion-row>
+        </ion-item>
+
+        <ion-item *ngIf="$error">
+            {{ $error }}
+        </ion-item>
+
+      </ion-list>
+    </form>
+
+  </ion-grid>
+
+  <ion-grid fixed>
+    <ion-item>
+        <ion-row>
+            <ion-col>
+                <button (click)="loginFb()" ion-button color="primary" block>{{ 'LOGIN_FB' | translate }}</button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <button (click)="loginGoogle()" ion-button color="danger" block>{{ 'LOGIN_GOOGLE' | translate }}</button>
+            </ion-col> 
+        </ion-row>
+    </ion-item>          
+  </ion-grid>
+
+  <ion-grid fixed>
+      <ion-item>
+          <ion-row>
+              <ion-col>
+                  <button ion-button color="primary" float-right small clear>{{ 'TERMS_LINK' | translate }}</button>
+              </ion-col>
+              <ion-col>
+                  <button ion-button color="" small clear>{{ 'USE_POLITICS_LINK' | translate }}</button>
+              </ion-col>
+          </ion-row>
+      </ion-item>          
+    </ion-grid>
+
+</ion-content>
+
+
+

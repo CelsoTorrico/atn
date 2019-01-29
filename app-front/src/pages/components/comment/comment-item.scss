@@ -1,0 +1,29 @@
+.comment-item {
+
+    header{
+        color: blue;
+
+        span.date{
+            font-size: 1.1rem;
+            color: #666;
+            margin-left: 15px;
+        }
+    }
+
+    article{
+        border-radius: 15px;
+        padding: 15px;
+        background-color: #f1f1f1;
+        color: #444;
+
+        button{
+            float: right;
+            margin: -10px 0px !important;
+        }
+    }
+
+    .commentResponsesContainer{
+        padding-left: 30px;
+    }
+    
+}

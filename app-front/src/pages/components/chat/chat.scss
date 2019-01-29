@@ -1,0 +1,49 @@
+.chat-message-container {
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+
+  .messages-list,
+  .chatForm {
+    background-color: #eee;
+    width: 100%;
+  }
+
+  .messages-list {
+    padding: 25px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: calc(100% - 100px);
+
+    .ballon-message {
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 15px;
+      display: inline-block;
+      font-weight: 100;      
+    }
+
+    .message-row {
+      display: block;
+      position: relative;
+      margin-bottom: 10px;
+
+      &.viewer-message{
+        text-align: right;
+        .ballon-message{
+          background-color: orangered;
+          color: #fff; 
+        }
+      }
+
+    }
+
+    
+
+  }
+
+  .chatForm {
+    height: 100px;
+  }
+
+}

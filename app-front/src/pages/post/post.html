@@ -1,0 +1,78 @@
+<ion-header>
+
+    <ion-toolbar>
+            
+      <ion-title>{{ "POST" | translate }}</ion-title>
+  
+      <ion-buttons end>
+          <ion-searchbar></ion-searchbar>
+      </ion-buttons>
+
+    </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="page-post">    
+
+  <ion-grid>
+      <ion-row padding>
+          
+          <ion-col col-12 col-md-9>
+
+            <ion-card>
+
+                <ion-grid>
+                    <ion-row>
+                        
+                        <ion-col>
+                            <img onclick="alert(currentPostItem.attachment)" src="https://www.atletasnow.com/wp-content/uploads/2018/12/como-ser-um-jogador-de-futebol-20181122132059.jpg" />
+                        </ion-col>
+                        
+                        <ion-col>
+
+                            <ion-list>
+                                <ion-item>
+                                    <ion-avatar *ngIf="currentPostItem.post_author.profile_img" >
+                                        <img [src]="currentPostItem.post_author.profile_img.value" />
+                                    </ion-avatar>
+                                    <h2>{{ currentPostItem.post_author.display_name }}</h2>
+                                    <ion-badge end>
+                                            {{ "COMMENTS" | translate }} : {{ currentPostItem.quantity_comments }}
+                                    </ion-badge>
+                                </ion-item> 
+                            </ion-list>
+
+                            <ion-item>
+                                
+                                <ion-card-header>
+                                    <ion-title>
+                                        Título
+                                    </ion-title>
+                                </ion-card-header>
+
+                                <ion-item-divider>
+                                    {{ currentPostItem.post_content }}
+                                </ion-item-divider>
+                            </ion-item>
+
+                        </ion-col>
+
+                    </ion-row>
+                </ion-grid>
+
+            </ion-card>
+
+          </ion-col>
+
+          <ion-col col-md-3>
+            {{ FEATURE }}            
+          </ion-col>
+
+      </ion-row>        
+  </ion-grid>
+
+</ion-content>
+
+<ion-footer>
+    @2019 - AtletasNow
+</ion-footer>

@@ -1,0 +1,254 @@
+<ion-header>
+
+    <ion-toolbar>
+            
+      <ion-title>{{ "PROFILE" | translate }}</ion-title>
+  
+      <ion-buttons end>
+          <ion-searchbar></ion-searchbar>
+      </ion-buttons>
+
+    </ion-toolbar>
+
+    <section id="profile-resume">
+        <ion-list>
+            
+            <ion-item id="feature">
+                
+                <ion-avatar *ngIf="currentUserData.metadata.profile_img" >
+                    <img img-center width="100px" [src]="currentUserData.metadata.profile_img.value" />
+                </ion-avatar>
+
+                <ion-title>{{ currentUserData.display_name}}</ion-title>
+
+                <ion-list>
+                    <a>{{ "INFORMATION" | translate}}</a>
+                    <a>{{ "ACHIEVEMENTS" | translate}}</a>
+                </ion-list>
+
+            </ion-item>
+
+            <ion-grid>
+                <ion-row>
+                    <ion-col class="block" text-center>
+                        <ion-list>
+                            <ion-item>
+                                <ion-label color="white" stacked>{{ "HEIGHT" | translate }}</ion-label>
+                                <ion-input *ngIf="currentUserData.metadata.height"
+                                [value]="currentUserData.metadata.height.value">
+                                    {{ currentUserData.metadata.height.value }
+                                }</ion-input>
+                            </ion-item>
+                        </ion-list>                                                    
+                    </ion-col>
+                    <ion-col class="block" text-center>
+                            <ion-list>
+                                <ion-item>
+                                    <ion-label color="white" stacked>{{ "BIRTHDAY" | translate }}</ion-label>
+                                    <ion-input *ngIf="currentUserData.metadata.birthday" 
+                                    [value]="currentUserData.metadata.birthday.value | date">
+                                        {{ currentUserData.metadata.birthday.value | date }}
+                                    </ion-input>
+                                </ion-item>
+                            </ion-list>                                                    
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="block" text-center>
+                        <ion-list>
+                            <ion-item>
+                                <ion-label color="white" stacked>{{ "WEIGHT" | translate }}</ion-label>
+                                <ion-input *ngIf="currentUserData.metadata.weight"
+                                [value]="currentUserData.metadata.weight.value">
+                                    {{ currentUserData.metadata.weight.value }}
+                                </ion-input>
+                            </ion-item>
+                        </ion-list>                                                    
+                    </ion-col>
+                    <ion-col class="block" text-center>
+                        <ion-list>
+                            <ion-item>
+                                <ion-label color="white" stacked>{{ "PLAYED_MATCHES" | translate }}</ion-label>
+                                <ion-input *ngIf="currentUserData.metadata.jogos" 
+                                [value]="currentUserData.metadata.jogos.value" readonly>
+                                    {{ currentUserData.metadata.jogos.value }}
+                                </ion-input>
+                            </ion-item>
+                        </ion-list>                                                    
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
+            <ion-item id="feature">
+                
+                <ion-title text-center>{{ "PERFORMANCE" | translate }}</ion-title>
+
+                <a (click)="goToPage('ProfilePage')">Estatísticas</a> 
+
+            </ion-item>
+
+        </ion-list>
+    </section>
+
+</ion-header>
+
+<ion-content class="page-profile">    
+
+  <ion-grid>
+      <ion-row padding>
+          
+          <ion-col id="ProfileData" col-12 col-md-4 offset-md-3>
+            <ion-card>
+
+                <button ion-button outline end (click)="downloadPDF()">
+                    {{ "DOWNLOAD" | translate }}
+                </button> 
+
+                <ion-card-header>
+                    {{ "ABOUT_ME" | translate }}
+                </ion-card-header> 
+
+                <ion-card-content id="biography" *ngIf="currentUserData.metadata.biography">
+                    <p>
+                        {{ currentUserData.metadata.biography.value }}
+                    </p>
+                </ion-card-content>
+
+                <ion-item-group>
+                    <ion-item>
+                        {{ "SPORTS" | translate }}
+                        <ion-list *ngIf="currentUserData.sport">
+                          <ion-badge *ngFor="let item of currentUserData.sport">
+                            {{ item.sport_name }}
+                          </ion-badge>
+                        </ion-list>
+                    </ion-item>
+                </ion-item-group>
+
+                <ion-item-group *ngIf="currentUserData.clubs">
+                    <ion-item>
+                        {{ "CLUBS" | translate }}
+                        <ion-list>
+                          <div padding *ngFor="let club of currentUserData.clubs">
+                              {{ club.club_name }}
+                              <ion-badge *ngIf='club.certify != undefined'>
+                                  {{ club.certify | translate }}
+                              </ion-badge>
+                          </div>                          
+                        </ion-list>
+                    </ion-item>
+                </ion-item-group>
+
+                <ion-item-group *ngIf="currentUserData.metadata.formacao" >
+                    <ion-item>
+                        {{ "FORMATION" | translate }}
+                        <ion-list>
+                          <div padding *ngFor="let form of currentUserData.metadata.formacao.value">
+                              <h4><strong>{{ 'INSTITUTE' | translate }}</strong>: {{ form[0] }}</h4>
+                              <h4><strong>{{ 'COURSE' | translate }}</strong>: {{ form[1] }}</h4>
+                              <h4><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</h4>
+                          </div>                          
+                        </ion-list>
+                    </ion-item>
+                </ion-item-group>
+
+                <ion-item-group *ngIf="currentUserData.metadata.cursos" >
+                    <ion-item>
+                        {{ "COURSES" | translate }}
+                        <ion-list>
+                          <div padding *ngFor="let form of currentUserData.metadata.cursos.value">
+                              <h4><strong>{{ 'INSTITUTE' | translate }}</strong>: {{ form[0] }}</h4>
+                              <h4><strong>{{ 'COURSE' | translate }}</strong>: {{ form[1] }}</h4>
+                              <h4><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</h4>
+                          </div>                          
+                        </ion-list>
+                    </ion-item>
+                </ion-item-group>
+
+            </ion-card>
+            
+            <ion-card>
+
+                <ion-item-group *ngIf="currentUserData.videos" >
+                    <ion-item>
+                        {{ "VIDEOS" | translate }}
+                        <ion-list>
+                          <div padding *ngFor="let video of currentUserData.videos.value">
+                              <!--<iframe width="560" height="315" [src]="video" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>-->
+                          </div>                          
+                        </ion-list>
+                    </ion-item>
+                </ion-item-group>
+
+            </ion-card>
+
+            <div>
+
+                <ion-item-group *ngIf="favoriteMembers" >
+                    <ion-item>
+                        {{ "FAVORITES" | translate }}
+                        
+                        <ion-list *ngIf="favoriteMembers.Atletas">
+                          
+                          <ion-list-header>
+                            {{ "ATLETAS" | translate }}
+                          </ion-list-header>
+                          
+                          <ion-item *ngFor="let member of favoriteMembers.Atletas">
+                              <ion-avatar>
+                                  <ion-img [src]="member"></ion-img>
+                              </ion-avatar>
+                              <h2 text-center>{{ member.display_name}}</h2>
+                          </ion-item>
+
+                        </ion-list>
+
+                        <ion-list *ngIf="favoriteMembers.Clubes">
+                          
+                            <ion-list-header>
+                              {{ "CLUBS" | translate }}
+                            </ion-list-header>
+                            
+                            <ion-item *ngFor="let member of favoriteMembers.Clubes">
+                                <ion-avatar>
+                                    <ion-img [src]="member"></ion-img>
+                                </ion-avatar>
+                                <h2 text-center>{{ member.display_name}}</h2>
+                            </ion-item>
+  
+                          </ion-list>
+
+                          <ion-list *ngIf="favoriteMembers.Outros">
+                          
+                              <ion-list-header>
+                                <ion-title>{{ "OTHERS" | translate }}</ion-title>
+                              </ion-list-header>
+                              
+                              <ion-item *ngFor="let member of favoriteMembers.Outros">
+                                  <ion-avatar>
+                                      <ion-img *ngIf="member.profile_img"  [src]="member.profile_img.value"></ion-img>
+                                  </ion-avatar>
+                                  <h2 text-center>{{ member.display_name}}</h2>
+                              </ion-item> 
+    
+                            </ion-list> 
+
+                    </ion-item>
+                </ion-item-group>
+
+            </div>
+
+          </ion-col>
+
+            <ion-col col-md-5 col-12> 
+                <timeline *ngIf="currentUserData.ID"  [timelineID]="currentUserData.ID"></timeline>
+            </ion-col> 
+
+      </ion-row>        
+  </ion-grid>
+
+</ion-content>
+
+<ion-footer>
+    @2019 - AtletasNow
+</ion-footer>

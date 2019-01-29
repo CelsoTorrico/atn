@@ -23,7 +23,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->get('/dashboard', 'UserController@getSelfDash');
 
     //Download de PDF
-    $router->get('/pdf', 'UserController@getPdf');
+    $router->get('/pdf[/{id:[0-9]+}]', 'UserController@getPdf');
 
     //Retorna estatisticas do usuário logado
     $router->get('/stats', 'UserController@getStats');

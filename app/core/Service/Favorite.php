@@ -25,6 +25,22 @@ class Favorite {
 
     }
 
+    /** Retorna se usuário está favoritado */
+    public function isUserFavorite(int $user_id){
+        
+        //Filtrar inputs e validação de dados
+        $favoriteData = [
+            'from_id'       => $this->currentUser->ID,
+            'to_id'         => $user_id
+        ];
+
+        //Insere dados no modelo
+        $favoriters = $this->model->getIterator($favoriteData);    
+
+        //Se há resultados retorna true, senão false
+        return ($favoriters->count() > 0)? TRUE : FALSE;
+    }
+
     /** Retornar todos os seguidores */
     public function getFavorites(){
 
@@ -42,7 +58,6 @@ class Favorite {
             'Clubes'    => [],
             'Outros'    => []
         ];
-
 
         //Iterar sobre os seguidores
         foreach ($favoriters as $item) {

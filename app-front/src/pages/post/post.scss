@@ -1,0 +1,50 @@
+#profile-resume {
+
+  background-color: red;
+  color: #fff !important;
+
+  @media screen and (min-width:600px){
+    width: 100%;
+    max-width: 24%;
+    height: 100%;
+    position: fixed;
+    top: 58px;
+    left: 0px;
+  }  
+
+  #feature{
+    background: linear-gradient(to top, red, lighten(red, 20%));
+  }
+
+  .block{
+    
+    &:nth-child(1){ 
+      border-right: 1px solid $vermelho;
+      //border-bottom: 1px solid $vermelho;
+    }
+
+    margin: 0px;
+
+    & ion-item.item-md{
+      background-color: transparent;
+      border: 0px;
+      color: #fff;
+
+      ion-label, input{
+        text-align: center;
+      }
+
+      input{
+        font-size: 3.2rem;
+      }
+
+    }
+  }
+
+}
+
+.page-post {
+
+  background-color: #f1f1f1;
+
+}

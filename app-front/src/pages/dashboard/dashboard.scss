@@ -1,0 +1,40 @@
+ion-header{
+    position: relative;
+    
+    ion-toolbar{
+        
+        .toolbar-background{
+            background-color: $vermelho;
+        }
+        
+
+        ion-img{
+            background-color: transparent;
+        }
+    }
+
+    ion-navbar{
+        background-color: #fff;
+        ion-searchbar .searchbar-input{
+            border-radius: 20px;
+            border: 1px solid #ddd; 
+            box-shadow: none;
+        }
+    }
+} 
+
+.page-dashboard{
+
+    background-color: #f1f1f1;
+
+    .profile-info, .profile-activity{
+        height: 400px;
+        background-color: #eee;
+    }
+
+    timeline{
+
+    }
+
+
+}

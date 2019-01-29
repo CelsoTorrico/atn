@@ -22,7 +22,7 @@ class PostModel extends Medools\Model
         'post_type',
         'guid',
         'post_mime_type',
-        'post_parent',
+        'post_parent'
     ];
 
     const OPTIONAL_COLUMNS = [
@@ -39,7 +39,7 @@ class PostModel extends Medools\Model
 
     const FOREIGN_KEY = [
         'ID' => [
-            'Core\Database\PostmetaModel',
+            PostmetaModel::class,
             'post_id'
         ]
     ];

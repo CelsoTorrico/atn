@@ -1,0 +1,56 @@
+<ion-content class="page-initial page-signup-steps" padding>
+
+  <ion-grid fixed>
+
+    <ion-item>
+        <ion-img width="275" height="38" src="assets/img/atletasnow-logotipo.svg" id="main-logo" class="img-center" title="AtletasNOW"></ion-img>
+    </ion-item>
+      
+    <!-- Cadastro -->
+    <ion-row>
+        <ion-col>
+            Etapas
+        </ion-col>        
+    </ion-row>
+
+    <ion-row>
+        <ion-col>                
+            <form #registerForm="ngForm" name='registerForm' (ngSubmit)="goToNext(registerForm); $event.preventDefault()">
+
+                <ion-item no-padding>
+                    <ion-input type="display_name" name="display_name" [(ngModel)]="$account.display_name" placeholder="Seu nome" #nome required full></ion-input>
+                </ion-item>
+            
+                <ion-item no-padding>
+                    <ion-input id="user_email" type="email" name="user_email" [(ngModel)]="$account.user_email" placeholder="Seu email" required full></ion-input>
+                </ion-item>
+            
+                <ion-item no-padding>
+                    <ion-input id="user_pass" type="password" name="user_pass" [(ngModel)]="$account.user_pass" placeholder="Sua senha" required full></ion-input>
+                </ion-item>
+
+                <ion-item no-padding>
+                    <ion-input id="confirm_pass" type="password" name="confirm_pass" [(ngModel)]="$account.confirm_pass" placeholder="Confirme a senha" required full></ion-input>
+                </ion-item>
+            
+                <button type="submit" ion-button full>{{ 'NEXT' | translate }}</button>
+                
+            </form>
+            
+            <ion-item *ngIf="$error">
+                {{ $error }}
+            </ion-item>
+
+        </ion-col>
+    </ion-row>
+
+    <!-- Login -->
+    <ion-row>
+        <ion-col>
+            <p text-center>{{ 'HAS_ACCOUNT?' | translate }} <a (click)="goToLogin()">{{ 'DO_LOGIN' | translate }}</a> </p>
+        </ion-col>
+    </ion-row>
+    
+  </ion-grid>
+
+</ion-content>

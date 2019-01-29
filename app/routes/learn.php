@@ -12,6 +12,7 @@ $router->group(['prefix' => 'learn'], function () use ($router) {
 
     //Retorna lista de Learns
     $router->get('/', 'LearnController@getAll');
+    $router->get('/paged/{paged:[0-9]+}', 'LearnController@getAll');
 
     //Adiciona Learn
     $router->post('/', 'LearnController@add');

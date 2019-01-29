@@ -13,6 +13,9 @@ use Core\Database\UsermetaModel;
 use Core\Database\UsertypeModel;
 use Core\Database\SportModel;
 use Core\Service\UserStats;
+use Core\Profile\Resume\Resume;
+use Core\Service\Favorite;
+use Core\Service\Follow;
 
 use Closure;
 use aryelgois\Medools\ModelIterator;
@@ -33,6 +36,8 @@ class User extends GenericUser{
     public $sport; //sports praticante
     public $clubs; //sports praticante
     public $metadata; //metadados genericos
+    public $favorite; //Selo de favoritado
+    public $following; //Selo de seguido
     private $user_email; //email
     
     //Contrução da classe
@@ -66,6 +71,20 @@ class User extends GenericUser{
      * @return mixed
      */
     public function get( int $id ) {
+
+        //Verificar se usuário está favorito e retornar selo true | false
+        if(!is_null($this->ID) && $this->ID != $id){            
+            //Instanciando classe Favorite e retorna status do usuário
+            $fav = new Favorite($this);
+            $favorite = $fav->isUserFavorite($id);
+
+            //Instanciando classe Follow e retorna status do usuário
+            $follow = new Follow($this);
+            $following = $follow->isUserFollowed($id);
+
+            //Adiciona dados aos atributos de classe do usuário
+            $this->setVars(['following' => $following, 'favorite' => $favorite]);            
+        } 
 
         //Filtro
         $filter = ['ID' => $id, 'user_status' => 0];
@@ -110,7 +129,7 @@ class User extends GenericUser{
             $clubs = $this->_getClubs();
             //Add valores a variaveis encontrados as variaveis da classe
             $this->setVars(['clubs' => $clubs]);
-        }
+        }     
 
         return $this;
 
@@ -186,7 +205,7 @@ class User extends GenericUser{
         //Atributos de comparação
         $atributes  = ['type', 'sport','clubs', 'metadata'];
         $random     = array_rand($atributes, 2);
-        $users      = ['success' => ['criterio' => []]];
+        $users      = ['success' => ['criterio' => []], 'found' => []];
         $query      = [];
         
         //Inicializa modelo
@@ -237,7 +256,7 @@ class User extends GenericUser{
                 //Atribui ID ao array
                 $query[$key][] = $i->user_id;
                 $user = new self();
-                $users[] = $user->getMinProfile($i->user_id);  
+                $users['found'][] = $user->getMinProfile($i->user_id);  
 
             }
         }  
@@ -255,7 +274,7 @@ class User extends GenericUser{
 
             //Rearranja ordem para usuários com 2 critérios
             //TODO: Arrumar essa função
-            array_unshift($users, $a);
+            array_unshift($users['found'], $a);
         }
         
         //Retornando array de dados estatisticos
@@ -334,29 +353,56 @@ class User extends GenericUser{
     }
 
     /** Retorna dados do usuário em formato PDF */
-    public function getUserPdf(){
+    public function getUserPdf(int $id = null){
+
+        //Se id for null, mostrar dados do usuário corrente
+        $user = (is_null($id))? $this : $this->get($id); 
         
         //Carreg classe de composição de PDFS e especifica caminho de download
         $mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ .'/public/pdf']);
-        
-        //Adicionando conteúdo inicial do arquivo
-        $html = '<h1>' . $this->display_name . '</h1>';
+
+        //Carrega classe de Resume e implementa os dados do usuário
+        $resume = new Resume();
+
+        //Atribuindo alguns valores a classe de resume
+        $resume->display_name = $user->display_name;
+        $resume->user_email = $user->user_email;
+        $resume->clubes = $user->clubs;
         
         //Verifica se usuário tem metadata para imprimir
-        //TODO: Verifica tradução e formatação dos campos
-        if( is_array($this->metadata) ){
-            foreach ($this->metadata as $key => $value) {
-                $html .= $key. ':';
-                $html .= $value['value'];
-                $html .= '<br />';
+        if( count($user->metadata) > 0){
+            
+            foreach ($user->metadata as $key => $value) {
+
+                //TODO: Verifica permissão bater com quem requisita
+                if(!isset($value['visibility']) 
+                || !in_array($value['visibility'], ["0", $this->type['ID']]) )
+                    continue; 
+
+                //Pula para proximo
+                if (!in_array($key, ['telefone', 'profile_img', 'biography', 'formacao', 'cursos', 'titulos-conquistas'])){
+                    continue;
+                }
+
+                //Mudando valor de key, devido a não suporte PHP
+                if($key == 'titulos-conquistas'){
+                    $key = 'titulos';
+                }
+
+                //Atribuindo valor a variavel
+                $resume->$key = $value['value'];                
+
             }
-        }        
+        }    
+
+        //Retorna html
+        $html = $resume->returnHTML();
 
         //Escreve dados no PDF
         $mpdf->WriteHTML($html);
 
         //Definindo nome do arquivo
-        $filename = 'resume-'. strtolower($this->user_login) .'.pdf';
+        $filename = 'resume-'. strtolower($user->user_login) . date('d-m-Y-h-hh-mm') . '.pdf';
         
         //Gera arquivo e forma de submeter
         $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
@@ -375,7 +421,7 @@ class User extends GenericUser{
     } 
 
     /** Realiza busca de usuários baseado em parametros */
-    public function searchUsers(array $search, int $page = 0) {
+    public function searchUsers(array $search, int $paged) {
 
         //Busca em user
         $personal   = ['display_name'];
@@ -419,17 +465,35 @@ class User extends GenericUser{
             //Busca em usermetas como array
             if (in_array($k, $isMetaArray)) {
 
+                //Atribui nome de meta_key usado pela aplicação
                 if ($k == 'clubs') {
-                    $regex = 's\:[0-9]+\:\"'.$v.'["\[]';
                     $k = 'clubes';
-                } else {
-                    $regex = 'i\:'.$v.'\;';
+                } 
+
+                //Se for array de dados, montar de grupo de ids a ser usado em regular expression
+                if(is_array($v)){   
+                    
+                    $r = '(';
+                    $qtdItem = count($v);
+                    
+                    foreach ($v as $key => $itemID) {
+                        $r .= ($key >= ($qtdItem - 1))? $itemID : $itemID . '|'; 
+                    }
+
+                    $r .= ')';
+                    
+                    //Monta regular expression
+                    $regex = 'i\:'. $r;
+                }
+                else{                    
+                    //Monta regular expression
+                    $regex = 's\:[0-9]+\:\"'.$v.'["\[]';
                 }
                 
                 //Adiciona a query
                 $content = [
-                    'usermeta.meta_key'              => $k,
-                    'usermeta.meta_value[REGEXP]'    => $regex                 
+                    'usermeta.meta_key'             => $k,
+                    'usermeta.meta_value[REGEXP]'   => $regex                 
                 ]; 
             }
 
@@ -451,7 +515,7 @@ class User extends GenericUser{
         $perPage = 24;
 
         //A partir de qual item contar
-        $initPageCount = ($page <= 1)? $page = 0 : ($page * $perPage) - $perPage;
+        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
 
         //Paginação de membros
         $limit = [$initPageCount, $perPage];
@@ -459,7 +523,7 @@ class User extends GenericUser{
         //Define o limite de posts
         $where = array_merge($where,  ['LIMIT' => $limit]);
 
-        //Executa query
+        //Executa query (Medoo)
         $result = $db->select('users',[
             '[>]usermeta' => ['ID' => 'user_id']
         ],[
@@ -1098,7 +1162,9 @@ class User extends GenericUser{
             'type'          => 'type',
             'sport'         => 'sport',
             'clubs'         => 'clubs',
-            'user_email'    => 'user_email'
+            'user_email'    => 'user_email',
+            'favorite'      => 'favorite',
+            'following'     => 'following'
         );
 
         foreach ($valid as $key => $value) {

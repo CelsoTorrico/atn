@@ -73,14 +73,26 @@ class Timeline {
     }
 
     /* Retorna lista de timeline */
-    function getAll(){     
+    function getAll(int $paged = 0){     
 
+        //Retorna lista de usuário que está conectado
         $following = $this->following;
 
-        //TODO: Retorna todos posts de feed baseado nas conexões
+        //Qtd de itens por página
+        $perPage = 24;
+
+        //A partir de qual item contar
+        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
+
+        //Paginação de timeline
+        $limit = [$initPageCount, $perPage];
+
+        //Retorna todos posts de feed baseado nas conexões
         $allTimelines = $this->model->getIterator([
             'post_author'   =>  $following,
-            'post_type'     =>  static::TYPE
+            'post_type'     =>  static::TYPE,
+            'ORDER'         => ['post_date' => 'DESC'],
+            'LIMIT'         => $limit
         ]);
         
         //Retorna resposta
@@ -99,21 +111,107 @@ class Timeline {
                 //Atribui dados do comentário
                 $timelineData = $item->getData();
 
+                //Atribui modelo da timeline corrente para verificação de permissão
+                $this->model = $item;
+
+                //Verifica se usuário tem permissão de enxergar post
+                if (!$this->isVisibility()) {
+                    continue;
+                }
+
                //Inicializa classe de comentários passando ID do POST
                 $comment = new Comment($item->ID);
 
                 //Combina array timeline e comentários
-                $timelines[$key] = array_merge($timelineData, [
+                $timeline = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity()            
                 ]); 
 
                 //Adiciona dados básico do autor do post timeline
-                $timelines[$key]['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
+                $timeline['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
 
                 //Se item tiver foto anexada
                 if ($attach = $this->model->getInstance(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
-                    $timelines[$key]['attachment'] = $attach->guid;
+                    $timeline['attachment'] = $attach->guid;
                 }
+
+                //Adiciona ao array de items
+                array_push($timelines, $timeline);
+                
+            }
+
+            //Retorna array de timelines
+            return $timelines;
+        } 
+        else{
+            //Retorna erro
+            return ['error' => ['timeline', 'Nenhum item a exibir.']];
+        }   
+        
+    }  
+
+    /* Retorna lista de timeline */
+    function getUserAll(int $currentViewUser, int $paged = 0){     
+
+        //Qtd de itens por página
+        $perPage = 24;
+
+        //A partir de qual item contar
+        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
+
+        //Paginação de timeline
+        $limit = [$initPageCount, $perPage];
+
+        //Retorna todos posts de feed baseado nas conexões
+        $allTimelines = $this->model->getIterator([
+            'post_author'   =>  $this->currentUser->ID,
+            'post_type'     =>  static::TYPE,
+            'ORDER'         => ['post_date' => 'DESC'],
+            'LIMIT'         => $limit
+        ]);
+        
+        //Retorna resposta
+        if( $allTimelines->count() > 0){
+
+            //Array para retornar dados
+            $timelines = [];
+            
+            foreach ($allTimelines as $key => $item) {
+
+                //Verifica se é valido
+                if ( !$allTimelines->valid() ) {
+                    continue;
+                }
+
+                //Atribui dados do comentário
+                $timelineData = $item->getData();
+                
+                //Atribui modelo da timeline corrente para verificação de permissão
+                $this->model = $item;
+
+                //Verifica se usuário tem permissão de enxergar post
+                if (!$this->isVisibility($currentViewUser)) {
+                    continue;
+                }
+
+               //Inicializa classe de comentários passando ID do POST
+                $comment = new Comment($item->ID);
+
+                //Combina array timeline e comentários
+                $timeline = array_merge($timelineData, [
+                    'quantity_comments' => $comment->getQuantity()            
+                ]); 
+
+                //Adiciona dados básico do autor do post timeline
+                $timeline['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
+
+                //Se item tiver foto anexada
+                if ($attach = $this->model->getInstance(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
+                    $timeline['attachment'] = $attach->guid;
+                }
+
+                //Adiciona ao array de items
+                array_push($timelines, $timeline);
                 
             }
 
@@ -315,13 +413,18 @@ class Timeline {
     }
 
     /** Verifica a visibilidade do conteúdo */
-    private function isVisibility():bool{
+    private function isVisibility($viewer_user_id = null):bool{
         
+        //Definindo id do visualizador da timeline
+        if(is_null($viewer_user_id)){
+            $viewer_user_id = $this->currentUser->ID;
+        }
+
         //Retorna visibilidade definida
         $visibility = new PostmetaModel();
 
         //Se autor post é mesmo usuário que quer visualizar
-        if ($this->model->post_author == $this->currentUser->ID) {
+        if ($this->model->post_author == $viewer_user_id) {
             return true;
         }
 
@@ -333,7 +436,7 @@ class Timeline {
 
         //Se for 1: Post privado, apenas seguidores podem ver
         if ($visibility->meta_value == 1) {
-            return in_array($this->model->post_author, $this->following);
+            return in_array($viewer_user_id, $this->following);
         }
 
         //Se for maior que 1: Visualizaçõa definida por pertencer a um club

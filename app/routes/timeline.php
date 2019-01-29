@@ -12,6 +12,8 @@ $router->group(['prefix' => 'timeline'], function () use ($router) {
 
     //Retorna lista de timelines
     $router->get('/', 'TimelineController@getAll');
+    $router->get('/paged/{paged:[0-9]+}', 'TimelineController@getAll');
+    $router->get('/user/{user_id:[0-9]+}[/paged/{paged:[0-9]+}]', 'TimelineController@getUserAll'); //Outros Usuários
 
     //Adiciona timeline
     $router->post('/', 'TimelineController@add');

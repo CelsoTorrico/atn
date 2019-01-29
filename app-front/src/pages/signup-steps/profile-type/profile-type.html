@@ -1,0 +1,129 @@
+<ion-content class="page-initial page-profile-type" padding>
+  
+    <ion-grid fixed>
+        
+        <ion-item>
+            <ion-img width="275" height="38" src="assets/img/atletasnow-logotipo.svg" id="main-logo" class="img-center" title="AtletasNOW"></ion-img>
+        </ion-item>    
+            
+        <!-- Cadastro -->
+        <ion-row>
+            <ion-col>
+                Etapas 2
+            </ion-col>        
+        </ion-row>
+  
+      <ion-row>
+          <ion-col>     
+            <form #registerForm="ngForm" (submit)="submitRegister(registerForm); $event.preventDefault()">           
+                
+                <!-- Selecionar tipo de usuário -->
+                <ion-item no-padding>
+                    <ion-label>{{ 'PROFILE' | translate}}</ion-label>
+                    <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full required>
+                        <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
+                            {{item.texto}}
+                        </ion-option>
+                    </ion-select>
+                </ion-item>
+
+                <!-- Selecionar tipo de usuário -->
+                <ion-row no-padding>
+                    <ion-label>{{ 'SPORT' | translate}}</ion-label> 
+                    <ion-col col-12>
+                        <rl-tag-input
+                            [(ngModel)]="$sportSelected"
+                            [addOnBlur]="false"
+                            [autocomplete]="true"
+                            [autocompleteItems]="$sportList"
+                            placeholder="{{ 'WRITE_SPORT' | translate}}"
+                            name="sportSelected" required>
+                        </rl-tag-input>                    
+                    </ion-col>                                       
+                </ion-row>
+                
+                <!-- Campos especifícos para Atletas e Profissionais -->
+                <ion-item-group *ngIf="$typeUserSelected != undefined" no-padding>
+                    
+                    <ion-row *ngIf="$typeUserSelected < 3">
+                        <ion-col col-6>
+                            <ion-item no-padding>
+                                <ion-select id="gender" [(ngModel)]="$account.gender" name='gender' placeholder="{{ 'GENDER' | translate}}" full required>
+                                    <ion-option *ngFor="let item of $genderList" [value]="item.valor">
+                                        {{item.texto}}
+                                    </ion-option>
+                                </ion-select>
+                            </ion-item>                            
+                        </ion-col>
+                        <ion-col col-3>
+                            <ion-input type="numero" [(ngModel)]="$account.rg" name="rg" placeholder="RG"></ion-input>
+                            </ion-col>
+                        <ion-col col-3>
+                            <ion-input type="numero" [(ngModel)]="$account.cpf" name="cpf" placeholder="CPF"></ion-input>
+                        </ion-col>                        
+
+                    </ion-row>
+
+                    <ion-row *ngIf="$typeUserSelected >= 3">
+                        <ion-col col-12>
+                            <ion-input type="numero" [(ngModel)]="$account.cnpj" name="cnpj" placeholder="CNPJ"></ion-input>
+                        </ion-col>
+                    </ion-row>
+                    
+                    <ion-row>                            
+                        <ion-col col-12>
+                            <ion-item no-padding>
+                                <ion-input id="endereco" [(ngModel)]="$account.address" type="text" name="address" placeholder="{{'ADDRESS' | translate}}" required full></ion-input>    
+                            </ion-item>                                
+                        </ion-col>
+                    </ion-row>
+
+                    <ion-row>
+                        <ion-col col-4>
+                            <ion-input id="cep" [(ngModel)]="$account.zipcode" type="text" name="zipcode" placeholder="{{'ZIPCODE' | translate}}" required full ></ion-input>
+                        </ion-col>
+                        <ion-col col-8>
+                            <ion-input id="bairro" [(ngModel)]="$account.neighborhood" type="text" name="neighborhood" placeholder="{{'NEIGHBORNHOOD' | translate}}" required full></ion-input> 
+                        </ion-col>                        
+                    </ion-row>
+
+                    <ion-row>
+                            <ion-col col-4>
+                                <ion-input type="text" [(ngModel)]="$account.city" name="city" placeholder="{{'CITY' | translate}}"></ion-input>
+                            </ion-col>                            
+                            <ion-col col-4>
+                                <ion-item no-padding>
+                                    <ion-select id="state" [(ngModel)]="$account.state" name="state" placeholder="{{ 'STATE' | translate }}" full required>
+                                        <ion-option *ngFor="let item of $statesList" [value]="item">
+                                            {{item}}
+                                        </ion-option>
+                                    </ion-select>
+                                </ion-item>                                
+                            </ion-col>
+                            <ion-col col-4>
+                                <ion-item no-padding>
+                                    <ion-input type="text" [(ngModel)]="$account.country" name="country" placeholder="{{'COUNTRY' | translate}}"></ion-input>    
+                                </ion-item>                                
+                            </ion-col>
+                    </ion-row>      
+
+                </ion-item-group>
+
+                <button type="submit" ion-button full>{{'NEXT' | translate}}</button>   
+                
+                <p *ngIf="$error">{{$error}}</p> 
+
+            </form>
+          </ion-col>
+      </ion-row>
+
+        <!-- Login -->
+        <ion-row>
+            <ion-col>
+                <p text-center>{{ 'HAS_ACCOUNT?' | translate }} <a (click)="goToLogin()">{{ 'DO_LOGIN' | translate }}</a> </p>
+            </ion-col>
+        </ion-row>
+  
+    </ion-grid>
+  
+  </ion-content>

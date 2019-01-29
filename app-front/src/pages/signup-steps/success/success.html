@@ -1,0 +1,30 @@
+<ion-content class="page-initial page-success" padding>
+
+    <ion-grid fixed>
+
+        <ion-item>
+            <ion-img width="275" height="38" src="assets/img/atletasnow-logotipo.svg" id="main-logo" class="img-center" title="AtletasNOW"></ion-img>
+        </ion-item>    
+        
+        <!-- Cadastro -->
+        <ion-row>
+            <ion-col>
+                Etapas 3
+            </ion-col>        
+        </ion-row>
+
+        <ion-row>
+            <ion-col>
+
+                <ion-title text-center>
+                    {{ 'NEW_USER_REGISTER_SUCCESS' | translate}}
+                </ion-title>
+            
+                <button (click)="goToDashboard()"  type="submit" ion-button full>{{ 'ENTER' | translate }}</button>
+                    
+            </ion-col>
+        </ion-row>
+        
+    </ion-grid>
+
+</ion-content>

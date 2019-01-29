@@ -23,7 +23,7 @@ class UserController extends Controller
         $this->user = $request->user();
     }
 
-    /**  */
+    /** Retorna usuário único  */
     function get($id) {
 
         $id = (int) $id;
@@ -40,9 +40,9 @@ class UserController extends Controller
         return response()->json($result);
     }
 
-    function getPdf() {
+    function getPdf(int $id) {
 
-        $result = $this->user->getUserPdf();
+        $result = $this->user->getUserPdf($id);
 
         //Se houve erro
         if(is_array($result) && isset($result['error'])){
@@ -153,7 +153,7 @@ class UserController extends Controller
 
     }
 
-    function search (Request $request, int $page) {
+    function search (Request $request, int $page = 0) {
         //retorna resultado
         return response()->json($this->user->searchUsers($request->all(), $page));
     }

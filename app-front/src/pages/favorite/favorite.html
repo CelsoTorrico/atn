@@ -1,0 +1,115 @@
+<ion-header>
+
+    <ion-navbar>
+            
+      <ion-title>{{ "FAVORITES" | translate }}</ion-title>
+
+    </ion-navbar>
+
+    <section id="profile-resume" class="profile-suggestions">
+        <ion-list>
+            
+            <ion-list-header>
+                {{ "FRIENDS_SUGGESTION" | translate }}
+            </ion-list-header>            
+
+            <ng-container *ngIf="friendsSuggestion.found">
+                
+                <ion-title>
+                    {{ "SUGGESTIONS_MESSAGE" | translate}} 
+                    <br />
+                    <ion-badge *ngFor="let message of friendsSuggestion.success.criterio">
+                        {{ message }}
+                    </ion-badge>
+                </ion-title>
+
+                <member-list id="feature" *ngFor="let user of friendsSuggestion.found" [member]="user"></member-list> 
+
+            </ng-container>
+
+        </ion-list>
+    </section> 
+
+</ion-header>
+
+<ion-content class="page-profile">    
+
+  <ion-grid>
+      <ion-row padding>
+          
+          <ion-col id="favorites-col" col-9 offset-3>
+            
+            <ion-card>
+
+                <ion-item-group *ngIf="favoriteMembers" >
+                    <ion-item>
+                        
+                        <ion-title>{{ "FAVORITES" | translate }}</ion-title>
+                        
+                        <ion-list>
+                          
+                          <ion-list-header *ngIf="favoriteMembers.Atletas">
+                            {{ "ATLETAS" | translate }}
+                          </ion-list-header>
+                          
+                          <member-container [listMembers]="favoriteMembers.Atletas"></member-container>
+
+                        </ion-list>
+
+                        <ion-list *ngIf="favoriteMembers.Clubes"> 
+                          
+                            <ion-list-header>
+                              {{ "CLUBS" | translate }}
+                            </ion-list-header>
+                            
+                            <member-container [listMembers]="favoriteMembers.Clubes"></member-container>
+  
+                          </ion-list>
+
+                          <ion-list *ngIf="favoriteMembers.Outros">
+                          
+                              <ion-list-header>
+                                {{ "OTHERS" | translate }}
+                              </ion-list-header>
+
+                              <member-container [listMembers]="favoriteMembers.Outros"></member-container>
+    
+                            </ion-list> 
+
+                    </ion-item>
+                </ion-item-group>
+
+            </ion-card>
+
+          </ion-col>
+
+            <ion-col id="friends-col" col-9 offset-3>
+            
+                <ion-card>
+
+                    <ion-item-group>
+                        <ion-item>
+                            
+                            <ion-title>{{ "FRIENDS" | translate }}</ion-title>
+                            
+                            <ion-list>
+                                
+                                <member-container></member-container>
+
+                            </ion-list>
+
+                        </ion-item>
+                    </ion-item-group>
+
+                </ion-card>
+
+            </ion-col>
+
+      </ion-row>        
+  </ion-grid>
+
+</ion-content>
+
+<ion-footer>
+    @2019 - AtletasNow
+</ion-footer>

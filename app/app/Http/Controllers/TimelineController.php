@@ -12,6 +12,7 @@ class TimelineController extends Controller
 {
 
     protected $timeline;
+    protected $currentUser;
     
     /**
      * Create a new controller instance.
@@ -21,6 +22,7 @@ class TimelineController extends Controller
     public function __construct(Request $request)
     {
         $this->timeline = new Timeline($request->user());
+        $this->currentUser = $request->user();
     }
 
     function get($id){
@@ -30,9 +32,23 @@ class TimelineController extends Controller
         return response()->json($response);
     }
 
-    function getAll(){
+    function getAll(int $paged = 0){
+
+        $response = $this->timeline->getAll($paged);
+
+        return response()->json( $response );
+    }
+
+    function getUserAll(int $user_id, int $paged = 0){
+
+        //Classe de usuário
+        $user = new User();
+        $profileUser = $user->get($user_id);
+        $currentUser = $this->currentUser->ID;
+        $timeline = new Timeline($profileUser);
         
-        $response = $this->timeline->getAll();
+        //Carrega timeline de usuário correspondente
+        $response = $timeline->getUserAll($currentUser, $paged);
 
         return response()->json( $response );
     }

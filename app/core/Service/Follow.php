@@ -25,6 +25,22 @@ class Follow {
 
     }
 
+    /** Retorna se usuário está favoritado */
+    public function isUserFollowed(int $user_id){
+        
+        //Filtrar inputs e validação de dados
+        $followData = [
+            'from_id'       => $this->currentUser->ID,
+            'to_id'         => $user_id
+        ];
+
+        //Insere dados no modelo
+        $following = $this->model->getIterator($followData);    
+
+        //Se há resultados retorna true, senão false
+        return ($following->count() > 0)? TRUE : FALSE;
+    }
+
     /** Retornar todos os seguidores */
     public function getFollowers($only_ids = false){
 

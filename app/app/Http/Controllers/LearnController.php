@@ -30,9 +30,9 @@ class LearnController extends Controller
         return response()->json($response);
     }
 
-    function getAll(){
+    function getAll(int $paged = 0){
         
-        $response = $this->learn->getAll();
+        $response = $this->learn->getAll($paged);
 
         return response()->json( $response );
     }

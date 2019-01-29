@@ -14,7 +14,7 @@ $router->group(['prefix' => 'chat'], function () use ($router) {
     $router->get('/message/{room_id:[0-9]+}', 'ChatController@getMessage');
 
     //Adiciona mensagem
-    $router->post('/{room_id:[0-9]+}', 'ChatController@addMessage');
+    $router->post('/{user_id:[0-9]+}', 'ChatController@addMessage');
 
     //Deleta timeline
     $router->delete('/message/{id:[0-9]+}', 'ChatController@deleteMessage');

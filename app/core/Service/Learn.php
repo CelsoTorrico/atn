@@ -15,17 +15,25 @@ class Learn extends Timeline {
     const TYPE = 'aprenda';
 
     /* Retorna lista de timeline */
-    function getAll(){     
+    function getAll(int $paged = 0){     
 
+        //Retorna lista de usuário que está conectado
         $following = $this->following;
+
+         //Qtd de itens por página
+         $perPage = 24;
+
+         //A partir de qual item contar
+         $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
+ 
+         //Paginação de timeline
+         $limit = [$initPageCount, $perPage];
 
         //TODO: Retorna todos posts de feed baseado nas conexões
         $allTimelines = $this->model->getIterator([
             'post_type'     =>  static::TYPE,
-            'LIMIT'         => 12,
-            'ORDER'         => [
-                'post_date' => 'DESC'
-            ]
+            'ORDER'         => ['post_date' => 'DESC'],
+            'LIMIT'         => $limit
         ]);
         
         //Retorna resposta

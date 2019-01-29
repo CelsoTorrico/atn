@@ -37,14 +37,14 @@ class ChatController extends Controller
         return response()->json( $response );
     }
 
-    function getMessage($room_id) {
+    function getMessage($suser) {
         
-        $response = $this->chat->getLastMessage($room_id);
+        $response = $this->chat->getLastMessage($suser);
 
         return response()->json( $response );
     }
 
-    function addMessage($room_id, Request $request){
+    function addMessage(int $user_id, Request $request){
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has('chat_content') || !$request->filled('chat_content')){
@@ -55,7 +55,7 @@ class ChatController extends Controller
         //Atribui conteúdo a variável
         $data = [
             'chat_content'  => $request->input('chat_content'),
-            'chat_room'     => $room_id
+            'suser'         => $user_id
         ];
 
         //Atribui imagem se tiver upload

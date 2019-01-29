@@ -1,0 +1,42 @@
+<ion-list class="chat-message-container">
+    
+    <ion-list class="messages-list">
+
+        <ng-container *ngIf="$chatMessages">
+
+            <div *ngFor="let room of $chatMessages" [ngClass]="{'viewer-message' : room.viewer }" class="message-row">
+                
+                <ion-avatar item-start *ngIf="!room.viewer" >
+                    <ion-img [src]="room.author.profile_img.value" alt="{{ room.author.display_name | titlecase }}"></ion-img>
+                </ion-avatar>
+
+                <span class="ballon-message">
+                    <p *ngIf="!room.viewer" ><small>{{ room.author.display_name | titlecase }}</small></p>
+                    {{ room.content }}
+                    <ion-note item-end ></ion-note>
+                </span>
+                <p><small>{{ room.date | date }}</small></p>
+            </div>
+            
+        </ng-container>
+    
+        <ng-container *ngIf="$chatNoMessages">
+            {{ $chatNoMessages }}
+        </ng-container>
+
+    </ion-list>
+    <ion-list class="chatForm">
+        <form #chatForm="ngForm" (keyup)="sendMessage($event)" name='chatForm'>
+
+            <ion-row>
+                <ion-col>                            
+                    <ion-item>
+                        <ion-textarea name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}" [(ngModel)]="$message" required ></ion-textarea>
+                    </ion-item>                
+                </ion-col>
+            </ion-row>                    
+        </form>        
+    </ion-list>
+
+</ion-list>
+

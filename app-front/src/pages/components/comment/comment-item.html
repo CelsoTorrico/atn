@@ -1,0 +1,44 @@
+<ion-item class="comment-item" *ngFor="let currentItem of currentCommentItems">
+
+    <ion-list ng>
+        <header (click)="goToProfile(currentItem.user_id)">
+            {{ currentItem.comment_author }} <span class="date">{{ currentItem.comment_date | date }}</span>
+        </header>                        
+        <article>
+            
+            {{ currentItem.comment_content }}
+
+            <button ion-button clear (click)="openComment(currentItem.comment_ID, $event)" >
+                <ion-icon md="ios-chatbubbles-outline"></ion-icon> 
+            </button>
+
+        </article>   
+        <comment-form [parentItem]="currentItem.comment_ID"></comment-form>              
+    </ion-list>
+
+    <ion-item-group class="commentResponsesContainer" *ngIf="currentItem.responses" >
+
+        <ion-item *ngFor="let resp of currentItem.responses">
+
+            <ion-list>
+                <header (click)="goToProfile(resp.user_id)">
+                    {{ resp.comment_author }} <span class="date">{{ resp.comment_date | date }}</span>
+                </header>                        
+                <article>
+
+                    {{ resp.comment_content }}
+
+                    <button ion-button clear (click)="openComment(resp.comment_ID, $event)" >
+                        <ion-icon md="ios-chatbubbles-outline"></ion-icon> 
+                    </button>
+
+                </article>                
+                <comment-form [parentItem]="currentItem.comment_ID"></comment-form>
+                
+            </ion-list>
+            
+        </ion-item>
+
+    </ion-item-group>
+    
+</ion-item>
