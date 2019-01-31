@@ -4,6 +4,7 @@ namespace Core\Service;
 
 use Core\Profile\User;
 use Core\Service\Comment;
+use Core\Service\Like;
 use Core\Utils\FileUpload;
 
 use Core\Database\PostModel;
@@ -14,15 +15,18 @@ class Timeline {
     protected $model;
     protected $currentUser;
     protected $following;
+    protected $like;
     const TYPE = 'timeline';
 
     public function __construct($user){
         
+        //Inicializa classes
         $this->model = new PostModel();
         $this->currentUser = $user;
+        $this->like = new Like($user);
 
         //Define following e retorna IDs
-        $follow = new Follow($user);
+        $follow = new Follow($user);        
         $this->following = $follow->getFollowing(true);
 
         //Retorna classe usuário ou retorna erro
@@ -50,13 +54,15 @@ class Timeline {
         //Inicializa classe de comentários passando ID do POST
         $comment = new Comment($this->model->ID);
 
+
         //Atribui dados do modelo a variavel como array
         $timelineData = $this->model->getData();
 
         //Combina array timeline e comentários
         $timelineData = array_merge($timelineData, [
             'list_comments' => $comment->getAll(),
-            'quantity_comments' => $comment->getQuantity()            
+            'quantity_comments' => $comment->getQuantity(),
+            'has_like' => $this->like->isPostLiked($this->model->ID)         
         ]);
 
         //Adiciona dados básico do autor do post timeline
@@ -124,7 +130,8 @@ class Timeline {
 
                 //Combina array timeline e comentários
                 $timeline = array_merge($timelineData, [
-                    'quantity_comments' => $comment->getQuantity()            
+                    'quantity_comments' => $comment->getQuantity(),
+                    'has_like' => $this->like->isPostLiked($item->ID)         
                 ]); 
 
                 //Adiciona dados básico do autor do post timeline
@@ -199,7 +206,8 @@ class Timeline {
 
                 //Combina array timeline e comentários
                 $timeline = array_merge($timelineData, [
-                    'quantity_comments' => $comment->getQuantity()            
+                    'quantity_comments' => $comment->getQuantity(),
+                    'has_like' => $this->like->isPostLiked($item->ID, $currentViewUser)         
                 ]); 
 
                 //Adiciona dados básico do autor do post timeline
@@ -394,13 +402,14 @@ class Timeline {
         $comment = new Comment();
 
         //Verifica se comentário existe
-        if( !$comment->get($comment_ID) ){
-            return ['error' => ['comment' => 'Comentário inexistente. Impossível cadastrar uma resposta']];        
+        if( !$comment->model->load(['comment_ID' => $comment_ID]) ){
+            return ['error' => [
+                'comment' => 'Comentário inexistente. Impossível cadastrar uma resposta']];        
         }
 
         //Filtrar inputs e validação de dados
         $filtered = [
-            'comment_post_ID'    => $comment->comment_post_ID,
+            'comment_post_ID'    => $comment->model->comment_post_ID,
             'comment_content'    => filter_var($data, FILTER_SANITIZE_STRING),
             'comment_author'     => $this->currentUser->display_name,
             'user_id'            => $this->currentUser->ID,

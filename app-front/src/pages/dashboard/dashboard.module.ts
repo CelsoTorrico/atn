@@ -1,3 +1,4 @@
+import { FooterAppModule } from './../components/footer/footer.module';
 import { SearchFieldsModule } from './../components/search/search.module';
 import { MenuPageModule } from './../components/menu/menu.module';
 import { DashboardPage } from './dashboard';
@@ -5,6 +6,7 @@ import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
 import { TimelineModule } from '../components/timeline/timeline.module';
+import { MemberModule } from '../components/member/member.module';
 
 @NgModule({
   //Declara apenas components, directives e pipes do módulo
@@ -16,9 +18,10 @@ import { TimelineModule } from '../components/timeline/timeline.module';
   imports: [
     IonicPageModule.forChild(DashboardPage),
     TranslateModule.forChild(),
-    MenuPageModule,
+    MenuPageModule, 
     SearchFieldsModule,
-    TimelineModule
+    TimelineModule,
+    MemberModule,
   ],
   //Inicializa componente enviando para index.html
   bootstrap: [],

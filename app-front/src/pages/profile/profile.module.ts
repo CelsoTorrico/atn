@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { Message } from './message.component';
 import { TimelineModule } from './../components/timeline/timeline.module';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,15 +7,16 @@ import { ProfilePage } from './profile';
 
 @NgModule({
   declarations: [
-    ProfilePage
+    ProfilePage, Message
   ],
   imports: [
     IonicPageModule.forChild(ProfilePage),
     TranslateModule.forChild(),
-    TimelineModule 
+    TimelineModule
   ],
   exports: [
-    ProfilePage
-  ]
+    ProfilePage, Message
+  ], 
+  entryComponents: [Message]
 })
 export class ProfilePageModule { }

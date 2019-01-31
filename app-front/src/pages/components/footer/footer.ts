@@ -7,26 +7,11 @@ interface PageItem {
 }
 type PageList = PageItem[] 
 
-@Component({
-  selector: 'nav-menu',
-  template: `
-      <ion-list>
-        <nav>
-            <ul class="list-inline">
-                <li *ngFor="let p of pages" (click)="goToPage(p)">
-                  <span class="button-atletas">{{ p.title }}</span>
-                </li>
-            </ul>                        
-        </nav>
-      </ion-list>
-  `,
-  styles: [`
-  ion-list{
-    margin: 0px;  
-  }
-  `]
+@Component({ 
+  selector: 'footer-app',
+  templateUrl: ''
 })
-export class NavMenu {
+export class FooterApp {
   
   // A reference to the ion-nav in our component
   @ViewChild(Nav) nav: Nav; 
@@ -36,14 +21,16 @@ export class NavMenu {
   constructor(public navCtrl: NavController) {
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Favorite',  component: 'FavoritePage' },
-      { title: 'Learn',     component: 'LearnPage' },
-      { title: 'Messages',  component: 'ChatPage' }
+      { title: 'Privacy',  component: 'ChatPage' },
+      { title: 'About',     component: 'ChatPage' },
+      { title: 'Terms & Conditions',  component: 'ChatPage' },
+      { title: 'Support',  component: 'ChatPage' },
+      { title: 'Purchase License',  component: 'ChatPage' }
     ];
   }
 
   ionViewDidLoad() {
-    console.log('Hello NavMenu Loaded');
+    
   }
 
   //Abre uma nova página de profile

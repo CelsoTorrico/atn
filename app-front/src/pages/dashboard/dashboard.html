@@ -1,20 +1,14 @@
 <ion-header>
     <ion-toolbar>
-        <ion-grid>
+        <ion-grid fixed>
             <ion-row>
                 <ion-col col-md-4 col-12>
-                    <img width="275" height="38" src="assets/img/atletasnow-logotipo-negativo.svg" id="main-logo" class="img-center" title="AtletasNOW" align-self-center />
+                    <img width="275" height="38" src="assets/img/atletasnow-logotipo-negativo.svg" id="main-logo" class="img-left" title="AtletasNOW" align-self-left />
                 </ion-col>
                 <ion-col col-md-8 col-12>
                     <ion-row>
-                        <ion-col col-4 offset-8 align-self-center>
-                            <ion-item class="btn-cursor" (click)="goToPage('ProfilePage')">   
-
-                                <h2>Olá, {{ currentUserData.display_name }}</h2>                                     
-                                <ion-avatar no-margin item-end>
-                                    <img height="30" width="30" [src]="currentUserData.metadata.profile_img.value" />
-                                </ion-avatar>                                    
-                            </ion-item>
+                        <ion-col col-auto offset-8 align-self-center>
+                            <member-current-user [member]="currentUserData"></member-current-user>
                         </ion-col>
                     </ion-row>
                 </ion-col>
@@ -56,9 +50,6 @@
             <ion-col class="profile-activity" padding><div>Atividades</div></ion-col>
         </ion-row>        
     </ion-grid>
-
-    <ion-footer>
-        @2019 - AtletasNow
-    </ion-footer>
   
-  </ion-content>  
+</ion-content>  
+

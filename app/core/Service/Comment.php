@@ -15,7 +15,7 @@ class Comment {
     public $comment_date;
     public $responses; //Array de respostas ao comentário
 
-    protected $model;
+    public $model;
 
     function __construct($post_id = 0) {
 
@@ -77,7 +77,11 @@ class Comment {
     public function getAll():Array{
 
         //Inicializa classe de iteração sobre comentários (BD)
-        $allcomments = $this->model->getIterator(['comment_post_ID' => $this->comment_post_ID]);
+        $allcomments = $this->model->getIterator([
+            'comment_post_ID' => $this->comment_post_ID,
+            'comment_parent'  => 0, //Retornar somente comentários mestres
+            'ORDER' => ['comment_date' => 'DESC']
+        ]);
 
         //Verifica se existe comentários e retorna array
         if($allcomments->count() < 0){
@@ -160,10 +164,11 @@ class Comment {
         }
 
         //Preenche colunas com valores
-        $this->model->fill($data); 
+        $model = new CommentModel();
+        $model->fill($data); 
 
         //Salva novo registro no banco
-        $result = $this->model->save();
+        $result = $model->save();
 
         //SE resultado for true, continua execução
         if($result){
@@ -172,10 +177,10 @@ class Comment {
             $post = new PostModel(['ID' => $data['comment_post_ID']]);
             
             //Intanciando notificação
-            $notify = new Notify($this->model->user_id);
+            $notify = new Notify($model->user_id);
             
             //Adicionando notificação
-            $r = $notify->add(6, $post->post_author, $this->model->user_id);
+            $r = $notify->add(6, $post->post_author, $model->user_id);
             
             //Mensagem de sucesso no cadastro
             return ['success' => ['comment' => 'Comentário realizado com sucesso!']];

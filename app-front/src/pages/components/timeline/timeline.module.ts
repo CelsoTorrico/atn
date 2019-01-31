@@ -1,3 +1,4 @@
+import { TimelineSingle } from './item/timeline-single.component';
 import { CommentModule } from './../comment/comment.module';
 import { TimelineItem } from './item/timelineItem';
 import { Timeline } from './timeline';
@@ -9,7 +10,7 @@ import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
-    Timeline, TimelineItem
+    Timeline, TimelineItem, TimelineSingle
   ],
   imports: [
     TranslateModule.forChild(),
@@ -20,7 +21,7 @@ import { CommonModule } from '@angular/common';
   ],
   exports: [Timeline],
   bootstrap: [Timeline],
-  entryComponents:[Timeline, TimelineItem], 
+  entryComponents:[Timeline, TimelineItem, TimelineSingle], 
   schemas: [],
   providers: []
 })

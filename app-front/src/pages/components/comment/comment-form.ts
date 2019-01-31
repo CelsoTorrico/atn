@@ -6,35 +6,29 @@ import { Api } from '../../../providers';
 @Component({
   selector: 'comment-form',
   template: `
-        <ion-item-group [id]="'form-' + parentItem">
-            <form #commentForm="ngForm" name='commentForm' (ngSubmit)="submitComment(commentForm, $event)">
-                <ion-list>
-                    <ion-item>
-                        <ion-avatar item-start>
-                            <ion-img [src]="">User Img</ion-img>
-                        </ion-avatar>
-                        <ion-textarea name="comment_content" [(ngModel)]="commentText.comment_content" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required ></ion-textarea>
-                    </ion-item>
-                </ion-list>                
-            </form>
+        <ion-item-group [id]="'form-' + parentItem" style="display:none !important;">
+            
+          <ion-list>
+              <ion-item>
+                  <ion-avatar item-start>
+                      <ion-img [src]="">User Img</ion-img>
+                  </ion-avatar>
+                  <ion-textarea name="comment_content" [(ngModel)]="commentText" (keyup)="submitComment($event)" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required ></ion-textarea>
+              </ion-item>
+          </ion-list>                
+            
         </ion-item-group>
   `
 })
 export class CommentForm {
 
   @Input() public parentItem:number;
-  
-  @Input()  public currentCommentItems:any[]; 
 
-  public commentText:any = { comment_content : <string> ''};
-
-  public commentShow:any;  
+  public commentText:string;
 
   constructor(
     public api: Api,
-    private toastCtrl: ToastController ) {
-      
-    } 
+    private toastCtrl: ToastController ) {} 
 
   //Retorna
   ngOnInit() {
@@ -42,26 +36,17 @@ export class CommentForm {
   }
 
   //Submeter um comentário ao post
-  submitComment(form:NgForm, event) {
+  submitComment($event) {
     
-    event.preventDefault();
+    $event.preventDefault();
 
-    //Se formulário estiver inválido, mostrar mensagem
-    if (form.status == 'INVALID') {
-        
-        let toast = this.toastCtrl.create({
-          message: 'Preencha os campos de email e senha!',
-          duration: 4000,
-          position:'bottom'
-        });
-
-        toast.present();
-        
+    //Só submeter quando clicar em Enter
+    if ($event.code != 'Enter') { 
         return;
     }
 
     //Enviado um comentário a determinada timeline
-    let items = this.api.post('timeline/comment' + this.parentItem, this.commentText).subscribe((resp:any) => {
+    let items = this.api.post('timeline/comment/' + this.parentItem, { comment_content : this.commentText}).subscribe((resp:any) => {
        
       //Se não existir items a exibir
       if(resp.length <= 0){
@@ -70,10 +55,13 @@ export class CommentForm {
 
       //Sucesso 
       if(resp.success != undefined){
+
+        //Reseta campo
+        this.commentText = '';
         
         let toast = this.toastCtrl.create({
           message: resp.success.comment,
-          duration: 4000,
+          duration: 8000,
           position:'bottom'
         });
 

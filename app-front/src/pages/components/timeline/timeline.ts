@@ -91,7 +91,7 @@ export class Timeline {
         return; 
     });
 
-  }
+  } 
 
   /**
    * Adicionar um novo item de timeline
@@ -118,68 +118,15 @@ export class Timeline {
   getItem($postID:number, event) {
     event.preventDefault();
 
+    //Impede de executar ações em cascata em botões com evento
+    if(event.target.tagName == 'IMG' || event.target.classList.contains('button-inner')) {
+      return;
+    }
+
     //Invoca um modal passando ID da Timeline
     let modal = this.modalCtrl.create(TimelineItem, { post_id: $postID });
     modal.present(); 
 
-  }
-
-  //Mostrar campo de comentário
-  openComment(event) {
-    event.preventDefault();
-    this.commentShow = true;
-  }
-
-  //Submeter um comentário ao post
-  submitComment($postID:number, form:NgForm, event) {
-    
-    event.preventDefault();
-
-    //Se formulário estiver inválido, mostrar mensagem
-    if (form.status == 'INVALID') {
-        
-        let toast = this.toastCtrl.create({
-          message: 'Preencha os campos de email e senha!',
-          duration: 4000,
-          position:'bottom'
-        });
-
-        toast.present();
-        
-        return;
-    }
-
-    //Enviado um comentário a determinada timeline
-    let items = this.api.post('timeline/'+ $postID, this.commentText).subscribe((resp:any) => {
-       
-      //Se não existir items a exibir
-      if(resp.length <= 0){
-        return;
-      }
-
-      //Sucesso 
-      if(resp.success != undefined){
-        
-        let toast = this.toastCtrl.create({
-          message: resp.success.comment,
-          duration: 4000,
-          position:'bottom'
-        });
-
-        toast.present();
-      }     
-
-    }, err => { 
-        return; 
-    }); 
-    
-  }
-
-  //Abre uma nova página de profile
-  goToProfile($user_id:number){
-    this.navCtrl.push('ProfilePage', {
-      user_id: $user_id
-    }); 
   }
 
 }

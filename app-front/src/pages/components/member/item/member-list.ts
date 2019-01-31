@@ -10,7 +10,9 @@ import { NavController } from 'ionic-angular';
                 </ion-avatar>
                 <h2>{{ member.display_name | titlecase }}</h2>
                 <p>Profissão</p>
-                <ion-note item-end >Favoritar</ion-note>
+                <ion-note item-end>
+                    {{ "SHOW_PROFILE" | translate }}
+                </ion-note>
             </button>             
     `,
     styles: [``]

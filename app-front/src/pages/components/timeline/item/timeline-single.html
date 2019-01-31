@@ -1,0 +1,70 @@
+<ion-card-content>
+    <ion-card-title>
+
+        <ion-list>
+            <ion-item>
+                <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
+                    <img [src]="currentTimeline.post_author.profile_img.value" />
+                </ion-avatar>
+                <h2>{{ currentTimeline.post_author.display_name}}</h2>
+                <h3>{{ currentTimeline.post_date | date }}</h3>
+            </ion-item> 
+        </ion-list>
+
+    </ion-card-title>
+
+    <ion-item-group>
+        
+        <ion-item>
+            {{ currentTimeline.post_content }}
+        </ion-item>
+
+        <ion-item *ngIf="currentTimeline.attachment">
+            <img [src]="currentTimeline.attachment" />
+        </ion-item>
+
+        <ion-item-divider>
+
+            <ion-list>  
+                
+                <button ion-button  icon-only small outline value="{{ 'LIKE' | translate }}" [ngClass]="{'active': currentTimeline.has_like === true, 'inactive': currentTimeline.has_like === false}" (click)="setLike(currentTimeline.ID, $event)">
+                    <ion-icon md="ios-thumbs-up-outline"></ion-icon> 
+                </button>
+                
+                <button ion-button icon-only small outline value="{{ 'COMMENT' | translate}}" (click)="openComment($event)" >
+                    <ion-icon md="ios-chatbubbles-outline"></ion-icon>
+                </button>
+
+                <ion-note end>
+                    {{ "ANSWERS" | translate }}
+                    <ion-badge item-end badge-sm>
+                        {{ currentTimeline.quantity_comments }}
+                    </ion-badge>
+                </ion-note>
+                
+            </ion-list>
+
+        </ion-item-divider>
+
+    </ion-item-group> 
+
+</ion-card-content>
+
+<ion-item-group *ngIf='commentShow'>
+    <ion-row>
+        <ion-col col-2>
+            <ion-list>
+                <ion-item>
+                    <ion-avatar item-start>
+                        <ion-img [src]=""></ion-img>
+                    </ion-avatar>
+                </ion-item>
+            </ion-list>                            
+        </ion-col>
+        <ion-col>                            
+            <ion-item>
+                <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required (keyup)="submitComment(currentTimeline.ID, $event)" ></ion-textarea>
+            </ion-item>                
+        </ion-col> 
+    </ion-row> 
+</ion-item-group>

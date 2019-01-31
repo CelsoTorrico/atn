@@ -59,6 +59,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 2 - Comentários em timelines @done(18-12-06 15:56)
 ✔ Semana 2 - Timeline -> Novo e Update de timeline com imagens @done(18-12-27 01:27)
 ☐ Semana 2 - Timeline -> Definir público de publicação (Publico, atleta, profissional e clubes)
+✔ Semana 2 - Sistema de Like de posts @done(19-01-30 19:51)
 ✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
 ✔ Semana 3 - Perfil Instituição -> deletar e atualizar @done(17-12-12 16:00)
 ✔ Semana 3 - Fazer validação de usuário logado em requisições @done(18-11-27 19:12)

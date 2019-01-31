@@ -5,15 +5,17 @@
             {{ currentItem.comment_author }} <span class="date">{{ currentItem.comment_date | date }}</span>
         </header>                        
         <article>
-            
-            {{ currentItem.comment_content }}
 
+            {{ currentItem.comment_content }}
+            
             <button ion-button clear (click)="openComment(currentItem.comment_ID, $event)" >
                 <ion-icon md="ios-chatbubbles-outline"></ion-icon> 
             </button>
 
-        </article>   
+        </article> 
+
         <comment-form [parentItem]="currentItem.comment_ID"></comment-form>              
+        
     </ion-list>
 
     <ion-item-group class="commentResponsesContainer" *ngIf="currentItem.responses" >
@@ -32,8 +34,7 @@
                         <ion-icon md="ios-chatbubbles-outline"></ion-icon> 
                     </button>
 
-                </article>                
-                <comment-form [parentItem]="currentItem.comment_ID"></comment-form>
+                </article>
                 
             </ion-list>
             

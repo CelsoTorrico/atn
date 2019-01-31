@@ -1,7 +1,8 @@
+import { Message } from './message.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Api } from './../../providers/api/api';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController, ModalController } from 'ionic-angular';
 import { User } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -42,13 +43,14 @@ export class ProfilePage {
       public user: User,
       public api: Api,
       public toastCtrl: ToastController,
+      private modalCtrl: ModalController,
       public translateService: TranslateService,
       private params: NavParams,
-      private browser: InAppBrowser ) {
+      private browser: InAppBrowser) {
 
       this.translateService.get('LOGIN_ERROR').subscribe((value) => {
           this.loginErrorString = value;
-      })
+      }) 
 
       //Adicionando enviadors da view anterior
       this.$ID = this.params.get('user_id');
@@ -115,11 +117,21 @@ export class ProfilePage {
     });
   }
 
-  downloadPDF(){
-        //Adiciona Id do usuário corrente
-        let $id = this.currentUserData.ID;
-        
-        this.browser.create('http://localhost/desenvolvimento/app-atletasnow-2.0/app/public/user/pdf/' + $id, '_blank'); 
+  downloadPDF(){ 
+    //Adiciona Id do usuário corrente
+    let $id = this.currentUserData.ID;
+    
+    this.browser.create('http://localhost/desenvolvimento/app-atletasnow-2.0/app/public/user/pdf/' + $id, '_blank'); 
+  }
+
+  sendMessage(){
+
+    //Adiciona Id do usuário corrente
+    let $id = this.currentUserData.ID;
+
+    //Invoca um modal passando ID da Timeline
+    let modal = this.modalCtrl.create(Message, { user_id: $id });
+    modal.present(); 
   }
 
 }

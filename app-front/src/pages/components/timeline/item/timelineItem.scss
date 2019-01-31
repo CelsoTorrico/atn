@@ -1,7 +1,9 @@
-.timelineItem{
-    
+.timelineCommentsContainer{
+    background-color: #f9f9f9;
 }
 
-.timelineCommentsContainer{
-    background-color: #eee;
+
+.timelineItem ion-card.card-md{
+    box-shadow:none !important;
+    -webkit-box-shadow: none !important;
 }

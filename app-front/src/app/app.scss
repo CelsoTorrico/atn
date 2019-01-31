@@ -16,9 +16,14 @@
 // automatically applied to the <body> element in the app.
 
 $vermelho: #5c0005; 
+$vermelho-contraste: #a52e2e;
+$background: #f1f1f1;
+$branco: #ffffff;
+$button-primary-color: #c55b06;
+$notify-color: rgb(240, 74, 152);
 
 body{
-    background-color: #f1f1f1;
+    
 }
 
 [col-0], [col-xs-0], [col-md-0], [col-lg-0], [col-xl-0] {
@@ -51,11 +56,115 @@ body{
     }
 }
 
+.button-atletas{
+    display:inline-block;
+    padding: 15px;
+    border-radius: 15px;
+    color: #555;
+    text-transform: capitalize;
+    font-weight: 500;
+    cursor: pointer;
+    border:1px solid transparent;
+
+    &::after{
+        content: "v";
+        color: #888;
+        margin-left: 5px;
+        font-weight: 100;
+    }
+
+    &:hover{
+        border-color: #f0f0f0;
+        transition: ease-in 0.3s;
+    }
+
+}
+
+/* RESETANDO ESTILOS DESNECESSÀRIOS */
+
+.item-md{
+    background-color: transparent;
+}
+
+.item-inner, .item-divider-md{
+    border-bottom: 0px !important;
+}
+
+/* Botões */
+
 .btn-cursor{
     cursor: pointer;
 }
 
+.button-default.button-md{ 
+    background-color: $button-primary-color;
+}
+
+.button-outline{
+
+    span, span.inactive{
+        border-radius: 3px;
+        background-color: transparent;
+        border-color: #555;
+        color: #555;
+    }   
+
+    &.active span, span.active{
+        background-color: $button-primary-color;
+        border-color: transparent;
+        color: $branco;
+    }
+
+}
+
+.button-clear, .button-outline{
+    border-color: transparent;
+    color: #555;
+}
+
+/* Badge */
+
+.badge-md{
+    background-color: $button-primary-color;
+}
+
+ion-avatar{
+    ion-img, img{
+        background-color: #cccccc;
+        border-radius: 50%;
+    }    
+}
+
 ion-card.card-md{
+    box-shadow: 1px 1px 15px rgba(125,125,125,0.1);
+}
+
+ion-img{
+    background-color: transparent;
+}
+
+ion-header .item-md.item-block .item-inner{
+    border: 0 !important;
+    max-height: 40px !important;
+}
+
+//Componente header
+ion-toolbar, ion-navbar{
+    .toolbar-background-md{
+        background-color: $vermelho !important;
+        background: url('../assets/img/dashboard/background-texture.jpg') no-repeat;
+        background-size: cover;
+        background-repeat: no-repeat;
+        color: $branco;
+    }
+
+    & .toolbar-title-md, & .bar-button-default-md, & .bar-button-clear-md-default, & .bar-button-md-default{
+        color: $branco !important;
+    }
+}
+
+.searchbar-md .searchbar-input{
+    border-radius: 20px;
+    border: 1px solid #ddd; 
     box-shadow: none;
-    -webkit-box-shadow: none;
 }

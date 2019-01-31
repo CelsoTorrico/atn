@@ -1,14 +1,14 @@
 <ion-header>
 
-    <ion-toolbar>
+    <ion-navbar>
             
-      <ion-title>{{ "PROFILE" | translate }}</ion-title>
+        <ion-title>{{ "PROFILE" | translate }}</ion-title>
   
-      <ion-buttons end>
-          <ion-searchbar></ion-searchbar>
-      </ion-buttons>
+        <ion-buttons end>
+            <ion-searchbar></ion-searchbar>
+        </ion-buttons>
 
-    </ion-toolbar>
+    </ion-navbar>
 
     <section id="profile-resume">
         <ion-list>
@@ -96,13 +96,31 @@
 
   <ion-grid>
       <ion-row padding>
+
+          <ion-col col-12 offset-md-3>
+
+                <ion-buttons>
+                    
+                    <button ion-button outline small icon-end (click)="followUp()">
+                        {{ "FOLLOW" | translate }}
+                        <ion-icon md="md-checkmark"></ion-icon>                        
+                    </button>
+    
+                    <button ion-button outline small (click)="downloadPDF()">
+                        {{ "DOWNLOAD_PROFILE" | translate }}
+                    </button>
+    
+                    <button ion-button small (click)="sendMessage()">
+                        {{ "MESSAGE" | translate }}
+                    </button>
+    
+                </ion-buttons>
+
+          </ion-col>
           
           <ion-col id="ProfileData" col-12 col-md-4 offset-md-3>
-            <ion-card>
 
-                <button ion-button outline end (click)="downloadPDF()">
-                    {{ "DOWNLOAD" | translate }}
-                </button> 
+            <ion-card>                
 
                 <ion-card-header>
                     {{ "ABOUT_ME" | translate }}

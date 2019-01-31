@@ -46,9 +46,7 @@
                                 </ion-item> 
                         </ion-col>
                         <ion-col col-6>
-                                <ion-item>
-                                    <button ion-button block>{{ 'SEND' | translate }}</button>
-                                </ion-item> 
+                            <button ion-button full end>{{ 'SEND' | translate }}</button>
                         </ion-col>
                     </ion-row>                    
                 </form>                
@@ -64,72 +62,7 @@
 
         <ion-card class="timelineItem" *ngFor="let data of currentItems"> 
             
-            <ion-card-content>
-                <ion-card-title>
-
-                    <ion-list>
-                        <ion-item>
-                            <ion-avatar class="btn-cursor" item-start (click)="goToProfile(data.post_author.ID)">
-                                <ion-img [src]="data.post_author.profile_img.value"></ion-img>
-                            </ion-avatar>
-                            <h2>{{ data.post_author.display_name}}</h2>
-                            <h3>{{ data.post_date | date }}</h3>
-                        </ion-item> 
-                    </ion-list>
-
-                </ion-card-title>
-
-                <ion-item-group>
-                    
-                    <ion-item>
-                        {{ data.post_content }}
-                    </ion-item>
-
-                    <ion-item *ngIf="data.attachment != undefined">
-                        <img [src]="data.attachment" />
-                    </ion-item>
-
-                    <ion-item-divider>
-
-                        <ion-list>  
-                            <button ion-button icon-only outline value="{{ 'LIKE' | translate }}">
-                                <ion-icon md="ios-thumbs-up-outline"></ion-icon> 
-                            </button>
-                            <button ion-button icon-only outline value="{{ 'COMMENT' | translate}}" (click)="openComment($event)" >
-                                <ion-icon md="ios-chatbubbles-outline"></ion-icon>
-                            </button>
-                            <button ion-button clear label-sm end (click)="getItem(data.ID, $event)">
-                                Respostas
-                                <ion-badge item-end badge-sm>{{ data.quantity_comments }}</ion-badge>
-                            </button>
-                        </ion-list>
-
-                    </ion-item-divider>
-
-                </ion-item-group>  
-    
-            </ion-card-content>
-
-            <ion-item-group *ngIf='commentShow'>
-                <form #commentForm="ngForm" name='commentForm' (ngSubmit)="submitComment(data.ID, commentForm, $event)">
-                    <ion-row>
-                        <ion-col col-2>
-                            <ion-list>
-                                <ion-item>
-                                    <ion-avatar item-start>
-                                        <ion-img [src]=""></ion-img>
-                                    </ion-avatar>
-                                </ion-item>
-                            </ion-list>                            
-                        </ion-col>
-                        <ion-col>                            
-                            <ion-item>
-                                <ion-textarea name="comment_content" [(ngModel)]="commentText.comment_content" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required ></ion-textarea>
-                            </ion-item>                
-                        </ion-col> 
-                    </ion-row>                    
-                </form>
-            </ion-item-group>
+            <timeline-single [currentTimeline]="data" (click)="getItem(data.ID, $event)"></timeline-single> 
 
         </ion-card>
     </ion-list> 

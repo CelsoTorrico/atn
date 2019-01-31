@@ -1,27 +1,7 @@
-ion-header{
-    position: relative;
-    
-    ion-toolbar{
-        
-        .toolbar-background{
-            background-color: $vermelho;
-        }
-        
-
-        ion-img{
-            background-color: transparent;
-        }
-    }
-
-    ion-navbar{
-        background-color: #fff;
-        ion-searchbar .searchbar-input{
-            border-radius: 20px;
-            border: 1px solid #ddd; 
-            box-shadow: none;
-        }
-    }
-} 
+page-dashboard ion-header ion-navbar .toolbar-background-md{
+    background-color: $branco !important;
+    background: initial;
+}
 
 .page-dashboard{
 
@@ -31,10 +11,5 @@ ion-header{
         height: 400px;
         background-color: #eee;
     }
-
-    timeline{
-
-    }
-
 
 }

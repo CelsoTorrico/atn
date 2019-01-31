@@ -66,7 +66,7 @@ export class Chat {
     sendMessage($event){
         
         //Só submeter quando clicar em Enter
-        if ($event.code != 'Enter') { 
+        if ($event.code != 'Enter' || $event.code != 'NumpadEnter') { 
             return;
         }
 

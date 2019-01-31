@@ -1,3 +1,4 @@
+import { MemberUser } from './item/member-current-user';
 import { MemberChat } from './member-message.component';
 import { MemberList } from './item/member-list';
 import { MemberItem } from './item/member-item';
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
 
 @NgModule({
     declarations: [
-        Member, MemberItem, MemberList, MemberChat
+        Member, MemberItem, MemberList, MemberChat, MemberUser
       ],
       imports: [
         TranslateModule.forChild(),
@@ -20,9 +21,9 @@ import { CommonModule } from '@angular/common';
         IonicModule,
         CommonModule
       ],
-      exports: [Member, MemberList, MemberChat],
+      exports: [Member, MemberList, MemberChat, MemberUser],
       bootstrap: [Member],
-      entryComponents:[Member, MemberItem, MemberList, MemberChat], 
+      entryComponents:[Member, MemberItem, MemberList, MemberChat, MemberUser], 
       schemas: [],
       providers: []
 })

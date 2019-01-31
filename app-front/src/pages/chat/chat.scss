@@ -1,6 +1,9 @@
 .page-messages{
-  .chat-message-container, .member-select{
-    //height: calc(600px - 70px);
+  background-color: $background;
+  
+  .member-select, .messages-list{
+    max-height: calc(100% - 150px);
+    overflow-y: auto;
   }
 }
 

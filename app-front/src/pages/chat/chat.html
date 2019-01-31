@@ -11,7 +11,7 @@
   <ion-grid>
       <ion-row padding>
           
-            <ion-col col-12 col-md-4 offset-md-3>
+            <ion-col col-12 col-md-6>
                 
                 <ion-list class="member-select">
                     
@@ -21,7 +21,7 @@
                     
                     <ng-container *ngIf="$chatRooms"> 
                         
-                        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
+                        <ion-infinite-scroll threshold="0px" (ionInfinite)="loadMore($event)">
                             <ion-infinite-scroll-content 
                             loadingSpinner="bubbles"
                             loadingText="Loading more data…">                                 
@@ -35,9 +35,10 @@
                 </ion-list>                
 
             </ion-col>
-            <ion-col col-md-5 col-12>
+
+            <ion-col col-12 col-md-6>
                 <chat-room [$roomID]="$roomSelected"></chat-room> 
-            </ion-col> 
+            </ion-col>
 
       </ion-row>        
   </ion-grid>

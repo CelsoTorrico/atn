@@ -1,3 +1,4 @@
+import { FooterAppModule } from './../pages/components/footer/footer.module';
 import { DashboardPageModule } from './../pages/dashboard/dashboard.module';
 import { loadNewPage } from './../providers/load-new-page/load-new-page';
 import { SignupStepsModule } from './../pages/signup-steps/signup-steps.module';
