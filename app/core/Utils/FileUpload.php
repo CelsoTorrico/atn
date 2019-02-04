@@ -26,7 +26,7 @@ class FileUpload {
         $this->ID           = $userID;
         $this->postID       = $postID;
         $this->fileClass    = $fileClass;        
-        $validTypes         = ['timeline', 'profile_img'];
+        $validTypes         = ['timeline', 'learn', 'profile_img'];
         
         //Verifica se tipo é válido
         if (in_array($type, $validTypes)) {
@@ -105,7 +105,6 @@ class FileUpload {
         $dir = __DIR__.env('APP_FILES').$date;
 
         //Movendo arquivo para a pasta de arquivos
-        //TODO: Corrigir o problema de não subir arquivo se diretório já existir
         $result = $file->move($dir, $filename);
 
         //Se falso, retorna falso
@@ -114,7 +113,7 @@ class FileUpload {
         }
 
         //Retorna caminho onde arquivo foi inserido
-        return env('APP_PATH').'/uploaded-images/'.$date.$result->getFilename();
+        return env('APP_IMAGES').$date.'/'.$result->getFilename();
     }
 
 }

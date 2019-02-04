@@ -1,4 +1,4 @@
-import { Message } from './message.component';
+import { ProfileMessage } from './profile-message.component';
 import { TimelineModule } from './../components/timeline/timeline.module';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,7 +7,7 @@ import { ProfilePage } from './profile';
 
 @NgModule({
   declarations: [
-    ProfilePage, Message
+    ProfilePage, ProfileMessage
   ],
   imports: [
     IonicPageModule.forChild(ProfilePage),
@@ -15,8 +15,8 @@ import { ProfilePage } from './profile';
     TimelineModule
   ],
   exports: [
-    ProfilePage, Message
+    ProfilePage, ProfileMessage
   ], 
-  entryComponents: [Message]
+  entryComponents: [ProfileMessage]
 })
 export class ProfilePageModule { }

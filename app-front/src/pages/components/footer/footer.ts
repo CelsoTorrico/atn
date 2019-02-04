@@ -9,7 +9,7 @@ type PageList = PageItem[]
 
 @Component({ 
   selector: 'footer-app',
-  templateUrl: ''
+  templateUrl: 'footer'
 })
 export class FooterApp {
   

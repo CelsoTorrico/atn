@@ -359,7 +359,7 @@ class User extends GenericUser{
         $user = (is_null($id))? $this : $this->get($id); 
         
         //Carreg classe de composição de PDFS e especifica caminho de download
-        $mpdf = new \Mpdf\Mpdf(['tempDir' => __DIR__ .'/public/pdf']);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => env("APP_FILES") .'/pdf']);
 
         //Carrega classe de Resume e implementa os dados do usuário
         $resume = new Resume();
@@ -408,7 +408,8 @@ class User extends GenericUser{
         $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
 
         //Retorna string com caminho do arquivo
-        return __DIR__ .'/public/pdf/' . $filename;
+        //return __DIR__ .'/public/pdf/' . $filename;
+        return env("APP_FILES") . '/pdf/'. $filename;
     }
 
     /* Retorna lista de usuários */

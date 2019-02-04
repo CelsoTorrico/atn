@@ -101,16 +101,16 @@
 
                 <ion-buttons>
                     
-                    <button ion-button outline small icon-end (click)="followUp()">
+                    <button ion-button outline small icon-end (click)="followProfile($event)" [ngClass]="{'active': currentUserData.favorite === true, 'inactive': currentUserData.favorite != true}"> 
                         {{ "FOLLOW" | translate }}
                         <ion-icon md="md-checkmark"></ion-icon>                        
                     </button>
     
-                    <button ion-button outline small (click)="downloadPDF()">
+                    <button ion-button outline small (click)="downloadProfilePDF()">
                         {{ "DOWNLOAD_PROFILE" | translate }}
                     </button>
     
-                    <button ion-button small (click)="sendMessage()">
+                    <button ion-button small (click)="sendProfileMessage()">
                         {{ "MESSAGE" | translate }}
                     </button>
     
@@ -267,6 +267,5 @@
 
 </ion-content>
 
-<ion-footer>
-    @2019 - AtletasNow
-</ion-footer>
+<!-- Campo de envio de mensagem -->
+<profile-message *ngIf="showMessageBox"  [$user_ID]="currentUserData.ID" [$display_name]= "currentUserData.display_name"></profile-message>

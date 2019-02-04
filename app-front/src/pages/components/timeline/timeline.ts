@@ -1,6 +1,5 @@
 import { TimelineItem } from './item/timelineItem';
 import { ToastController } from 'ionic-angular';
-import { NgForm } from '@angular/forms';
 import { Component, Input } from '@angular/core';
 import { ModalController, NavController } from 'ionic-angular';
 import { Api } from '../../../providers';
@@ -19,14 +18,6 @@ export class Timeline {
   
   //Lista de Items
   public currentItems:any[] = [];
-
-  public addTimeline:any = {
-    post_content: <string> '',
-    post_visibility: <number> 0,
-    post_image: <any> null, 
-  }
-
-  public visibility:string[];
 
   public commentText:any = { comment_content : <string> ''}; 
 
@@ -52,7 +43,6 @@ export class Timeline {
     }
 
     this.query();
-    this.getVisibility();
   }
 
   query(){
@@ -75,45 +65,7 @@ export class Timeline {
     });
 
   }
-
-  getVisibility(){
-    //Retorna a lista de esportes do banco e atribui ao seletor
-    let items = this.api.get('timeline/visibility').subscribe((resp:any) => {
-       
-      //Se não existir items a exibir
-      if(resp.length > 0){
-        
-        this.visibility = resp;
-
-      }         
-
-    }, err => { 
-        return; 
-    });
-
-  } 
-
-  /**
-   * Adicionar um novo item de timeline
-   */
-  addItem(form:NgForm) {
-      this.api.post('/timeline', this.addTimeline).subscribe((resp:any) => {
-        
-        if(resp.success != undefined){
-          
-          let toast = this.toastCtrl.create({
-            message: resp.success.timeline,
-            duration: 4000,
-            position:'bottom'
-          });
-
-          toast.present();
-
-        }
-
-      });
-  }
-
+  
   //Carregar comentários
   getItem($postID:number, event) {
     event.preventDefault();

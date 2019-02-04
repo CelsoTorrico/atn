@@ -1,4 +1,3 @@
-import { Message } from './message.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Api } from './../../providers/api/api';
 import { Component } from '@angular/core';
@@ -37,6 +36,8 @@ export class ProfilePage {
   public loginErrorString;
 
   private $getProfile:string = 'user/self';
+
+  public showMessageBox:boolean = false;
   
   constructor(
       public navCtrl: NavController,
@@ -117,21 +118,44 @@ export class ProfilePage {
     });
   }
 
-  downloadPDF(){ 
+  followProfile($event){
+
+    $event.preventDefault();
+
+    //Adiciona Id do usuário corrente
+    let $id = this.currentUserData.ID;
+
+    //Começar ou deixar de seguir profile
+    this.api.get('follow/' + $id).subscribe((resp:any) => {
+        
+        if(resp.success != undefined){
+            let el = $event.target.parentNode;
+            if(el.classList.contains("active")){ 
+              el.classList.remove("active");
+              el.classList.add("inactive");
+            } else { 
+              el.classList.add("active")
+              el.classList.remove("inactive"); 
+            }
+        }
+    });   
+  }
+
+  downloadProfilePDF(){ 
     //Adiciona Id do usuário corrente
     let $id = this.currentUserData.ID;
     
+    //Abre uma nova aba para download
     this.browser.create('http://localhost/desenvolvimento/app-atletasnow-2.0/app/public/user/pdf/' + $id, '_blank'); 
   }
 
-  sendMessage(){
-
-    //Adiciona Id do usuário corrente
-    let $id = this.currentUserData.ID;
-
-    //Invoca um modal passando ID da Timeline
-    let modal = this.modalCtrl.create(Message, { user_id: $id });
-    modal.present(); 
+  sendProfileMessage(){
+    //Abre e fecha box de mensagem
+    if(this.showMessageBox){
+        this.showMessageBox = false;
+    } else {
+        this.showMessageBox = true;
+    }    
   }
 
 }

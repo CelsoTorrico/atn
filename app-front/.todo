@@ -2,6 +2,7 @@
     Módulos NPM para conexões sincronizas com BD MySQL
     mysqljs >> https://github.com/mysqljs/mysql
     nodemysql2 >> https://github.com/sidorares/node-mysql2
+    JSCookie >> https://github.com/js-cookie/js-cookie
 */
 
 
@@ -9,3 +10,4 @@
 ✔ Criar uma método para que não envie diversas solicitações ao clicar em algum botão. Ex: login, registro e etc. @done(19-01-22 20:03)
 ✔ Fazer validação de formulário, campos obrigatórios não impedindo envio. @done(19-01-21 15:57)
 ✔ Verificar inserção (INSERT | UPDATE) de dados no ambiente de teste @done(19-01-22 20:03)
+☐ Envio de email em Perfil: Fazer mostrar resposta de sucesso

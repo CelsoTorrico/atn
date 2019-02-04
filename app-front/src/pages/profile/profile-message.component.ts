@@ -4,37 +4,45 @@ import { NavController, ViewController } from 'ionic-angular';
 import { Api } from '../../providers';
 
 @Component({
-  selector: 'message',
+  selector: 'profile-message',
   template: `
-        <ion-col col-2>
-            <ion-list>
-                <ion-item>
-                    <ion-avatar item-start>
-                        <ion-img [src]=""></ion-img>
-                    </ion-avatar>
-                </ion-item>
-            </ion-list>                            
-            </ion-col>
-            <ion-col>                            
-            <ion-item>
-                <ion-textarea name="comment_content" [(ngModel)]='messageText' placeholder="{{ 'YOUR_MESSAGE' | translate }}" required (keyup)='submitMessage($event)' ></ion-textarea>
-            </ion-item>                
-        </ion-col> 
+      <div id="#profile-message" class="ion-card">
+        
+          <ion-item>
+              <ion-title>
+                {{ "Envie uma mensagem para " | translate }} {{ $display_name }}
+              </ion-title>
+              <ion-avatar item-start>
+                    <ion-img [src]=""></ion-img>
+                </ion-avatar>
+              <ion-textarea name="comment_content" [(ngModel)]='messageText' placeholder="{{ 'YOUR_MESSAGE' | translate }}" required (keyup)='submitMessage($event)' ></ion-textarea>
+          </ion-item>                
+        
+      </div>
   `,
   styles: [`
-    
+    .ion-card{
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 15px;
+      display: block;
+      position: fixed;
+      right: 30px;
+      bottom: 30px;
+      box-shadow: 1px 1px 60px rgba(0,0,0,0.1);
+    }
   `]
 })
-export class Message{
+export class ProfileMessage{
 
-  public $ID:number;
+  @Input() public $user_ID:number;
+  @Input() public $display_name:string;
   
   public messageText:string; 
 
   constructor(
     private toastCtrl: ToastController,
     private api: Api,
-    private navCtrl:NavController,
     private viewer: ViewController) {} 
 
   //Retorna
@@ -53,7 +61,7 @@ export class Message{
     }
 
     //Enviado um comentário a determinada timeline
-    let items = this.api.post('user/message/'+ this.$ID, {message_content : this.messageText}).subscribe((resp:any) => {
+    let items = this.api.post('user/message/'+ this.$user_ID, {message_content : this.messageText}).subscribe((resp:any) => {
        
       //Se não existir items a exibir
       if(resp.length <= 0){ 
