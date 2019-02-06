@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 export class Api {
   
   //Development
-  //static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public';
+  //static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public'; 
   
   //Ambiente de testes
   static readonly url = 'http://testes.makingpie.com.br/atletasNOW/app/public';

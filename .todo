@@ -59,6 +59,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 2 - Comentários em timelines @done(18-12-06 15:56)
 ✔ Semana 2 - Timeline -> Novo e Update de timeline com imagens @done(18-12-27 01:27)
 ☐ Semana 2 - Timeline -> Definir público de publicação (Publico, atleta, profissional e clubes)
+☐ Semana 2 - Upload de Fotos, verificar permissões de criação de pastas
 ✔ Semana 2 - Sistema de Like de posts @done(19-01-30 19:51)
 ✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
 ✔ Semana 3 - Perfil Instituição -> deletar e atualizar @done(17-12-12 16:00)
@@ -67,6 +68,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 3 - Download CV (PDF) -> Estruturar o conteúdo de forma visualmente organizado (Precisamos de um modelo de arquivo) @done(19-01-28 01:44)
 ✔ Semana 3 - Quando requisição de perfil de usuário, incluir campo de Favorito: Sim | Não (boolean) @done(19-01-28 03:52)
 ☐ Semana 3 - Fazer verificação de resiquição de privacidade(visibilidade) na visualização de perfil, no momento retorna somente parametro visibilidade. !!Não mostrar campos com outras visibilidades!!
+☐ Semana 3 - Perfil de está sempre retornando 'following = true'
 ✔ Semana 3 - Download CV: Qualquer um pode baixar currículos de qualquer outro @done(19-01-28 02:15)
 ☐ Semana 4 - Edição de Perfil, quando campo estiver vazio enviar notificação ao usuário
 ✔ Semana 5 - Sugestões de Amigos | Arrumar ordenação de usuários 2 critérios @done(19-01-28 02:16)

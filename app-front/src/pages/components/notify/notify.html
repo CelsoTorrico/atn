@@ -1,0 +1,26 @@
+<button ion-button clear icon-only class="notify-icon" (click)="openNotifications($event)">
+    
+    <img src="assets/img/dashboard/notify-icon.png"/>
+    <ion-badge *ngIf="notifyCount">{{ notifyCount }}</ion-badge>  
+
+    <div class="popover-notify popup">
+        <ion-grid class="notification-container">
+        
+            <ion-list>
+                
+                <ion-card *ngIf="currentNotifyItems.length <= 0">
+                    <ion-card-content>
+                        {{ "NOT_TO_SHOW" | translate }}
+                    </ion-card-content>
+                </ion-card>
+        
+                <ion-card class="notifyItem" *ngFor="let data of currentNotifyItems"> 
+                    <notify-single [currentNotify]="data"></notify-single>
+                </ion-card>
+    
+            </ion-list> 
+        
+        </ion-grid>
+    </div>
+
+</button>

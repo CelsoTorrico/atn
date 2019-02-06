@@ -57,7 +57,7 @@ export function provideSettings(storage: Storage) {
     }),
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
-    MenuPageModule,
+    MenuPageModule, 
     LoginPageModule,
     SignupStepsModule, 
     DashboardPageModule

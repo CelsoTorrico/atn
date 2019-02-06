@@ -1,0 +1,159 @@
+<ion-header>
+
+  <ion-navbar>
+
+    <ion-title>{{ "CONFIG_USER" | translate }}</ion-title>
+
+    <ion-buttons end>
+      <ion-searchbar></ion-searchbar>
+    </ion-buttons>
+
+  </ion-navbar>
+
+  <section id="profile-resume">
+    <ion-list>
+
+      <ion-item id="feature">
+
+        <!-- Adicionar barra lateral de perfil -->
+
+      </ion-item>
+
+      <ion-item id="feature">
+
+        <ion-title text-center>{{ "PERFORMANCE" | translate }}</ion-title>
+
+      </ion-item>
+
+    </ion-list>
+  </section>
+
+</ion-header>
+
+<ion-content class="page-profile">
+
+  <ion-grid>
+    <ion-row padding>
+
+      <ion-col id="ProfileData" col-9 offset-md-3>
+
+        <my-profile-menu></my-profile-menu>
+
+        <ion-card>
+
+          <form #personalData="ngForm">
+
+            <ion-card-header>
+              {{ "ABOUT_ME" | translate }}
+            </ion-card-header>
+
+            <ion-card-content>
+
+              <ion-item>
+                <ion-label inset>{{ "BIOGRAPHY" | translate }}</ion-label>
+                <ion-textarea name="biography" type="text" [(ngModel)]="myProfileData.metadata.biography.value" [value]="myProfileData.metadata.biography.value"></ion-textarea>
+              </ion-item>
+
+              <ion-item>
+                <ion-label inset>{{ "NAME" | translate}}</ion-label>
+                <ion-input name="display_name" type="text" [(ngModel)]="myProfileData.display_name" [value]="myProfileData.display_name"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label inset>{{ "EMAIL" | translate }}</ion-label>
+                <ion-input name="user_email" type="email" [(ngModel)]="myProfileData.metadata.user_email" [value]="myProfileData.metadata.user_email"></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label inset>{{ "BIRTHDATE" | translate }}</ion-label>
+                <ion-input name="birthdate" type="date" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" [(ngModel)]="myProfileData.metadata.birthdate.value" [value]="myProfileData.metadata.birthdate.value"></ion-input>
+              </ion-item>
+
+              <ion-item-group>
+
+                <ion-row>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label inset>{{ "CPF" | translate }}</ion-label>
+                      <ion-input name="cpf" type="text" pattern="[0-9]+" [(ngModel)]="myProfileData.metadata.cpf.value"
+                        [value]="myProfileData.metadata.cpf.value"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label inset>{{ "RG" | translate }}</ion-label>
+                      <ion-input name="rg" type="text" pattern="[0-9]+" [(ngModel)]="myProfileData.metadata.rg.value"
+                        [value]="myProfileData.metadata.rg.value"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+
+              </ion-item-group>
+
+              <ion-item>
+                <ion-label inset>{{ "ADDRESS" | translate }}</ion-label>
+                <ion-input name="address" type="text" [(ngModel)]="myProfileData.metadata.address.value" [value]="myProfileData.metadata.address.value"></ion-input>
+              </ion-item>
+
+              <ion-row>
+                <ion-col col-4>
+                  <ion-item>
+                    <ion-label inset>{{ "ZIPCODE" | translate}}</ion-label>
+                    <ion-input name="zipcode" [(ngModel)]="myProfileData.metadata.zipcode.value" [value]="myProfileData.metadata.zipcode.value"
+                      type="number" pattern="[0-9]{5}-[0-9]{3}" full></ion-input>
+                  </ion-item>
+                </ion-col>
+
+                <ion-col col-8>
+                  <ion-item>
+                    <ion-label inset>{{ "NEIGHBORNHOOD" | translate}}</ion-label>
+                    <ion-input name="neighborhood" [(ngModel)]="myProfileData.metadata.neighborhood.value" [value]="myProfileData.metadata.neighborhood.value"
+                      type="text" full></ion-input>
+                  </ion-item>
+                </ion-col>
+
+              </ion-row>
+
+              <ion-row>
+
+                <ion-col col-5>
+                  <ion-item>
+                    <ion-label inset>{{ "CITY" | translate}}</ion-label>
+                    <ion-input name="city" type="text" [(ngModel)]="myProfileData.metadata.city.value" [value]="myProfileData.metadata.city.value"></ion-input>
+                  </ion-item>
+                </ion-col>
+
+                <ion-col col-2>
+                  <ion-item>
+                    <ion-label>{{ "STATE" | translate }}</ion-label>
+                    <ion-select name="state" [(ngModel)]="myProfileData.metadata.state.value" full>
+                      <ion-option *ngFor="let item of $statesList" [value]="item">
+                        {{item}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+
+                <ion-col col-5>
+                  <ion-item>
+                    <ion-label inset>{{ "COUNTRY" | translate}}</ion-label>
+                    <ion-input name="country" type="text" [(ngModel)]="myProfileData.metadata.country.value" [value]="myProfileData.metadata.country.value"></ion-input>
+                  </ion-item>
+                </ion-col>
+
+              </ion-row>
+
+              <button type="submit" ion-button end>{{'SAVE' | translate}}</button>
+
+            </ion-card-content>
+
+          </form>
+
+        </ion-card>
+
+      </ion-col>
+
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

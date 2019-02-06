@@ -8,8 +8,14 @@
         </ion-col>
         <ion-col col-md-8 col-12>
           <ion-row>
-            <ion-col col-auto offset-8 align-self-center>
-              <member-current-user [member]="currentUserData"></member-current-user>
+            <ion-col col-5>
+              <ion-buttons>
+                  <notify></notify><!-- Notificações -->
+                  <user-menu></user-menu><!-- Icones de navegação -->                  
+              </ion-buttons>              
+            </ion-col>
+            <ion-col col-auto align-self-end>
+              <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
             </ion-col>
           </ion-row>
         </ion-col>
@@ -61,29 +67,25 @@
 
           <ion-card-content>
 
-            <form #postTimelineForm="ngForm" name='postTimelineForm' (ngSubmit)="addItem( postTimelineForm, $event)">
+            <form #postTimelineForm="ngForm" (ngSubmit)="addItem( postTimelineForm, $event)">
 
               <ion-list>
                 <ion-item>
                   <ion-label>Privacidade</ion-label>
                   <ion-select name="post_visibility" interface="popover" [(ngModel)]="addTimeline.post_visibility">
-                    <ion-option *ngFor="let item of visibility" [value]="item.value">{{item.option}}</ion-option> 
+                    <ion-option *ngFor="let item of visibility" [value]="item.value">
+                      {{item.option}}
+                    </ion-option>
                   </ion-select>
                 </ion-item>
               </ion-list>
 
               <ion-row>
-                <ion-col col-2>
-                  <ion-list>
-                    <ion-item>
-                      <ion-avatar item-start>
-                        <ion-img [src]=""></ion-img>
-                      </ion-avatar>
-                    </ion-item>
-                  </ion-list>
-                </ion-col>
-                <ion-col col-10>
+                <ion-col col-12>
                   <ion-item>
+                    <ion-avatar item-start>
+                      <ion-img [src]="currentUserData.metadata.profile_img.value"></ion-img>
+                    </ion-avatar>
                     <ion-textarea name="post_content" [(ngModel)]="addTimeline.post_content" type="textarea"
                       placeholder="{{ 'POST' | translate }}" required></ion-textarea>
                   </ion-item>
@@ -91,7 +93,7 @@
                 <ion-col col-6>
                   <ion-item>
                     <label class="item item-input">
-                      <input type="file" id="upimgfile" name="uploadfile" [(ngModel)]="addTimeline.post_image">
+                      <input type="file" id="upimgfile" name="post_image" [(ngModel)]="addTimeline.post_image">
                     </label>
                   </ion-item>
                 </ion-col>

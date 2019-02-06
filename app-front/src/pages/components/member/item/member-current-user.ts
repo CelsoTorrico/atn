@@ -39,7 +39,7 @@ export class MemberUser{
 
     //Abre uma nova página de profile
     goToProfile($user_id:number){
-        this.navCtrl.push('ProfilePage', {
+        this.navCtrl.push('MyProfilePage', { 
         user_id: $user_id
         }); 
     }

@@ -16,10 +16,10 @@
 // automatically applied to the <body> element in the app.
 
 $vermelho: #5c0005; 
-$vermelho-contraste: #a52e2e;
+$vermelho-contraste: rgb(160,0,42);
 $background: #f1f1f1;
 $branco: #ffffff;
-$button-primary-color: #c55b06;
+$button-primary-color: rgb(255,95,0);
 $notify-color: rgb(240, 74, 152);
 
 body{
@@ -81,6 +81,40 @@ body{
 }
 
 /* RESETANDO ESTILOS DESNECESSÀRIOS */
+
+input, textarea, select{
+    font-weight: 100;
+    color: #444; 
+}
+
+ion-label, .item-input .label-md{
+    font-weight: 300;
+    color: #111;
+}
+
+.searchbar-md .searchbar-input, .text-input, textarea{
+    border-radius: 10px;
+    padding: 6px 55px;
+    background-color: $branco;
+    border: 1px solid #ddd; 
+    box-shadow: none;
+    font-weight: 100;
+}
+
+textarea.text-input, input.text-input{
+    border-radius: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+
+}
+
+rl-tag-input, select{
+    background-color: #fff;
+    padding: 10px 15px !important;
+    border: 1px solid #ddd;
+    box-shadow: none !important;
+    border-radius: 10px;
+}
 
 .item-md{
     background-color: transparent;
@@ -163,8 +197,23 @@ ion-toolbar, ion-navbar{
     }
 }
 
-.searchbar-md .searchbar-input{
-    border-radius: 20px;
-    border: 1px solid #ddd; 
-    box-shadow: none;
+.popup{
+    position: absolute;
+    opacity:0;
+    transform: translateY(-100px);
+    transition: ease-out 0.3s;
+    background-color: $branco;
+    max-height: 500px;
+    max-width: 300px;
+    width: 100%;
+    overflow-y: auto;
+    z-index: -50;
+    box-shadow: 5px 5px 50px 15px rgba(125,125,125,0.1);
+
+    &.open{
+        opacity:1;
+        transform: translateY(0px);
+        transition: ease-in 0.7s;
+        z-index: 99999;
+    }
 }

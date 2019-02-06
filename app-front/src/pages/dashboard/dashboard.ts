@@ -18,7 +18,7 @@ export class DashboardPage {
         ID: '',
         display_name: '',
         metadata: {
-            profile_img: {
+            profile_img: { 
                 value: ''
             }
         }
@@ -34,7 +34,7 @@ export class DashboardPage {
 
     constructor(
         public navCtrl: NavController,
-        public user: User,
+        public user: User, 
         public api: Api,
         public toastCtrl: ToastController,
         public translateService: TranslateService) {
@@ -93,20 +93,29 @@ export class DashboardPage {
      */
     addItem(form: NgForm, $event) {
 
-        //O campo de imagem deve permanecer na ordem
-        let file = $event.target[2].files[0];
-        
         //Convertendo data em objeto FormData
         let formData = new FormData();
-        formData.append('post_image', file, file.name);
+
+        if ($event.target[2].files[0] != undefined){
+            //O campo de imagem deve permanecer na ordem
+            let file = $event.target[2].files[0];
+            formData.append('post_image', file, file.name); 
+        }
+        
         formData.append('post_content',     this.addTimeline.post_content);
         formData.append('post_visibility',   this.addTimeline.post_visibility);
 
         //Para envio de imagens {{ options }}
         this.api.post('/timeline', formData).subscribe((resp: any) => {
 
+            //Se sucesso
             if (resp.success != undefined) {
 
+                //Reseta campos de atualização de timeline
+                this.addTimeline.post_content = '';
+                this.addTimeline.post_image = null;
+
+                //Mostrar alerta de sucesso
                 let toast = this.toastCtrl.create({
                     message: resp.success.timeline,
                     duration: 4000,
@@ -114,7 +123,18 @@ export class DashboardPage {
                 });
 
                 toast.present();
+            }
 
+            //Se erro, mostrar erro
+            if (resp.error != undefined) {
+
+                let toast = this.toastCtrl.create({
+                    message: resp.error.timeline,
+                    showCloseButton: true,
+                    position: 'bottom'
+                });
+
+                toast.present();
             }
 
         });

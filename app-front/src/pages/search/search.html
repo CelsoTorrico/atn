@@ -11,128 +11,133 @@
   <ion-grid>
     <ion-row>
       <ion-col col-md-6 col-12>
-        
+
         <form #searchForm="ngForm" (submit)="submitSearch(searchForm, $event)">
-          
+
           <ion-searchbar type="text" name="display_name" [(ngModel)]="query.display_name" placeholder="{{ 'DISPLAY_NAME' | translate }}"></ion-searchbar>
 
-          <ion-grid>
-            <ion-row>
-              <ion-col col-12>
-                  <ion-label>{{ "SPORT" | translate }}</ion-label> 
+          <ion-card>
+
+            <ion-grid>
+              <ion-row>
+                <ion-col col-12>
+                  <ion-label>{{ "SPORT" | translate }}</ion-label>
                   <ion-list>
-                      <rl-tag-input
-                          [(ngModel)]="$sportSelected"
-                          [addOnBlur]="false"
-                          [autocomplete]="true"
-                          [autocompleteItems]="$sportList"
-                          placeholder="{{ 'WRITE_SPORT' | translate}}"
-                          name="sportSelected">
-                      </rl-tag-input> 
-                  </ion-list>                
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
+                    <rl-tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false" [autocomplete]="true"
+                      [autocompleteItems]="$sportList" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected">
+                    </rl-tag-input>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
                   <ion-item>
-                      <ion-label>{{ "CLUBS" | translate }}</ion-label>
-                      <ion-select name='clubs' [(ngModel)]="query.clubs" full>
-                          <ion-option *ngFor="let item of $clubsList" [value]="item.ID">
-                              {{item.display_name}}
-                          </ion-option>
-                      </ion-select>
-                  </ion-item> 
-              </ion-col>
-              <ion-col>
+                    <ion-label>{{ "CLUBS" | translate }}</ion-label>
+                    <ion-select name='clubs' [(ngModel)]="query.clubs" full>
+                      <ion-option *ngFor="let item of $clubsList" [value]="item.ID">
+                        {{item.display_name}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
                   <ion-item>
-                      <ion-label>{{ "TYPE_USER" | translate }}</ion-label>
-                      <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full>
-                          <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
-                              {{item.texto}}
-                          </ion-option>
-                      </ion-select>
-                  </ion-item> 
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
+                    <ion-label>{{ "TYPE_USER" | translate }}</ion-label>
+                    <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full>
+                      <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
+                        {{item.texto}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
                   <ion-item>
-                      <ion-label>{{ "CITY" | translate }}</ion-label>
-                      <ion-input [(ngModel)]="query.city" name="city" type="text"></ion-input>
-                  </ion-item> 
-              </ion-col>
-              <ion-col col-2>
+                    <ion-label>{{ "NEIGHBORNHOOD" | translate }}</ion-label>
+                    <ion-input [(ngModel)]="query.neighbornhood" name="neighbornhood" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
                   <ion-item>
-                        <ion-label>{{ "STATE" | translate }}</ion-label>
-                        <ion-select id="state" [(ngModel)]="query.state" name='state' full>
-                                <ion-option *ngFor="let item of $statesList" [value]="item">
-                                    {{item}}
-                                </ion-option>
-                            </ion-select>
-                  </ion-item> 
-              </ion-col>
-              <ion-col>
+                    <ion-label>{{ "CITY" | translate }}</ion-label>
+                    <ion-input [(ngModel)]="query.city" name="city" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col col-6>
                   <ion-item>
-                      <ion-label>{{ "NEIGHBORNHOOD" | translate }}</ion-label>
-                      <ion-input [(ngModel)]="query.neighbornhood" name="neighbornhood" type="text"></ion-input>
-                  </ion-item> 
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
+                    <ion-label>{{ "STATE" | translate }}</ion-label>
+                    <ion-select id="state" [(ngModel)]="query.state" name='state' full>
+                      <ion-option *ngFor="let item of $statesList" [value]="item">
+                        {{item}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
                   <ion-item>
-                        <ion-label>{{ "GENDER" | translate }}</ion-label>
-                        <ion-select id="gender" [(ngModel)]="query.gender" name='gender' full>
-                            <ion-option *ngFor="let item of $genderList" [value]="item.valor">
-                                {{item.texto}}
-                            </ion-option>
-                        </ion-select>
-                  </ion-item> 
-              </ion-col>
-              <ion-col>
+                    <ion-label>{{ "GENDER" | translate }}</ion-label>
+                    <ion-select id="gender" [(ngModel)]="query.gender" name='gender' full>
+                      <ion-option *ngFor="let item of $genderList" [value]="item.valor">
+                        {{item.texto}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+
+                <ion-col>
                   <ion-item>
-                      <ion-label>{{ "FORMATION" | translate }}</ion-label>
-                      <ion-input [(ngModel)]="query.formacao" name="formacao" type="text"></ion-input>
-                  </ion-item> 
-              </ion-col>
-              <ion-col col-3>
+                    <ion-label>{{ "FORMATION" | translate }}</ion-label>
+                    <ion-input [(ngModel)]="query.formacao" name="formacao" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+
+                <ion-col col-12>
                   <button ion-button block end>{{ "SEARCH" | translate }}</button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
+                </ion-col>
+
+              </ion-row>
+            </ion-grid>
+
+          </ion-card>
+
         </form>
       </ion-col>
       <ion-col col-md-6 col-12>
         <ion-card>
-            <ion-list>
-              
-                <ion-list-header>
-                    {{ "PROFILES_FOUND" | translate }}
-                </ion-list-header>
+          <ion-list>
 
-                <ng-container *ngIf="$memberList.length <= 0" >
-                    <ion-item>                    
-                        <ion-item-divider>
-                            {{ "NOT_MEMBER_SHOW" | translate }}
-                        </ion-item-divider>                    
-                    </ion-item>
-                </ng-container>
-                
-                <ng-container *ngIf="$memberList.length > 0" >
-                    <ion-item *ngFor="let user of $memberList" >                    
-                        <ion-item-divider>
-                            <member-list [member]="user"></member-list>
-                        </ion-item-divider>                    
-                    </ion-item>
-                </ng-container>
+            <ion-list-header>
+              {{ "PROFILES_FOUND" | translate }}
+            </ion-list-header>
+
+            <ng-container *ngIf="$memberList.length <= 0">
+              <ion-item>
+                <ion-item-divider>
+                  {{ "NOT_MEMBER_SHOW" | translate }}
+                </ion-item-divider>
+              </ion-item>
+            </ng-container>
+
+            <ng-container *ngIf="$memberList.length > 0">
+              <ion-item *ngFor="let user of $memberList">
+                <ion-item-divider>
+                  <member-list [member]="user"></member-list>
+                </ion-item-divider>
+              </ion-item>
+            </ng-container>
 
 
-                
-                  
-              </ion-list>
-        </ion-card>          
+
+
+          </ion-list>
+        </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
-  
+
 </ion-content>

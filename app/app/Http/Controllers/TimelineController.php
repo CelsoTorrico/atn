@@ -81,11 +81,14 @@ class TimelineController extends Controller
         //Atribui imagem se tiver upload
         if ($request->hasFile('post_image') && $request->file('post_image')->isValid()) {
 
-            //Atribui fn a var
-            $file = $request->file('post_image');
-
             //Atribui caminho a variavel
-            $data['post_image'] = $file;
+            $data['post_image'] = $request->file('post_image');
+        }
+
+        //Verifica formato da imagem e continua se permitida
+        if (isset($data['post_image']) && !empty($data['post_image']) 
+        && !in_array($data['post_image']->getClientMimeType(), ['image/jpeg', 'image/gif', 'image/png', 'image/jpg'])) {
+            return response()->json(["error" => ["timeline" => "Formato de imagem não suportado."]]);
         }
 
         $response = $this->timeline->add($data);

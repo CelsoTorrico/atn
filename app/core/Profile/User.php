@@ -74,6 +74,7 @@ class User extends GenericUser{
 
         //Verificar se usuário está favorito e retornar selo true | false
         if(!is_null($this->ID) && $this->ID != $id){            
+            
             //Instanciando classe Favorite e retorna status do usuário
             $fav = new Favorite($this);
             $favorite = $fav->isUserFavorite($id);
@@ -129,7 +130,13 @@ class User extends GenericUser{
             $clubs = $this->_getClubs();
             //Add valores a variaveis encontrados as variaveis da classe
             $this->setVars(['clubs' => $clubs]);
-        }     
+        }   
+        
+        //Verificar se usuário requisitado é mesmo que logado/requisitor
+        //Adicionar aos metadados user_email
+        if(!is_null($this->ID) && $this->ID == $id){
+            $this->metadata['user_email'] = $this->user_email;
+        }
 
         return $this;
 
@@ -1348,7 +1355,7 @@ class User extends GenericUser{
 
         //Colunas Gerais'
         $usermeta = array(
-            'type', 'sport', 'clubes', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'session_tokens'
+            'type', 'sport', 'clubes', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'session_tokens'
         );
 
         //Compartilhado entre Atleta e Profissional do Esporte

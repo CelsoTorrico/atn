@@ -1,4 +1,3 @@
-import { FooterAppModule } from './../components/footer/footer.module';
 import { SearchFieldsModule } from './../components/search/search.module';
 import { MenuPageModule } from './../components/menu/menu.module';
 import { DashboardPage } from './dashboard';
@@ -7,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
 import { TimelineModule } from '../components/timeline/timeline.module';
 import { MemberModule } from '../components/member/member.module';
+import { NotifyModule } from '../components/notify/notify.module';
 
 @NgModule({
   //Declara apenas components, directives e pipes do módulo
@@ -21,7 +21,8 @@ import { MemberModule } from '../components/member/member.module';
     MenuPageModule, 
     SearchFieldsModule,
     TimelineModule,
-    MemberModule,
+    NotifyModule,
+    MemberModule
   ],
   //Inicializa componente enviando para index.html
   bootstrap: [],

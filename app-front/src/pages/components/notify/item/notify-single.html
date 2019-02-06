@@ -1,0 +1,22 @@
+<ion-item-sliding>
+  
+    <ion-item>
+
+        <ion-label>
+            {{ currentNotify.message }}
+        </ion-label>
+
+        <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentNotify.post_author.ID)">
+        <img [src]="currentNotify.user_profile.profile_img.value" />
+        </ion-avatar>
+
+    <ion-item-options>
+        <ion-buttons>
+            <button>Teste</button>
+        </ion-buttons>
+    </ion-item-options>
+
+  </ion-item>
+
+  
+</ion-item-sliding>
