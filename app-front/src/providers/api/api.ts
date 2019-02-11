@@ -8,22 +8,21 @@ import { Injectable } from '@angular/core';
 export class Api {
   
   //Development
-  //static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public'; 
+  static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public'; 
   
   //Ambiente de testes
-  static readonly url = 'http://testes.makingpie.com.br/atletasNOW/app/public';
+  //static readonly url = 'http://testes.makingpie.com.br/atletasNOW/app/public';
   
   protected $headerObject = {
     'Content-Type'    :'application/x-www-form-urlencoded',
     'withCredentials' : true,
-    'Origin'          : 'http://localhost:8100'
+    'Origin'          : 'http://localhost:8100' 
   }
 
   private $httpParams;
   private $optionsParams = { withCredentials: true };
 
-  constructor(public http: HttpClient) {
-  }
+  constructor(public http: HttpClient) {}
 
   /** TODO: Todas as requisições após login deve usar parametro Options = {withCredentials: true} para enviar cookie setado na seção */
   get(endpoint: string, params?: any, reqOpts?: any) {
@@ -81,6 +80,10 @@ export class Api {
       alert('ok');
     });*/
 
+  }
+
+  getUrl(){
+    return Api.url;
   }
 
 }

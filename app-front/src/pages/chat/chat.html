@@ -1,50 +1,55 @@
 <ion-header>
 
-    <ion-navbar>
-        <ion-title>{{ "MESSAGES" | translate }}</ion-title>
-    </ion-navbar>
+  <ion-navbar>
+    <ion-title>{{ "MESSAGES" | translate }}</ion-title>
+  </ion-navbar>
 
 </ion-header>
 
-<ion-content class="page-messages">    
+<ion-content class="page-messages">
 
-  <ion-grid>
-      <ion-row padding>
-          
-            <ion-col col-12 col-md-6>
-                
-                <ion-list class="member-select">
-                    
-                    <ion-list-header>
-                        {{ "CHAT_ROOMS" | translate }}
-                    </ion-list-header>
-                    
-                    <ng-container *ngIf="$chatRooms"> 
-                        
-                        <ion-infinite-scroll threshold="0px" (ionInfinite)="loadMore($event)">
-                            <ion-infinite-scroll-content 
-                            loadingSpinner="bubbles"
-                            loadingText="Loading more data…">                                 
-                            </ion-infinite-scroll-content>
-                        </ion-infinite-scroll> 
+  <ion-grid fixed>
 
-                        <member-chat (clickEvent)="loadData($event)" *ngFor="let room of $chatRooms" [room]="room"></member-chat>
-                       
-                    </ng-container>                    
-                    
-                </ion-list>                
+    <ion-row padding> 
 
-            </ion-col>
+      <ion-col col-12 col-md-6>
 
-            <ion-col col-12 col-md-6>
-                <chat-room [$roomID]="$roomSelected"></chat-room> 
-            </ion-col>
+        <ion-card class="list-chat-members">
 
-      </ion-row>        
+          <ion-card-header>
+            {{ "CHAT_ROOMS" | translate }}
+          </ion-card-header>
+
+          <ion-card-content>
+
+            <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
+              <ion-list class="member-select">
+
+                <ng-container *ngIf="$chatRooms">
+
+                  <member-chat (clickEvent)="loadData($event)" *ngFor="let room of $chatRooms" [room]="room"></member-chat>
+
+                </ng-container>
+
+              </ion-list>
+
+            </ion-scroll>
+
+          </ion-card-content>
+
+        </ion-card>
+
+      </ion-col>
+
+      <ion-col col-12 col-md-6>
+        <chat-room [$roomID]="$roomSelected"></chat-room>
+      </ion-col>
+
+    </ion-row>
   </ion-grid>
 
 </ion-content>
 
 <ion-footer>
-    @2019 - AtletasNow
+  @2019 - AtletasNow
 </ion-footer>

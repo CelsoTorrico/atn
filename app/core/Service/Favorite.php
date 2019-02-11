@@ -30,23 +30,39 @@ class Favorite {
         
         //Filtrar inputs e validação de dados
         $favoriteData = [
-            'from_id'       => $this->currentUser->ID,
-            'to_id'         => $user_id
+            'to_id'         => $this->currentUser->ID,
+            'from_id'       => $user_id
         ];
 
         //Insere dados no modelo
-        $favoriters = $this->model->getIterator($favoriteData);    
+        $favoriters = $this->model->load($favoriteData);    
 
         //Se há resultados retorna true, senão false
-        return ($favoriters->count() > 0)? TRUE : FALSE;
+        return $favoriters;
     }
 
-    /** Retornar todos os seguidores */
+    /** Retorna quantidade de favoritos */
+    public function getTotal($to = 'to_id'){
+
+        //Filtrar inputs e validação de dados
+        $favoriteData = [
+            $to => $this->currentUser->ID,
+        ];
+
+        //Insere dados no modelo
+        $favoriters = $this->model->getIterator($favoriteData);
+
+        //Retorna totol de favoritos
+        return $favoriters->count();
+
+    }
+
+    /** Retornar todos favoritos */
     public function getFavorites(){
 
         //Filtrar inputs e validação de dados
         $favoriteData = [
-            'from_id'     => $this->currentUser->ID,
+            'to_id'     => $this->currentUser->ID,
         ];
 
         //Insere dados no modelo
@@ -74,7 +90,7 @@ class Favorite {
             $user = new User();
 
             //Atribui dados de usuário ao array
-            $currentFavorite = $user->getMinProfile($item['to_id'], ['type']);
+            $currentFavorite = $user->getMinProfile($item['from_id'], ['type']);
 
             //ID de tipo de usuário
             if (!array_key_exists('type', $currentFavorite)){
@@ -112,8 +128,8 @@ class Favorite {
 
         //Filtrar inputs e validação de dados
         $favoriteData = [
-            'to_id'   => $user_id,
-            'from_id'     => $this->currentUser->ID
+            'from_id'       => $user_id,
+            'to_id'         => $this->currentUser->ID
         ];
 
         //Insere dados no modelo

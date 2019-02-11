@@ -1,8 +1,6 @@
-import { ToastController } from 'ionic-angular';
-import { Component, Input, ViewChild, ComponentFactoryResolver } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api } from '../../../providers';
-import { CommentFormDirective } from './comment-form.directive';
 
 @Component({
   selector: 'comments',
@@ -24,11 +22,7 @@ export class CommentItem {
 
   constructor(
     public api: Api,
-    public navCtrl: NavController,
-    private toastCtrl: ToastController,
-    private componentFactoryResolver: ComponentFactoryResolver) {
-
-  }
+    public navCtrl: NavController) {}
 
   //Retorna
   ngOnInit() {

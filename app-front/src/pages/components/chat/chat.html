@@ -1,39 +1,45 @@
 <ion-list class="chat-message-container">
-    
-    <ion-list class="messages-list">
 
-        <ng-container *ngIf="$chatMessages">
+  <ion-scroll class="messages-list" direction="y" scrollY="true" scrollbar-y="true" style="height: 385px;">
 
-            <div *ngFor="let room of $chatMessages.reverse()" [ngClass]="{'viewer-message' : room.viewer }" class="message-row">
-                
-                <ion-avatar item-start *ngIf="!room.viewer" >
-                    <ion-img [src]="room.author.profile_img.value" alt="{{ room.author.display_name | titlecase }}"></ion-img>
-                </ion-avatar>
+      <ng-container *ngIf="$chatMessages">
 
-                <span class="ballon-message">
-                    <p *ngIf="!room.viewer" ><small>{{ room.author.display_name | titlecase }}</small></p>
-                    {{ room.content }}
-                    <ion-note item-end ></ion-note>
-                </span>
-                <p><small>{{ room.date | date }}</small></p>
-            </div>
-            
-        </ng-container>
-    
-        <ng-container *ngIf="$chatNoMessages">
-            {{ $chatNoMessages }}
-        </ng-container>
+        <ion-list *ngFor="let room of $chatMessages.reverse()" [ngClass]="{'viewer-message' : room.viewer }" class="message-row">
 
-    </ion-list>
-    <ion-list class="chatForm">
-        <form #chatForm="ngForm" (keyup)="sendMessage($event)" name='chatForm'>
+          <ion-avatar item-start *ngIf="!room.viewer">
+            <img *ngIf="room.author.profile_img" [src]="room.author.profile_img.value" alt="{{ room.author.display_name | titlecase }}" />
+          </ion-avatar>
 
-            <ion-item>
-                <ion-textarea name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}" [(ngModel)]="$message" required ></ion-textarea>
-            </ion-item> 
+          <span class="ballon-message">
+            {{ room.content }}
+            <ion-note item-end></ion-note>
+          </span>
+          <p><small>{{ room.date | date }}</small></p>
 
-        </form>        
-    </ion-list>
+        </ion-list>
+
+      </ng-container>
+
+      <ng-container *ngIf="$chatNoMessages">
+        {{ $chatNoMessages }}
+      </ng-container>
+
+  </ion-scroll>
+  <ion-list class="chatForm">
+    <form #chatForm="ngForm" (submit)="addRoomMessage($event)" name='chatForm'>
+
+      <ion-row>
+        <ion-col col-9>
+          <ion-textarea name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}" [(ngModel)]="$message"
+            required></ion-textarea>
+        </ion-col>
+        <ion-col>
+            <button ion-button large type="submit">{{ "SEND" | translate }}</button>
+        </ion-col>
+
+      </ion-row>
+
+    </form>
+  </ion-list>
 
 </ion-list>
-

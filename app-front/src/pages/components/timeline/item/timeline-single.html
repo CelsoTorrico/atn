@@ -51,20 +51,19 @@
 </ion-card-content>
 
 <ion-item-group *ngIf='commentShow'>
+   
     <ion-row>
-        <ion-col col-2>
-            <ion-list>
-                <ion-item>
-                    <ion-avatar item-start>
-                        <ion-img [src]=""></ion-img>
-                    </ion-avatar>
-                </ion-item>
-            </ion-list>                            
-        </ion-col>
-        <ion-col>                            
+        <ion-col col-auto>
             <ion-item>
-                <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required (keyup)="submitComment(currentTimeline.ID, $event)" ></ion-textarea>
-            </ion-item>                
-        </ion-col> 
-    </ion-row> 
+                <ion-avatar item-start>
+                    <ion-img [src]=""></ion-img>
+                </ion-avatar>
+            </ion-item>                            
+        </ion-col>
+        <ion-col>
+            <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-textarea>
+            <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" | translate }}</button>
+        </ion-col>
+    </ion-row>
+
 </ion-item-group>

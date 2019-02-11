@@ -116,8 +116,9 @@ export class ProfileType{
         
     }
 
+    //Insere novo usuário no banco
     private insertRegister(body:any){        
-        //Retorna a lista de esportes do banco e atribui ao seletor
+        //executa função de registrar
         this.user.signup(body);
     }
 

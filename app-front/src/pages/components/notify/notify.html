@@ -14,9 +14,7 @@
                     </ion-card-content>
                 </ion-card>
         
-                <ion-card class="notifyItem" *ngFor="let data of currentNotifyItems"> 
-                    <notify-single [currentNotify]="data"></notify-single>
-                </ion-card>
+                <notify-single class="notifyItem" *ngFor="let data of currentNotifyItems"[currentNotify]="data"></notify-single> 
     
             </ion-list> 
         

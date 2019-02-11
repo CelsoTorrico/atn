@@ -30,8 +30,8 @@ class Follow {
         
         //Filtrar inputs e validação de dados
         $followData = [
-            'from_id'       => $this->currentUser->ID,
-            'to_id'         => $user_id
+            'to_id'       => $this->currentUser->ID,
+            'from_id'     => $user_id
         ];
 
         //Insere dados no modelo
@@ -46,7 +46,7 @@ class Follow {
 
         //Filtrar inputs e validação de dados
         $followData = [
-            'from_id'     => $this->currentUser->ID,
+            'to_id'     => $this->currentUser->ID,
             'has_block' => 0
         ];
 
@@ -66,7 +66,7 @@ class Follow {
             //Instanciando classe de usuário
             $user = new User();
             //Atribui dados de usuário ao array
-            $listUsers[] = ($only_ids)? $item['to_id'] : $user->getMinProfile($item['to_id']);
+            $listUsers[] = ($only_ids)? $item['from_id'] : $user->getMinProfile($item['from_id']);
         }       
 
         return $listUsers;
@@ -178,8 +178,8 @@ class Follow {
 
         //Filtrar inputs e validação de dados
         $followData = [
-            'from_id'       => $this->currentUser->ID,
-            'to_id'         => $user_id
+            'to_id'       => $this->currentUser->ID,
+            'from_id'     => $user_id
         ];
 
         //Insere dados no modelo

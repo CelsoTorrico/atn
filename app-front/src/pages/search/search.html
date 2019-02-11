@@ -6,22 +6,22 @@
 
 </ion-header>
 
-<ion-content id="page-search-member">
+<ion-content id="page-search-member" class="page-search">
 
   <ion-grid>
     <ion-row>
-      <ion-col col-md-6 col-12>
+      <ion-col col-md-4 col-12>
 
         <form #searchForm="ngForm" (submit)="submitSearch(searchForm, $event)">
 
-          <ion-searchbar type="text" name="display_name" [(ngModel)]="query.display_name" placeholder="{{ 'DISPLAY_NAME' | translate }}"></ion-searchbar>
+          <ion-card padding>
 
-          <ion-card>
+            <ion-searchbar type="text" name="display_name" [(ngModel)]="query.display_name" placeholder="{{ 'DISPLAY_NAME' | translate }}"></ion-searchbar>
 
             <ion-grid>
               <ion-row>
-                <ion-col col-12>
-                  <ion-label>{{ "SPORT" | translate }}</ion-label>
+                <ion-col padding>
+                  <ion-label stacked>{{ "SPORT" | translate }}</ion-label>
                   <ion-list>
                     <rl-tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false" [autocomplete]="true"
                       [autocompleteItems]="$sportList" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected">
@@ -32,7 +32,7 @@
               <ion-row>
                 <ion-col>
                   <ion-item>
-                    <ion-label>{{ "CLUBS" | translate }}</ion-label>
+                    <ion-label stacked>{{ "CLUBS" | translate }}</ion-label>
                     <ion-select name='clubs' [(ngModel)]="query.clubs" full>
                       <ion-option *ngFor="let item of $clubsList" [value]="item.ID">
                         {{item.display_name}}
@@ -42,7 +42,7 @@
                 </ion-col>
                 <ion-col>
                   <ion-item>
-                    <ion-label>{{ "TYPE_USER" | translate }}</ion-label>
+                    <ion-label stacked>{{ "TYPE_USER" | translate }}</ion-label>
                     <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full>
                       <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
                         {{item.texto}}
@@ -54,13 +54,13 @@
               <ion-row>
                 <ion-col>
                   <ion-item>
-                    <ion-label>{{ "NEIGHBORNHOOD" | translate }}</ion-label>
+                    <ion-label stacked>{{ "NEIGHBORNHOOD" | translate }}</ion-label>
                     <ion-input [(ngModel)]="query.neighbornhood" name="neighbornhood" type="text"></ion-input>
                   </ion-item>
                 </ion-col>
                 <ion-col>
                   <ion-item>
-                    <ion-label>{{ "CITY" | translate }}</ion-label>
+                    <ion-label stacked>{{ "CITY" | translate }}</ion-label>
                     <ion-input [(ngModel)]="query.city" name="city" type="text"></ion-input>
                   </ion-item>
                 </ion-col>
@@ -68,7 +68,7 @@
               <ion-row>
                 <ion-col col-6>
                   <ion-item>
-                    <ion-label>{{ "STATE" | translate }}</ion-label>
+                    <ion-label stacked>{{ "STATE" | translate }}</ion-label>
                     <ion-select id="state" [(ngModel)]="query.state" name='state' full>
                       <ion-option *ngFor="let item of $statesList" [value]="item">
                         {{item}}
@@ -78,7 +78,7 @@
                 </ion-col>
                 <ion-col>
                   <ion-item>
-                    <ion-label>{{ "GENDER" | translate }}</ion-label>
+                    <ion-label stacked>{{ "GENDER" | translate }}</ion-label>
                     <ion-select id="gender" [(ngModel)]="query.gender" name='gender' full>
                       <ion-option *ngFor="let item of $genderList" [value]="item.valor">
                         {{item.texto}}
@@ -91,7 +91,7 @@
 
                 <ion-col>
                   <ion-item>
-                    <ion-label>{{ "FORMATION" | translate }}</ion-label>
+                    <ion-label stacked>{{ "FORMATION" | translate }}</ion-label>
                     <ion-input [(ngModel)]="query.formacao" name="formacao" type="text"></ion-input>
                   </ion-item>
                 </ion-col>
@@ -107,8 +107,9 @@
 
         </form>
       </ion-col>
-      <ion-col col-md-6 col-12>
-        <ion-card>
+      <ion-col col-md-7 col-12>
+
+        <ion-card class="search-container">
           <ion-list>
 
             <ion-list-header>
@@ -124,15 +125,10 @@
             </ng-container>
 
             <ng-container *ngIf="$memberList.length > 0">
-              <ion-item *ngFor="let user of $memberList">
-                <ion-item-divider>
-                  <member-list [member]="user"></member-list>
-                </ion-item-divider>
-              </ion-item>
+
+              <member-container [listMembers]="$memberList"></member-container>
+
             </ng-container>
-
-
-
 
           </ion-list>
         </ion-card>

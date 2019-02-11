@@ -16,6 +16,7 @@ use Core\Service\UserStats;
 use Core\Profile\Resume\Resume;
 use Core\Service\Favorite;
 use Core\Service\Follow;
+use Core\Service\Chat;
 
 use Closure;
 use aryelgois\Medools\ModelIterator;
@@ -38,7 +39,9 @@ class User extends GenericUser{
     public $metadata; //metadados genericos
     public $favorite; //Selo de favoritado
     public $following; //Selo de seguido
-    private $user_email; //email
+    public $totalFavorite; //Selo de favoritado
+    public $totalMessages; //Selo de seguido
+    public $user_email; //email
     
     //Contrução da classe
     public function __construct($args = array()) {
@@ -54,7 +57,7 @@ class User extends GenericUser{
             //Carrega respectivo user no banco
             if ($this->model->load(['user_login' => $args['user_login'], 'user_pass' => $args['user_pass']])) {
                 $user = $this->model->getData();
-                return $this->get($user['ID']);
+                return $this->getCurrentLoggedUser($user['ID']);
             } else {
                 return null;
             } 
@@ -64,28 +67,66 @@ class User extends GenericUser{
         }
     }
 
+    //Retorna dados do usuário logado
+    private function getCurrentLoggedUser(int $id){
+
+        //Retorna usuário
+        $this->get($id, $this);
+
+        /** Dados Apenas para usuários logados */
+        
+        //Carrega classes
+        $messages = new Chat($this);
+        $fav = new Favorite($this);
+
+        //totais de propriedades do usuário
+        $this->setVars([
+            'totalFavorite'  => [
+                'otherFavorite' => $fav->getTotal('from_id'),
+                'myFavorites' => $fav->getTotal()
+            ],
+            'totalMessages'  => $messages->getTotal()
+        ]); 
+
+        return $this;        
+    }
+
+    public function getUser(int $id){
+        
+        //Retorna classe de usuário preenchida com dados
+        $user = new User();
+        $user->get($id);
+
+        //Instanciando classe Favorite e retorna status do usuário
+        $fav = new Favorite($this);        
+        $favorite = $fav->isUserFavorite($id);
+
+        //Instanciando classe Follow e retorna status do usuário
+        $follow = new Follow($this);
+        $following = $follow->isUserFollowed($id);
+
+        //Adiciona dados aos atributos de classe do usuário
+        $user->setVars(['following' => $following, 'favorite' => $favorite]);
+
+        //Remover metadados duplicados (os que já estão nos atributos da classe)
+        if(!is_null($user->metadata)) {
+            foreach (['type', 'sport', 'clubes'] as $key) {
+                unset($user->metadata[$key]);
+            }
+        }
+
+        //Finalmente retorna classe de usuário preenchida
+        return $user;
+    }
+
     /**
      * Retorna dados de usuário único por ID
      * @since 2.0
      * 
+     * @param $class = Classe de usuário a ser preenchida
      * @return mixed
      */
-    public function get( int $id ) {
-
-        //Verificar se usuário está favorito e retornar selo true | false
-        if(!is_null($this->ID) && $this->ID != $id){            
-            
-            //Instanciando classe Favorite e retorna status do usuário
-            $fav = new Favorite($this);
-            $favorite = $fav->isUserFavorite($id);
-
-            //Instanciando classe Follow e retorna status do usuário
-            $follow = new Follow($this);
-            $following = $follow->isUserFollowed($id);
-
-            //Adiciona dados aos atributos de classe do usuário
-            $this->setVars(['following' => $following, 'favorite' => $favorite]);            
-        } 
+    function get( int $id ) {
 
         //Filtro
         $filter = ['ID' => $id, 'user_status' => 0];
@@ -130,17 +171,10 @@ class User extends GenericUser{
             $clubs = $this->_getClubs();
             //Add valores a variaveis encontrados as variaveis da classe
             $this->setVars(['clubs' => $clubs]);
-        }   
-        
-        //Verificar se usuário requisitado é mesmo que logado/requisitor
-        //Adicionar aos metadados user_email
-        if(!is_null($this->ID) && $this->ID == $id){
-            $this->metadata['user_email'] = $this->user_email;
-        }
+        }              
 
         return $this;
-
-    } 
+    }
 
     /**
      * Retorna dados de usuário único por ID
@@ -239,17 +273,17 @@ class User extends GenericUser{
             $fn = $this->friendsSuggestionsLogic($k);
 
             //Limitar em 20 usuários por vez
-            $fn['LIMIT'] = 20;
+            $fn['LIMIT'] = 10;
 
             //Adiciona criterio de sugestão
             $users['success']['criterio'][] = $fn['meta_key'][0];
 
             //Merge arrays de query
             $found = $metaModel->getIterator($fn);
-            
+
             //Atribuir apenas ids
             foreach($found as $i) {
-                
+
                 //Se atual não é valido
                 if(!$found->valid()){
                     continue;
@@ -263,7 +297,7 @@ class User extends GenericUser{
                 //Atribui ID ao array
                 $query[$key][] = $i->user_id;
                 $user = new self();
-                $users['found'][] = $user->getMinProfile($i->user_id);  
+                $users['found'][] = $user->getMinProfile($i->user_id);                 
 
             }
         }  
@@ -283,6 +317,9 @@ class User extends GenericUser{
             //TODO: Arrumar essa função
             array_unshift($users['found'], $a);
         }
+
+        //Divide array para mostrar apenas 3 usuários
+        $users['found'] = array_slice($users['found'], 0, 4, false);
         
         //Retornando array de dados estatisticos
         return $users;
@@ -619,6 +656,11 @@ class User extends GenericUser{
         //Checkando data e erros e avisa que é update de perfil
         $filtered = $this->checkSentData($checked, $isUpdate);
 
+        //Se retornar null é que campos obrigatórios foram enviados vazios
+        if(is_null($filtered)){
+            return ["error" => ['register' => "Campos obrigatórios vazios. Preencha todos os campos solicitados."]];
+        }
+
         //Verifica se houve erro retorna
         if( array_key_exists('error', $filtered) && count($filtered['error']) > 0 ){
             return array('error' => $filtered['error']);
@@ -713,8 +755,10 @@ class User extends GenericUser{
 
             }
 
+            $msg = (!$isUpdate)? 'Seu cadastro foi realizado com sucesso! Bem Vindo!' : 'Seu dados foram atualizados com sucesso!';
+
             //Mensagem de sucesso no cadastro
-            return ['success' => ['register' => 'Seu cadastro foi realizado com sucesso! Bem Vindo!']];
+            return ['success' => ['register' => $msg]];
 
         } else {
             //Mensagem de erro no cadastro
@@ -777,7 +821,7 @@ class User extends GenericUser{
 
             //Verifica se visibilidade foi definida e add novo valor
             if(isset($meta_value['visibility'])){
-                $meta->visibility = $this->appVal->check_user_inputs('visibility', $meta_value['visibility']);
+                $meta->visibility = $this->appVal->check_user_inputs(['visibility' => $meta_value['visibility']]);
                 $fields[] = 'visibility';
             }
             
@@ -1172,6 +1216,8 @@ class User extends GenericUser{
             'clubs'         => 'clubs',
             'user_email'    => 'user_email',
             'favorite'      => 'favorite',
+            'totalFavorite' => 'totalFavorite',
+            'totalMessages' => 'totalMessages',
             'following'     => 'following'
         );
 
@@ -1196,7 +1242,7 @@ class User extends GenericUser{
     }
 
     //TODO: Formatar para PHP
-    protected function checkSentData($data, $isUpdate = false):array{
+    protected function checkSentData($data, $isUpdate = false){
 
         //Inicia classe Validation
         $val = $this->appVal;
@@ -1204,29 +1250,32 @@ class User extends GenericUser{
         //Executa função de checar inputs
         $checked = $val->check_filtered_inputs($data, $isUpdate);
 
-        //Se houver algum campo inválidado
-        if (array_key_exists('error', $checked)) {
-            return $checked;
+        //Se troca de email foi requisitada, fazer verificação se existe algum usuário com mesmo email
+        if(key_exists('user_email', $data)){
+            
+            //Carrega base e verifica se retorna sucesso
+            $searchQuery = $this->model->load([
+                'user_email' => $data['user_email']
+            ]);
+
+            //SE não existe retorna
+            if(!$searchQuery){
+                return null;
+            }
+
+            //Se email pertencer a outro usuário diferente do logado (requisidor)
+            if($this->model->ID != $this->ID){
+                $checked['error'] = ['user_email' => "E-mail já atribuido a um usuário."]; 
+            } 
+            
         }
 
-        //Se for update de perfil, finaliza execução
-        if($isUpdate){
+        //Se houver algum campo inválidado obrigatório: display_name || user_email
+        if (array_key_exists('error', $checked) && in_array(['display_name', 'user_email'], $checked['error'])) {
             return $checked;
-        }
-
-        //Montando query e executando
-        $searchQuery = $this->model->load([
-            'user_email' => $checked['user_email']
-        ]);
-
-        //Verificando se resposta foi verdadeira
-        if ($searchQuery) {            
-            //Adicionando ERRO
-            $checked['error'][] = array('user_email' => "E-mail já atribuido a um usuário."); 
         }
         
-        return $checked;
-
+        return [];
     }
 
     //Instancia classe PasswordHash e retorna string hashead
@@ -1266,8 +1315,8 @@ class User extends GenericUser{
         //Dados para ser utilizando para trazer dados database
         $filter = ['user_id' => (int) $id, 'meta_key'  => 'views'];
 
-        //Inicializa modelo filtrando data necessária
-        $metaModel = $this->metaModel;
+        //Inicializa modelo
+        $metaModel = new UsermetaModel();
 
         //Se não existir data para execução de fn
         if ($metaModel->load($filter)) {

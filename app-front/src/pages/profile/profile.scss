@@ -1,50 +1,52 @@
-#profile-resume {
-
-  background-color: red;
-  color: #fff !important;
-
-  @media screen and (min-width:600px){
-    width: 100%;
-    max-width: 24%;
-    height: 100%;
-    position: fixed;
-    top: 60px;
-    left: 0px;
-  }  
-
-  #feature{
-    background: linear-gradient(to top, red, lighten(red, 20%));
-  }
-
-  .block{
-    
-    &:nth-child(1){ 
-      border-right: 1px solid $vermelho;
-      //border-bottom: 1px solid $vermelho;
-    }
-
-    margin: 0px;
-
-    & ion-item.item-md{
-      background-color: transparent;
-      border: 0px;
-      color: #fff;
-
-      ion-label, input{
-        text-align: center;
-      }
-
-      input{
-        font-size: 3.2rem;
-      }
-
-    }
-  }
-
-}
-
 .page-profile {
 
   background-color: #f1f1f1;
+
+  .personalData{
+    ion-label{
+      color: $titulos;
+      font-weight: normal;
+      margin-top: 20px;
+    }
+  }
+
+  .about{
+    p, ul{
+      font-weight: 100;
+      font-size: 16px;
+    }
+
+    ul{
+      padding: 0;
+      margin: 20px 0;
+      list-style: none;
+
+      li{
+        width: 50%;
+        margin-bottom: 10px;
+        display: block;
+        float: left;
+
+        &.address span{
+          display: block;
+          font-size: 11px;
+        }
+
+        strong{
+          font-size: 12px;
+          display: block;
+        }
+      }
+      
+    }
+    
+  }
+
+  .about-item{
+    padding: 10px;
+    margin-top: 5px;
+    border-bottom: 1px solid #ddd;
+    font-weight: 100;
+  }
 
 }

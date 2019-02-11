@@ -1,3 +1,4 @@
+import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
 import { SearchFieldsModule } from './../components/search/search.module';
 import { MenuPageModule } from './../components/menu/menu.module';
 import { DashboardPage } from './dashboard';

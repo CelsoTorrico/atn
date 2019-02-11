@@ -1,9 +1,11 @@
-import { Api } from '../../providers/api/api';
-import { Component } from '@angular/core';
-import { IonicPage, NavController, ToastController } from 'ionic-angular';
-import { User } from '../../providers';
-import { TranslateService } from '@ngx-translate/core';
-import { BrazilStates } from '../../providers/useful/states';
+import { MyProfileStatsComponent } from './stats-data/stats-data.component';
+import { MyProfileMenu } from './../components/menu/my-profile-menu';
+import { MyProfileSportsComponent } from './sports-data/sports-data.component';
+import { MyProfilePersonalDataComponent } from './personal-data/personal-data.component';
+import { ProfileStepDirective } from './profile-step.directive';
+import { Component, ViewChild, ComponentFactoryResolver } from '@angular/core';
+import { IonicPage} from 'ionic-angular';
+import { Api, User } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -12,124 +14,56 @@ import { BrazilStates } from '../../providers/useful/states';
 })
 export class MyProfilePage {
 
-    public myProfileData: any = {
-        ID: <number>null,
-        display_name: <string>'',
-        type:  {
-            ID: <number>null
-        },
-        sport: <any>[],
-        clubs: <any>[],
-        metadata: {
-            biography: {
-                value: <string>'',
-                visibility: <number>null
-            },
-            birthdate:{
-                value: <string>'',
-                visibility: <number>null
-            },
-            rg:{
-                value: <string>'',
-                visibility: <number>null
-            },
-            cpf:{
-                value: <string>'',
-                visibility: <number>null
-            },
-            cnpj:{
-                value: <string>'',
-                visibility: <number>null
-            },
-            gender:{
-                value: <string>'',
-                visibility: <number>null
-            },
-            telefone:{
-                value: <string>'',
-                visibility: <number>null
-            },
-            profile_img: {
-                value: <string>'',
-                visibility: <number>null
-            },
-            address: {
-                value: <string>'',
-                visibility: <number>null
-            }, 
-            neighborhood: {
-                value: <string>'',
-                visibility: <number>null
-            },
-            city: {
-                value: <string>'',
-                visibility: <number>null
-            },
-            state: {
-                value: <string>'',
-                visibility: <number>null
-            },
-            country: {
-                value: <string>'',
-                visibility: <number>null
-            },
-            zipcode: {
-                value: <string>'',
-                visibility: <number>null
-            }
-        }
-    };
+    @ViewChild(ProfileStepDirective) profileStep: ProfileStepDirective; 
+    @ViewChild(MyProfileMenu) profileMenu: MyProfileMenu;
 
-    //Lista de Estados
-    protected $statesList = [];
+    private ListComponents:any = {
+        personalData : MyProfilePersonalDataComponent,
+        sportsData : MyProfileSportsComponent,
+        statsData : MyProfileStatsComponent,
+    }
 
-    public loginErrorString;
-
-    private static $getProfile: string = 'user/self';
+    public visibility:any[];
 
     constructor(
-        public navCtrl: NavController,
-        public user: User,
-        public api: Api,
-        public toastCtrl: ToastController,
-        public translateService: TranslateService,
-        public states:BrazilStates) {
-
-        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
-        })
-
-        //Carrega lista de estados do provider
-        this.$statesList = this.states.statesList; 
-
-    }
+        public  user: User,
+        private api: Api,
+        private componentFactoryResolver: ComponentFactoryResolver) {
+            this.getVisibility();
+        }
 
     //Função que inicializa
     ngOnInit() {
-        this.getCurrentUser();
+        this.loadComponent();
     }
 
-    //Retorna dados do usuário corrente
-    private getCurrentUser() {
+    //Função para carregar componentes 
+    loadComponent($component = MyProfilePersonalDataComponent) {
+        
+        let componentFactory = this.componentFactoryResolver.resolveComponentFactory($component);
 
-        //Retorna os dados de usuário e atribui ao seletor
-        let $selfRequest = this.api.get(MyProfilePage.$getProfile).subscribe((resp: any) => {
+        let viewContainerRef = this.profileStep.viewContainerRef;
+        viewContainerRef.clear();
+
+        let componentRef = viewContainerRef.
+        createComponent(componentFactory);
+
+        (componentRef.instance).visibility = this.visibility;
+    }
+
+    //Mudar a visualização de componentes
+    changeComponentView($event){
+        this.loadComponent(this.ListComponents[$event]);        
+    }
+
+    getVisibility() {
+        //Retorna a lista de esportes do banco e atribui ao seletor
+        let items = this.api.get('timeline/visibility').subscribe((resp: any) => {
 
             //Se não existir items a exibir
-            if (resp.length <= 0) {
-                return; 
+            if (resp.length > 0) {
+                this.visibility = resp;
             }
-
-            //Adicionando valores a classe user
-            this.user._user = resp;
-            this.myProfileData = this.user.fillMyProfileData();
-            console.log(this.myProfileData);
-
-            //Workaround para parametro de objeto sem acesso direto
-            let $vParameter = 'my-videos';
-
-            //Atribui valores ao objeto
-            this.myProfileData.videos = resp.metadata[$vParameter];
 
         }, err => {
             return;

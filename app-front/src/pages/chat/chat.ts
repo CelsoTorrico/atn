@@ -58,7 +58,6 @@ export class ChatPage {
 
     loadData($event) {
         this.$roomSelected = $event;
-
     }
 
 }

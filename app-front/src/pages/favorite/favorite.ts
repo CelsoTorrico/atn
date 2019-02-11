@@ -33,9 +33,18 @@ export class FavoritePage {
     public static getFavoriteUrl:string = 'favorite';
     public static getSuggestionsUrl:string = 'user/suggestions';
 
-    public favoriteMembers:any = {};
+    public favoriteMembers:any = {
+        Atletas: [],
+        Clubes: [],
+        Outros: []
+    };
 
-    public friendsSuggestion:any = {};
+    public friendsSuggestion:any = {
+        found: [],
+        success: {
+            criterio: []
+        }
+    };
 
     public loginErrorString;
   

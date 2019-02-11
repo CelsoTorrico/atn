@@ -31,7 +31,7 @@ $app->withFacades(TRUE, [
     'Laravel\Socialite\Facades\Socialite' => 'Socialite'
 ]);
 
-//$app->withEloquent();
+$app->withEloquent();
 
 /*
 |--------------------------------------------------------------------------
@@ -106,6 +106,8 @@ $app->register(\Laravel\Socialite\SocialiteServiceProvider::class);
 //Serviço de hashear strings
 $app->register(Illuminate\Hashing\HashServiceProvider::class);
 
+//Serviços para habilitar suporte Redis
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

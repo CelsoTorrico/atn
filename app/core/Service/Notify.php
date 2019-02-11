@@ -33,7 +33,7 @@ class Notify {
 
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
-            'from_id'   =>  $this->currentUser->ID,
+            'user_id'   =>  $this->currentUser->ID,
             'read'      =>  0,
             'ORDER'     => ['date' => 'DESC']
         ]);
@@ -55,7 +55,7 @@ class Notify {
                 $notifyData = $item->getData();
 
                 //Combina array notify e comentários
-                $notifys[] = $this->defineTypeContent($notifyData); 
+                $notifys[] = $this->defineTypeContent($notifyData);
                 
             }
 
@@ -76,11 +76,11 @@ class Notify {
         return $this->register($type, $toID, $fromID);
     }
 
-    /* Deletar um plano */
-    function delete( $ID ){
+    /* Deletar um notificação */
+    function delete( $notifyID ){
 
         //Executa função de desregistrar
-        return $this->deregister($ID);        
+        return $this->deregister($notifyID);        
     }
 
     /** Registra uma notificação para usuário */
@@ -158,8 +158,7 @@ class Notify {
         if($response){
             //Mensagem de sucesso no cadastro
             return ['success' => ['approve_notify' => 'Confirmação Enviada!']];
-        }
-        else{
+        } else {
             //Mensagem de erro no cadastro
             return ['error' => ['approve_notify' => 'Houve erro ao marcar notificação como lida! Tente novamente mais tarde.']];
         }
@@ -204,7 +203,9 @@ class Notify {
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify['ID'],
-            "message"       => "O usuário " . $user['display_name'] . " começou a te seguir.",
+            "type"          => $notify["type"],
+            "message"       => "Começou a te seguir.",
+            "date"          => $notify["date"],
             "user_profile"  => $user
         ];
         
@@ -221,8 +222,10 @@ class Notify {
 
         //Pegar estilo da notificação
         $content = [
-            "ID"            => $notify['ID'],
-            "message"       => "O usuário " . $user['display_name'] . " te adicionou como um clube no qual ele já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize as informações do perfil e defina se a informação é verdadeira.",
+            "ID"            => $notify["ID"],
+            "type"          => $notify["type"],
+            "message"       => "Adicionou como um clube no qual afirmando que já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize o perfil do usuário e defina abaixo se a informação é verdadeira.",
+            "date"          => $notify["date"],
             "user_profile"  => $user
         ];
         
@@ -240,7 +243,9 @@ class Notify {
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify['ID'],
-            "message"       => "O usuário " . $user['display_name'] . " comentou em sua publicação.",
+            "type"          => $notify["type"],
+            "message"       => "Comentou em sua publicação.",
+            "date"          => $notify["date"],
             "user_profile"  => $user
         ];
         
@@ -258,7 +263,9 @@ class Notify {
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify['ID'],
-            "message"       => $user['display_name'] . " te enviou uma mensagem.",
+            "type"          => $notify["type"],
+            "message"       => "Enviou uma mensagem para você.",
+            "date"          => $notify["date"],
             "user_profile"  => $user
         ];
         

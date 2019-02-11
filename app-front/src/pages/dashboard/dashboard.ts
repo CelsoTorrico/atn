@@ -14,6 +14,7 @@ export class DashboardPage {
 
     public loginErrorString;
 
+    //Informações básicas de usuário
     public currentUserData: any = { 
         ID: '',
         display_name: '',
@@ -24,13 +25,25 @@ export class DashboardPage {
         }
     };
 
+    //Timeline
     public addTimeline: any = {
         post_content: <string>'',
         post_visibility: <number>0, 
         post_image: <any>null,
     }
 
+    //Visibilidade
     public visibility: string[];
+
+    //Atividades
+    public activity:any[] = [];
+
+    //Informações de visualização
+    public info:any = {
+        views: <number>null,
+        messages: <number>null,
+        favorite: <any>[]
+    }
 
     constructor(
         public navCtrl: NavController,
@@ -48,8 +61,10 @@ export class DashboardPage {
     ngOnInit() {
         this.currentUser();
         this.getVisibility();
+        this.getLastActivity();
     }
 
+    //Retorna dados do usuário
     public currentUser() {
 
         //Retorna a lista de esportes do banco e atribui ao seletor
@@ -62,6 +77,11 @@ export class DashboardPage {
 
             //Adicionando valores a variavel global
             this.currentUserData = resp;
+            
+            //Campos específicos para dados básicos
+            this.info.views = resp.metadata.views.value;
+            this.info.favorite = resp.totalFavorite;
+            this.info.messages = resp.totalMessages; 
 
         }, err => {
             return;
@@ -71,21 +91,33 @@ export class DashboardPage {
 
     }
 
+    //Retorna dados de visibilidade
     getVisibility() {
         //Retorna a lista de esportes do banco e atribui ao seletor
         let items = this.api.get('timeline/visibility').subscribe((resp: any) => {
 
             //Se não existir items a exibir
             if (resp.length > 0) {
-
                 this.visibility = resp;
-
             }
 
         }, err => {
             return;
         });
 
+    }
+
+    //Retorna as últimas atividades
+    getLastActivity() {
+        //Retorna a lista de esportes do banco e atribui ao seletor
+        let items = this.api.get('timeline/activity').subscribe((resp: any) => {
+            //Se não existir items a exibir
+            if (resp.length > 0) {
+                this.activity = resp;
+            }
+        }, err => {
+            return;
+        });
     }
 
     /**
@@ -140,9 +172,16 @@ export class DashboardPage {
         });
     }
 
-    //Abre uma nova página de profile
+    //Abre uma nova página
     goToPage($page: string, $data: any) {
         this.navCtrl.push($page, { currentUser: $data });
+    }
+
+    //Abre uma nova página de profile
+    goToProfile($user_id:number){
+        this.navCtrl.push('ProfilePage', {
+        user_id: $user_id
+        }); 
     }
 
 }

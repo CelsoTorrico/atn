@@ -8,7 +8,7 @@ $router->group(['prefix' => 'chat'], function () use ($router) {
     $router->get('/', 'ChatController@getAllRooms');
 
     //Retorna único
-    $router->get('/{user_id:[0-9]+}', 'ChatController@get');
+    $router->get('/{suser_id:[0-9]+}', 'ChatController@get');
 
     //Retorna últimas mensagens da room
     $router->get('/message/{room_id:[0-9]+}', 'ChatController@getMessage');

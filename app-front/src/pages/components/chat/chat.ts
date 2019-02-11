@@ -1,6 +1,8 @@
 import { NavParams } from 'ionic-angular';
 import { Component, Input, SimpleChange } from '@angular/core';
 import { Api, User } from '../../../providers';
+import { Socket } from 'ng-socket-io';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'chat-room',
@@ -8,29 +10,58 @@ import { Api, User } from '../../../providers';
 })
 export class Chat {
 
-    @Input() public $roomID: number; 
+    @Input() public $roomID: number;
 
     public $chatMessages: any[];
 
-    public $chatNoMessages:string;
+    public $chatNoMessages: string;
 
-    public $message:string = '';
+    public $message: string = '';
+
+    private messageModel:any = {
+        author: {
+            ID: <string>''
+        },
+        content: <string>'',
+        viewer: <boolean>true,
+        date: new Date()
+    } 
 
     private $getChatMessagesUrl: string = 'chat/';
 
-    constructor(public api: Api, public params: NavParams, public user: User) { }
+    constructor(public api: Api, public params: NavParams, public user: User, private socket: Socket) {
+
+        this.getMessages().subscribe((message:any) => {
+
+            //Se string estiver vazia
+            if(message == ''){
+                return;
+            }
+
+            //Transforma strinf em formato json
+            let messageObj = JSON.parse(message);
+
+            //Atribui valores de modo a ser exibido corretamente
+            this.messageModel.author.ID = messageObj.author_id;
+            this.messageModel.content   = messageObj.content;
+
+            //Adiciona ao último item da lista
+            this.$chatMessages.unshift(this.messageModel);
+        });
+    }
 
     //Quando iniciar classe
     ngOnInit() {
-        if(this.$roomID != undefined){
-            this.getRoomMessages();    
-        }        
+        if (this.$roomID != undefined) {
+            this.getRoomMessages();
+        }
     }
 
     //Quando ocorrer mudança nos atributos da classe
     ngOnChanges(changes: SimpleChange) {
-        if(this.$roomID != undefined){
-            this.getRoomMessages();    
+        if (this.$roomID != undefined) {
+            this.socket.connect();
+            this.getRoomMessages();
         }
     }
 
@@ -46,11 +77,15 @@ export class Chat {
             }
 
             //Exibe erro
-            if(resp.error){
+            if (resp.error) {
                 this.$chatNoMessages = resp.error.chat;
                 this.$chatMessages = [];
                 return;
             }
+
+            //Emite um evento para adicionar o contexto da room para o Redis
+            let channel = resp[0].room_id;
+            this.socket.emit('enterChannel', { channel: channel });
 
             //Adicionando valores a variavel global
             this.$chatMessages = resp;
@@ -62,40 +97,31 @@ export class Chat {
 
     }
 
-    //Envia mensagem para room em contexto
-    sendMessage($event){
-        
-        //Só submeter quando clicar em Enter
-        if ($event.code != 'Enter' || $event.code != 'NumpadEnter') { 
-            return;
-        }
-
-        //Envia para servidor
-        this.addRoomMessage();
-    }
-
     //Abre uma nova página de profile
-    private addRoomMessage() {
+    public addRoomMessage($event) {
+
+        $event.preventDefault();
 
         //Retorna a lista de esportes do banco e atribui ao seletor
-        this.api.post(this.$getChatMessagesUrl + this.$roomID, { 'chat_content' : this.$message } ).subscribe((resp: any) => {
+        this.api.post(this.$getChatMessagesUrl + this.$roomID, { chat_content: this.$message })
+            .subscribe((resp: any) => {
 
-            //Reseta campo de mensagem
-            this.$message = '';
+                //Limpa o campo
+                this.$message = '';
 
-            //Exibe erro
-            if(resp.error){
-                this.$chatNoMessages = resp.error.chat;
+            }, err => {
                 return;
-            } 
+            });
 
-            //Carrega novamente as mensagem atualizando
-            this.getRoomMessages();
+    }
 
-        }, err => {
-            return;
-        });
-
+    getMessages() {
+        let observable = new Observable(observer => {
+            this.socket.on('addMessage', (data) => {
+                observer.next(data);
+            });
+        })
+        return observable;
     }
 
 }

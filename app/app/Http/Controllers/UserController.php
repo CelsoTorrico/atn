@@ -24,16 +24,15 @@ class UserController extends Controller
     }
 
     /** Retorna usuário único  */
-    function get($id) {
+    function get(int $id) {
 
-        $id = (int) $id;
-        
-        $result = $this->user->get($id);
+        //Retorna classe de usuário com dados a exibir
+        $result = $this->user->getUser($id);
 
         //Se usuário da query é current_user, não contabilizar view
-        if( $id != $this->user->ID ){
+        if( $result->ID != $this->user->ID ){
             //incrementado qtd view
-            $this->user->increaseView($id);
+            $result->increaseView($id);
         }  
         
         //retorna resultado

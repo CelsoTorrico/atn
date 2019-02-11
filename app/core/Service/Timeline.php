@@ -491,4 +491,59 @@ class Timeline {
 
     }
 
+    /** Retorna as últimas atividades de usuários */
+    public function getLastActivity(){
+        
+        //Qtd de itens por página
+        $limit = 10;
+
+        //Retorna todos posts de feed baseado nas conexões
+        $allTimelines = $this->model->getIterator([
+            'post_author[!]'    => $this->currentUser->ID,
+            'ORDER'             => ['post_date' => 'DESC'],
+            'LIMIT'             => $limit
+        ]);
+
+        //Retorna resposta
+        if( $allTimelines->count() > 0){
+
+            //Array para retornar dados
+            $timelines = [];
+            
+            foreach ($allTimelines as $key => $item) {
+
+                //Verifica se é valido
+                if ( !$allTimelines->valid() ) {
+                    continue;
+                }
+
+                //Atribui dados do comentário
+                $timelineData = $item->getData();
+
+                //Atribui modelo da timeline corrente para verificação de permissão
+                $this->model = $item;
+
+                //Adiciona data do post
+                $timeline['post_date'] = $timelineData['post_date'];
+
+                //Adiciona o tipo de post
+                $timeline['post_type'] = $timelineData['post_type'];
+                
+                //Adiciona dados básico do autor do post timeline
+                $timeline['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
+
+                //Adiciona ao array de items
+                array_push($timelines, $timeline);
+                
+            }
+
+            //Retorna array de timelines
+            return $timelines;
+        } 
+        else{
+            //Retorna erro
+            return ['error' => ['activity', 'Nenhuma atividade recente.']];
+        } 
+    }   
+
 }

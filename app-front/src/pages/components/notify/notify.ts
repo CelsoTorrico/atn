@@ -68,17 +68,37 @@ export class Notify {
   //Abrir popup notificação
   openNotifications($event){
     
-    //Retorna PopUp
-    let popup   = $event.target.parentElement.children[2];
+    $event.preventDefault();
+
+    //Adiciona ao elemento pai
+    let page = document.getElementsByTagName('page-dashboard');
+    let find = page[0].querySelector('.popover-notify');
+    let popup:any = find;
+
+    /*if(!find){
+      //Retorna PopUp
+      popup = $event.target.parentElement.children[2];
+    }
+    else{
+      popup = find[0];
+    }*/
 
     //Define a posicao do elemento popup
     popup.style.left = ($event.pageX / 2) + 'px';
     popup.style.top  = ($event.pageY + 15) + 'px';
     
-    //Adiciona ao elemento pai
-    let page = document.getElementsByTagName('page-dashboard');
+    //Adicionar popup ao elemento para sobrepor header
     page[0].appendChild(popup);
-    page[0].querySelector('.popup').classList.add('open');
+    popup.classList.add('open');
+
+    //Ao clicar fora da área de notificação >> fechar
+    popup.addEventListener('mouseout', function(){
+        page[0].addEventListener('click', function(ev){
+          if(ev.target != popup.children){
+            popup.classList.remove('open');
+          }
+        });
+    });
 
   }
 

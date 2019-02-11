@@ -1,3 +1,6 @@
+import { ProfileResumeModule } from './../components/profile-resume/profile-resume.module';
+import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
+import { MemberModule } from './../components/member/member.module';
 import { ProfileMessage } from './profile-message.component';
 import { TimelineModule } from './../components/timeline/timeline.module';
 import { NgModule } from '@angular/core';
@@ -12,7 +15,9 @@ import { ProfilePage } from './profile';
   imports: [
     IonicPageModule.forChild(ProfilePage),
     TranslateModule.forChild(),
-    TimelineModule
+    TimelineModule,
+    MemberModule,
+    ProfileResumeModule
   ],
   exports: [
     ProfilePage, ProfileMessage

@@ -85,11 +85,6 @@ export class TimelineSingle{
     
     $event.preventDefault();
 
-    //Só submeter quando clicar em Enter
-    if ($event.code != 'Enter') { 
-        return;
-    }
-
     //Enviado um comentário a determinada timeline
     let items = this.api.post('timeline/'+ $postID, {comment_content : this.commentText}).subscribe((resp:any) => {
        

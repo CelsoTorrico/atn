@@ -1,10 +1,11 @@
-import { NavController } from 'ionic-angular';
+import { NavController, ToastController } from 'ionic-angular';
 import { SuccessStep } from './../../pages/signup-steps/success/success';
 import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
 import { Api } from '../api/api';
 import { loadNewPage } from '../load-new-page/load-new-page';
 import { DashboardPage } from '../../pages/dashboard/dashboard';
+import { Observable } from 'rxjs/Observable';
 
 /**
  * Most apps have the concept of a User. This is a simple provider
@@ -29,6 +30,7 @@ import { DashboardPage } from '../../pages/dashboard/dashboard';
 export class User {
 
   _user: any;
+  _userObservable: Observable<ArrayBuffer>;
 
   private navCtrl: any;
 
@@ -38,8 +40,10 @@ export class User {
 
   constructor(
     private api: Api,
-    private loadPageService: loadNewPage) { }
-
+    private loadPageService: loadNewPage,
+    private toast: ToastController) {
+      this.getSelfUser();
+    }
 
   /** Implementa variavel com controlador de navegação */
   injectNavCtrl(navComponent: NavController) {
@@ -47,8 +51,7 @@ export class User {
   }
 
   /**
-   * Send a POST request to our login endpoint with the data
-   * the user entered on the form.
+   * Executa login na plataforma
    */
   login(accountInfo: any) {
 
@@ -74,6 +77,7 @@ export class User {
     return seq;
   }
 
+  //Executa login via Redes Sociais
   socialLogin(app: string) {
 
     let seq = this.api.getSocial('login/' + app);
@@ -82,8 +86,7 @@ export class User {
   }
 
   /**
-   * Send a POST request to our signup endpoint with the data
-   * the user entered on the form.
+   * Registra um novo usuário
    */
   signup(accountInfo: any) {
 
@@ -117,6 +120,56 @@ export class User {
   }
 
   /**
+   * Atualiza dados de usuário logado
+   * @param accountData 
+   */
+  update(accountData: any) {
+
+    let seq = this.api.put('user/update', accountData);
+
+    seq.subscribe((res: any) => {
+      // Se mensagem contiver parametro 'success'
+      if (res.success != undefined) {
+
+        //Redireciona para página dashboard
+        let message = this.toast.create({
+          message: res.success.register,
+          position: "bottom",
+          showCloseButton: true
+        });
+
+        message.present();
+
+      }
+      else {
+        //Exibe erro de atualização
+        let message = this.toast.create({
+          message: res.error.register,
+          position: "bottom",
+          showCloseButton: true
+        });
+
+        message.present();
+
+      }
+    }, err => {
+      console.error('ERROR', err);
+    });
+
+    return seq;
+  }
+
+  /**
+   * Retorna dados do usuario logado
+   */
+  private getSelfUser(): Observable<ArrayBuffer> {
+
+    //Retorna os dados de usuário e atribui ao seletor
+    return this._userObservable = this.api.get('user/self');
+
+  }
+
+  /**
    * Log the user out, which forgets the session
    */
   logout() {
@@ -130,25 +183,47 @@ export class User {
     this._user = resp.success;
   }
 
+  subscribeUser($optionalFn = null, $component = null) {
+    return this._userObservable.subscribe(
+      (resp:any) => {
+
+        //Se não existir items a exibir
+        if (resp.length <= 0) {
+          return;
+        }
+
+        //Adicionando valores a classe user
+        this._user = resp;
+        this.fillMyProfileData();
+
+        //Executa função adicional
+        $optionalFn($component);
+
+      },
+      (error) => {
+
+      });
+  }
+
   //Define os campos definidos para o usuário
-  public fillMyProfileData(){        
-        
+  fillMyProfileData() {
+
     //Retorna campos por tipo de usuaŕio
     let campos = this.userLoggedFields();
     let userdata = this._user;
 
     //Percorre array de campos e adiciona valores para os campos de usuários necessário, incluindo os que não forem preenchidos
-    campos.forEach(function(value, index, array){
-        userdata.metadata[value] = {
-            value : (userdata.metadata[value] != undefined)? userdata.metadata[value].value : null,
-            visibility : (userdata.metadata[value] != undefined)? userdata.metadata[value].visibility : 0
-        }    
+    campos.forEach(function (value, index, array) {
+      userdata.metadata[value] = {
+        value: (userdata.metadata[value] != undefined) ? userdata.metadata[value].value : null,
+        visibility: (userdata.metadata[value] != undefined) ? userdata.metadata[value].visibility : 0
+      }
     }, userdata);
 
     //Adiciona a variavel global
     return userdata;
-    
-}    
+
+  }
 
   /**
    * Retorna campos especificos para cada usuário
@@ -157,25 +232,25 @@ export class User {
 
     //Campos gerais
     let $fields: string[] = [
-      'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography'
+      'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email'
     ]
 
     //Se usuario for atleta e profissional
     if (this._user.type.ID == (1 || 2)) {
       let arr: string[] = ['birthdate', 'gender', 'rg', 'cpf', 'formacao', 'cursos', 'parent_user'];
-      Array.prototype.push.apply($fields, arr);      
+      Array.prototype.push.apply($fields, arr);
     }
 
     //Compartilhado entre Faculdade e Clube
     if (this._user.type.ID == (3 || 4 || 5)) {
       let arr: string[] = ['cnpj', 'eventos', 'meus-atletas', 'club_site', 'club_liga', 'club_sede'];
-      Array.prototype.push.apply($fields, arr);      
+      Array.prototype.push.apply($fields, arr);
     }
 
     //Compartilhado entre Atleta e Clube
     if (this._user.type.ID == (1 || 3 || 4 || 5)) {
       let arr: string[] = ['empates', 'vitorias', 'derrotas', 'titulos', 'jogos', 'titulos-conquistas'];
-      Array.prototype.push.apply($fields, arr);      
+      Array.prototype.push.apply($fields, arr);
     }
 
     //Atleta

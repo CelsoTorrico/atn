@@ -11,7 +11,7 @@ import { MemberModule } from '../components/member/member.module';
   imports: [
     IonicPageModule.forChild(FavoritePage),
     TranslateModule.forChild(),
-    MemberModule 
+    MemberModule
   ],
   exports: [
     FavoritePage

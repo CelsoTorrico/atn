@@ -1,5 +1,4 @@
 import { ToastController} from 'ionic-angular';
-import { NgForm } from '@angular/forms';
 import { Component, Input } from '@angular/core';
 import { Api } from '../../../providers';
 
@@ -11,9 +10,10 @@ import { Api } from '../../../providers';
           <ion-list>
               <ion-item>
                   <ion-avatar item-start>
-                      <ion-img [src]="">User Img</ion-img>
+                      <ion-img [src]="">User Img</ion-img> 
                   </ion-avatar>
-                  <ion-textarea name="comment_content" [(ngModel)]="commentText" (keyup)="submitComment($event)" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required ></ion-textarea>
+                  <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required ></ion-textarea>
+                  <button ion-button small end (click)="submitComment($event)">{{ "PUBLISH" | translate }}</button>
               </ion-item>
           </ion-list>                
             
@@ -39,11 +39,6 @@ export class CommentForm {
   submitComment($event) {
     
     $event.preventDefault();
-
-    //Só submeter quando clicar em Enter
-    if ($event.code != 'Enter') { 
-        return;
-    }
 
     //Enviado um comentário a determinada timeline
     let items = this.api.post('timeline/comment/' + this.parentItem, { comment_content : this.commentText}).subscribe((resp:any) => {

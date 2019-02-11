@@ -8,20 +8,26 @@ use Core\Utils\FileUpload;
 use Core\Database\ChatRoomModel;
 use Core\Database\ChatMessagesModel;
 
-class Chat {
+class Chat{
 
     protected $currentUser;
     protected $room;
     protected $messages;
     protected $following;
+    protected $redis;
+    public    $channel;
 
     public function __construct($user){
-        
+
         //Instancinando classes
         $this->currentUser  = $user;
         $this->room         = new ChatRoomModel();
-        $this->messages     = new ChatMessagesModel();    
+        $this->messages     = new ChatMessagesModel(); 
         
+        //Instanciando classe Illuminate\Redis 5.7
+        //Para funcionalidade de chat realtime
+        $this->redis = app('redis');
+                
         //Define followers e retorna IDs
         $follow = new Follow($user);
         $this->following = $follow->getFollowing(true);
@@ -115,6 +121,7 @@ class Chat {
             $user = new User();
 
             $allmessages[] = [
+                'room_id'    => $item->room_id,
                 'message_id' => $item->message_id,
                 'date'       => $item->date,
                 'content'    => ($item->read == 1)? '(Mensagem Apagada)' : $item->content,
@@ -141,6 +148,35 @@ class Chat {
         //Retorna mensagens
         return $messages;
 
+    }
+
+    /** Retorna total de mensagens não lidas */
+    function getTotal(){
+
+        //Retorna rooms que usuário contém
+        $rooms = $this->room->getIterator([
+            'OR' => [
+                'fuser' => $this->currentUser->ID,
+                'suser' => $this->currentUser->ID 
+            ]
+        ]);
+
+        $rooms_ids = [];
+
+        //Atribui ids das rooms encontradas
+        foreach ($rooms as $item) {
+            $rooms_ids[] = $item->room_id;
+        }
+        
+        //Insere dados no modelo
+        $messages = $this->messages->getIterator([
+            'author_id[!]'  => $this->currentUser->ID,
+            'room_id'       => $rooms_ids,
+            'read'          => 0
+        ]);
+
+        //Retorna totol de favoritos
+        return $messages->count();
     }
 
     /* Retorna lista de timeline */
@@ -212,52 +248,32 @@ class Chat {
             return ['error' => ['room', 'Você não pode enviar mensagens nesta conversa.']];
         }
 
+        //Sanitizando dados a serem inseridos no banco
+        $room_id = filter_var($room['room_id'], FILTER_SANITIZE_NUMBER_INT);
+        $content = filter_var($data['chat_content'], FILTER_SANITIZE_STRING);
+        $author_id = $this->currentUser->ID;
+
         //Filtrar inputs e validação de dados
-        $content = [
-            'room_id'       => filter_var($room['room_id'], FILTER_SANITIZE_NUMBER_INT),
-            'content'       => filter_var($data['chat_content'], FILTER_SANITIZE_STRING),
-            'author_id'     => $this->currentUser->ID
+        $contentArray = [
+            'room_id'       => $room_id,
+            'content'       => $content,
+            'author_id'     => $author_id
         ];
-        
+
+        //Insere no banco de dados 'Redis' para chat em realtime
+        $this->redis->publish($room_id, json_encode($contentArray));
+
+        //Abaixo insere no banco como histórico de conversa
         //Preenche colunas com valores
-        $this->messages->fill($content); 
+        $this->messages->fill($contentArray); 
 
         //Salva novo registro no banco
         $result = $this->messages->save();
 
-        //SE resultado for true, continua execução
-        if ($result) {
-
-            //Pega id da última inserção
-            $lastInsert = $this->messages->getPrimaryKey();
-
-            //Verificar quem esta recebendo mensagem
-            $toUser = ('fuser' == array_search($this->currentUser->ID, $room))? $room['suser'] : $room['fuser'];
-
-            //Registra notificação para seguido
-            $notify = new Notify($this->currentUser);
-            $notify->add(7, $toUser, $this->currentUser->ID);
-
-            //Verifica se existe objeto para upload
-            if (isset($data['chat_image']) && is_a($data['chat_image'], 'Symfony\Component\HttpFoundation\File\UploadedFile')) {
-
-                $file = $data['chat_image'];
-
-                //Inicializa classe de upload
-                $upload = new FileUpload($this->currentUser->ID, $lastInsert['ID'], $file);
-
-                //Enviar arquivo e insere no banco
-                $upload->insertFile();           
-            }
-
-            //Mensagem de sucesso no cadastro
-            return ['success' => ['chat' => 'Mensagem Enviada!']];
-
-        }
-        else{
-            //Mensagem de erro no cadastro
-            return ['error' => ['chat' => 'Houve erro no envio! Tente novamente mais tarde.']];
-        }
+        //Pega id da última inserção
+        $lastInsert = $this->messages->getPrimaryKey();         
+        
+        return [];
     }
 
     private function deregister($ID){
@@ -305,13 +321,18 @@ class Chat {
     /** Verifica o acesso a sala de conversa */
     function isAccessRoom($suser) {
 
-        //Ids válidos para verificação
-        $ids = [$this->currentUser->ID, $suser];
-        
         //Verificar se usuários podem enviar mensagem na conversa
         $hasAccess = $this->room->getInstance([
-            'fuser' => $ids,
-            'suser' => $ids           
+            'AND' => [
+                'fuser' => $this->currentUser->ID,
+                'suser' => $suser           
+            ],
+            'OR' => [
+                'AND' =>[
+                    'fuser' => $this->currentUser->ID,
+                    'suser' => $suser 
+                ]
+            ]            
         ]);
 
         if (!$room = $hasAccess->getData()) {

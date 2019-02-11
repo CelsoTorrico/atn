@@ -7,11 +7,16 @@ import { NavController } from 'ionic-angular';
     template: `
         <ion-grid>
             <ion-row>
-                <ion-col col-md-2 col-3 *ngFor="let member of members">
+                <ion-col col-md-3 col-auto *ngFor="let member of members">
                     <ion-item class="btn-cursor" (click)="goToProfile(member.ID)">
-                        <ion-avatar>
-                            <ion-img class="img-center" [src]="member.profile_img.value"></ion-img>
-                        </ion-avatar>
+                        
+                            <ion-avatar>
+                                <ng-template *ngIf="member.hasOwnProperty(profile_img)">
+                                    <ion-img class="img-center" [src]="member.profile_img.value"></ion-img>
+                                </ng-template>
+                                <img #elseBlock class="img-center" />  
+                            </ion-avatar>
+                                             
                         {{ member.display_name | titlecase }}
                     </ion-item>
                 </ion-col> 

@@ -1,0 +1,65 @@
+<section class="profile-resume">
+  <ion-list>
+
+    <header>
+
+      <button id="btn-favorite" ion-item icon-only clear (click)="favoriteUser(ID, $event)">
+        <ion-icon [name]="(favorite  == true)? 'star': 'star-outline'"></ion-icon>
+        {{ "Favorite" | translate }}
+      </button>
+
+      <ion-list>
+        <ion-avatar>
+          <img img-center *ngIf="profile_img.value" [src]="profile_img.value" />
+        </ion-avatar>
+      </ion-list>
+
+      <h1>{{ display_name | titlecase }}</h1>
+
+      <ion-list>
+        <button ion-button clear item-start>{{ "INFORMATION" | translate}}</button>
+        <button ion-button clear item-end>{{ "ACHIEVEMENTS" | translate}}</button>
+      </ion-list>
+    </header>
+
+    <ion-grid no-padding>
+      <ion-row>
+        <ion-col class="block" text-center>
+          <ion-list>
+            <ion-label>{{ "HEIGHT" | translate }}</ion-label>
+            {{ height.value }}
+          </ion-list>
+        </ion-col>
+        <ion-col class="block" text-center>
+          <ion-list>
+            <ion-label>{{ "BIRTHDATE" | translate }}</ion-label>
+            {{ birthdate.value | date:'yyyy' }}
+          </ion-list>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="block" text-center>
+          <ion-list>
+            <ion-label>{{ "WEIGHT" | translate }}</ion-label>
+            {{ weight.value }}
+          </ion-list>
+        </ion-col>
+        <ion-col class="block" text-center>
+          <ion-list>
+            <ion-label>{{ "PLAYED_MATCHES" | translate }}</ion-label>
+            {{ jogos.value }}
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-item id="feature">
+
+      <ion-label text-center>{{ "PERFORMANCE" | translate }}</ion-label>
+
+      <a (click)="goToPage('StatsPage')">Estatísticas</a>
+
+    </ion-item>
+
+  </ion-list>
+</section>

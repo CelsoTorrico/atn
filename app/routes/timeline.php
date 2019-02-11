@@ -7,6 +7,8 @@ $router->group(['prefix' => 'timeline'], function () use ($router) {
     //Retorna único
     $router->get('/visibility', 'TimelineController@getVisibility');
 
+    $router->get('/activity',  'TimelineController@getLastActivity');
+
     //Retorna único
     $router->get('/{id:[0-9]+}', 'TimelineController@get');
 

@@ -1,3 +1,20 @@
 .profile-suggestions{
-    background-color: #f1f1f1 !important;
+    
+    padding: 25px;
+    background: linear-gradient(to top, $button-primary-color, $vermelho-contraste);
+    color: $branco;
+
+    h1, h2, ion-list-header{
+        color: $branco !important;
+    }
+
+    ion-badge{
+        padding: 10px;
+        border-radius: 22.5px;
+        color: $titulos;
+        background-color: #f7f2ef;
+        margin-right: 10px;
+        min-width: 70px;
+    }
+    
 }

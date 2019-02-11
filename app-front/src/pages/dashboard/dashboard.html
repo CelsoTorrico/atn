@@ -8,11 +8,11 @@
         </ion-col>
         <ion-col col-md-8 col-12>
           <ion-row>
-            <ion-col col-5>
+            <ion-col col-5 no-padding>
               <ion-buttons>
-                  <notify></notify><!-- Notificações -->
-                  <user-menu></user-menu><!-- Icones de navegação -->                  
-              </ion-buttons>              
+                <notify></notify><!-- Notificações -->
+                <user-menu></user-menu><!-- Icones de navegação -->
+              </ion-buttons>
             </ion-col>
             <ion-col col-auto align-self-end>
               <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
@@ -30,13 +30,13 @@
       <ion-row>
         <ion-col col-md-8 col-0>
 
-          <nav-menu></nav-menu>
+          <nav-menu></nav-menu><!-- Menu de navegação -->
 
         </ion-col>
         <ion-col col-md-4 col-8>
 
           <ion-buttons end>
-            <search-member></search-member>
+            <search-member></search-member><!-- Componente de pesquisa de usuário -->
           </ion-buttons>
 
         </ion-col>
@@ -52,17 +52,92 @@
 
   <ion-grid fixed>
     <ion-row padding>
-      <ion-col class="profile-info" col-md-3 col-12 padding>
-        <div>Info Básicas</div>
+
+      <ion-col col-md-4 col-12 no-padding>
+        <ion-card class="profile-info">
+          <ion-row>
+            <ion-col>
+              <ion-card class="views">
+                <ion-card-header>
+                  <ion-list>
+                    <ion-item>
+                      <img src="assets/img/dashboard/views.png" />
+                    </ion-item>
+                    <span class="grande">
+                      {{ info.views}}
+                    </span>
+                    <p>pessoas</p>
+                  </ion-list>
+                </ion-card-header>
+                <ion-card-content>
+                  <p>Viram seu perfil</p>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+            <ion-col>
+              <ion-card class="views">
+                <ion-card-header>
+                  <ion-list>
+                    <ion-item>
+                      <img src="assets/img/dashboard/messages.png" />
+                    </ion-item>
+                    <span class="grande">
+                      {{ info.messages}}
+                    </span>
+                    <p>mensagens</p>
+                  </ion-list>
+                </ion-card-header>
+                <ion-card-content>
+                  <p>Não lidas</p>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+            <ion-col>
+              <ion-card class="views">
+                <ion-card-header>
+                  <ion-list>
+                    <ion-item>
+                      <img src="assets/img/dashboard/my-favorite.png" />
+                    </ion-item>
+                    <span class="grande">
+                      {{ info.favorite.myFavorites}}
+                    </span>
+                    <p>Favoritos</p>
+                  </ion-list>
+                </ion-card-header>
+                <ion-card-content>
+                  <p>Seus prediletos</p>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+            <ion-col>
+              <ion-card class="views">
+                <ion-card-header>
+                  <ion-list>
+                    <ion-item>
+                      <img src="assets/img/dashboard/other-favorite.png" />
+                    </ion-item>
+                    <span class="grande">
+                      {{ info.favorite.otherFavorite}}
+                    </span>
+                    <p>pessoas</p>
+                  </ion-list>
+                </ion-card-header>
+                <ion-card-content>
+                  <p>Me favoritaram</p>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-card>
       </ion-col>
-      <ion-col col-md-6 col-12>
+
+      <ion-col col-md-5 col-12>
 
         <ion-card>
 
           <ion-card-header>
-            <ion-card-title>
               {{ "ADD_PUBLICATION" | translate}}
-            </ion-card-title>
           </ion-card-header>
 
           <ion-card-content>
@@ -71,9 +146,8 @@
 
               <ion-list>
                 <ion-item>
-                  <ion-label>Privacidade</ion-label>
                   <ion-select name="post_visibility" interface="popover" [(ngModel)]="addTimeline.post_visibility">
-                    <ion-option *ngFor="let item of visibility" [value]="item.value">
+                    <ion-option *ngFor="let item of visibility" [value]="item.value" [selected]="item.value == 0">
                       {{item.option}}
                     </ion-option>
                   </ion-select>
@@ -82,7 +156,7 @@
 
               <ion-row>
                 <ion-col col-12>
-                  <ion-item>
+                  <ion-item no-padding>
                     <ion-avatar item-start>
                       <ion-img [src]="currentUserData.metadata.profile_img.value"></ion-img>
                     </ion-avatar>
@@ -91,14 +165,14 @@
                   </ion-item>
                 </ion-col>
                 <ion-col col-6>
-                  <ion-item>
+                  <ion-item no-padding>
                     <label class="item item-input">
                       <input type="file" id="upimgfile" name="post_image" [(ngModel)]="addTimeline.post_image">
                     </label>
                   </ion-item>
                 </ion-col>
                 <ion-col col-6>
-                  <button ion-button full end>{{ 'SEND' | translate }}</button>
+                  <button ion-button full end>{{ 'PUBLISH' | translate }}</button>
                 </ion-col>
               </ion-row>
             </form>
@@ -109,9 +183,35 @@
         <timeline></timeline>
 
       </ion-col>
-      <ion-col class="profile-activity" padding>
-        <div>Atividades</div>
+
+      <ion-col col-md-3 no-padding>
+
+        <ion-card class="profile-activity">
+
+          <ion-card-header>
+            <h2>{{ "ACTIVITY" | translate }}</h2>
+          </ion-card-header>
+
+          <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
+            
+            <ion-card class="btn-cursor" 
+            *ngFor="let i of activity" (click)="goToProfile(i.post_author.ID)">
+
+              <ion-card-content>
+                <p>
+                    <strong>{{ i.post_author.display_name}}</strong> publicou '{{ i.post_type}}' em {{ i.post_date |
+                    date }}
+                </p>
+              </ion-card-content>
+
+            </ion-card>
+
+          </ion-scroll>
+
+        </ion-card>
+
       </ion-col>
+
     </ion-row>
   </ion-grid>
 

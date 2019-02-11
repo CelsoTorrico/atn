@@ -7,9 +7,53 @@ page-dashboard ion-header ion-navbar .toolbar-background-md{
 
     background-color: #f1f1f1;
 
-    .profile-info, .profile-activity{
-        height: 400px;
-        background-color: #eee;
+    .profile-info{
+        background-color: #f0f0f0; 
+
+        ion-card{
+            margin: 0px;
+            width: 100%;
+            text-align: center;
+
+            ion-item img{
+                width: auto;
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 50px;
+            }
+
+            .grande{
+                display: block;
+                font-family: Axiforma;
+                font-size: 52px;
+                font-weight: 600;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: -0.3px;
+                color: #d03014;
+            }
+        }
+    }
+
+    .profile-activity{
+        
+        .scroll-content{
+            padding: 0px !important;
+        }
+
+        ion-card{
+            
+            &.card-md{
+                margin: auto 0px;
+                width: 100%;
+                border-bottom:1px solid #ddd;
+                p{
+                    font-weight: 100;
+                }
+            }
+
+        }
     }
 
 }

@@ -1,9 +1,21 @@
-.page-messages{
+.page-messages {
   background-color: $background;
-  
-  .member-select, .messages-list{
-    max-height: calc(100% - 150px);
-    overflow-y: auto;
+
+  .member-select,
+  .messages-list {
+    member-chat {
+
+      ion-list {
+        border: 1px solid #ddd;
+      }
+
+      button {
+        border-bottom: 1px solid #ddd;
+      }
+    }
+  }
+
+  .list-chat-members{
+    margin: 0px;
   }
 }
-

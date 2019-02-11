@@ -60,6 +60,13 @@ class TimelineController extends Controller
         return response()->json($response);
     }
 
+    function getLastActivity(){
+
+        $response = $this->timeline->getLastActivity();
+        
+        return response()->json($response);
+    }
+
     function add(Request $request){
 
         //Verifica se campos obrigatórios estão presentes

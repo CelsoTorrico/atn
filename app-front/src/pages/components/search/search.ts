@@ -4,11 +4,16 @@ import { NavController } from 'ionic-angular';
 @Component({
     selector: 'search-member',
     template: `
-        <ion-searchbar [(ngModel)]="search" (keyup)="searchMember($event)"></ion-searchbar>              
+        <ion-row>
+            <ion-col>
+                <input type="search" placeholder="Encontre alguém" [(ngModel)]="search" class="searchbar-input" />
+            </ion-col>
+            <ion-col>
+                <button ion-button (click)="searchMember($event)">{{ "Pesquisar" | translate }}</button>
+            </ion-col>
+        </ion-row>        
     `,
-    styles: [`
-
-    `]
+    styles: [``]
 })
 export class searchField{
 
@@ -20,9 +25,6 @@ export class searchField{
 
     //Redireciona para página de busca com query
     searchMember($event){
-        if ($event.code != 'Enter') { 
-            return;
-        }
         this.navCtrl.push('SearchPage', {
             display_name: this.search
         }); 
