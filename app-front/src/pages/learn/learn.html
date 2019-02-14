@@ -1,52 +1,53 @@
 <ion-header>
 
-    <ion-navbar>
-        <ion-title>{{ "LEARN" | translate }}</ion-title>
-    </ion-navbar>
+  <ion-navbar>
+    <ion-title>{{ "LEARN" | translate }}</ion-title>
+  </ion-navbar>
 
 </ion-header>
 
-<ion-content class="page-profile">    
+<ion-content class="page-profile">
 
-  <ion-grid>
-        <ion-row padding>
+  <ion-grid fixed>
+    <ion-row padding>
 
-            <ion-col class="feature-learn-col" col-md-3>
-                <ion-card>
+      <ion-col class="feature-learn-col" col-md-4>
+        <ion-card>
+          <ion-card-header>
+            {{ "FEATURE" | translate }}
+          </ion-card-header>
 
-                    <ion-item-group>
-                        <ion-item>
-                            
-                            <ion-title>{{ "FEATURE" | translate }}</ion-title>
+          <ion-item-group>
+            <ion-item>
 
-                        </ion-item>
-                    </ion-item-group>
+              <ion-title></ion-title>
 
-                </ion-card>
-            </ion-col>
-          
-            <ion-col id="learn-col" col-md-9 >                
-                <ion-card>
+            </ion-item>
+          </ion-item-group>
 
-                    <ion-item-group>
-                        <ion-item>
-                            
-                            <ion-title>{{ "LEARN" | translate }}</ion-title>
+        </ion-card>
+      </ion-col>
 
-                            <learn-container></learn-container>
+      <ion-col id="learn-col" col-md-8>
+        <ion-card>
 
-                        </ion-item>
-                    </ion-item-group>
+          <ion-card-header>
+            {{ "LEARN" | translate }}
+          </ion-card-header>
 
-                </ion-card>
-            </ion-col>
+          <ion-card-content>
+            <learn-container></learn-container>
+          </ion-card-content>
 
-        </ion-row>   
+        </ion-card>
+      </ion-col>
 
-    </ion-grid>
+    </ion-row>
+
+  </ion-grid>
 
 </ion-content>
 
 <ion-footer>
-    @2019 - AtletasNow
+  @2019 - AtletasNow
 </ion-footer>

@@ -52,6 +52,9 @@ class Learn extends Timeline {
                 //Atribui dados do comentário
                 $timelineData = $item->getData();
 
+                $user = new User();
+                $timelineData['post_author'] = $user->getMinProfile($item->post_author);
+
                //Inicializa classe de comentários passando ID do POST
                 $comment = new Comment($item->ID);
 
@@ -91,6 +94,8 @@ class Learn extends Timeline {
 
         //Filtrar inputs e validação de dados
         $filtered = [
+            'post_title'    => filter_var($data['post_title'], FILTER_SANITIZE_STRING),
+            'post_excerpt'  => filter_var($data['post_excerpt'], FILTER_SANITIZE_STRING),
             'post_content'  => filter_var($data['post_content'], FILTER_SANITIZE_STRING),
             'post_author'   => $this->currentUser->ID,
             'post_type'     => static::TYPE
@@ -104,6 +109,12 @@ class Learn extends Timeline {
                 'ID' => $postID, 
                 'post_author' => $this->currentUser->ID
             ]);
+
+            //Insere novo valor a coluna selecionada
+            $this->model->post_title = $filtered['post_title'];
+
+            //Insere novo valor a coluna selecionada
+            $this->model->post_excerpt = $filtered['post_excerpt'];
 
             //Insere novo valor a coluna selecionada
             $this->model->post_content = $filtered['post_content'];

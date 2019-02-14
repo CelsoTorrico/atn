@@ -122,7 +122,7 @@ export class MyProfilePersonalDataComponent {
         })
 
         //Função a ser executada após requisição de dados de usuário
-        this.addFormData = function ($this) {
+        this.addFormData = function ($this:any) {
 
             //Adicionando valores a classe user
             let atributes = $this.user._user;

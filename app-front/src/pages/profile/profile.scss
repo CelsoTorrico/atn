@@ -1,48 +1,58 @@
 .page-profile {
 
-  background-color: #f1f1f1;
+  background-color: #fafafa;
 
-  .personalData{
-    ion-label{
+  .personalData {
+    ion-label {
       color: $titulos;
       font-weight: normal;
       margin-top: 20px;
     }
   }
 
-  .about{
-    p, ul{
+  .about {
+
+    p{
+      margin-top: 20px;
+      strong {
+        font-size: 12px;
+        display: block;
+      }
+    }
+
+    p,
+    ul {
       font-weight: 100;
       font-size: 16px;
     }
 
-    ul{
+    ul {
       padding: 0;
       margin: 20px 0;
       list-style: none;
 
-      li{
+      li {
         width: 50%;
         margin-bottom: 10px;
         display: block;
         float: left;
 
-        &.address span{
+        &.address span {
           display: block;
           font-size: 11px;
         }
 
-        strong{
+        strong {
           font-size: 12px;
           display: block;
         }
       }
-      
+
     }
-    
+
   }
 
-  .about-item{
+  .about-item {
     padding: 10px;
     margin-top: 5px;
     border-bottom: 1px solid #ddd;

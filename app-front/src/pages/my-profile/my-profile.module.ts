@@ -11,6 +11,8 @@ import { RlTagInputModule } from 'angular2-tag-input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfileResumeModule } from '../components/profile-resume/profile-resume.module';
+import { StatsList } from '../../providers/useful/stats';
+import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,8 @@ import { ProfileResumeModule } from '../components/profile-resume/profile-resume
     CommonModule,
     RlTagInputModule,
     MenuPageModule,
-    ProfileResumeModule
+    ProfileResumeModule,
+    PipesModule
   ],
   exports: [
     MyProfilePage, ProfileStepDirective
@@ -37,6 +40,9 @@ import { ProfileResumeModule } from '../components/profile-resume/profile-resume
     MyProfileSportsComponent,
     MyProfileStatsComponent
   ],
-  bootstrap:[MyProfilePage]
+  bootstrap:[MyProfilePage],
+  providers: [
+    StatsList
+  ]
 })
-export class ProfilePageModule { }
+export class MyProfilePageModule { }

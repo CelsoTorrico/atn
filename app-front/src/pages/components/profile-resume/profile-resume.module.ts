@@ -15,7 +15,9 @@ import { CommonModule } from '@angular/common';
       ],
       exports: [ProfileResumeComponent],
       bootstrap: [ProfileResumeComponent],
-      entryComponents:[ProfileResumeComponent], 
+      entryComponents:[
+        ProfileResumeComponent
+      ], 
       schemas: [],
       providers: []
 })

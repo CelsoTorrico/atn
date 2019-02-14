@@ -4,35 +4,41 @@
 
     <ion-title>{{ "PROFILE" | translate }}</ion-title>
 
-    <ion-buttons end>
-      <ion-searchbar></ion-searchbar>
-    </ion-buttons>
-
   </ion-navbar>
 
-  <profile-resume [userData]="$getUser"></profile-resume><!-- Resumo de Perfil -->
+  <profile-resume (changeViewEvent)="changeComponentView($event)">
+  </profile-resume><!-- Resumo de Perfil -->
 
 </ion-header>
 
 <ion-content class="page-profile">
 
   <ion-grid>
+    
     <ion-row padding>
 
-      <ion-col col-12 offset-md-3>
+      <ion-col col-12 col-md-9 offset-md-3>
 
         <ion-buttons>
+            
+            <button ion-button end clear (click)="editData('personalData');">
+                {{ "EDIT" | translate }}
+            </button>
 
-          <button ion-button outline small icon-end (click)="followProfile($event)" [ngClass]="{'active': favorite === true, 'inactive': favorite != true}">
+        </ion-buttons>
+
+        <ion-buttons item-end>
+
+          <button ion-button small icon-end favorite (click)="followProfile($event)" [ngClass]="{'outline': favorite === true, 'clear': favorite != true}">
             {{ "FOLLOW" | translate }}
             <ion-icon md="md-checkmark"></ion-icon>
           </button>
 
-          <button ion-button outline small (click)="downloadProfilePDF()">
+          <button ion-button small outline (click)="downloadProfilePDF()">
             {{ "DOWNLOAD_PROFILE" | translate }}
           </button>
 
-          <button ion-button small (click)="sendProfileMessage()">
+          <button ion-button small outline (click)="sendProfileMessage()">
             {{ "MESSAGE" | translate }}
           </button>
 
@@ -40,129 +46,17 @@
 
       </ion-col>
 
-      <ion-col id="ProfileData" col-12 col-md-5 offset-md-3>
+      <ion-col id="ProfileData" col-12 col-md-9 offset-md-3>
 
-        <ion-card class="personalData">
+        <ng-template profile-view></ng-template>
 
-          <ion-card-header>
-            {{ "ABOUT_ME" | translate }}
-          </ion-card-header>
-
-          <ion-card-content class="about">
-
-            <p *ngIf="biography.value">
-              {{ biography.value }}
-            </p>
-
-            <ul>
-              <li *ngIf="birthdate.value"><strong>{{ "BIRTHDATE" | translate }}</strong>
-                {{ birthdate.value }}</li>
-              <li *ngIf="rg.value"><strong>{{ "RG" | translate }}</strong>
-                {{ rg.value }}</li>
-              <li *ngIf="cpf.value"><strong>{{ "CPF" | translate }}</strong>
-                {{ cpf.value }}</li>
-              <li *ngIf="gender.value"><strong>{{ "GENDER" | translate }}</strong>
-                {{ gender.value | translate }}</li>
-              <li *ngIf="telefone.value"><strong>{{ "TELEPHONE" | translate }}</strong>
-                {{ telefone.value }}</li>
-              <li class="address">
-                <strong>{{ "ADDRESS" | translate}}</strong>
-                <span>{{ address.value }}</span><span>{{ neighbornhood.value }}</span>
-                <span>{{ city.value }}</span><span>{{ state.value }}</span>
-                <span>{{ country.value }}</span>
-              </li>
-            </ul>
-
-          </ion-card-content>
-
-          <ion-item-group *ngIf="sport != undefined && sport.length > 0">
-            <ion-item>
-              {{ "SPORTS" | translate }}
-              <ion-list>
-                <ion-badge class="sport-badge" *ngFor="let item of sport">
-                  {{ item.sport_name }}
-                </ion-badge>
-              </ion-list>
-            </ion-item>
-          </ion-item-group>
-
-          <ion-item-group *ngIf="clubes != undefined && clubes.length > 0">
-            <ion-item>
-              {{ "CLUBS" | translate }}
-              <ion-list>
-                <div class="about-item" *ngFor="let club of clubes">
-                  <h4>
-                    {{ club.club_name }}
-                    <ion-badge class="club-badge" *ngIf='club.certify != undefined'>
-                      {{ club.certify | translate }}
-                    </ion-badge>
-                  </h4>
-                </div>
-              </ion-list>
-            </ion-item>
-          </ion-item-group>
-
-          <ion-item-group *ngIf="formacao != undefined && formacao.value.length > 0">
-            <ion-item>
-              {{ "FORMATION" | translate }}
-              <ion-list>
-                <div class="about-item" *ngFor="let form of formacao.value">
-                  <h4><strong>{{ 'INSTITUTE' | translate }}</strong>: {{ form[0] }}</h4>
-                  <p><strong>{{ 'COURSE' | translate }}</strong>: {{ form[1] }}</p>
-                  <p><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</p>
-                </div>
-              </ion-list>
-            </ion-item>
-          </ion-item-group>
-
-          <ion-item-group *ngIf="cursos != undefined && cursos.value.length > 0">
-            <ion-item>
-              {{ "COURSES" | translate }}
-              <ion-list>
-                <div class="about-item" *ngFor="let form of cursos.value">
-                  <h4><strong>{{ 'INSTITUTE' | translate }}</strong>: {{ form[0] }}</h4>
-                  <p><strong>{{ 'COURSE' | translate }}</strong>: {{ form[1] }}</p>
-                  <p><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</p>
-                </div>
-              </ion-list>
-            </ion-item>
-          </ion-item-group>
-
-        </ion-card>
-
-        <ion-card class="myVideos" *ngIf="videos">
-
-          <ion-card-header>
-            {{ "VIDEOS" | translate }}
-          </ion-card-header>
-
-          <ion-item-group>
-            <ion-item>
-              <ion-row padding>
-
-                <ng-container *ngFor="let video of videos">
-                  <iframe width="100%" height="240" [src]="video" frameborder="0" allowfullscreen></iframe>
-                </ng-container>
-
-              </ion-row>
-            </ion-item>
-          </ion-item-group>
-
-        </ion-card>
-
-      </ion-col>
-
-      <ion-col col-md-4 col-12>
-        <ion-title>
-          {{ "LAST_ACTIVITY" | translate }}
-        </ion-title>
-        <timeline *ngIf="ID" [timelineID]="ID"></timeline>
       </ion-col>
 
     </ion-row>
+
   </ion-grid>
 
-</ion-content>
+  <!-- Campo de envio de mensagem -->
+  <profile-message *ngIf="showMessageBox" [$user_ID]="ID" [$display_name]="display_name"></profile-message>
 
-<!-- Campo de envio de mensagem -->
-<profile-message *ngIf="showMessageBox" [$user_ID]="ID" [$display_name]="display_name"></profile-message>
+</ion-content>

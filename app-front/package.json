@@ -1,8 +1,8 @@
 {
-  "name": "app-peggas",
-  "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
+  "name": "app-atletasnow",
+  "version": "0.0.2",
+  "author": "Iran Alves",
+  "homepage": "https://makingpie.com.br/",
   "private": true,
   "scripts": {
     "start": "ionic-app-scripts serve",
@@ -38,8 +38,9 @@
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
     "cordova-plugin-whitelist": "^1.3.3",
-    "ionic-angular": "3.9.2",
+    "ionic-angular": "^3.9.3",
     "ionicons": "3.0.0",
+    "ng-chartjs": "0.0.9",
     "ng-socket-io": "^0.2.4",
     "rxjs": "5.5.11",
     "socket.io": "2.2.0",
@@ -47,7 +48,7 @@
     "zone.js": "0.8.26"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "3.2.1",
+    "@ionic/app-scripts": "3.2.2",
     "typescript": "~2.6.2"
   },
   "description": "An Ionic project",

@@ -95,20 +95,21 @@
               </ion-option>
             </ion-select>
 
-            <ion-row *ngFor="let item of formacao.value">
-              <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let i = index">
-                <ion-item>
-                  <ion-label stacked>{{ n | translate}} </ion-label>
-                  <ion-input type="text" name="formacao.value[item][]" [value]="item[i]"></ion-input>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row padding>
-              <ion-col>
-                <button ion-button item-end (click)="addMore(formacao.value)">{{ "ADD_MORE" | translate }}</button>
-              </ion-col>
-            </ion-row>
+            <ion-grid>
+              <ion-row *ngFor="let item of formacao.value; let i = index; trackBy:customTrackBy">
+                <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let a = index">
+                  <ion-item>
+                    <ion-label stacked>{{ n | translate}} </ion-label>
+                    <ion-input type="text" [ngModel]="formacao.value[i][a]" [name]="formacao.value[i][a]"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
 
+              <ion-item>
+                  <button ion-button item-end (click)="addMore(formacao, $event)">{{ "ADD_MORE" | translate }}</button>
+              </ion-item> 
+
+            </ion-grid>
           </ion-list>
         </ion-col>
 
@@ -126,17 +127,17 @@
               </ion-option>
             </ion-select>
 
-            <ion-row *ngFor="let item of cursos.value">
-              <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; index as i">
+            <ion-row *ngFor="let item of cursos.value; let i = index; trackBy:customTrackBy">
+              <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let a = index">
                 <ion-item>
-                  <ion-label stacked>{{ n | translate}}</ion-label>
-                  <ion-input type="text" name="cursos.value[item][]" [value]="item[i]"></ion-input>
+                  <ion-label stacked>{{ n | translate}} </ion-label>
+                  <ion-input type="text" [ngModel]="cursos.value[i][a]" [name]="cursos.value[i][a]"></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
             <ion-row padding>
               <ion-col>
-                  <button ion-button item-end (click)="addMore(cursos.value)">{{ "ADD_MORE" | translate }}</button>
+                <button ion-button item-end (click)="addMore(cursos.value)">{{ "ADD_MORE" | translate }}</button>
               </ion-col>
             </ion-row>
 
@@ -157,17 +158,17 @@
               </ion-option>
             </ion-select>
 
-            <ion-row *ngFor="let item of conquistas.value">
-              <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; index as i">
+            <ion-row *ngFor="let item of conquistas.value; let i = index; trackBy:customTrackBy">
+              <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index">
                 <ion-item>
-                  <ion-label stacked>{{ n | translate}}</ion-label>
-                  <ion-input type="text" name="conquistas.value[item][]" [value]="item[i]"></ion-input>
+                  <ion-label stacked>{{ n | translate}} </ion-label>
+                  <ion-input type="text" [ngModel]="conquistas.value[i][a]" [name]="conquistas.value[i][a]"></ion-input>
                 </ion-item>
               </ion-col>
             </ion-row>
             <ion-row padding>
               <ion-col>
-                  <button ion-button item-end (click)="addMore(conquistas.value)">{{ "ADD_MORE" | translate }}</button>
+                <button ion-button item-end (click)="addMore(conquistas.value)">{{ "ADD_MORE" | translate }}</button>
               </ion-col>
             </ion-row>
           </ion-list>
@@ -200,17 +201,17 @@
             </ion-option>
           </ion-select>
 
-          <ion-row *ngFor="let item of eventos.value">
-            <ion-col col-md-4 *ngFor="let n of ['NAME','ABOUT','YEAR']; index as i">
+          <ion-row *ngFor="let item of eventos.value; let i = index; trackBy:customTrackBy">
+            <ion-col col-md-4 *ngFor="let n of ['NAME','ABOUT','YEAR']; let a = index">
               <ion-item>
-                <ion-label stacked>{{ n | translate}}</ion-label>
-                <ion-input type="text" name="eventos.value[item][]" [value]="item[i]"></ion-input>
+                <ion-label stacked>{{ n | translate}} </ion-label>
+                <ion-input type="text" [ngModel]="eventos.value[i][a]" [name]="eventos.value[i][a]"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
           <ion-row padding>
             <ion-col>
-                <button ion-button item-end (click)="addMore(eventos.value)">{{ "ADD_MORE" | translate }}</button>
+              <button ion-button item-end (click)="addMore(eventos.value)">{{ "ADD_MORE" | translate }}</button>
             </ion-col>
           </ion-row>
         </ion-list>
@@ -227,17 +228,17 @@
             </ion-option>
           </ion-select>
 
-          <ion-row *ngFor="let item of club_liga.value">
-            <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; index as i">
+          <ion-row *ngFor="let item of club_liga.value; let i = index; trackBy:customTrackBy">
+            <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index">
               <ion-item>
-                <ion-label stacked>{{ n | translate}}</ion-label>
-                <ion-input type="text" name="eventos.value[item][]" [value]="item[i]"></ion-input>
+                <ion-label stacked>{{ n | translate}} </ion-label>
+                <ion-input type="text" [ngModel]="eventos.value[i][a]" [name]="eventos.value[i][a]"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
           <ion-row padding>
             <ion-col>
-                <button ion-button item-end (click)="addMore(club_liga.value)">{{ "ADD_MORE" | translate }}</button>
+              <button ion-button item-end (click)="addMore(club_liga.value)">{{ "ADD_MORE" | translate }}</button>
             </ion-col>
           </ion-row>
         </ion-list>

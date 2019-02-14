@@ -45,7 +45,7 @@ export class Timeline {
     this.query();
   }
 
-  query(){
+  query($fn:any = null){
     //Retorna a lista de esportes do banco e atribui ao seletor
     let items = this.api.get(Timeline.$getTimelineUrl + this.$url).subscribe((resp:any) => {
        
@@ -57,12 +57,32 @@ export class Timeline {
           //Retorna array de timelines
           this.currentItems.push(element);
         }); 
-
-      }         
+      }     
+      
+      $fn();
 
     }, err => { 
         return; 
     });
+
+  }
+
+  loadMore($event) {
+
+    setTimeout(() => {
+      
+      //Adiciona uma página a mais para adicionar itens
+      this.$paged = this.$paged + 1;
+      this.$url = '/paged/' + this.$paged;
+
+      //Função para finalizar
+      let endFn = function(){
+        $event.complete();
+      };
+
+      this.query(endFn);
+
+    }, 500);
 
   }
   

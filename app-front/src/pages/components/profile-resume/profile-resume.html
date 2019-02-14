@@ -10,44 +10,46 @@
 
       <ion-list>
         <ion-avatar>
-          <img img-center *ngIf="profile_img.value" [src]="profile_img.value" />
+          <img  class="img-center" />
         </ion-avatar>
-      </ion-list>
+      </ion-list> 
 
       <h1>{{ display_name | titlecase }}</h1>
 
-      <ion-list>
-        <button ion-button clear item-start>{{ "INFORMATION" | translate}}</button>
-        <button ion-button clear item-end>{{ "ACHIEVEMENTS" | translate}}</button>
+      <ion-list *ngIf="views">
+        <button ion-button clear *ngFor="let v of views" (click)="loadView(v)">
+          {{ v.title | translate}}
+        </button>
       </ion-list>
+      
     </header>
 
     <ion-grid no-padding>
       <ion-row>
-        <ion-col class="block" text-center>
+        <ion-col class="block" text-center *ngIf="height" >
           <ion-list>
             <ion-label>{{ "HEIGHT" | translate }}</ion-label>
-            {{ height.value }}
+            {{ height }}
           </ion-list>
         </ion-col>
-        <ion-col class="block" text-center>
+        <ion-col class="block" text-center *ngIf="birthdate">
           <ion-list>
             <ion-label>{{ "BIRTHDATE" | translate }}</ion-label>
-            {{ birthdate.value | date:'yyyy' }}
+            {{ birthdate | date:'yyyy' }}
           </ion-list>
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col class="block" text-center>
+        <ion-col class="block" text-center *ngIf="weight">
           <ion-list>
             <ion-label>{{ "WEIGHT" | translate }}</ion-label>
-            {{ weight.value }}
+            {{ weight }}
           </ion-list>
         </ion-col>
-        <ion-col class="block" text-center>
+        <ion-col class="block" text-center *ngIf="jogos">
           <ion-list>
             <ion-label>{{ "PLAYED_MATCHES" | translate }}</ion-label>
-            {{ jogos.value }}
+            {{ jogos }}
           </ion-list>
         </ion-col>
       </ion-row>
@@ -55,9 +57,7 @@
 
     <ion-item id="feature">
 
-      <ion-label text-center>{{ "PERFORMANCE" | translate }}</ion-label>
-
-      <a (click)="goToPage('StatsPage')">Estatísticas</a>
+      <ion-label text-center>{{ "PERFORMANCE" | translate }}</ion-label> 
 
     </ion-item>
 

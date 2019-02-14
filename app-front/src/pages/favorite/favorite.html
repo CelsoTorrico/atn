@@ -30,7 +30,7 @@
               </ion-badge>
             </ion-list>
 
-            <member-suggestion *ngFor="let userSugg of friendsSuggestion.found" [member]="userSugg"></member-suggestion>            
+            <member-suggestion *ngFor="let userSugg of friendsSuggestion.found" [member]="userSugg"></member-suggestion>
 
           </div>
 
@@ -87,13 +87,13 @@
 
         <ion-card id="friends-col">
 
+          <ion-card-header>
+            <ion-title>{{ "FOLLOWING" | translate }}</ion-title>
+          </ion-card-header>
+
           <ion-item-group>
             <ion-item>
-
-              <ion-title>{{ "FRIENDS" | translate }}</ion-title>
-
-              <member-container></member-container>
-
+              <member-container></member-container><!-- Lista de Friends -->
             </ion-item>
           </ion-item-group>
 

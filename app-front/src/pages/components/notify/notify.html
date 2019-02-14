@@ -1,7 +1,7 @@
 <button ion-button clear icon-only class="notify-icon" (click)="openNotifications($event)">
     
     <img src="assets/img/dashboard/notify-icon.png"/>
-    <ion-badge *ngIf="notifyCount">{{ notifyCount }}</ion-badge>  
+    <ion-badge class="messageCount" *ngIf="notifyCount">{{ notifyCount }}</ion-badge>  
 
     <div class="popover-notify popup">
         <ion-grid class="notification-container">

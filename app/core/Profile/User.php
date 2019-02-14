@@ -225,10 +225,13 @@ class User extends GenericUser{
     } 
 
     /** Retorna dados de estatistica */
-    public function getStats(){
+    public function getStats(int $id = null){
+
+        //Se id for null, mostrar dados do usuário corrente
+        $user = (is_null($id))? $this : $this->get($id); 
         
         //Campos gerais de estatisticas
-        $stats = new UserStats($this->metadata, $this->type['ID'], $this->sport);
+        $stats = new UserStats($user->metadata, $user->type['ID'], $user->sport);
         
         //Setando estatisticas do banco
         $stats->setStats();

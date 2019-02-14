@@ -1,0 +1,122 @@
+.statsGeneralData, .statsAchievementsData, .statsData{
+    ul{
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+    }
+}
+
+.statsAchievementsData, .statsData{
+    min-height: 200px;
+}
+
+.box-stats{
+    display: inline-block;
+    height: 100%;
+    max-width: 140px;
+    max-height: 110px;
+    margin-bottom: 3px;
+    padding: 20px;
+    color: $titulos;
+    font-size: 4.0rem;
+}
+
+.statsAchievementsData{
+
+    .box-titulo{
+
+        padding-bottom: 20px;
+        margin-top: 15px;
+
+        p{
+            font-weight: 100;
+            margin-bottom: 5px;
+
+            &.championship{
+                font-weight: 400;
+            }
+        }
+
+        h4{
+            clear: both;
+            font-size: 3.0rem !important;
+            color: $titulos;
+            padding: 0 20px 0 0;
+            width: auto;
+            height: auto; 
+            max-width: initial;
+
+            ion-icon{
+                &.silver{
+                    color: gray;
+                }
+
+                &.gold{
+                    color: yellow !important;
+                }
+            }
+        }
+    }
+    
+}
+
+.statsGeneralData{
+
+    padding: 10px 10px 0px 10px;
+
+    .card-header-md {
+        color: $branco !important;        
+    }
+
+    ul li{
+        background-color: $branco;
+        border-radius: 5px;
+        margin-bottom: 7px;
+        text-align: center;
+        width: 100%;
+        max-width: initial;
+        box-shadow: 5px 5px 10px rgba(0,0,0,0.1);
+
+        strong{
+            font-size: 1.0rem;
+            display: block;
+            color: #000;
+        }
+        
+    }
+}
+
+.statsData{
+
+    h3, h4, h5{
+        text-transform: uppercase;
+    }
+
+    h3{
+        font-size: 2.5rem;
+    }
+
+    ion-item{
+        h4{
+            font-size: 1.5rem;
+            color: $titulos;
+        }
+
+        padding: 5px 0px;
+        margin-top: 10px;
+
+        li{
+            border: 0px;
+            margin-bottom: 3px;
+            padding: 15px 10px 0px 0px;
+            font-size: 2.5rem;
+            color: $titulos;
+
+            strong{
+                font-size: 1.2rem;
+                display: block;
+                color: #000;
+            }
+        }
+    }
+}

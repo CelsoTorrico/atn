@@ -8,12 +8,16 @@ import { NavController } from 'ionic-angular';
             <ion-col>
                 <input type="search" placeholder="Encontre alguém" [(ngModel)]="search" class="searchbar-input" />
             </ion-col>
-            <ion-col>
+            <ion-col text-left>
                 <button ion-button (click)="searchMember($event)">{{ "Pesquisar" | translate }}</button>
             </ion-col>
         </ion-row>        
     `,
-    styles: [``]
+    styles: [`
+        button{
+            margin: 0px;
+        }
+    `]
 })
 export class searchField{
 

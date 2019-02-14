@@ -70,9 +70,19 @@ class UserController extends Controller
         return response()->json($this->user->getMinProfile());
     }
 
-    function getStats() {
+    function getStats(int $user_id = null) {
+        
         //retorna resultado
-        return response()->json($this->user->getStats());
+        $result = $this->user->getStats($user_id);
+
+        //Se houve erro
+        if(is_array($result) && isset($result['error'])){
+            return $response()->json($result['error']);
+        }
+        else{
+            //Retorna string com dados
+            return response()->json($result);
+        }
     }
 
     function getSuggestions() {        

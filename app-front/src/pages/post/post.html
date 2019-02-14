@@ -1,78 +1,105 @@
 <ion-header>
 
-    <ion-toolbar>
-            
-      <ion-title>{{ "POST" | translate }}</ion-title>
-  
-      <ion-buttons end>
-          <ion-searchbar></ion-searchbar>
-      </ion-buttons>
+  <ion-toolbar>
 
-    </ion-toolbar>
+    <ion-title>{{ "POST" | translate }}</ion-title>
+
+  </ion-toolbar>
 
 </ion-header>
 
-<ion-content class="page-post">    
+<ion-content class="page-post">
 
   <ion-grid>
-      <ion-row padding>
-          
-          <ion-col col-12 col-md-9>
+    <ion-row padding>
 
-            <ion-card>
+      <ion-col col-12 col-md-9>
 
-                <ion-grid>
-                    <ion-row>
-                        
-                        <ion-col>
-                            <img onclick="alert(currentPostItem.attachment)" src="https://www.atletasnow.com/wp-content/uploads/2018/12/como-ser-um-jogador-de-futebol-20181122132059.jpg" />
-                        </ion-col>
-                        
-                        <ion-col>
+        <ion-card>
 
-                            <ion-list>
-                                <ion-item>
-                                    <ion-avatar *ngIf="currentPostItem.post_author.profile_img" >
-                                        <img [src]="currentPostItem.post_author.profile_img.value" />
-                                    </ion-avatar>
-                                    <h2>{{ currentPostItem.post_author.display_name }}</h2>
-                                    <ion-badge end>
-                                            {{ "COMMENTS" | translate }} : {{ currentPostItem.quantity_comments }}
-                                    </ion-badge>
-                                </ion-item> 
-                            </ion-list>
+          <ion-grid>
+            <ion-row>
 
-                            <ion-item>
-                                
-                                <ion-card-header>
-                                    <ion-title>
-                                        Título
-                                    </ion-title>
-                                </ion-card-header>
+              <ion-col id="feature" col-md-6>
+                
+              </ion-col>
 
-                                <ion-item-divider>
-                                    {{ currentPostItem.post_content }}
-                                </ion-item-divider>
-                            </ion-item>
+              <ion-col>
 
-                        </ion-col>
+                <ion-card-content>
 
-                    </ion-row>
-                </ion-grid>
+                  <h1>{{ currentPostItem.post_title }}</h1>
 
-            </ion-card>
+                  <p>
+                      <small>
+                        {{ "BY"}} {{ currentPostItem.post_author.display_name }}
+                      </small> 
+                      <br />                   
+                  </p>
 
-          </ion-col>
+                  <hr />
 
-          <ion-col col-md-3>
-            {{ FEATURE }}            
-          </ion-col>
+                  <div [innerHTML]="currentPostItem.post_content"></div>
 
-      </ion-row>        
+                  <ion-footer>
+                    <ion-item>
+                      <ion-badge end>
+                        {{ "COMMENTS" | translate }} : {{ currentPostItem.quantity_comments }}
+                      </ion-badge>
+                    </ion-item>
+
+                  </ion-footer>
+
+                </ion-card-content>
+
+              </ion-col>
+
+            </ion-row>
+          </ion-grid>
+
+        </ion-card>
+
+      </ion-col>
+
+      <ion-col col-md-3>
+        <!-- Comentário -->
+
+        <ion-card>
+
+          <ion-card-header>
+            {{ "COMMENTS" | translate }}
+          </ion-card-header>
+
+          <ion-item-group>
+
+            <ion-row>
+              <ion-col col-auto>
+                <ion-item>
+                  <ion-avatar item-start>
+                    <ion-img [src]=""></ion-img>
+                  </ion-avatar>
+                </ion-item>
+              </ion-col>
+              <ion-col>
+                <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
+                  required></ion-textarea>
+                <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" |
+                  translate
+                  }}</button>
+              </ion-col>
+            </ion-row>
+
+          </ion-item-group>
+        </ion-card>
+
+
+      </ion-col>
+
+    </ion-row>
   </ion-grid>
 
 </ion-content>
 
 <ion-footer>
-    @2019 - AtletasNow
+  @2019 - AtletasNow
 </ion-footer>

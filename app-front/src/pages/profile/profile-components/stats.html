@@ -1,0 +1,83 @@
+<ion-row>
+  <ion-col col-md-2>
+    <div class="statsGeneralData">
+
+      <ul *ngIf="general">
+        <li class="box-stats" *ngIf="general.titulos"><strong>{{ "QTD_ACHIEVEMENT" | translate }}</strong>
+          {{ general.titulos }}</li>
+        <li class="box-stats" *ngIf="general.jogos"><strong>{{ "MATCHS" | translate }}</strong>
+          {{ general.jogos }}</li>
+        <li class="box-stats" *ngIf="general.vitorias"><strong>{{ "VICTORYS" | translate }}</strong>
+          {{ general.vitorias }}</li>
+        <li class="box-stats" *ngIf="general.empates"><strong>{{ "DRAWS" | translate }}</strong>
+          {{ general.empates }}</li>
+        <li class="box-stats" *ngIf="general.derrotas"><strong>{{ "LOSES" | translate }}</strong>
+          {{ general.derrotas }}</li>
+      </ul>
+
+    </div>
+  </ion-col>
+  <ion-col col-md-10>
+    <ion-col col-12>
+      <ion-card class="statsAchievementsData">
+
+        <ion-card-header>
+          <h2>{{ "IMPORTANT_ACHIEVEMENTS" | translate }}</h2>
+        </ion-card-header>
+
+        <ion-card-content *ngIf="general">
+
+          <ion-item-group *ngIf="general['titulos-conquistas']">
+            <ion-row>
+              <ion-col col-12 col-sm-6 col-md-4 class="box-titulo" *ngFor="let titulo of general['titulos-conquistas']">
+                <h4 class="box-stats">
+                  <ion-icon start name="medal" [ngClass]="{'gold': titulo[0].search('1'), 'silver': titulo[0].search('2'), 'bronze': titulo[0].search('3') }"></ion-icon>
+                  {{ titulo[0] }}
+                </h4>
+                <p class="championship">{{ titulo[1] }}</p>
+                <p>{{ titulo[2] }}</p>
+              </ion-col>
+            </ion-row>
+          </ion-item-group>
+
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+
+    <ion-col col-12 *ngIf="type == 1" >
+
+      <ion-card class="statsData">
+
+        <ion-card-header>
+          <h2>{{ "SPORTS_STATS" | translate }}</h2>
+        </ion-card-header>
+
+        <ion-card-content *ngIf="performance">
+
+          <ion-item-group *ngFor="let sport of performance.stats | mapToIterable">
+
+            <h3>{{ sport.key | translate | titlecase }}</h3>
+
+            <ion-row>
+              <ion-col col-12 col-md-6>
+                <ion-item *ngFor="let item of sport.val | mapToIterable">
+                  <h4>{{ item.key | translate | titlecase }}</h4>
+                  <ul>
+                    <li class="box-stats" *ngFor="let i of item.val  | mapToIterable">
+                      <strong>{{ i.key }}</strong>
+                      {{ i.val }}
+                    </li>
+                  </ul>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+
+
+          </ion-item-group>
+
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-col>
+
+  </ion-row>

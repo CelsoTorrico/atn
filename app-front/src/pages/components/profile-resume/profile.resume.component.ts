@@ -1,49 +1,50 @@
 import { Observable } from 'rxjs/Observable';
-import { Component, Input } from '@angular/core';
-import { NavController } from 'ionic-angular';
-import { Api } from '../../../providers';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { NavController, ModalController } from 'ionic-angular';
+import { Api, User } from '../../../providers';
 
 @Component({
     selector: 'profile-resume',
     templateUrl: "profile-resume.html",
 })
-export class ProfileResumeComponent {
+export class ProfileResumeComponent implements OnInit{
 
-    @Input() userData: Observable<ArrayBuffer>;
+    @Output() changeViewEvent = new EventEmitter<any>();
 
     ID: number = null;
 
-    display_name: string = '';
-
     type: number = null;
 
-    favorite:boolean = false;
+    display_name: string = null;
 
-    profile_img: any = { value: '' };
+    profile_img: any = { value: null };
 
-    birthdate: any = { value: '' };
+    favorite: boolean = false;
 
-    sport: any = { value: '' };
+    birthdate:string = null;
 
-    clubes: any = { value: '' };
+    sport: any = { value: null };
 
-    height: any = { value: '' };
+    height:number = null;
 
-    weight: any = { value: '' };
+    weight:number = null;
 
-    jogos: any = { value: '' };
+    jogos:number = null;
 
-    vitorias: any = { value: '' };
+    aproveitamento: any = {
+        value: null
+    }
 
-    derrotas: any = { value: '' };
+    public views: any[] = null;
 
-    empates: any = { value: '' };
+    constructor(public navCtrl: NavController, private user: User, private api: Api) {
 
-    titulos: any = { value: '' };
+        // used for an example of ngFor and navigation
+        this.views = 
+        [{ title: 'Profile', component: 'personalView' },
+        { title: 'Stats', component: 'statsView' }]; 
 
-    ['titulos-conquistas']: any = { value: '' };
-
-    constructor(public navCtrl: NavController, private api: Api) { }
+    }
 
     ngOnInit() {
         this.fillUserData();
@@ -52,34 +53,82 @@ export class ProfileResumeComponent {
     //Adiciona valores as variaveis globais
     fillUserData() {
 
-        this.userData.subscribe((resp: any) => {
+        //Retorna dados pessoais
+        this.user._userObservable.subscribe((resp: any) => {
 
-            if (resp.length < 0) {
+            //Se não existir items a exibir
+            if (resp.length <= 0) {
                 return;
             }
 
-            if (resp.metadata != undefined) {
-                //Intera sobre objeto e atribui valor aos modelos de metadata
-                for (var key in resp.metadata) {
-                    if (resp.metadata.hasOwnProperty(key) && this[key] != undefined) {
-                        this[key] = resp.metadata[key];
+            //Adicionando valores as variavel global
+            let atributes = resp;
+
+            //Atribuindo dados aos modelos
+            this.ID = atributes.ID;
+            this.display_name = atributes.display_name;
+            this.type = atributes.type.ID;
+            this.sport = atributes.sport;
+
+            if(atributes.metadata.hasOwnProperty('height')){
+                this.height = atributes.metadata.height.value;
+            }               
+
+            if(atributes.metadata.hasOwnProperty('weight')){
+                this.weight = atributes.metadata.weight.value;
+            }                
+            
+            if(atributes.metadata.hasOwnProperty('birthdate')){
+                this.birthdate = atributes.metadata.birthdate.value; 
+            }
+                
+
+            //Pega os dados de estatística 
+            this.getStats();  
+
+        }, err => {
+            return;
+        });
+
+    }
+
+    private getStats(){
+        
+        //Retorna dados de estatística
+        this.user._statsObservable.subscribe((resp: any) => {
+
+            //Se não existir items a exibir
+            if (resp.length <= 0) {
+                return;
+            }
+
+            //Adicionando valores as variavel global
+            let atributes = resp;
+
+            //Verifica se existe propriedades
+            if (Object.keys(atributes.general).length > 0) {
+                for (const keys in atributes.general) {
+                    if (this.hasOwnProperty(keys)) {
+                        this[keys] = atributes.general[keys];
                     }
                 }
             }
 
-            //Atribuindo dados aos modelos
-            this.ID = resp.ID;
-            this.display_name = resp.display_name;
-            this.type = resp.type.ID;
-
+        }, err => {
+            return;
         });
+    }
 
+    //Abre Modal e envia dados do usuário atual
+    loadView($view: any) {
+        //Emite um evento para ser capturado pelo pais
+        this.changeViewEvent.emit($view.component);
     }
 
     //Favoritar Usuário
     favoriteUser($user_ID: number, event) {
 
-        event.preventDefault(); 
+        event.preventDefault();
 
         this.api.get('favorite/' + $user_ID).subscribe((resp: any) => {
 
@@ -88,11 +137,11 @@ export class ProfileResumeComponent {
                 if (el.classList.contains("active")) {
                     el.classList.remove("active");
                     el.classList.add("inactive");
-                    this.favorite = false; 
+                    this.favorite = false;
                 } else {
                     el.classList.add("active")
                     el.classList.remove("inactive");
-                    this.favorite = true; 
+                    this.favorite = true;
                 }
             }
 

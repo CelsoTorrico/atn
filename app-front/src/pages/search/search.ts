@@ -57,6 +57,10 @@ export class SearchPage {
   //Lista de Estados
   protected $statesList = [];
 
+  //Paginação
+  public $url:string = '';
+  public $paged:number = 0;  
+
   constructor(public api:Api, public navCtrl: NavController, public navParams: NavParams, public states:BrazilStates ) {
     
       //Carrega lista de estados do provider
@@ -73,6 +77,12 @@ export class SearchPage {
   }
 
   ngOnInit() {
+
+    //Adciona parametro de paginação
+    if(this.$paged > 0){
+      this.$url = '/paged/' + this.$paged;
+    }
+
     this.getSportList();
     this.getClubsList();
   }
@@ -109,15 +119,19 @@ export class SearchPage {
     
   }
 
-  private widgetSearch(){
+  private widgetSearch($fn:any = null){
       //Retorna a lista de clubes para seletor
-      this.api.post('/user/search', this.query).subscribe((resp:any) => {
+      this.api.post('/user/search' + this.$url, this.query).subscribe((resp:any) => {
 
         //Lista de Usuários
-        this.$memberList = resp;
+        resp.forEach(element => {
+          this.$memberList.push(element);
+        });        
 
         //Reseta dados do campo "sport"
         this.query.sport = [];
+
+        $fn();
 
       }, err => { 
           return; 
@@ -127,6 +141,9 @@ export class SearchPage {
   submitSearch(form:NgForm, event){
     
     event.preventDefault();
+
+    //Reseta lista de usuários já pesquisados
+    this.$memberList = [];
 
     //Adiciona tipo de usuário selecionado
     this.query.type  = this.$typeUserSelected;
@@ -150,6 +167,25 @@ export class SearchPage {
             this.query.sport.push(element[0]);
         }
     });
+
+  }
+
+  loadMore($event) {
+
+    setTimeout(() => {
+      
+      //Adiciona uma página a mais para adicionar itens
+      this.$paged = this.$paged + 1;
+      this.$url = '/paged/' + this.$paged;
+
+      //Função para finalizar
+      let endFn = function(){
+        $event.complete();
+      };
+
+      this.widgetSearch(endFn);
+
+    }, 500);
 
   }
 

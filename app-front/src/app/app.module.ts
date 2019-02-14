@@ -1,4 +1,3 @@
-import { FooterAppModule } from './../pages/components/footer/footer.module';
 import { DashboardPageModule } from './../pages/dashboard/dashboard.module';
 import { loadNewPage } from './../providers/load-new-page/load-new-page';
 import { SignupStepsModule } from './../pages/signup-steps/signup-steps.module';
@@ -19,6 +18,8 @@ import { Settings, User, Api } from '../providers';
 import { MyApp } from './app.component';
 import { MenuPageModule } from '../pages/components/menu/menu.module';
 import { BrazilStates } from '../providers/useful/states';
+import { NgChartjsModule } from 'ng-chartjs';
+import { PipesModule } from '../pipes/pipes.module';
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -60,7 +61,8 @@ export function provideSettings(storage: Storage) {
     MenuPageModule, 
     LoginPageModule,
     SignupStepsModule, 
-    DashboardPageModule
+    DashboardPageModule,
+    PipesModule
   ],
   exports: [],
   bootstrap: [IonicApp],

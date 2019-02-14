@@ -1,5 +1,5 @@
+import { MyProfilePersonalDataComponent } from './../my-profile/personal-data/personal-data.component';
 import { ProfileResumeModule } from './../components/profile-resume/profile-resume.module';
-import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
 import { MemberModule } from './../components/member/member.module';
 import { ProfileMessage } from './profile-message.component';
 import { TimelineModule } from './../components/timeline/timeline.module';
@@ -7,21 +7,40 @@ import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
 import { ProfilePage } from './profile';
+import { StatsList } from '../../providers/useful/stats';
+import { ProfileComponent } from './profile-components/profile.component';
+import { StatsComponent } from './profile-components/stats.component';
+import { ProfileViewDirective } from './profile-view.directive';
+import { NgChartjsModule } from 'ng-chartjs';
+import { PipesModule } from '../../pipes/pipes.module';
+import { MyProfilePageModule } from '../my-profile/my-profile.module';
 
 @NgModule({
   declarations: [
-    ProfilePage, ProfileMessage
+    ProfilePage, ProfileMessage, 
+    ProfileViewDirective,
+    ProfileComponent, 
+    StatsComponent
   ],
   imports: [
     IonicPageModule.forChild(ProfilePage),
     TranslateModule.forChild(),
     TimelineModule,
     MemberModule,
-    ProfileResumeModule
+    ProfileResumeModule,
+    PipesModule,
+    MyProfilePageModule
   ],
   exports: [
-    ProfilePage, ProfileMessage
+    ProfilePage, ProfileMessage, ProfileViewDirective
   ], 
-  entryComponents: [ProfileMessage]
+  entryComponents: [
+    ProfileMessage, 
+    ProfileComponent,
+    StatsComponent
+  ],
+  providers: [
+    StatsList
+  ]
 })
 export class ProfilePageModule { }

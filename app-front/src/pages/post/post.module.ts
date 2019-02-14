@@ -1,8 +1,9 @@
-import { TimelineModule } from '../components/timeline/timeline.module';
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
 import { PostPage } from './post';
+import { CommentModule } from '../components/comment/comment.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { PostPage } from './post';
   imports: [
     IonicPageModule.forChild(PostPage),
     TranslateModule.forChild(),
-    TimelineModule 
+    CommonModule,
+    CommentModule
   ],
   exports: [
     PostPage

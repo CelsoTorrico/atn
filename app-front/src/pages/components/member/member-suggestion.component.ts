@@ -26,6 +26,7 @@ import { Nav, NavController, ModalController } from 'ionic-angular';
         width: 50%;
         float: left;
         font-size: 1.2rem;
+        border: 0px;
     }
     
     ion-card ion-label{

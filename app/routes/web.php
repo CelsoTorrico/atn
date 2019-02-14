@@ -31,3 +31,8 @@ $router->get('/', function () use ($router) {
         'author' => 'Iran Alves'
     ));
 });
+
+/** Acesso liberado para images */
+$router->get('/uploaded-images/*', function () use ($router) {
+    return response();
+});

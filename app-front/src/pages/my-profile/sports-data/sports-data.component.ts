@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
-import { NavController, ToastController } from 'ionic-angular';
+import { MultipleFields } from './../formUtils/multiple-fields';
+import { MyProfilePersonalDataComponent } from './../personal-data/personal-data.component';
+import { Component, ViewChild } from '@angular/core';
+import { NavController, ToastController, ModalController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
 import { NgForm } from '@angular/forms';
-import { timingSafeEqual } from 'crypto';
 
 
 @Component({
@@ -85,19 +86,15 @@ export class MyProfileSportsComponent {
 
     public visibility: any;
 
-    public itemToAddArray: any[] = [];
-    public itemToAdd: any = {
-        0: '',
-        1: '',
-        2: ''
-    };
+    public fieldToAdd:any = [ '', '', ''];
 
     constructor(
         public navCtrl: NavController,
         public user: User,
         public api: Api,
         public toastCtrl: ToastController,
-        public translateService: TranslateService) {
+        public translateService: TranslateService,
+        public modal: ModalController) {
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
@@ -192,8 +189,22 @@ export class MyProfileSportsComponent {
         });
     }
 
-    addMore($parentModel) {
-        $parentModel.push(this.itemToAddArray);
+    /** Adicionar um novo item para multiplos campos | Abre modal */
+    addMore($parentModel, $event) {
+        
+        $event.preventDefault();
+
+        //Abre modal
+        let addMore = this.modal.create(MultipleFields, { list: ['INSTITUTE','COURSE','YEAR']});
+
+        //Ao modal ser fechado, é passada os dados modificados nele
+        addMore.onDidDismiss(data => {
+            $parentModel.value.push(data);
+        });
+
+        //Cria o modal
+        addMore.present();
+        
     }
 
     //Salvar dados do formulário

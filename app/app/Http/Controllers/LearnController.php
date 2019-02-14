@@ -47,6 +47,12 @@ class LearnController extends Controller
     function add(Request $request){
 
         //Verifica se campos obrigatórios estão presentes
+        if(!$request->has('post_title') || !$request->filled('post_title')){
+            //TODO: Melhorar resposta json
+            return response("Campo obrigatório não submetido! Tente novamente!"); 
+        }
+
+        //Verifica se campos obrigatórios estão presentes
         if(!$request->has('post_content') || !$request->filled('post_content')){
             //TODO: Melhorar resposta json
             return response("Campo obrigatório não submetido! Tente novamente!"); 
@@ -54,7 +60,11 @@ class LearnController extends Controller
 
         //Atribui conteúdo a variável
         //O ideal é ser um conteúdo estruturado em html
-        $data = ['post_content' => $request->input('post_content')];
+        $data = [
+            'post_title'        => $request->input('post_title'),
+            'post_excerpt'      => $request->input('post_excerpt'),
+            'post_content'      => $request->input('post_content')
+        ];
 
         //Se foi definido a visibilidade do post
         if ($request->has('post_visibility') && $request->filled('post_visibility')) {

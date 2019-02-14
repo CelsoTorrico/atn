@@ -26,7 +26,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->get('/pdf[/{id:[0-9]+}]', 'UserController@getPdf');
 
     //Retorna estatisticas do usuário logado
-    $router->get('/stats', 'UserController@getStats');
+    $router->get('/stats[/{user_id:[0-9]+}]', 'UserController@getStats');
 
     //Retorna sugestões de usuários a seguir
     $router->get('/suggestions', 'UserController@getSuggestions');
@@ -37,8 +37,9 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //Envia mensagem de e-mail a usuário
     $router->post('/message/{id:[0-9]+}', 'UserController@sendMessage');
 
-    //Envia mensagem de e-mail a usuário
-    $router->post('/search[/{page:[0-9]+}]', 'UserController@search');
+    //Faz pesquisas de usuário
+    $router->post('/search/paged/{page:[0-9]+}', 'UserController@search');
+    $router->post('/search', 'UserController@search');
 
     //CLUBES e CONFEDERAÇÔES
     $router->group(['prefix' => 'self'], function() use ($router){

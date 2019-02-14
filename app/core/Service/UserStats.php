@@ -57,8 +57,14 @@ class UserStats {
             }
             
             //Apenas permite e converte strings em int
-            preg_match('/[-0-9]+/', $n, $n);
-            $numeros[$value] = (int) $n[0];
+            $valid = preg_match('/[-0-9]+/', $n, $n);
+
+            //Verifica se houve conversão corretamente do número
+            if($valid){
+                $numeros[$value] = (int) $n[0];
+            } else {
+                $numeros[$value] = 0;
+            }
 
         }
 

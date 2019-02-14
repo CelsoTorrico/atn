@@ -30,7 +30,8 @@ import { Observable } from 'rxjs/Observable';
 export class User {
 
   _user: any;
-  _userObservable: Observable<ArrayBuffer>;
+  _userObservable:  Observable<ArrayBuffer>;
+  _statsObservable: Observable<ArrayBuffer>;
 
   private navCtrl: any;
 
@@ -42,7 +43,9 @@ export class User {
     private api: Api,
     private loadPageService: loadNewPage,
     private toast: ToastController) {
+       //Carrega Observables
       this.getSelfUser();
+      this.getSelfStats();
     }
 
   /** Implementa variavel com controlador de navegação */
@@ -60,7 +63,7 @@ export class User {
     seq.subscribe((res: any) => {
       // Se mensagem contiver parametro 'success'
       if (res.success != undefined) {
-        //Registra sucessp de login
+        //Registra sucesso de login
         this._loggedIn(res);
 
         //Redireciona para página dashboard
@@ -79,9 +82,7 @@ export class User {
 
   //Executa login via Redes Sociais
   socialLogin(app: string) {
-
     let seq = this.api.getSocial('login/' + app);
-
     return seq;
   }
 
@@ -160,13 +161,36 @@ export class User {
   }
 
   /**
-   * Retorna dados do usuario logado
+   * Retorna observable usuário logado
    */
   private getSelfUser(): Observable<ArrayBuffer> {
 
     //Retorna os dados de usuário e atribui ao seletor
     return this._userObservable = this.api.get('user/self');
 
+  }
+
+  /**
+   * Retorna observable usuário logado
+   */
+  private getSelfStats(): Observable<ArrayBuffer> {
+
+    //Retorna os dados de usuário e atribui ao seletor
+    return this._statsObservable = this.api.get('user/stats');
+
+  }
+
+  /**
+   * Retorna observable de usuário requisitado
+   */
+  getUser($user_id:number):User {
+
+    //Atribui observable
+    this._userObservable  = this.api.get('user/' + $user_id);
+    this._statsObservable = this.api.get('user/stats/' + $user_id);
+
+    //Retorna instancia da classe
+    return this;
   }
 
   /**
@@ -183,6 +207,7 @@ export class User {
     this._user = resp.success;
   }
 
+  /** Subscribe ao userdata */
   subscribeUser($optionalFn = null, $component = null) {
     return this._userObservable.subscribe(
       (resp:any) => {
@@ -212,7 +237,8 @@ export class User {
     let campos = this.userLoggedFields();
     let userdata = this._user;
 
-    //Percorre array de campos e adiciona valores para os campos de usuários necessário, incluindo os que não forem preenchidos
+    //Percorre array de campos e adiciona valores para os campos de usuários necessário, 
+    //incluindo os que não forem preenchidos
     campos.forEach(function (value, index, array) {
       userdata.metadata[value] = {
         value: (userdata.metadata[value] != undefined) ? userdata.metadata[value].value : null,

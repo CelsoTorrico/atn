@@ -21,6 +21,8 @@ import { NavController } from 'ionic-angular';
     
     h2{
         font-weight: 300;
+        text-align: right;
+        color: #fff !important;
     }
 
     ion-avatar{
@@ -39,8 +41,8 @@ export class MemberUser{
 
     //Abre uma nova página de profile
     goToProfile($user_id:number){
-        this.navCtrl.push('MyProfilePage', { 
+        /*this.navCtrl.push('MyProfilePage', { 
         user_id: $user_id
-        }); 
+        });*/ 
     }
 }

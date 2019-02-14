@@ -27,11 +27,11 @@
 
             <ion-list>  
                 
-                <button ion-button  icon-only small outline value="{{ 'LIKE' | translate }}" [ngClass]="{'active': currentTimeline.has_like === true, 'inactive': currentTimeline.has_like === false}" (click)="setLike(currentTimeline.ID, $event)">
+                <button ion-button  icon-only small like value="{{ 'LIKE' | translate }}" [ngClass]="{'active': currentTimeline.has_like === true, 'inactive': currentTimeline.has_like === false}" (click)="setLike(currentTimeline.ID, $event)">
                     <ion-icon md="ios-thumbs-up-outline"></ion-icon> 
                 </button>
                 
-                <button ion-button icon-only small outline value="{{ 'COMMENT' | translate}}" (click)="openComment($event)" >
+                <button ion-button icon-only small like value="{{ 'COMMENT' | translate}}" (click)="openComment($event)" >
                     <ion-icon md="ios-chatbubbles-outline"></ion-icon>
                 </button>
 

@@ -22,11 +22,12 @@ class PostModel extends Medools\Model
         'post_type',
         'guid',
         'post_mime_type',
-        'post_parent'
+        'post_parent',
+        'post_title',
+        'post_excerpt'
     ];
 
     const OPTIONAL_COLUMNS = [
-        'post_title',
         'post_parent',
         'post_mime_type',
         'guid'
