@@ -1,4 +1,4 @@
-import { style } from '@angular/core/src/animation/dsl';
+import { MyProfilePersonalDataComponent } from './../my-profile/personal-data/personal-data.component';
 import { ProfileViewDirective } from './profile-view.directive';
 import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
@@ -29,9 +29,9 @@ export class ProfilePage {
 
   //Variveis de template de usuario
 
-  ID: number = null; 
+  ID: number = null;
 
-  public $user_ID: number;
+  public $user_ID: number = null;
 
   public showMessageBox: boolean = false;
 
@@ -39,6 +39,7 @@ export class ProfilePage {
 
   constructor(
     public navCtrl: NavController,
+    public modalCtrl: ModalController,
     private api: Api,
     public user: User,
     public translateService: TranslateService,
@@ -55,7 +56,7 @@ export class ProfilePage {
     this.$user_ID = this.params.get('user_id');
 
     //Define requisiçaõ para mostrar dados
-    if (this.$user_ID != undefined) {
+    if (this.$user_ID != null) {
       //Adiciona url para exibir perfis de conexão
       this.user.getUser(this.$user_ID);
     }
@@ -70,20 +71,20 @@ export class ProfilePage {
 
   }
 
-  
 
   ngAfterViewInit() {
+    //Move profile-resume quando mobile
     this.platform.ready().then((readySource) => {
-      if(this.platform.width() < 600){
-          
-          let resume = document.querySelector('.profile-resume');
-        
-          //Adicionar popup ao elemento para sobrepor header
-          let page = document.querySelector('.scroll-content');
-          //Inserir elemento como primeiro
-          page.insertBefore(resume, page.childNodes[0]);
+      if (this.platform.width() < 600) {
 
-          page.style.marginTop = '0px';
+        let resume = document.querySelector('.profile-resume');
+
+        //Adicionar popup ao elemento para sobrepor header
+        let page = document.querySelector('.scroll-content');
+        //Inserir elemento como primeiro
+        page.insertBefore(resume, page.childNodes[0]);
+
+        //page.style.marginTop = '0px';
       }
     });
   }
@@ -106,13 +107,12 @@ export class ProfilePage {
     this.loadComponent(this.ListComponents[$event]);
   }
 
-  
+
   /** Funções de botões */
 
   followProfile($event) {
 
     $event.preventDefault();
-    console.log(this);
 
     //Adiciona Id do usuário corrente
     let $id = this.ID;

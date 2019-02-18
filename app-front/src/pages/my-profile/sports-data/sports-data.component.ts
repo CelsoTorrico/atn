@@ -1,7 +1,7 @@
 import { MultipleFields } from './../formUtils/multiple-fields';
 import { MyProfilePersonalDataComponent } from './../personal-data/personal-data.component';
 import { Component, ViewChild } from '@angular/core';
-import { NavController, ToastController, ModalController } from 'ionic-angular';
+import { NavController, ToastController, ModalController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
 import { NgForm } from '@angular/forms';
@@ -86,13 +86,14 @@ export class MyProfileSportsComponent {
 
     public visibility: any;
 
-    public fieldToAdd:any = [ '', '', ''];
+    public fieldToAdd: any = ['', '', ''];
 
     constructor(
         public navCtrl: NavController,
         public user: User,
         public api: Api,
         public toastCtrl: ToastController,
+        public viewCtrl: ViewController,
         public translateService: TranslateService,
         public modal: ModalController) {
 
@@ -104,25 +105,41 @@ export class MyProfileSportsComponent {
 
     //Função que inicializa
     ngOnInit() {
-        //Adicionando valores a classe user
-        let atributes = this.user._user;
+        this.currentUser();
+    }
 
-        //Intera sobre objeto e atribui valor aos modelos de metadata
-        for (var key in atributes.metadata) {
-            if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
-                this[key] = atributes.metadata[key];
+    private currentUser() {
+
+        this.user._userObservable.subscribe((resp: any) => {
+
+            //Se não existir items a exibir
+            if (resp.length <= 0) {
+                return;
             }
-        }
 
-        //Atribuindo dados aos modelos
-        this.type = atributes.type.ID;
-        this.sport = atributes.sport;
-        this.clubes = atributes.clubs;
-        this.conquistas = atributes.metadata['titulos-conquistas'];
+            //Adicionando valores as variavel global
+            let atributes = resp;
 
-        //Carrega lista de esporte e clubes para popular selecionadores
-        this.getSportList();
-        this.getClubsList();
+            //Intera sobre objeto e atribui valor aos modelos de metadata
+            for (var key in atributes.metadata) {
+                if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
+                    this[key] = atributes.metadata[key];
+                }
+            }
+
+            //Atribuindo dados aos modelos
+            this.type = atributes.type.ID;
+            this.sport = atributes.sport;
+            this.clubes = atributes.clubs;
+            this.conquistas = atributes.metadata['titulos-conquistas'];
+
+            //Carrega lista de esporte e clubes para popular selecionadores
+            this.getSportList();
+            this.getClubsList();
+
+        }, err => {
+            return;
+        });
     }
 
     //REtorna lista de esportes
@@ -191,11 +208,11 @@ export class MyProfileSportsComponent {
 
     /** Adicionar um novo item para multiplos campos | Abre modal */
     addMore($parentModel, $event) {
-        
+
         $event.preventDefault();
 
         //Abre modal
-        let addMore = this.modal.create(MultipleFields, { list: ['INSTITUTE','COURSE','YEAR']});
+        let addMore = this.modal.create(MultipleFields, { list: ['INSTITUTE', 'COURSE', 'YEAR'] });
 
         //Ao modal ser fechado, é passada os dados modificados nele
         addMore.onDidDismiss(data => {
@@ -204,7 +221,7 @@ export class MyProfileSportsComponent {
 
         //Cria o modal
         addMore.present();
-        
+
     }
 
     //Salvar dados do formulário
@@ -230,6 +247,11 @@ export class MyProfileSportsComponent {
 
     }
 
-    customTrackBy(index: number, item:any): number { return index; }
+    //Fechar modal
+    dismiss() {
+        this.viewCtrl.dismiss();
+    }
+
+    customTrackBy(index: number, item: any): number { return index; }
 
 }

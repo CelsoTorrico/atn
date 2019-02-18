@@ -9,10 +9,13 @@
       </button>
 
       <ion-list>
-        <ion-avatar>
-          <img  class="img-center" />
+        <ion-avatar class="btn-cursor" item-start>
+          <img *ngIf="profile_img, else elseBlock"  [src]="profile_img" />
+          <ng-template #elseBlock>
+              <img  src="assets/img/user.png"/>
+          </ng-template>          
         </ion-avatar>
-      </ion-list> 
+      </ion-list>
 
       <h1>{{ display_name | titlecase }}</h1>
 
@@ -21,12 +24,12 @@
           {{ v.title | translate}}
         </button>
       </ion-list>
-      
+
     </header>
 
     <ion-grid no-padding>
       <ion-row>
-        <ion-col class="block" text-center *ngIf="height" >
+        <ion-col class="block" text-center *ngIf="height">
           <ion-list>
             <ion-label>{{ "HEIGHT" | translate }}</ion-label>
             {{ height }}
@@ -57,7 +60,7 @@
 
     <ion-item id="feature">
 
-      <ion-label text-center>{{ "PERFORMANCE" | translate }}</ion-label> 
+      <ion-label text-center>{{ "PERFORMANCE" | translate }}</ion-label>
 
     </ion-item>
 

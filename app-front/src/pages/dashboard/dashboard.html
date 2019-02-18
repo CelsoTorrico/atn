@@ -137,7 +137,7 @@
         <ion-card>
 
           <ion-card-header>
-              {{ "ADD_PUBLICATION" | translate}}
+            {{ "ADD_PUBLICATION" | translate}}
           </ion-card-header>
 
           <ion-card-content>
@@ -157,9 +157,14 @@
               <ion-row>
                 <ion-col col-12>
                   <ion-item no-padding>
-                    <ion-avatar item-start>
-                      <ion-img [src]="currentUserData.metadata.profile_img.value"></ion-img>
+
+                    <ion-avatar class="btn-cursor" item-start>
+                      <img *ngIf="currentUserData.metadata.profile_img.value, else elseBlock" [src]="currentUserData.metadata.profile_img.value" />
+                      <ng-template #elseBlock>
+                        <img src="assets/img/user.png" />
+                      </ng-template>
                     </ion-avatar>
+
                     <ion-textarea name="post_content" [(ngModel)]="addTimeline.post_content" type="textarea"
                       placeholder="{{ 'POST' | translate }}" required></ion-textarea>
                   </ion-item>
@@ -193,14 +198,13 @@
           </ion-card-header>
 
           <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
-            
-            <ion-card class="btn-cursor" 
-            *ngFor="let i of activity" (click)="goToProfile(i.post_author.ID)">
+
+            <ion-card class="btn-cursor" *ngFor="let i of activity" (click)="goToProfile(i.post_author.ID)">
 
               <ion-card-content>
                 <p>
-                    <strong>{{ i.post_author.display_name}}</strong> publicou '{{ i.post_type}}' em {{ i.post_date |
-                    date }}
+                  <strong>{{ i.post_author.display_name}}</strong> publicou '{{ i.post_type}}' em {{ i.post_date |
+                  date }}
                 </p>
               </ion-card-content>
 

@@ -52,6 +52,11 @@ h1,h2,ion-list-header, ion-card-header, ion-title{
     }
 }
 
+.nomargin-nopadding{
+    padding:0px;
+    margin: 0px;
+}
+
 .img-center{
     display: block;
     margin-left: auto;
@@ -208,8 +213,8 @@ ion-badge, .badge, .badge-md{
 
 ion-avatar{
     ion-img, img{
-        background-color: #fafafa;
-        border:1px solid $titulos;
+        //background-color: #fafafa;
+        //border:1px solid $titulos;
         border-radius: 50%;
     }    
 }
@@ -250,20 +255,45 @@ ion-toolbar, ion-navbar{
 .popup{
     position: absolute;
     opacity:0;
-    transform: translateY(-100px);
-    transition: ease-out 0.3s;
+    transform: translateY(-15px) scale(0, 0);
+    transform-origin: left top;
+    transition: ease-out 0.2s;
     background-color: $branco;
-    max-height: 500px;
     max-width: 300px;
     width: 100%;
-    overflow-y: auto;
+    top: 65px;
     z-index: -50;
     box-shadow: 5px 5px 50px 15px rgba(125,125,125,0.1);
 
     &.open{
         opacity:1;
-        transform: translateY(0px);
-        transition: ease-in 0.7s;
+        transform: translateY(0px) scale(1, 1);
+        transition: ease-in-out 0.3s;
         z-index: 99999;
     }
+
+    &.popover-menu{
+        max-width: 250px;
+        transform-origin: right top;
+        ul{
+            list-style: none;
+            li{
+                a{
+                    background-color: #fdfdfd; 
+                    display: block;
+                    padding: 15px 25px;
+                    color: #222;
+                    font-weight: 100;
+                    text-align: left;
+                }
+
+                &:first-child a{
+                    background-color: $titulos;
+                    color: #fff;
+                }
+            } 
+        }
+    }
+
+    
 }

@@ -1,4 +1,4 @@
-import { MyProfileStatsComponent } from './stats-data/stats-data.component';
+import { MyProfileAchievementsComponent } from './achievements-data/achievements-data.component';
 import { MyProfileSportsComponent } from './sports-data/sports-data.component';
 import { ProfileStepDirective } from './profile-step.directive';
 import { MyProfilePersonalDataComponent } from './personal-data/personal-data.component';
@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
 import { ProfileResumeModule } from '../components/profile-resume/profile-resume.module';
 import { StatsList } from '../../providers/useful/stats';
 import { PipesModule } from '../../pipes/pipes.module';
+import { MyProfileStatsComponent } from './stats-data/stats-data.component';
+import { MyProfileGeneralStatsComponent } from './general-stats-data/general-stats-data.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { PipesModule } from '../../pipes/pipes.module';
       ProfileStepDirective,
       MyProfilePersonalDataComponent,
       MyProfileSportsComponent,
-      MyProfileStatsComponent
+      MyProfileStatsComponent,
+      MyProfileGeneralStatsComponent,
+      MyProfileAchievementsComponent
   ],
   imports: [
     IonicPageModule.forChild(MyProfilePage),
@@ -38,7 +42,8 @@ import { PipesModule } from '../../pipes/pipes.module';
   entryComponents: [
     MyProfilePersonalDataComponent,
     MyProfileSportsComponent,
-    MyProfileStatsComponent
+    MyProfileStatsComponent,
+    MyProfileGeneralStatsComponent
   ],
   bootstrap:[MyProfilePage],
   providers: [

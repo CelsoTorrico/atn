@@ -20,6 +20,7 @@ import { MenuPageModule } from '../pages/components/menu/menu.module';
 import { BrazilStates } from '../providers/useful/states';
 import { NgChartjsModule } from 'ng-chartjs';
 import { PipesModule } from '../pipes/pipes.module';
+import { MyProfilePageModule } from '../pages/my-profile/my-profile.module';
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -62,6 +63,7 @@ export function provideSettings(storage: Storage) {
     LoginPageModule,
     SignupStepsModule, 
     DashboardPageModule,
+    MyProfilePageModule,
     PipesModule
   ],
   exports: [],

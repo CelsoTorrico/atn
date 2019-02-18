@@ -5,9 +5,15 @@ import { Nav, NavController, ModalController } from 'ionic-angular';
     selector: 'member-chat',
     template: `
             <button class="btn-cursor" ion-item (click)="openRoom(room.user.ID, $event)">
-                <ion-avatar item-start *ngIf="room.user.profile_img" >
-                    <img [src]="room.user.profile_img.value" />
+
+                <ion-avatar class="btn-cursor" item-start>
+                    <img *ngIf="room.user.profile_img, else elseBlock" 
+                    [src]="room.user.profile_img.value" />
+                    <ng-template #elseBlock>
+                        <img src="assets/img/user.png" [title]="room.user.display_name" />
+                    </ng-template>
                 </ion-avatar>
+
                 <h2>{{ room.user.display_name | titlecase }}</h2>
                 <p *ngIf="room.last_update">{{ room.last_update | date }}</p>
                 <ion-note item-end ><ion-badge>{{ room.quantity_messages }}</ion-badge></ion-note>

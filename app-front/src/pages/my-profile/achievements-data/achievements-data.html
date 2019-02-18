@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+        {{ "IMPORTANTS_ACHIEVEMENTS" | translate}}
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        {{ "CLOSE" | translate }}
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <form #sportsData="ngForm" (submit)="save(sportsData, $event)">
+
+    <ion-list ngModelGroup="groupTitulos" #titulosCtrl="ngModelGroup" ngControl="test">
+
+      <ion-select name="visibility" [(ngModel)]="titulos_conquistas.visibility" interface="popover">
+        <ion-option *ngFor="let item of visibility" [value]="item.value">
+          {{item.option}}
+        </ion-option>
+      </ion-select>
+
+      <ion-grid>
+        <ion-row *ngFor="let item of titulos_conquistas.value; let i = index;">
+          <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let a = index">
+            <ion-item>
+              <ion-label stacked>{{ n | translate}} </ion-label>
+              <ion-input type="text" [ngModel]="titulos_conquistas.value[i][a]" [name]="titulos_conquistas.value[i][a]"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-item>
+          <button ion-button item-end (click)="addMore(titulos_conquistas, $event)">{{ "ADD_MORE" | translate }}</button>
+        </ion-item>
+
+      </ion-grid>
+
+    </ion-list>
+
+    <ion-item>
+      <button type="submit" ion-button full>{{'SAVE' | translate}}</button>
+    </ion-item>
+
+  </form>
+
+</ion-content>

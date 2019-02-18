@@ -6,6 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { User, Api } from '../../../providers';
 import { MyProfilePersonalDataComponent } from '../../my-profile/personal-data/personal-data.component';
 import { MyProfileSportsComponent } from '../../my-profile/sports-data/sports-data.component';
+import { ProfileMessage } from '../profile-message.component';
 import { MyProfileStatsComponent } from '../../my-profile/stats-data/stats-data.component';
 
 @Component({
@@ -88,7 +89,7 @@ export class ProfileComponent {
 
   ['titulos-conquistas'] = {
       value: ''
-    }
+  }
 
   videos: any = []
 
@@ -100,10 +101,11 @@ export class ProfileComponent {
 
   public showMessageBox: boolean = false;
 
-  private ListComponents:any = {
-      personalData : MyProfilePersonalDataComponent,
-      sportsData : MyProfileSportsComponent,
-      statsData : MyProfileStatsComponent,
+  private ListComponents: any = {
+    personalData  : MyProfilePersonalDataComponent,
+    sportsData    : MyProfileSportsComponent,
+    videosData    : MyProfileStatsComponent,
+    statsData     : MyProfileStatsComponent
   }
 
   constructor(
@@ -186,6 +188,17 @@ export class ProfileComponent {
     }, err => {
       return;
     });
+  }
+
+  //Abrir modal com dados para atualizar perfil
+  editData($component:string){
+
+    //Criar modal do respectivo component
+    let modal = this.modalCtrl.create(this.ListComponents[$component], {});
+    
+    //Inicializar modal
+    modal.present();
+
   }
 
 }

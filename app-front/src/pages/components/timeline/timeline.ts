@@ -45,7 +45,7 @@ export class Timeline {
     this.query();
   }
 
-  query($fn:any = null){
+  query($fn:any = function(){}){
     //Retorna a lista de esportes do banco e atribui ao seletor
     let items = this.api.get(Timeline.$getTimelineUrl + this.$url).subscribe((resp:any) => {
        

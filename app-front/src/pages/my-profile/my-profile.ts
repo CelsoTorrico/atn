@@ -1,4 +1,4 @@
-import { MyProfileStatsComponent } from './stats-data/stats-data.component';
+import { MyProfileGeneralStatsComponent } from './general-stats-data/general-stats-data.component';
 import { MyProfileMenu } from './../components/menu/my-profile-menu';
 import { MyProfileSportsComponent } from './sports-data/sports-data.component';
 import { MyProfilePersonalDataComponent } from './personal-data/personal-data.component';
@@ -6,6 +6,7 @@ import { ProfileStepDirective } from './profile-step.directive';
 import { Component, ViewChild, ComponentFactoryResolver } from '@angular/core';
 import { IonicPage} from 'ionic-angular';
 import { Api, User } from '../../providers';
+import { MyProfileStatsComponent } from './stats-data/stats-data.component';
 
 @IonicPage()
 @Component({
@@ -18,9 +19,9 @@ export class MyProfilePage {
     @ViewChild(MyProfileMenu) profileMenu: MyProfileMenu;
 
     private ListComponents:any = {
-        personalData : MyProfilePersonalDataComponent,
-        sportsData : MyProfileSportsComponent,
-        statsData : MyProfileStatsComponent,
+        personalData    : MyProfilePersonalDataComponent,
+        sportsData      : MyProfileSportsComponent,
+        statsData       : MyProfileStatsComponent
     }
 
     public visibility:any[];

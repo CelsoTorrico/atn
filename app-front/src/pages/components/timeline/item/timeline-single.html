@@ -1,69 +1,77 @@
 <ion-card-content>
-    <ion-card-title>
+  <ion-card-title>
 
-        <ion-list>
-            <ion-item>
-                <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
-                    <img [src]="currentTimeline.post_author.profile_img.value" />
-                </ion-avatar>
-                <h2>{{ currentTimeline.post_author.display_name}}</h2>
-                <h3>{{ currentTimeline.post_date | date }}</h3>
-            </ion-item> 
-        </ion-list>
+    <ion-list>
+      <ion-item>
 
-    </ion-card-title>
+        <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
+          <img *ngIf="currentTimeline.post_author.profile_img.value, else elseBlock" [src]="currentTimeline.post_author.profile_img.value" />
+          <ng-template #elseBlock>
+            <img src="assets/img/user.png" />
+          </ng-template>
+        </ion-avatar>
 
-    <ion-item-group>
-        
-        <ion-item>
-            {{ currentTimeline.post_content }}
-        </ion-item>
+        <h2>{{ currentTimeline.post_author.display_name}}</h2>
+        <h3>{{ currentTimeline.post_date | date }}</h3>
+      </ion-item>
+    </ion-list>
 
-        <ion-item *ngIf="currentTimeline.attachment">
-            <img [src]="currentTimeline.attachment" />
-        </ion-item>
+  </ion-card-title>
 
-        <ion-item-divider>
+  <ion-item-group>
 
-            <ion-list>  
-                
-                <button ion-button  icon-only small like value="{{ 'LIKE' | translate }}" [ngClass]="{'active': currentTimeline.has_like === true, 'inactive': currentTimeline.has_like === false}" (click)="setLike(currentTimeline.ID, $event)">
-                    <ion-icon md="ios-thumbs-up-outline"></ion-icon> 
-                </button>
-                
-                <button ion-button icon-only small like value="{{ 'COMMENT' | translate}}" (click)="openComment($event)" >
-                    <ion-icon md="ios-chatbubbles-outline"></ion-icon>
-                </button>
+    <ion-item>
+      {{ currentTimeline.post_content }}
+    </ion-item>
 
-                <ion-note end>
-                    {{ "ANSWERS" | translate }}
-                    <ion-badge item-end badge-sm>
-                        {{ currentTimeline.quantity_comments }}
-                    </ion-badge>
-                </ion-note>
-                
-            </ion-list>
+    <ion-item *ngIf="currentTimeline.attachment">
+      <img [src]="currentTimeline.attachment" />
+    </ion-item>
 
-        </ion-item-divider>
+    <ion-item-divider>
 
-    </ion-item-group> 
+      <ion-list>
+
+        <button ion-button icon-only small like value="{{ 'LIKE' | translate }}" [ngClass]="{'active': currentTimeline.has_like === true, 'inactive': currentTimeline.has_like === false}"
+          (click)="setLike(currentTimeline.ID, $event)">
+          <ion-icon md="ios-thumbs-up-outline"></ion-icon>
+        </button>
+
+        <button ion-button icon-only small like value="{{ 'COMMENT' | translate}}" (click)="openComment($event)">
+          <ion-icon md="ios-chatbubbles-outline"></ion-icon>
+        </button>
+
+        <ion-note end>
+          {{ "ANSWERS" | translate }}
+          <ion-badge item-end badge-sm>
+            {{ currentTimeline.quantity_comments }}
+          </ion-badge>
+        </ion-note>
+
+      </ion-list>
+
+    </ion-item-divider>
+
+  </ion-item-group>
 
 </ion-card-content>
 
 <ion-item-group *ngIf='commentShow'>
-   
-    <ion-row>
-        <ion-col col-auto>
-            <ion-item>
-                <ion-avatar item-start>
-                    <ion-img [src]=""></ion-img>
-                </ion-avatar>
-            </ion-item>                            
-        </ion-col>
-        <ion-col>
-            <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-textarea>
-            <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" | translate }}</button>
-        </ion-col>
-    </ion-row>
+
+  <ion-row>
+    <ion-col col-auto>
+      <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
+        <img *ngIf="currentTimeline.post_author.profile_img.value, else elseBlock" [src]="currentTimeline.post_author.profile_img.value" />
+        <ng-template #elseBlock>
+          <img src="assets/img/user.png" />
+        </ng-template>
+      </ion-avatar>
+    </ion-col>
+    <ion-col>
+      <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
+        required></ion-textarea>
+      <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" | translate }}</button>
+    </ion-col>
+  </ion-row>
 
 </ion-item-group>

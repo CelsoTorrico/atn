@@ -2,6 +2,11 @@
   <ion-col col-md-2>
     <div class="statsGeneralData">
 
+      <button edit-profile ion-button small end clear icon-only *ngIf="$user_ID == null" (click)="editData('generalData');">
+        <ion-icon item-start name="create"></ion-icon>
+        {{ "EDIT" | translate }}
+      </button>
+
       <ul *ngIf="general">
         <li class="box-stats" *ngIf="general.titulos"><strong>{{ "QTD_ACHIEVEMENT" | translate }}</strong>
           {{ general.titulos }}</li>
@@ -23,6 +28,12 @@
 
         <ion-card-header>
           <h2>{{ "IMPORTANT_ACHIEVEMENTS" | translate }}</h2>
+
+          <button edit-profile ion-button small end clear icon-only *ngIf="$user_ID == null" (click)="editData('achievementsData');">
+            <ion-icon item-start name="create"></ion-icon>
+            {{ "EDIT" | translate }}
+          </button>
+
         </ion-card-header>
 
         <ion-card-content *ngIf="general">
@@ -44,12 +55,18 @@
       </ion-card>
     </ion-col>
 
-    <ion-col col-12 *ngIf="type == 1" >
+    <ion-col col-12 *ngIf="type == 1">
 
       <ion-card class="statsData">
 
         <ion-card-header>
           <h2>{{ "SPORTS_STATS" | translate }}</h2>
+
+          <button edit-profile ion-button small end clear icon-only *ngIf="$user_ID == null" (click)="editData('statsData');">
+            <ion-icon item-start name="create"></ion-icon>
+            {{ "EDIT" | translate }}
+          </button>
+
         </ion-card-header>
 
         <ion-card-content *ngIf="performance">
@@ -80,4 +97,4 @@
     </ion-col>
   </ion-col>
 
-  </ion-row>
+</ion-row>

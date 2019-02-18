@@ -13,3 +13,7 @@
 ✔ Verificar inserção (INSERT | UPDATE) de dados no ambiente de teste @done(19-01-22 20:03)
 ☐ Envio de email em Perfil: Fazer mostrar resposta de sucesso.
 ☐ comment-form >> Exibir botão de envio de mensagem
+☐ Timeline >> Adicionar um botão para excluir post
+☐ Datas >> Corrigir a exibição de datas convertendo para formato suportado
+☐ Notificação >> Melhorar a exibição
+☐ Font Web >> Donwload e adicionar ao projeto

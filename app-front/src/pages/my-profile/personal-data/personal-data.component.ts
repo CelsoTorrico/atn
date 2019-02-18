@@ -1,14 +1,15 @@
 import { Observable } from 'rxjs/Observable';
 import { Component, Input, SimpleChanges } from '@angular/core';
-import { NavController, ToastController } from 'ionic-angular';
+import { NavController, ToastController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { User, Api } from '../../../providers';
 import { BrazilStates } from '../../../providers/useful/states';
 import { FormControl, NgForm } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { viewClassName } from '@angular/compiler';
 
 @Component({
-    selector: 'my-profile',
+    selector: 'personal-data-edit',
     templateUrl: 'personal-data.html',
 
 })
@@ -111,6 +112,7 @@ export class MyProfilePersonalDataComponent {
         public user: User,
         public api: Api,
         public toastCtrl: ToastController,
+        public viewCtrl: ViewController,
         public translateService: TranslateService,
         public states: BrazilStates) {
 
@@ -180,6 +182,15 @@ export class MyProfilePersonalDataComponent {
         //Realiza update de dados do usuario
         let resp = this.user.update(saveFields);
 
+        if(resp){
+            this.dismiss();
+        }
+
+    }
+
+    //Fechar modal
+    dismiss(){
+        this.viewCtrl.dismiss();
     }
 
 }

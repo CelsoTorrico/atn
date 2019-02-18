@@ -6,9 +6,13 @@ import { Nav, NavController, ModalController } from 'ionic-angular';
     template: `
             <ion-card class="btn-cursor" ion-item (click)="goToProfile(memberModel.ID, $event)">
 
-                <ion-avatar item-start *ngIf="memberModel.profile_img" >
-                    <img [src]="memberModel.profile_img.value" />
+                <ion-avatar class="btn-cursor" item-start>
+                    <img *ngIf="memberModel.profile_img.value, else elseBlock" [src]="memberModel.profile_img.value" />
+                    <ng-template #elseBlock>
+                        <img src="assets/img/user.png" [title]="memberModel.display_name" />
+                    </ng-template>
                 </ion-avatar>
+
                 <ion-label>{{ memberModel.display_name | titlecase }}</ion-label>                
 
             </ion-card>                       

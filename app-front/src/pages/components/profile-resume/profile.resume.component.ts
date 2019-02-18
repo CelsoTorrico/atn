@@ -17,7 +17,7 @@ export class ProfileResumeComponent implements OnInit{
 
     display_name: string = null;
 
-    profile_img: any = { value: null };
+    profile_img:string = null;
 
     favorite: boolean = false;
 
@@ -69,6 +69,10 @@ export class ProfileResumeComponent implements OnInit{
             this.display_name = atributes.display_name;
             this.type = atributes.type.ID;
             this.sport = atributes.sport;
+
+            if(atributes.metadata.hasOwnProperty('profile_img')){
+                this.profile_img = atributes.metadata.profile_img.value;
+            } 
 
             if(atributes.metadata.hasOwnProperty('height')){
                 this.height = atributes.metadata.height.value;

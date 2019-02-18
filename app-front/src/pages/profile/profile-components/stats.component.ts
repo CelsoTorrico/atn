@@ -1,9 +1,10 @@
-import { ToastController } from 'ionic-angular';
-import { Component, Input, trigger } from '@angular/core';
-import { ViewController } from 'ionic-angular';
+import { MyProfileStatsComponent } from './../../my-profile/stats-data/stats-data.component';
+import { ModalController } from 'ionic-angular';
+import { Component } from '@angular/core';
 import { User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
-import { state, style, transition, animate } from '@angular/core/src/animation/dsl';
+import { MyProfileGeneralStatsComponent } from '../../my-profile/general-stats-data/general-stats-data.component';
+import { MyProfileAchievementsComponent } from '../../my-profile/achievements-data/achievements-data.component';
 
 @Component({
   selector: 'profile-stats',
@@ -31,8 +32,15 @@ export class StatsComponent {
     stats : null
   }
 
+  private ListComponents: any = {
+    generalData       : MyProfileGeneralStatsComponent,
+    achievementsData  : MyProfileAchievementsComponent,
+    statsData         : MyProfileStatsComponent
+  }
+
   constructor(
     private user: User,
+    private modalCtrl: ModalController,
     public statsList: StatsList) { }
 
   //Retorna
@@ -113,6 +121,17 @@ export class StatsComponent {
 
     });
   }*/
+
+  //Abrir modal com dados para atualizar perfil
+  editData($component:string){ 
+
+    //Criar modal do respectivo component
+    let modal = this.modalCtrl.create(this.ListComponents[$component], {});
+    
+    //Inicializar modal
+    modal.present();
+
+  }
 
   private subsChar(c) {
 

@@ -6,9 +6,15 @@ import { NavController } from 'ionic-angular';
     template: `
             <ion-card>
                 <button class="btn-cursor" ion-item (click)="goToProfile(member.ID)">
-                    <ion-avatar item-start *ngIf="member.profile_img">
-                        <img [src]="member.profile_img.value" />
+                    
+                    <ion-avatar item-start>
+                        <img *ngIf="member.profile_img, else elseBlock" 
+                        [src]="member.profile_img" />
+                        <ng-template #elseBlock>
+                            <img src="assets/img/user.png" [title]="member.display_name" />
+                        </ng-template>
                     </ion-avatar>
+
                     <h2>{{ member.display_name | titlecase }}</h2>
                 </button> 
             </ion-card>                         

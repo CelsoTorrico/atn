@@ -59,4 +59,16 @@
     font-weight: 100;
   }
 
+  ion-card-header{
+    position: relative;
+    button[edit-profile]{
+      position: absolute;
+      padding: 5px 10px;
+      right: 15px;
+      top: 7px;
+    }
+  }
+
+  
+
 }

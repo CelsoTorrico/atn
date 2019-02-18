@@ -9,12 +9,13 @@ import { NavController } from 'ionic-angular';
             <ion-row>
                 <ion-col col-md-3 col-auto *ngFor="let member of members">
                     <ion-item class="btn-cursor" (click)="goToProfile(member.ID)">
-                        
-                            <ion-avatar>
-                                <ng-template *ngIf="member.hasOwnProperty(profile_img)">
-                                    <ion-img class="img-center" [src]="member.profile_img.value"></ion-img>
+
+                            <ion-avatar item-start>
+                                <img class="img-center" *ngIf="member.profile_img, else elseBlock" 
+                                [src]="member.profile_img.value" />
+                                <ng-template #elseBlock>
+                                    <img src="assets/img/user.png" class="img-center" [title]="member.display_name" />
                                 </ng-template>
-                                <img #elseBlock class="img-center" />  
                             </ion-avatar>
                                              
                         {{ member.display_name | titlecase }}

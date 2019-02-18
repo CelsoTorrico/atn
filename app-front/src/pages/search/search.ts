@@ -119,7 +119,7 @@ export class SearchPage {
     
   }
 
-  private widgetSearch($fn:any = null){
+  private widgetSearch($fn:any = function(){}){
       //Retorna a lista de clubes para seletor
       this.api.post('/user/search' + this.$url, this.query).subscribe((resp:any) => {
 

@@ -1,4 +1,3 @@
-import { MyProfilePersonalDataComponent } from './../my-profile/personal-data/personal-data.component';
 import { ProfileResumeModule } from './../components/profile-resume/profile-resume.module';
 import { MemberModule } from './../components/member/member.module';
 import { ProfileMessage } from './profile-message.component';
@@ -13,7 +12,7 @@ import { StatsComponent } from './profile-components/stats.component';
 import { ProfileViewDirective } from './profile-view.directive';
 import { NgChartjsModule } from 'ng-chartjs';
 import { PipesModule } from '../../pipes/pipes.module';
-import { MyProfilePageModule } from '../my-profile/my-profile.module';
+import { MyProfilePersonalDataComponent } from '../my-profile/personal-data/personal-data.component';
 
 @NgModule({
   declarations: [
@@ -28,8 +27,7 @@ import { MyProfilePageModule } from '../my-profile/my-profile.module';
     TimelineModule,
     MemberModule,
     ProfileResumeModule,
-    PipesModule,
-    MyProfilePageModule
+    PipesModule
   ],
   exports: [
     ProfilePage, ProfileMessage, ProfileViewDirective

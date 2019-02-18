@@ -9,8 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from 'ionic-angular';
 import { CommonModule } from '@angular/common';
-
-
+import { PipesModule } from '../../../pipes/pipes.module';
 
 @NgModule({
     declarations: [
@@ -20,7 +19,8 @@ import { CommonModule } from '@angular/common';
         TranslateModule.forChild(),
         FormsModule,
         IonicModule,
-        CommonModule
+        CommonModule,
+        PipesModule
       ],
       exports: [Member, MemberList, MemberChat, MemberUser,  MemberSuggestion],
       bootstrap: [Member],
