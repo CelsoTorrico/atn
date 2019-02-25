@@ -11,9 +11,11 @@
 ✔ Criar uma método para que não envie diversas solicitações ao clicar em algum botão. Ex: login, registro e etc. @done(19-01-22 20:03)
 ✔ Fazer validação de formulário, campos obrigatórios não impedindo envio. @done(19-01-21 15:57)
 ✔ Verificar inserção (INSERT | UPDATE) de dados no ambiente de teste @done(19-01-22 20:03)
-☐ Envio de email em Perfil: Fazer mostrar resposta de sucesso.
+☐ Envio de email em Perfil >> Fazer mostrar resposta de sucesso.
 ☐ comment-form >> Exibir botão de envio de mensagem
-☐ Timeline >> Adicionar um botão para excluir post
-☐ Datas >> Corrigir a exibição de datas convertendo para formato suportado
+✔ Timeline >> Adicionar um botão para excluir post @done(19-02-24 18:56)
+✔ Datas >> Corrigir a exibição de datas convertendo para formato suportado @done(19-02-25 03:25)
 ☐ Notificação >> Melhorar a exibição
 ☐ Font Web >> Donwload e adicionar ao projeto
+✔ Chat >> Envio de mensagem quando iniciar via perfil de usuário @done(19-02-22 02:12)
+☐ Profile >> Fazer requisição única utilizando classe Subject

@@ -102,7 +102,7 @@ class FileUpload {
         $filename = $this->filename;
 
         //Diretório para upload do arquivo
-        $dir = __DIR__.env('APP_FILES').$date;
+        $dir = __DIR__.env('APP_FILES').$date.'/';
 
         //Movendo arquivo para a pasta de arquivos
         $result = $file->move($dir, $filename);

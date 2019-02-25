@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { ForgetPasswordComponent } from './forget-password.component';
+import { DashboardPage } from './../dashboard/dashboard';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IonicPage, NavController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, ToastController, ModalController } from 'ionic-angular';
 
 import { User } from '../../providers';
 import { SignupStepsPage } from '../signup-steps/signup-steps';
 import { NgForm } from '@angular/forms';
+import { CookieService } from 'ng2-cookies';
 
 
 @IonicPage()
@@ -13,7 +16,7 @@ import { NgForm } from '@angular/forms';
   templateUrl: 'login.html'
 })
 
-export class LoginPage {
+export class LoginPage implements OnInit{
   // The account fields for the login form.
   // If you're using the username field with or without email, make
   // sure to add it to the type
@@ -31,8 +34,10 @@ export class LoginPage {
   constructor(
     public navCtrl: NavController,
     public user: User,
+    public modal: ModalController,
     public toastCtrl: ToastController,
-    public translateService: TranslateService) {
+    public translateService: TranslateService,
+    public cookie: CookieService) {
 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
       this.loginErrorString = value;
@@ -40,8 +45,21 @@ export class LoginPage {
 
   }
 
-  ngOnInit() {
+  ionViewDidLoad(){
+    
     //Se cookie de sessão já estiver setado direcionar para dashboard
+    let existsCookie = this.cookie.check('app_atletas_now');
+    
+    //Se cookie da plataforma estiver presente direcionar para dashboard
+    if(existsCookie){
+      //Não tem como verificar se cookie está expirado, portanto no momento somente direcionar 
+      this.navCtrl.push(DashboardPage);
+    }
+
+  }
+
+  ngOnInit(){
+    
   }
 
   // Realiza login comum via email e senha 
@@ -78,8 +96,15 @@ export class LoginPage {
     this.user.socialLogin('google');
   }
 
+  //Redireciona para etapas de registro
   goToRegister(){
     this.navCtrl.push(SignupStepsPage); 
+  }
+
+  //Abrir modal de Esqueci Minha Senha 
+  openForgetPass(){
+    let modal = this.modal.create(ForgetPasswordComponent);
+    modal.present()
   }
 
 }

@@ -1,0 +1,26 @@
+ion-card-header.card-header-md{
+    position:relative;
+    border: 0px;
+}
+
+ion-card-content{
+    
+    ion-note{
+        margin: auto 0px auto auto;
+        display: inline-block;
+    }
+
+    .timeline-content{
+        padding-left: 16px;
+        padding-right: 16px;
+        font-weight: 100;
+    }
+
+    .image-content{
+        width: calc(100% + 50px);
+        padding: 0px;
+        margin-left: -16px;
+        margin-right: -16px;
+    }
+
+}

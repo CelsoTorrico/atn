@@ -23,10 +23,18 @@ class ChatController extends Controller
         $this->chat = new Chat($request->user());
     }
 
-    function get($suser_id){
+    function get(int $suser_id){
 
         $response = $this->chat->getRoom($suser_id);
         
+        return response()->json($response);
+    }
+
+    function getRoom(int $suser_id){
+
+        $room_model = $this->chat->setRoom($suser_id);
+        $response = ['chat_room' => $room_model['suser']];
+
         return response()->json($response);
     }
 
@@ -37,7 +45,7 @@ class ChatController extends Controller
         return response()->json( $response );
     }
 
-    function getMessage($suser) {
+    function getMessage(int $suser) {
         
         $response = $this->chat->getLastMessage($suser);
 

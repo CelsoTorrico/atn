@@ -1,5 +1,7 @@
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { NavController } from 'ionic-angular';
 
 /**
  * Api is a generic REST Api handler. Set your API url first.
@@ -8,10 +10,10 @@ import { Injectable } from '@angular/core';
 export class Api {
   
   //Development
-  static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public';
+  //static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public';
   
   //Ambiente de testes
-  //static readonly url = 'http://testes.makingpie.com.br/atletasNOW/app/public';
+  static readonly url = 'http://testes.makingpie.com.br/atletasNOW/app/public';
   
   protected $headerObject = {
     'Content-Type'    :'application/x-www-form-urlencoded',
@@ -22,7 +24,9 @@ export class Api {
   private $httpParams;
   private $optionsParams = { withCredentials: true };
 
-  constructor(public http: HttpClient) {}
+  constructor(
+    public http: HttpClient, 
+    public appBrowser: InAppBrowser) {}
 
   /** TODO: Todas as requisições após login deve usar parametro Options = {withCredentials: true} para enviar cookie setado na seção */
   get(endpoint: string, params?: any, reqOpts?: any) {
@@ -70,15 +74,11 @@ export class Api {
 
   //Login Social - Abre uma nova página no app
   getSocial(endpoint: string) {
+    //Versão para app nativo
+    //let ob = this.appBrowser.create(Api.url + '/login/' + endpoint);
     
-    /*const browser = this.appBrowser.create(Api.url + '/' + endpoint);
-    console.log(browser);*/
-
-    return this.http.get(Api.url + '/' + endpoint);
-    
-    /*browser.on('loadstop').subscribe(event => { 
-      alert('ok');
-    });*/
+    //Nativamente redirecionar para página de login social
+    window.location.assign(Api.url + '/login/' + endpoint)
 
   }
 

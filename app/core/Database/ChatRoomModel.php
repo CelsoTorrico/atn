@@ -27,7 +27,7 @@ class ChatRoomModel extends Medools\Model
 
     const STAMP_COLUMNS = [
         'created_date' => 'datetime',
-        'last_update' => 'auto'
+        'last_update' => 'datetime'
     ];
 
     const FOREIGN_KEY = [

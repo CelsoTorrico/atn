@@ -1,5 +1,3 @@
-import { MultipleFields } from './../formUtils/multiple-fields';
-import { MyProfilePersonalDataComponent } from './../personal-data/personal-data.component';
 import { Component, ViewChild } from '@angular/core';
 import { NavController, ToastController, ModalController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -31,7 +29,7 @@ export class MyProfileSportsComponent {
     }
 
     posicao = {
-        value: <string>'',
+        value: [<string>''],
         visibility: <number>null
     }
 
@@ -86,7 +84,7 @@ export class MyProfileSportsComponent {
 
     public visibility: any;
 
-    public fieldToAdd: any = ['', '', ''];
+    public fieldToAdd: any = [null, null, null];
 
     constructor(
         public navCtrl: NavController,
@@ -101,44 +99,44 @@ export class MyProfileSportsComponent {
             this.loginErrorString = value;
         })
 
-    }
+        //Função a ser executada após requisição de dados de usuário
+        this.addFormData = function ($this:any) {
 
-    //Função que inicializa
-    ngOnInit() {
-        this.currentUser();
-    }
-
-    private currentUser() {
-
-        this.user._userObservable.subscribe((resp: any) => {
-
-            //Se não existir items a exibir
-            if (resp.length <= 0) {
-                return;
-            }
-
-            //Adicionando valores as variavel global
-            let atributes = resp;
+            //Adicionando valores a classe user
+            let atributes = $this.user._user;
 
             //Intera sobre objeto e atribui valor aos modelos de metadata
             for (var key in atributes.metadata) {
-                if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
-                    this[key] = atributes.metadata[key];
+                if (atributes.metadata.hasOwnProperty(key) && $this[key] != undefined) {
+                    $this[key] = atributes.metadata[key]; 
                 }
             }
 
             //Atribuindo dados aos modelos
-            this.type = atributes.type.ID;
-            this.sport = atributes.sport;
-            this.clubes = atributes.clubs;
-            this.conquistas = atributes.metadata['titulos-conquistas'];
+            $this.type = atributes.type.ID;
+            $this.sport = atributes.sport;
+            $this.clubes = atributes.clubs;
 
             //Carrega lista de esporte e clubes para popular selecionadores
-            this.getSportList();
-            this.getClubsList();
+            $this.getSportList();
+            $this.getClubsList();
+            $this.getVisibility();
+        }
 
-        }, err => {
-            return;
+    }
+
+    //Função que inicializa
+    ngOnInit() {
+        //Retorna dados de usuário
+        this.user.subscribeUser(this.addFormData, this);
+    }
+
+    getVisibility(){
+        //Retorna opções de visibilidade
+        this.user._visibilityObservable.subscribe((resp:any) => {
+            if(Object.keys(resp).length > 0){
+                this.visibility = resp;
+            }
         });
     }
 
@@ -146,6 +144,10 @@ export class MyProfileSportsComponent {
     getSportList() {
         //Retorna a lista de esportes do banco e atribui ao seletor
         let subscriber = this.api.get('/user/sports').subscribe((resp: any) => {
+
+            if(resp.length <= 0){
+                return;
+            }
 
             //Tabela de Esportes com ID e nome
             this.$sportTable = resp;
@@ -156,10 +158,12 @@ export class MyProfileSportsComponent {
                 this.$sportList.push(element[1]);
             });
 
-            //Define ID's dos esportes selecionados
-            this.$sportTable.forEach(element => {
-                this.setChoosed(element, this.sport, 'sport_name', '$sportsSelected');
-            });
+            if(this.sport != undefined){
+                 //Define ID's dos esportes selecionados
+                this.$sportTable.forEach(element => {
+                    this.setChoosed(element, this.sport, 'sport_name', '$sportsSelected');
+                });
+            }           
 
         }, err => {
             return;
@@ -172,6 +176,10 @@ export class MyProfileSportsComponent {
         //Retorna a lista de esportes do banco e atribui ao seletor
         let subscriber = this.api.get('/user/clubs').subscribe((resp: any) => {
 
+            if(resp.length <= 0){
+                return;
+            }
+
             //Tabela de Clubes com ID e nome
             this.$clubsTable = resp;
 
@@ -181,11 +189,13 @@ export class MyProfileSportsComponent {
                 this.$clubsList.push(element.display_name);
             });
 
-            //Define ID's dos clubes selecionados
-            this.$clubsTable.forEach(element => {
-                let arrayItem = ['', element.display_name];
-                this.setChoosed(arrayItem, this.clubes, 'club_name', '$clubsSelected');
-            });
+            if(this.clubes != undefined){
+                //Define ID's dos clubes selecionados
+                this.$clubsTable.forEach(element => {
+                    let arrayItem = ['', element.display_name];
+                    this.setChoosed(arrayItem, this.clubes, 'club_name', '$clubsSelected');
+                });
+            }
 
         }, err => {
             return;
@@ -206,22 +216,57 @@ export class MyProfileSportsComponent {
         });
     }
 
-    /** Adicionar um novo item para multiplos campos | Abre modal */
-    addMore($parentModel, $event) {
+    private setChooseSports($sportChoose:string) {
+        //Intera sobre items
+        this.$sportTable.forEach(element => {
+            //Compara valores selecionados com tabela de esportes
+            if (element[1] == $sportChoose) {
+                //Atribui valor a array
+                this.sport.push(element[0]);
+            }
+        });
+    }
+
+    private setChooseClubs($clubsChoose:string) {
+        //Intera sobre items
+        this.$clubsTable.forEach(element => {
+            //Compara valores selecionados com tabela de esportes
+            if (element[1] == $clubsChoose) {
+                //Atribui valor a array
+                this.clubes.push(element[0]);
+            }
+        });
+    }
+
+    /** Função para definir visibilidade selecionada automaticamente */
+    defaultOptionSelected(var1, var2){
+        return this.height.visibility == undefined ? var1.value === var2.value : var1 === var2;
+    }
+
+    /** Adicionar um novo item para multiplos campos */
+    addMore($parentModel:string, $event, $labels:any = [null,null,null]) { 
 
         $event.preventDefault();
 
-        //Abre modal
-        let addMore = this.modal.create(MultipleFields, { list: ['INSTITUTE', 'COURSE', 'YEAR'] });
+        //Se valor for nulo, recondicionar para array
+        if(this[$parentModel].value == null){
+            this[$parentModel].value = [];
+        }
 
-        //Ao modal ser fechado, é passada os dados modificados nele
-        addMore.onDidDismiss(data => {
-            $parentModel.value.push(data);
-        });
+        //Atribui novo item ao array
+        this[$parentModel].value.push($labels);
 
-        //Cria o modal
-        addMore.present();
+    }
 
+    remove($itemToDelete:string, $index:number){
+        
+        //Se valor for nulo, recondicionar para array
+        if(this[$itemToDelete].value == null){
+            return;
+        }
+
+        //Atribui novo item ao array
+        this[$itemToDelete].value.splice($index);
     }
 
     //Salvar dados do formulário
@@ -229,11 +274,27 @@ export class MyProfileSportsComponent {
 
         $event.preventDefault();
 
-        console.log(form);
-        console.log($event);
+        //Define ID's dos esportes selecionados
+        this.sport = [];
+        this.$sportsSelected.forEach(element => {
+            this.setChooseSports(element); 
+        });
+        this.clubes = [];
+        //Define ID's dos clubes selecionados
+        this.$clubsSelected.forEach(element => {
+            this.setChooseClubs(element); 
+        });
 
-        //Validação de dados
-        /*//let email = form.getControl(this.user_email);
+        //Campos válidos
+        let saveFields:any = {
+            sport: {},
+            clubes: {},
+            weight: {},
+            height: {},
+            posicao: {},
+            formacao: {},
+            cursos: {}
+        }
 
         //Intera sobre objeto e atribui valor aos modelos de metadata
         for (var key in saveFields) {
@@ -243,7 +304,11 @@ export class MyProfileSportsComponent {
         }
 
         //Realiza update de dados do usuario
-        let resp = this.user.update(saveFields);*/
+        let resp = this.user.update(saveFields);
+
+        if(resp){
+            this.dismiss();
+        }
 
     }
 

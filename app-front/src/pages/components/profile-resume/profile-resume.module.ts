@@ -1,17 +1,21 @@
+import { ChartModule } from 'angular2-chartjs';
 import { ProfileResumeComponent } from './profile.resume.component';
 import { NgModule } from "@angular/core";
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from 'ionic-angular';
 import { CommonModule } from '@angular/common';
+import { PipesModule } from '../../../pipes/pipes.module';
 
 @NgModule({
     declarations: [
-        ProfileResumeComponent
+        ProfileResumeComponent 
       ],
       imports: [
-        TranslateModule.forChild(),
+        TranslateModule.forChild(),        
         IonicModule,
-        CommonModule
+        CommonModule,
+        PipesModule,
+        ChartModule        
       ],
       exports: [ProfileResumeComponent],
       bootstrap: [ProfileResumeComponent],

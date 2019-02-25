@@ -3,23 +3,31 @@
 
     <header>
 
-      <button id="btn-favorite" ion-item icon-only clear (click)="favoriteUser(ID, $event)">
-        <ion-icon [name]="(favorite  == true)? 'star': 'star-outline'"></ion-icon>
-        {{ "Favorite" | translate }}
+      <button id="btn-favorite" ion-button icon-only clear (click)="favoriteUser(ID, $event)">
+        <ion-icon [name]="(favorite == true)? 'star': 'star-outline'"></ion-icon>
       </button>
 
       <ion-list>
         <ion-avatar class="btn-cursor" item-start>
-          <img *ngIf="profile_img, else elseBlock"  [src]="profile_img" />
+          <img *ngIf="profile_img, else elseBlock" [src]="profile_img" />
           <ng-template #elseBlock>
-              <img  src="assets/img/user.png"/>
-          </ng-template>          
+            <img src="assets/img/user.png" />
+          </ng-template>
+
+          <ng-container *ngIf="isLogged">
+            <label for="update-photo" class="change-photo btn-cursor ion-button large img-center clear">
+              <ion-icon item-start name="camera"></ion-icon>
+            </label>
+            <input id="update-photo" type="file" ([ngModel])="uploadPhoto" (change)="changePhoto($event)" style="display:none;" />
+          </ng-container>
+
         </ion-avatar>
+
       </ion-list>
 
       <h1>{{ display_name | titlecase }}</h1>
 
-      <ion-list *ngIf="views">
+      <ion-list no-margin *ngIf="views">
         <button ion-button clear *ngFor="let v of views" (click)="loadView(v)">
           {{ v.title | translate}}
         </button>
@@ -38,7 +46,7 @@
         <ion-col class="block" text-center *ngIf="birthdate">
           <ion-list>
             <ion-label>{{ "BIRTHDATE" | translate }}</ion-label>
-            {{ birthdate | date:'yyyy' }}
+            {{ birthdate | dateReplaceToTrace | date:'yyyy' }}
           </ion-list>
         </ion-col>
       </ion-row>
@@ -58,11 +66,9 @@
       </ion-row>
     </ion-grid>
 
-    <ion-item id="feature">
+    <ion-label text-center>{{ "PERFORMANCE" | translate }}</ion-label>
 
-      <ion-label text-center>{{ "PERFORMANCE" | translate }}</ion-label>
-
-    </ion-item>
+    <chart [type]="typeChart" [data]="data" [options]="options"></chart>
 
   </ion-list>
 </section>

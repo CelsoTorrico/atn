@@ -107,8 +107,7 @@ class AppValidation
             'user_email'    => FILTER_VALIDATE_EMAIL, 
             'cpf'           => array('validation', 'cpf'), 
             'cnpj'          => array('validation', 'cnpj'),
-            'club_site'     => FILTER_VALIDATE_URL,
-            'my-videos'     => FILTER_VALIDATE_URL,
+            'club_site'     => FILTER_SANITIZE_URL,
             'profile_img'   => new StdClass()
         );
 
@@ -118,13 +117,12 @@ class AppValidation
             'telefone'  => '(\(?[0-9]{2}\)?)?\s?([0-9-]{4,5})(\-)?([0-9]{4})',
             'weight'    => '([0-9]{2,})',
             'height'    => '([0-2]{1}[.,][0-9]{2,})',
-            'birthdate' => '([0-9]{2}\/[0-9]{2}\/[0-9]{4})',
+            'birthdate' => '([0-9]{4}\-[0-9]{2}\-[0-9]{2})',
             'empates'   => '([0-9]{1,})',
             'vitorias'  => '([0-9]{1,})',
             'titulos'   => '([0-9]{1,})',
             'jogos'     => '([0-9]{1,})',
             'derrotas'  => '([0-9]{1,})',
-            'visibility' => '([1-5]{1})', //ID TYPE USER,
             'parent_user' => '([0-9]{1,})' //ID USUARIO(PAI)
         );
 
@@ -132,8 +130,7 @@ class AppValidation
         $user = array(
             'user_login'    => '([a-zA-Z0-9_-])+',
             'posicao'       => '.*',
-            'gender'        => '((fe)?male)',    
-            'formacao'      => '.*',
+            'gender'        => '((fe)?male)',
             'biography'     => '.*',
             'howknowus'     => '.*',
             'social_tokens' => '.*'
@@ -141,7 +138,7 @@ class AppValidation
 
         //Endereço
         $address = array(
-            'address',
+            'address'   => '.*',
             'city'      => '[\sa-zA-Zéêáâãíóôõúûü]+',
             'state'     => '[a-zA-Z]{2}',
             'country'   => '[a-zA-Z\s]+',
@@ -150,20 +147,28 @@ class AppValidation
         
         //Array de dados
         $array = array(
-            'stats'     => '[0-9]{1,}', 
+            'stats'     => '.*', 
             'clubes'    => '[0-9]{1,}',
             'sport'     => '[0-9]{1,}',
-            'club_liga',
-            'club_sede', 
-            'stats-sports',
-            'titulos-conquistas',
+            'club_liga' => '.*',
+            'club_sede' => '.*', 
+            'stats-sports' => '.*',
+            'titulos-conquistas' => '.*',
+            'formacao'  => '.*',
+            'cursos'    => '.*',
+            'my-videos'     => 'https?\:\/\/www\.youtube\.com\/.*'
         );
 
         foreach ($data as $key => $originalValue) {
 
             //No caso de um update de perfil em que cada dado vem em forma de array
             // keys => value | visibility
-            $value = (is_array($originalValue))? $originalValue['value'] : $originalValue;
+            $value = (is_array($originalValue) && key_exists('value', $originalValue))? $originalValue['value'] : $originalValue;
+
+            //Se valor enviado for null pula próximo item
+            if(is_null($value)){
+                continue;
+            }
 
             //Se campo for na forma de array
             if (array_key_exists($key, $array)) {
@@ -173,8 +178,11 @@ class AppValidation
                 $checkedItem = [];
 
                 //Percorre array fazendo validação e converte string em int
-                //Atribuindo valor a key respectiva
-                $filtered = $this->sanitizeItem($value, $action);                
+                $filtered = $this->sanitizeItem($value, $action);   
+                
+                //Atribui valor ao array
+                $data[$key] = $this->add_value_to_var($data[$key], $filtered);
+
                 continue;
             }
             
@@ -188,7 +196,7 @@ class AppValidation
                 } 
                 elseif(is_string($action)){
                     //Executa regular expression para validar
-                    $filtered = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
+                    $filtered = (preg_match('/'.$action.'/', $value, $match ) && is_array($match)) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
                 }
                 elseif(is_object($action)){
                     //Se for upload de imagem retornar classe
@@ -197,7 +205,11 @@ class AppValidation
                 else{
                     //Filtra o dado
                     $filtered = filter_var($value, $action);
-                }                
+                }  
+                
+                //Atribui valor ao array
+                $data[$key] = $this->add_value_to_var($data[$key], $filtered);
+
                 continue;
             }
             
@@ -206,6 +218,8 @@ class AppValidation
                 $action = $validFormat[$key];
                 //Executa regular expression para validação
                 $filtered = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
+                //Atribui valor ao array
+                $data[$key] = $this->add_value_to_var($data[$key], $filtered);
                 continue;
             }
             
@@ -214,6 +228,8 @@ class AppValidation
                 $action = $user[$key];
                 //Executa regular expression para validação
                 $filtered = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
+                //Atribui valor ao array
+                $data[$key] = $this->add_value_to_var($data[$key], $filtered);
                 continue;
             }
 
@@ -222,25 +238,32 @@ class AppValidation
                 $action = $address[$key];
                 //Executa regular expression para validação
                 $filtered = (preg_match('/'.$action.'/', $value, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
+                //Atribui valor ao array
+                $data[$key] = $this->add_value_to_var($data[$key], $filtered);
+
                 continue;
             } 
-            else {
-                //Filtra outros dados com padrão de validação
-                $filtered = filter_var($value, FILTER_SANITIZE_STRING);
-            }
 
-            if(is_array($originalValue)){
-                $data[$key] = [
-                    'value'     => $filtered,
-                    'visibility' => $originalValue['visibility']
-                ];
-            }else{
-                $data[$key] = $filtered;
-            }
+            //Filtra outros dados com padrão de validação e atribui a var
+            $data[$key] = $this->add_value_to_var($data[$key], filter_var($value, FILTER_SANITIZE_STRING));
 
         }
 
         return $data;
+    }
+
+    //Função de verificar se visibilidade enviada está no formato permitido
+    function check_user_input_visibility(int $visibility){
+        
+        //Expressõe regulares
+        $validFormat = '([1-5]{1})'; //ID TYPE USER
+
+        //Executa regular expression para validação
+        $filtered = (preg_match('/'.$validFormat.'/', $visibility, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : 0;
+        
+        //Atribui valor ao array
+        return $filtered;
+
     }
 
     //Função formata diferentes tipos de dado e aplica erros
@@ -256,7 +279,7 @@ class AppValidation
 
             //No caso de um update de perfil em que cada dado vem em forma de array
             // keys => value | visibility
-            $value = (is_array($originalValue))? $originalValue['value'] : $originalValue;
+            $value = (is_array($originalValue) && key_exists('value', $originalValue))? $originalValue['value'] : $originalValue;
             
             /** Verificações de erros */
             //Se valor for falso adiciona erro ao array
@@ -278,7 +301,7 @@ class AppValidation
                 //Executa ação e retorna dado
                 $filtered = $this->load($action, $value);
                 //Atribui valor a variavel
-                $data[$key] = (is_array($data[$key]) && key_exists('value', $data[$key]))? ['value' => $filtered] : $filterd;
+                $data[$key] = (is_array($data[$key]) && key_exists('value', $data[$key]))? ['value' => $filtered] : $filtered;
 
                 continue;
             }
@@ -297,11 +320,12 @@ class AppValidation
             $data['display_name'] = ucwords($data['display_name']);
         }
 
-        //Verifica qtd de erros e retorna
+        //Verifica qtd de erros e combina com array de dados
         if (count($errorMsg) > 0) {
-            return $errorMsg;
+            $data = array_merge($data, $errorMsg);
         }
 
+        //Retorna array 
         return $data;
 
     }
@@ -336,10 +360,21 @@ class AppValidation
             }
 
             //Executar regex e filtros
-            $sanitized[$key] = (preg_match('/'.$action.'/', $item, $match )) ? (int) filter_var($match[0], FILTER_SANITIZE_NUMBER_INT) : (string) filter_var($item, FILTER_SANITIZE_STRING);
+            $sanitized[$key] = (preg_match('/'.$action.'/', $item, $match))? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
         } 
 
         return $sanitized;
+    }
+
+    //Adicionar valor a varíavel se for array ou não
+    private function add_value_to_var($array, $value, string $keyVerify = 'value'){
+        if (is_array($array) && array_key_exists($keyVerify, $array)){
+            $array[$keyVerify] = $value;
+        } else {
+            $array = $value;
+        }
+
+        return $array;
     }
 
 }

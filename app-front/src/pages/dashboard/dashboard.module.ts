@@ -1,4 +1,3 @@
-import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
 import { SearchFieldsModule } from './../components/search/search.module';
 import { MenuPageModule } from './../components/menu/menu.module';
 import { DashboardPage } from './dashboard';
@@ -8,6 +7,7 @@ import { IonicPageModule } from 'ionic-angular';
 import { TimelineModule } from '../components/timeline/timeline.module';
 import { MemberModule } from '../components/member/member.module';
 import { NotifyModule } from '../components/notify/notify.module';
+import { User } from '../../providers';
 
 @NgModule({
   //Declara apenas components, directives e pipes do módulo

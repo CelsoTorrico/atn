@@ -14,7 +14,7 @@ export class Timeline {
   @Input() public timelineID:number;
   public static $getTimelineUrl:string = 'timeline';
   public $url:string = '';
-  public $paged:number = 0;
+  public $paged:number = 1;
   
   //Lista de Items
   public currentItems:any[] = [];
@@ -36,28 +36,33 @@ export class Timeline {
     if (this.timelineID != undefined) {
       this.$url = '/user/' + this.timelineID;
     }
-
-    //Adciona parametro de paginação
-    if(this.$paged > 0){
-      this.$url = '/paged/' + this.$paged;
-    }
+    else{
+      //Define caminho para timeline user logado
+      this.$url = '';
+    }    
 
     this.query();
   }
 
   query($fn:any = function(){}){
     //Retorna a lista de esportes do banco e atribui ao seletor
-    let items = this.api.get(Timeline.$getTimelineUrl + this.$url).subscribe((resp:any) => {
+    let items = this.api.get(Timeline.$getTimelineUrl + this.$url + '/paged/' + this.$paged).subscribe((resp:any) => {
        
       //Se não existir items a exibir
-      if(resp.length > 0){
+      if(Object.keys(resp).length <= 0){
+        return;
+      }
+
+      if(resp.error){
+        $fn();
+        return;
+      }
         
-        //Intera sobre elementos
-        resp.forEach(element => {
-          //Retorna array de timelines
-          this.currentItems.push(element);
-        }); 
-      }     
+      //Intera sobre elementos
+      resp.forEach(element => {
+        //Retorna array de timelines
+        this.currentItems.push(element);
+      });         
       
       $fn();
 
@@ -67,13 +72,19 @@ export class Timeline {
 
   }
 
+  //Após excluido item de timeline, eliminar do loop de items
+  hideTimeline($event){
+    let el = document.getElementById('timeline-post-' + $event);
+    el.remove();
+  }
+
+  //Carrega mais items de timeline via infinescroll
   loadMore($event) {
 
     setTimeout(() => {
       
       //Adiciona uma página a mais para adicionar itens
       this.$paged = this.$paged + 1;
-      this.$url = '/paged/' + this.$paged;
 
       //Função para finalizar
       let endFn = function(){
@@ -82,22 +93,21 @@ export class Timeline {
 
       this.query(endFn);
 
-    }, 500);
+    }, 800);
 
   }
   
   //Carregar comentários
   getItem($postID:number, event) {
+    
     event.preventDefault();
 
     //Impede de executar ações em cascata em botões com evento
-    if(event.target.tagName == 'IMG' || event.target.classList.contains('button-inner')) {
-      return;
+    if(event.target.tagName == 'IMG' || event.target.classList.contains('count-responses')) {
+      //Invoca um modal passando ID da Timeline
+      let modal = this.modalCtrl.create(TimelineItem, { post_id: $postID });
+      modal.present(); 
     }
-
-    //Invoca um modal passando ID da Timeline
-    let modal = this.modalCtrl.create(TimelineItem, { post_id: $postID });
-    modal.present(); 
 
   }
 

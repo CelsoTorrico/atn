@@ -7,6 +7,7 @@ use Core\Database\LoginModel;
 use Core\Database\UsermetaModel; 
 use Core\Utils\PasswordHash;
 use Core\Utils\AppValidation;
+use Core\Utils\SendEmail;
 use Core\Profile\User;
 use Illuminate\Http\Request;
 use Illuminate\Auth\GenericUser as AppUser;
@@ -158,14 +159,74 @@ class Login implements LoginInterface{
         
     }
 
-    //Desloga usuário e todas as sessões atuais
-    public function setLogout(){
+    public function forgetPassword(string $email){
+       
+        //Se tem token atribuido juntamente com dados
+        if(empty($email)) {
+            //Executa login social
+            return ['error' => ['forget-password' => 'E-mail de usuário não foi submetido']];            
+        }
 
-        //Verifica se está logado
-        /*if(! self::isLogged() ){
-            return ['error' =>['login' => 'Sessão ainda foi não inicializada.']]; 
-        }*/
+        //aplicando filtro de string
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL); 
 
+        //Instancia LoginModel para verificar existencia de usuário via user_login
+        $this->model = new LoginModel();
+
+        //Verifica se existe usuário, passando array de dados
+        if (!$this->model->load(['user_email' => $email])) {
+            return ['error' => ['forget-password' => 'Usuário inexistente.']];
+        }
+
+        //Instanciando classe de verificação de passwords Wordpress = (8, true)
+        $passwordClass = new PasswordHash(8, true);
+
+        $new_pass = $passwordClass->HashPassword($email);
+
+        //Comparação de senhas
+        $sessionAuth = $passwordClass->CheckPassword($email, $new_pass);
+
+        if(!$sessionAuth){
+            //Retorna string erro
+            return ['error' => ["forget-password" => "Houve um erro em gerar uma nova senha para este usuário. Tente novamente mais tarde."]]; 
+        }
+
+        //Instancia usuário com dados do banco
+        $user = new User([
+            'user_login'=> $this->model->user_login, 
+            'user_pass' => $this->model->user_pass  ]);
+
+        //Atribuindo nova senha ao usuário que solicitou reenvio de senha
+        $success = $user->update(['user_pass' => $new_pass]);   
+        
+        //Verifica se hash ocorreu com sucesso
+        if (!key_exists('success', $success)) {
+            //Retorna string erro
+            return ['error' => ["forget-password" => "Houve um erro em gerar uma nova senha para este usuário. Tente novamente mais tarde."]]; 
+        }
+
+        //CONTEUDO
+        $html = '<html><img width="275" height="38" src="https://www.atletasnow.com/wp-content/uploads/2018/10/rsz_atletasnow_logoprincipal-01.png" title="AtletasNOW"><p>Sua nova senha gerada para acesso a plataforma AtletasNOW é:</p><p><font size="5">' . $new_pass .'</font></p>. <p>Recomendamos após fazer login em sua conta, trocar a senha.</p></html>';
+
+        //SETUP DE EMAIL
+        $phpmailer = new SendEmail();
+        $phpmailer->setToEmail(['email' => $email, 'name' => $user->display_name]);
+        $phpmailer->setFromName('AtletasNOW - Sua hora é agora');
+        $phpmailer->setSubject('Nova senha de usuário gerada - AtletasNOW');
+        $phpmailer->setContent($html);
+        
+        //Envio do email
+        $result = $phpmailer->send();
+
+        //Se houve sucesso
+        if(key_exists('success', $result)){
+            //Retorna string erro
+            return ['success' => ["forget-password" => "Uma nova senha foi gerada e enviada para o seu e-mail. Bem Vindo a AtletasNOW!"]];
+        } else {
+            //Retorna string erro
+            return ['error' => ["forget-password" => "Houve erro no envio da nova senha. Tente novamente mais tarde."]];
+        }         
+        
     }
 
     private function completeProfileNotify() {

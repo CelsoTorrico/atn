@@ -1,13 +1,13 @@
-import { InAppBrowser } from '@ionic-native/in-app-browser';
-import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController, ModalController } from 'ionic-angular';
+import { MyProfileVideosComponent } from './../../my-profile/videos-data/videos-data.component';
+import { Component, Input } from '@angular/core';
+import { NavController, ToastController, ModalController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { User, Api } from '../../../providers';
 import { MyProfilePersonalDataComponent } from '../../my-profile/personal-data/personal-data.component';
 import { MyProfileSportsComponent } from '../../my-profile/sports-data/sports-data.component';
-import { ProfileMessage } from '../profile-message.component';
 import { MyProfileStatsComponent } from '../../my-profile/stats-data/stats-data.component';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'profile',
@@ -16,6 +16,12 @@ import { MyProfileStatsComponent } from '../../my-profile/stats-data/stats-data.
 export class ProfileComponent {
 
   //Variveis de template de usuario
+
+  profile: Observable<ArrayBuffer>;
+
+  stats: Observable<ArrayBuffer>;
+
+  isLogged: boolean = false;
 
   ID: number = null;
 
@@ -88,12 +94,10 @@ export class ProfileComponent {
   }
 
   ['titulos-conquistas'] = {
-      value: ''
+    value: ''
   }
 
   videos: any = []
-
-  public $user_ID: number;
 
   public $getUser: any;
 
@@ -102,21 +106,18 @@ export class ProfileComponent {
   public showMessageBox: boolean = false;
 
   private ListComponents: any = {
-    personalData  : MyProfilePersonalDataComponent,
-    sportsData    : MyProfileSportsComponent,
-    videosData    : MyProfileStatsComponent,
-    statsData     : MyProfileStatsComponent
+    personalData: MyProfilePersonalDataComponent,
+    sportsData:   MyProfileSportsComponent,
+    videosData:   MyProfileVideosComponent,
+    statsData:    MyProfileStatsComponent
   }
 
   constructor(
     public navCtrl: NavController,
-    public user: User,
     public api: Api,
     public toastCtrl: ToastController,
     private modalCtrl: ModalController,
     public translateService: TranslateService,
-    private params: NavParams,
-    private browser: InAppBrowser,
     private domSanitizer: DomSanitizer) {
 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
@@ -127,28 +128,20 @@ export class ProfileComponent {
 
   //Função que inicializa
   ngOnInit() {
-
     //Carrega dados do usuário de contexto
-    this.currentUser();
-
+    this.currentUserLoadData();
   }
 
   ionViewWillEnter(): void {
 
   }
 
-  private currentUser() {
+  private currentUserLoadData() {
 
-    this.user._userObservable.subscribe((resp: any) => {
-
-      //Se não existir items a exibir
-      if (resp.length <= 0) {
-        return;
-      }
+    this.profile.subscribe((resp: any) => {
 
       //Adicionando valores as variavel global
       let atributes = resp;
-      //Adicionando dados para serem usados em components
 
       if (atributes.metadata != undefined) {
         //Intera sobre objeto e atribui valor aos modelos de metadata
@@ -159,15 +152,15 @@ export class ProfileComponent {
         }
       }
 
-      if (resp.metadata['my-videos'] != undefined) {
+      if (atributes.metadata['my-videos'] != undefined) {
 
-        if (resp.metadata['my-videos'].value.length <= 0)
+        if (atributes.metadata['my-videos'].value.length <= 0)
           return;
 
         let videos: any[] = [];
 
         //Percorre array de links de video, sanitizando e atribuindo
-        resp.metadata['my-videos'].value.forEach(element => {
+        atributes.metadata['my-videos'].value.forEach(element => {
           //Atribui valores ao objeto
           let embed = element.replace('watch?v=', 'embed/');
           let trustedVideo = this.domSanitizer.bypassSecurityTrustResourceUrl(embed);
@@ -185,17 +178,16 @@ export class ProfileComponent {
       this.sport = atributes.sport;
       this.clubes = atributes.clubs;
 
-    }, err => {
-      return;
     });
+
   }
 
   //Abrir modal com dados para atualizar perfil
-  editData($component:string){
+  editData($component: string) {
 
     //Criar modal do respectivo component
     let modal = this.modalCtrl.create(this.ListComponents[$component], {});
-    
+
     //Inicializar modal
     modal.present();
 

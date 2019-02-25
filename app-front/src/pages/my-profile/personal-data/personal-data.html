@@ -57,7 +57,7 @@
 
             <ion-label stacked>{{ "BIRTHDATE" | translate }}</ion-label>
 
-            <ion-datetime name="birthdate" displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY" [(ngModel)]="birthdate.value"></ion-datetime>
+            <ion-input name="birthdate" type="date" displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY" [(ngModel)]="birthdate.value"></ion-input>
 
             <ion-select name="visibility" [(ngModel)]="birthdate.visibility" interface="popover">
               <ion-option *ngFor="let item of visibility" [value]="item.value">
@@ -189,7 +189,7 @@
             </ion-option>
           </ion-select>
 
-          <ion-select [(ngModel)]="state.visibility" name="visibility" interface="popover">
+          <ion-select class="flutuante" [(ngModel)]="state.visibility" name="visibility" interface="popover">
             <ion-option *ngFor="let item of visibility" [value]="item.value">
               {{item.option}}
             </ion-option>

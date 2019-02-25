@@ -72,8 +72,8 @@ class Authenticate
                     return $next($request);
                 }
 
-                //Seta cookie de sessão
-                $this->sessionCookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_DOMAIN'), false);  
+                //Seta cookie de sessão : cookie HTTP_ONLY=false
+                $this->sessionCookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_DOMAIN'), false, false);  
 
                 //Atribui a variavel
                 $tokenDatabase = $this->sessionCookie;
@@ -143,7 +143,7 @@ class Authenticate
             $cookie = $control->getToken();
 
             //Seta cookie de sessão
-            $this->sessionCookie = app('cookie')->make(env('APPCOOKIE'), $cookie[0], $cookie[1],'/', env('APP_PATH'), false);  
+            $this->sessionCookie = app('cookie')->make(env('APPCOOKIE'), $cookie[0], $cookie[1],'/', env('APP_DOMAIN'), false, false);  
 
             //Atribui a variavel
             $tokenDatabase = $this->sessionCookie;
@@ -153,13 +153,19 @@ class Authenticate
 
             //Retorna resultados
             if($success){
-                //Retorna mensagem juntamente com cookie 
-                return response(['success' => ["login", "Login realizado com sucesso! Bem Vindo."]])->withCookie($tokenDatabase);
+                //Redireciona para front-app juntamente com cookie via url parameter
+                return redirect(env('APP_FRONT').'login')->withCookie($this->sessionCookie);
             } else {
                 //Retorna erro
                 return response(['error']);
             }
 
+        }
+
+        //Se usuário estiver com perfil desativado, permitir requisição de esqueci minha senha
+        if ($request->method() ==  'POST' && $request->is('forget-pass')) {
+            //Retorna requisição com dados
+            return $next($request);
         }
 
         //Permitir listagem de clubes ou listagem de esportes

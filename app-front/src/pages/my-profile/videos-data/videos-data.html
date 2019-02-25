@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ "MY_VIDEOS" | translate }}
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        {{ "CLOSE" | translate }}
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <form #sportsData="ngForm" (submit)="save(sportsData, $event)">
+
+    <ion-item-group>
+
+      <ion-list ngModelGroup="groupVideos" #videosCtrl="ngModelGroup" ngControl="test">
+
+        <ion-list-header>
+          {{ "MY_VIDEOS" | translate}}
+        </ion-list-header>
+
+        <ion-select name="visibility" [(ngModel)]="videos.visibility" interface="popover">
+          <ion-option *ngFor="let item of visibility" [value]="item.value">
+            {{item.option}}
+          </ion-option>
+        </ion-select>
+
+        <ion-grid>
+          <ion-row *ngFor="let item of videos.value; let i = index; trackBy:customTrackBy">
+            <ion-col col-12>
+              <ion-item>
+                <ion-label stacked>{{ "YOUTUBE_URL" | translate}} </ion-label>
+                <ion-input type="url" [(ngModel)]="videos.value[i]" [name]="'videos.value['+ i +'][]'"></ion-input>
+              </ion-item>
+            </ion-col>
+            <div class="close-button" (click)="remove('videos', i)">
+              <ion-icon name="close-circle"></ion-icon>
+              {{ "REMOVE" | translate }}
+            </div>
+          </ion-row>
+
+          <ion-item>
+            <button ion-button outline item-end (click)="addMore('videos', $event)">
+              <ion-icon item-start name="add-circle"></ion-icon>
+              {{ "ADD_MORE" | translate }}
+            </button>
+          </ion-item>
+
+        </ion-grid>
+      </ion-list>
+
+    </ion-item-group>
+
+    <ion-item>
+      <button type="submit" full ion-button>{{'SAVE' | translate}}</button>
+    </ion-item>
+
+  </form>
+
+</ion-content>

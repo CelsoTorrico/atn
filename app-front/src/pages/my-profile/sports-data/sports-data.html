@@ -16,172 +16,159 @@
 
     <ion-item-group>
 
-      <ion-item>
-        <ion-title>{{ "SPORTS" | translate }}</ion-title>
-      </ion-item>
+      <ion-list>
 
-      <ion-list padding>
-        <rl-tag-input [(ngModel)]="$sportsSelected" [addOnBlur]="false" [autocomplete]="true" [autocompleteItems]="$sportList"
-          placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected">
+        <ion-list-header>
+          {{ "SPORTS" | translate }}
+        </ion-list-header>
+
+        <rl-tag-input padding [(ngModel)]="$sportsSelected" [addOnBlur]="false" [autocomplete]="true"
+          [autocompleteItems]="$sportList" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected">
         </rl-tag-input>
+
       </ion-list>
 
     </ion-item-group>
 
     <ion-item-group *ngIf="type < 3">
 
-      <ion-item>
-        <ion-title>{{ "CLUBS" | translate }}</ion-title>
-      </ion-item>
+      <ion-list>
 
-      <ion-list padding>
-        <rl-tag-input [(ngModel)]="$clubsSelected" [addOnBlur]="false" [autocomplete]="true" [autocompleteItems]="$clubsList"
-          placeholder="{{ 'WRITE_CLUB' | translate}}" name="clubsSelected">
+        <ion-list-header>
+          {{ "CLUBS" | translate }}
+        </ion-list-header>
+
+        <rl-tag-input padding [(ngModel)]="$clubsSelected" [addOnBlur]="false" [autocomplete]="true"
+          [autocompleteItems]="$clubsList" placeholder="{{ 'WRITE_CLUB' | translate}}" name="clubsSelected">
         </rl-tag-input>
       </ion-list>
 
     </ion-item-group>
 
-    <ion-row *ngIf="type < 3">
-      <ion-col>
-        <ion-item>
-          <ion-label stacked>{{ "WEIGHT" | translate }}</ion-label>
-          <ion-input type="number" pattern="[0-9]{1,3}" [(ngModel)]="weight.value" name="weight" full></ion-input>
+    <ion-item-group>
 
-          <ion-select name="visibility" [(ngModel)]="weight.visibility" interface="popover">
-            <ion-option *ngFor="let item of visibility" [value]="item.value">
-              {{item.option}}
-            </ion-option>
-          </ion-select>
+      <ion-list>
 
-        </ion-item>
-      </ion-col>
-      <ion-col>
-        <ion-item>
-          <ion-label stacked>{{ "HEIGHT" | translate }}</ion-label>
-          <ion-input type="number" pattern="[0-9]{1}.[0-9]{2}" [(ngModel)]="height.value" name="height" full></ion-input>
+        <ion-list-header></ion-list-header>
 
-          <ion-select name="visibility" [(ngModel)]="height.visibility" interface="popover">
-            <ion-option *ngFor="let item of visibility" [value]="item.value">
-              {{item.option}}
-            </ion-option>
-          </ion-select>
-
-        </ion-item>
-      </ion-col>
-      <ion-col col-md-6>
-        <ion-item>
-          <ion-label stacked>{{ "POSITION" | translate}}</ion-label>
-          <ion-input type="text" name="posicao" [(ngModel)]="posicao.value" full></ion-input>
-
-          <ion-select name="visibility" [(ngModel)]="posicao.visibility" interface="popover">
-            <ion-option *ngFor="let item of visibility" [value]="item.value">
-              {{item.option}}
-            </ion-option>
-          </ion-select>
-
-        </ion-item>
-      </ion-col>
-    </ion-row>
-
-    <ion-item-divider></ion-item-divider>
-
-    <ion-row *ngIf="type < 3">
-
-      <ion-col col-12>
-        <ion-list ngModelGroup="groupFormacao" #formacaoCtrl="ngModelGroup" ngControl="test">
-
-          <ion-list-header>
-            <ion-title>{{ "FORMATION" | translate}}</ion-title>
-          </ion-list-header>
-
-          <ion-select name="visibility" [(ngModel)]="formacao.visibility" interface="popover">
-            <ion-option *ngFor="let item of visibility" [value]="item.value">
-              {{item.option}}
-            </ion-option>
-          </ion-select>
-
-          <ion-grid>
-            <ion-row *ngFor="let item of formacao.value; let i = index; trackBy:customTrackBy">
-              <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let a = index">
-                <ion-item>
-                  <ion-label stacked>{{ n | translate}} </ion-label>
-                  <ion-input type="text" [ngModel]="formacao.value[i][a]" [name]="formacao.value[i][a]"></ion-input>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-
+        <ion-row *ngIf="type < 3">
+          <ion-col>
             <ion-item>
-              <button ion-button item-end (click)="addMore(formacao, $event)">{{ "ADD_MORE" | translate }}</button>
+              <ion-label stacked>{{ "WEIGHT" | translate }}</ion-label>
+              <ion-input type="number" pattern="[0-9]{1,3}" [(ngModel)]="weight.value" name="weight" full></ion-input>
+
+              <ion-select name="visibility" [(ngModel)]="weight.visibility" interface="popover">
+                <ion-option *ngFor="let item of visibility" [value]="item.value" [selected]="weight.visibility == undefined && item.value == 0">
+                  {{item.option}}
+                </ion-option>
+              </ion-select>
+
             </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label stacked>{{ "HEIGHT" | translate }}</ion-label>
+              <ion-input type="number" pattern="[0-9]{1}.[0-9]{2}" [(ngModel)]="height.value" name="height" full></ion-input>
 
-          </ion-grid>
-        </ion-list>
-      </ion-col>
+              <ion-select name="visibility" [(ngModel)]="height.visibility" interface="popover">
+                <ion-option *ngFor="let item of visibility" [value]="item.value">
+                  {{item.option}}
+                </ion-option>
+              </ion-select>
 
-      <ion-col col-12>
+            </ion-item>
+          </ion-col>
+          <ion-col col-md-6>
+            <ion-item>
+              <ion-label stacked>{{ "POSITION" | translate}}</ion-label>
+              <ion-input type="text" name="posicao" [(ngModel)]="posicao.value" full></ion-input>
 
-        <ion-list ngModelGroup="groupCursos" #cursosCtrl="ngModelGroup">
+              <ion-select name="visibility" [(ngModel)]="posicao.visibility" interface="popover">
+                <ion-option *ngFor="let item of visibility" [value]="item.value">
+                  {{item.option}}
+                </ion-option>
+              </ion-select>
 
-          <ion-list-header>
-            <ion-title>{{ "COURSES" | translate}}</ion-title>
-          </ion-list-header>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-list>
 
-          <ion-select name="visibility" [(ngModel)]="cursos.visibility" interface="popover">
+    </ion-item-group>
+
+    <ion-item-group *ngIf="type < 3">
+
+      <ion-list ngModelGroup="groupFormacao" #formacaoCtrl="ngModelGroup" ngControl="test">
+
+        <ion-list-header>
+          {{ "FORMATION" | translate}}
+        </ion-list-header>
+
+        <ion-select name="visibility" [(ngModel)]="formacao.visibility" interface="popover">
             <ion-option *ngFor="let item of visibility" [value]="item.value">
               {{item.option}}
             </ion-option>
           </ion-select>
 
-          <ion-row *ngFor="let item of cursos.value; let i = index; trackBy:customTrackBy">
+        <ion-grid>
+          <ion-row *ngFor="let item of formacao.value; let i = index; trackBy:customTrackBy">
             <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let a = index">
               <ion-item>
                 <ion-label stacked>{{ n | translate}} </ion-label>
-                <ion-input type="text" [ngModel]="cursos.value[i][a]" [name]="cursos.value[i][a]"></ion-input>
+                <ion-input type="text" [(ngModel)]="formacao.value[i][a]" [name]="'formacao.value['+ i +']['+ a +'][]'"></ion-input>
               </ion-item>
             </ion-col>
+            <div class="close-button" (click)="remove('formacao', i)">
+              <ion-icon name="close-circle"></ion-icon>
+              {{ "REMOVE" | translate }}
+            </div>
           </ion-row>
-          <ion-row padding>
-            <ion-col>
-              <button ion-button item-end (click)="addMore(cursos.value)">{{ "ADD_MORE" | translate }}</button>
-            </ion-col>
-          </ion-row>
 
-        </ion-list>
-      </ion-col>
+          <ion-item>
+            <button ion-button outline item-end (click)="addMore('formacao', $event)">
+              <ion-icon item-start name="add-circle"></ion-icon>
+              {{ "ADD_MORE" | translate }}
+            </button>
+          </ion-item>
 
-      <ion-col col-12>
+        </ion-grid>
+      </ion-list>
 
-        <ion-list ngModelGroup="groupConquistas" #conquistasCtrl="ngModelGroup">
+      <ion-list ngModelGroup="groupCursos" #cursosCtrl="ngModelGroup">
 
-          <ion-list-header>
-            <ion-title>{{ "TITLES" | translate}}</ion-title>
-          </ion-list-header>
+        <ion-list-header>
+          <ion-title>{{ "COURSES" | translate}}</ion-title>
+        </ion-list-header>
 
-          <ion-select name="visibility" [(ngModel)]="conquistas.visibility" interface="popover">
-            <ion-option *ngFor="let item of visibility" [value]="item.value">
-              {{item.option}}
-            </ion-option>
-          </ion-select>
+        <ion-select name="visibility" [(ngModel)]="cursos.visibility" interface="popover">
+          <ion-option *ngFor="let item of visibility" [value]="item.value">
+            {{item.option}}
+          </ion-option>
+        </ion-select>
 
-          <ion-row *ngFor="let item of conquistas.value; let i = index; trackBy:customTrackBy">
-            <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index">
-              <ion-item>
-                <ion-label stacked>{{ n | translate}} </ion-label>
-                <ion-input type="text" [ngModel]="conquistas.value[i][a]" [name]="conquistas.value[i][a]"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-          <ion-row padding>
-            <ion-col>
-              <button ion-button item-end (click)="addMore(conquistas.value)">{{ "ADD_MORE" | translate }}</button>
-            </ion-col>
-          </ion-row>
-        </ion-list>
+        <ion-row *ngFor="let item of cursos.value; let i = index; trackBy:customTrackBy">
+          <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let a = index">
+            <ion-item>
+              <ion-label stacked>{{ n | translate}} </ion-label>
+              <ion-input type="text" [(ngModel)]="cursos.value[i][a]" [name]="'cursos.value['+ i +']['+ a +'][]'"></ion-input>
+            </ion-item>
+          </ion-col>
+          <div class="close-button" (click)="remove('cursos', i)">
+            <ion-icon name="close-circle"></ion-icon>
+            {{ "REMOVE" | translate }}
+          </div>
+        </ion-row>
 
-      </ion-col>
+        <ion-item>
+          <button ion-button outline item-end (click)="addMore('cursos', $event)">
+            <ion-icon item-start name="add-circle"></ion-icon>
+            {{ "ADD_MORE" | translate }}
+          </button>
+        </ion-item>
 
-    </ion-row>
+      </ion-list>
+
+    </ion-item-group>
 
     <ion-item-group *ngIf="type >= 3">
 
@@ -198,7 +185,7 @@
       <ion-list ngModelGroup="groupEventos" #eventosCtrl="ngModelGroup">
 
         <ion-list-header>
-          <ion-label stacked>{{ "EVENTS" | translate}}</ion-label>
+          {{ "EVENTS" | translate}}
         </ion-list-header>
 
         <ion-select name="visibility" [(ngModel)]="eventos.visibility" interface="popover">
@@ -211,15 +198,22 @@
           <ion-col col-md-4 *ngFor="let n of ['NAME','ABOUT','YEAR']; let a = index">
             <ion-item>
               <ion-label stacked>{{ n | translate}} </ion-label>
-              <ion-input type="text" [ngModel]="eventos.value[i][a]" [name]="eventos.value[i][a]"></ion-input>
+              <ion-input type="text" [(ngModel)]="eventos.value[i][a]" [name]="'eventos.value['+ i +']['+ a +'][]'"></ion-input>
             </ion-item>
           </ion-col>
+          <div class="close-button" (click)="remove('eventos', i)">
+            <ion-icon name="close-circle"></ion-icon>
+            {{ "REMOVE" | translate }}
+          </div>
         </ion-row>
-        <ion-row padding>
-          <ion-col>
-            <button ion-button item-end (click)="addMore(eventos.value)">{{ "ADD_MORE" | translate }}</button>
-          </ion-col>
-        </ion-row>
+
+        <ion-item>
+          <button ion-button outline item-end (click)="addMore('eventos', $event)">
+            <ion-icon item-start name="add-circle"></ion-icon>
+            {{ "ADD_MORE" | translate }}
+          </button>
+        </ion-item>
+
       </ion-list>
 
       <ion-list ngModelGroup="groupLiga" #eventosCtrl="ngModelGroup">
@@ -238,21 +232,28 @@
           <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index">
             <ion-item>
               <ion-label stacked>{{ n | translate}} </ion-label>
-              <ion-input type="text" [ngModel]="eventos.value[i][a]" [name]="eventos.value[i][a]"></ion-input>
+              <ion-input type="text" [(ngModel)]="club_liga.value[i][a]" [name]="'eventos.value['+ i +']['+ a +'][]'"></ion-input>
             </ion-item>
           </ion-col>
+          <div class="close-button" (click)="remove('club_liga', i)">
+            <ion-icon name="close-circle"></ion-icon>
+            {{ "REMOVE" | translate }}
+          </div>
         </ion-row>
-        <ion-row padding>
-          <ion-col>
-            <button ion-button item-end (click)="addMore(club_liga.value)">{{ "ADD_MORE" | translate }}</button>
-          </ion-col>
-        </ion-row>
+
+        <ion-item>
+          <button ion-button outline item-end (click)="addMore('club_liga', $event)">
+            <ion-icon item-start name="add-circle"></ion-icon>
+            {{ "ADD_MORE" | translate }}
+          </button>
+        </ion-item>
+
       </ion-list>
 
     </ion-item-group>
 
     <ion-item>
-        <button type="submit" full ion-button>{{'SAVE' | translate}}</button>
+      <button type="submit" full ion-button>{{'SAVE' | translate}}</button>
     </ion-item>
 
   </form>

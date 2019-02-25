@@ -10,42 +10,44 @@ import { MyProfilePage } from './my-profile';
 import { RlTagInputModule } from 'angular2-tag-input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ProfileResumeModule } from '../components/profile-resume/profile-resume.module';
 import { StatsList } from '../../providers/useful/stats';
 import { PipesModule } from '../../pipes/pipes.module';
 import { MyProfileStatsComponent } from './stats-data/stats-data.component';
 import { MyProfileGeneralStatsComponent } from './general-stats-data/general-stats-data.component';
+import { MyProfileVideosComponent } from './videos-data/videos-data.component';
 
 @NgModule({
   declarations: [
-      MyProfilePage, 
-      ProfileStepDirective,
-      MyProfilePersonalDataComponent,
-      MyProfileSportsComponent,
-      MyProfileStatsComponent,
-      MyProfileGeneralStatsComponent,
-      MyProfileAchievementsComponent
+    MyProfilePage,
+    ProfileStepDirective,
+    MyProfilePersonalDataComponent,
+    MyProfileSportsComponent,
+    MyProfileVideosComponent,
+    MyProfileGeneralStatsComponent,
+    MyProfileAchievementsComponent,
+    MyProfileStatsComponent
   ],
   imports: [
-    IonicPageModule.forChild(MyProfilePage),
+    IonicPageModule.forChild(MyProfilePage), 
     TranslateModule.forChild(),
     FormsModule,
     CommonModule,
     RlTagInputModule,
-    MenuPageModule,
-    ProfileResumeModule,
+    MenuPageModule, 
     PipesModule
   ],
   exports: [
     MyProfilePage, ProfileStepDirective
-  ], 
+  ],
   entryComponents: [
     MyProfilePersonalDataComponent,
     MyProfileSportsComponent,
-    MyProfileStatsComponent,
-    MyProfileGeneralStatsComponent
+    MyProfileVideosComponent,
+    MyProfileGeneralStatsComponent,
+    MyProfileAchievementsComponent,
+    MyProfileStatsComponent
   ],
-  bootstrap:[MyProfilePage],
+  bootstrap: [MyProfilePage],
   providers: [
     StatsList
   ]

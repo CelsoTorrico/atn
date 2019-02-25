@@ -6,10 +6,6 @@
 
         <ion-list *ngFor="let room of $chatMessages.reverse()" [ngClass]="{'viewer-message' : room.viewer }" class="message-row">
 
-          <ion-avatar item-start *ngIf="!room.viewer">
-            <img *ngIf="room.author.profile_img" [src]="room.author.profile_img.value" alt="{{ room.author.display_name | titlecase }}" />
-          </ion-avatar>
-
           <span class="ballon-message">
             {{ room.content }}
             <ion-note item-end></ion-note>

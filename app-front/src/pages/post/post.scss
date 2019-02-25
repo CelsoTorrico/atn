@@ -2,7 +2,11 @@
 
   #feature{
     background: linear-gradient(to top, $button-primary-color, $vermelho-contraste);
-    margin: -5px;
+    padding:0px;
+    margin: 0px;
+    img{
+      width: 100%;
+    }
   }
 
   ion-card-content{

@@ -2,7 +2,7 @@
   <ion-col col-md-2>
     <div class="statsGeneralData">
 
-      <button edit-profile ion-button small end clear icon-only *ngIf="$user_ID == null" (click)="editData('generalData');">
+      <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('generalData');">
         <ion-icon item-start name="create"></ion-icon>
         {{ "EDIT" | translate }}
       </button>
@@ -29,7 +29,7 @@
         <ion-card-header>
           <h2>{{ "IMPORTANT_ACHIEVEMENTS" | translate }}</h2>
 
-          <button edit-profile ion-button small end clear icon-only *ngIf="$user_ID == null" (click)="editData('achievementsData');">
+          <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('achievementsData');">
             <ion-icon item-start name="create"></ion-icon>
             {{ "EDIT" | translate }}
           </button>
@@ -38,7 +38,7 @@
 
         <ion-card-content *ngIf="general">
 
-          <ion-item-group *ngIf="general['titulos-conquistas']">
+          <ion-item-group *ngIf="general['titulos-conquistas'] != (null || undefined), else elseAchieve">
             <ion-row>
               <ion-col col-12 col-sm-6 col-md-4 class="box-titulo" *ngFor="let titulo of general['titulos-conquistas']">
                 <h4 class="box-stats">
@@ -51,6 +51,16 @@
             </ion-row>
           </ion-item-group>
 
+          <ng-template #elseAchieve>
+            
+            {{ "NOT_TO_SHOW" | translate }}
+
+            <ion-label *ngIf="isLogged">
+              {{ "COMPLETE_YOUR_DATA" | translate }}
+            </ion-label>
+
+          </ng-template>
+
         </ion-card-content>
       </ion-card>
     </ion-col>
@@ -62,22 +72,22 @@
         <ion-card-header>
           <h2>{{ "SPORTS_STATS" | translate }}</h2>
 
-          <button edit-profile ion-button small end clear icon-only *ngIf="$user_ID == null" (click)="editData('statsData');">
+          <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('statsData');">
             <ion-icon item-start name="create"></ion-icon>
             {{ "EDIT" | translate }}
           </button>
 
         </ion-card-header>
 
-        <ion-card-content *ngIf="performance">
+        <ion-card-content>
 
-          <ion-item-group *ngFor="let sport of performance.stats | mapToIterable">
+          <div *ngIf="performance.stats != (null || ''), else elseBlock">
+            <ion-item-group *ngFor="let sport of performance.stats | mapToIterable">
 
-            <h3>{{ sport.key | translate | titlecase }}</h3>
+              <h3>{{ sport.key | translate | titlecase | removeTrace }}</h3>
 
-            <ion-row>
-              <ion-col col-12 col-md-6>
-                <ion-item *ngFor="let item of sport.val | mapToIterable">
+              <ion-row>
+                <ion-col class="sport-category-info" col-12 *ngFor="let item of sport.val | mapToIterable">
                   <h4>{{ item.key | translate | titlecase }}</h4>
                   <ul>
                     <li class="box-stats" *ngFor="let i of item.val  | mapToIterable">
@@ -85,14 +95,24 @@
                       {{ i.val }}
                     </li>
                   </ul>
-                </ion-item>
-              </ion-col>
-            </ion-row>
+                </ion-col>
+              </ion-row>
 
+            </ion-item-group>
+          </div>
 
-          </ion-item-group>
+          <ng-template #elseBlock>
+            
+            {{ "NOT_TO_SHOW" | translate }}
+
+            <ion-label *ngIf="isLogged">
+              {{ "COMPLETE_YOUR_DATA" | translate }}
+            </ion-label>
+
+          </ng-template>
 
         </ion-card-content>
+
       </ion-card>
     </ion-col>
   </ion-col>

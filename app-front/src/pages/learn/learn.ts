@@ -53,9 +53,4 @@ export class LearnPage {
 
     }
 
-    //Função que inicializa
-    ngOnInit() {
-        
-    }
-
 }

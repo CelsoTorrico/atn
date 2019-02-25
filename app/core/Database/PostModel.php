@@ -30,7 +30,9 @@ class PostModel extends Medools\Model
     const OPTIONAL_COLUMNS = [
         'post_parent',
         'post_mime_type',
-        'guid'
+        'guid',
+        'post_title',
+        'post_excerpt'
     ];
 
     const STAMP_COLUMNS = [

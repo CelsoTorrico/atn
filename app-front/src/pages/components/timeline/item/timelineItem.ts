@@ -30,7 +30,7 @@ export class TimelineItem {
 
   public currentCommentItems:any[];
 
-  public static getTimelineUrl = 'timeline/';
+  private static getTimelineUrl = 'timeline/';
 
   constructor(
     public api: Api,

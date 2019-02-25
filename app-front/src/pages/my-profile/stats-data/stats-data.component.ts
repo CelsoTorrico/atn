@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, ToastController, ViewController } from 'ionic-angular';
+import { ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
+import { NgForm, FormGroup } from '@angular/forms';
 
 
 @Component({
@@ -12,61 +13,30 @@ import { StatsList } from '../../../providers/useful/stats';
 })
 export class MyProfileStatsComponent {
 
+    public groupStats:FormGroup;
+
     type: number = null;
 
     sport: any[] = [];
 
-    jogos: any = {
-        value: <string>'',
-        visibility: <number>null
-    }
-
-    vitorias: any = {
-        value: <string>'',
-        visibility: <number>null
-    }
-
-    derrotas: any = {
-        value: <string>'',
-        visibility: <number>null
-    }
-
-    empates: any = {
-        value: <string>'',
-        visibility: <number>null
-    }
-
-    titulos: any = {
-        value: <string>'',
-        visibility: <number>null
-    }
-
-    titulos_conquistas: any = {
-        value: <string>'',
-        visibility: <number>null
-    }
-
     stats: any = {
         value: <any>[],
-        visibility: <number>null
+        visibility: <number>null 
     }
 
-    stats_sports: any = {
-        value: <any>[],
-        visibility: <number>null
-    }
+    public statsLoaded:boolean = false;
 
     public loginErrorString;
 
-    public statsFields: any[] = [];
+    public addFormData: any;
 
-    private static $getProfile: string = 'user/self';
+    public statsFields: any = [];
+
+    public visibility:any;
 
     constructor(
-        public navCtrl: NavController,
         public user: User,
         public api: Api,
-        public toastCtrl: ToastController,
         public viewCtrl: ViewController,
         public translateService: TranslateService,
         public statsList: StatsList) {
@@ -74,39 +44,20 @@ export class MyProfileStatsComponent {
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
         })
-    }
 
-    //Função que inicializa
-    ngOnInit() {
-        this.currentUser();
-    }
-
-    private currentUser() {
-
-        this.user._userObservable.subscribe((resp: any) => {
-
-            //Se não existir items a exibir
-            if (resp.length <= 0) {
-                return;
-            }
+        //Função a ser executada após requisição de dados de usuário
+        this.addFormData = function ($this:any) {
 
             //Adicionando valores a classe user
-            let atributes = this.user._user;
-
-            //Intera sobre objeto e atribui valor aos modelos de metadata
-            for (var key in atributes.metadata) {
-                if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
-                    this[key] = atributes.metadata[key];
-                }
-            }
+            let atributes = $this.user._user;
 
             //Atribuindo dados aos modelos
-            this.type = atributes.type.ID;
-            this.sport = atributes.sport;
-            this.titulos_conquistas = atributes.metadata['titulos-conquistas'];
+            $this.type  = atributes.type.ID;
+            $this.sport = atributes.sport;
+
 
             //Adicionando campos de acordo com os esportes definidos
-            this.sport.forEach(element => {
+            $this.sport.forEach(element => {
 
                 //retorna esporte atual
                 let sport = element.sport_name;
@@ -114,30 +65,137 @@ export class MyProfileStatsComponent {
                 //Faz a modificação de cada letra para padrão usado
                 for (var i = 0; i < element.sport_name; i++) {
                     let currentChar = element.sport_name.charAt(i);
-                    let changed = this.subsChar(currentChar);
+                    let changed = $this.subsChar(currentChar);
                     sport.replace(currentChar, changed);
                 }
 
                 //Nome do esporte reformatado
                 let sport_name = sport.toLowerCase();
 
-                //Adiciona ao array de objetos
-                this.statsFields.push({
-                    [sport_name]: this.statsList.statsList[sport_name]
-                });
+                //Key para atribuir propriedades
+                let key = sport_name.replace(/ /g, '-');   
 
-                console.log(this.statsFields);
+                $this.statsFields.push(key);
 
             });
 
-        }, err => {
-            return;
+            //Preenche modelo com campos e valores já preenchidos
+            $this.stats.value.push($this.compareAndFill());
+
+            $this.statsLoaded = true;  
+
+            $this.getVisibility();
+        }
+    }
+
+    ionViewDidLoad(){
+        this.user.subscribeUser(this.addFormData, this);
+    }
+
+    //Função que inicializa
+    ngOnInit() {
+        this.statsLoaded = true;
+    }
+
+    getVisibility(){
+        //Retorna opções de visibilidade
+        this.user._visibilityObservable.subscribe((resp:any) => {
+            if(Object.keys(resp).length > 0){
+                this.visibility = resp;
+            }
         });
+    }
+
+    defineTypeInput($name:string){
+        
+        //Verificar se tipo de campo deve ser
+        let string = $name.search(/(Evento|Especialidade|Resultado|Oponente|Grupo|Time)/); //text
+        let date = $name.search(/Data/); //date
+
+        //se encontrou string retorna tipo
+        if(string >= 0){
+            return 'text'; 
+        }
+        //retorna tipo data
+        if(date >= 0){
+            return 'date'
+        }
+
+        return 'number';        
+    }
+
+    /** Adicionar um novo item para multiplos campos */
+    addMore($parentModel:string, $event, $labels:any = [null,null,null]) { 
+
+        $event.preventDefault();
+
+        //Se valor for nulo, recondicionar para array
+        if(this[$parentModel].value == null){
+            this[$parentModel].value = [];
+        }
+
+        //Atribui novo item ao array
+        this[$parentModel].value.push($labels);
+
+    }
+
+    remove($itemToDelete:string, $index:number){
+        
+        //Se valor for nulo, recondicionar para array
+        if(this[$itemToDelete].value == null){
+            return;
+        }
+
+        //Atribui novo item ao array
+        this[$itemToDelete].value.splice($index);
+    }
+
+    //Salvar dados do formulário
+    save(form: NgForm, $event) {
+
+        $event.preventDefault();
+
+        //Campos válidos
+        let saveFields:any = {
+            stats: this.stats
+        }
+
+        //Realiza update de dados do usuario
+        let resp = this.user.update(saveFields);
+
+        if(resp){
+            this.dismiss();
+        }
+
     }
 
     //Fechar modal
     dismiss() {
         this.viewCtrl.dismiss();
+    }
+
+    //Função para preencher o modelo de estatísticas com datas provenientes do BD
+    compareAndFill(){
+
+        this.statsFields.forEach(function(element, index, array){
+
+            //Adiciona ao array de objetos
+            this.stats.value.push({ [element]:  this.statsList.getSportProperty(element) });
+
+            //Percorre atributos do atleta e preenche os campos já anteriormente já preenchidos
+            let sportCategory = this.user._user.metadata.stats.value[element]
+
+            //percorre objetos e atribui valor
+            for (const key in sportCategory) {
+                for (const p in sportCategory[key]) {
+                    let data = sportCategory[key][p];
+                    if(data == ''){ return }
+                    this.stats.value[index][element][key][p] = data;
+                }   
+            }
+                        
+        }, this);  
+
     }
 
     private subsChar(c) {
@@ -147,8 +205,7 @@ export class MyProfileStatsComponent {
             'Ê': 'E', 'Ë': 'E', 'Ì': 'I', 'Í': 'I', 'Î': 'I', 'Ï': 'I', 'Ñ': 'N', 'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O', 'Ø': 'O', 'Ù': 'U',
             'Ú': 'U', 'Û': 'U', 'Ü': 'U', 'Ý': 'Y', 'Þ': 'B', 'ß': 'Ss', 'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a', 'æ': 'a', 'ç': 'c',
             'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e', 'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i', 'ð': 'o', 'ñ': 'n', 'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o',
-            'ö': 'o', 'ø': 'o', 'ù': 'u', 'ú': 'u', 'û': 'u', 'ý': 'y', 'þ': 'b', 'ÿ': 'y',
-            ' ': '-'
+            'ö': 'o', 'ø': 'o', 'ù': 'u', 'ú': 'u', 'û': 'u', 'ý': 'y', 'þ': 'b', 'ÿ': 'y', '\s' : '-'
         };
 
         return chars[c];

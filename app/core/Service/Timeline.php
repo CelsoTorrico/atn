@@ -480,8 +480,8 @@ class Timeline {
             ['option' => 'Privado', 'value' => 1]
         ];
 
-        //Se usuário for pertecente a um clube
-        if ($this->currentUser->type['ID'] == 2) {
+        //Se usuário for pertecente a um clube, adicionar visibilidade para posts privados para somente os pertencentes ao grupo
+        if (!is_null($this->currentUser->clubs) && $this->currentUser->type['ID'] == 2) {
             foreach ($this->currentUser->clubs as $key => $value) {
                 $levels[] = ['option' => $value['club_name'], 'value' => $value['ID']];
             } 

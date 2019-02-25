@@ -13,14 +13,13 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
-
 import { Settings, User, Api } from '../providers';
 import { MyApp } from './app.component';
 import { MenuPageModule } from '../pages/components/menu/menu.module';
 import { BrazilStates } from '../providers/useful/states';
-import { NgChartjsModule } from 'ng-chartjs';
 import { PipesModule } from '../pipes/pipes.module';
 import { MyProfilePageModule } from '../pages/my-profile/my-profile.module';
+import { ChartModule } from 'angular2-chartjs';
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -58,13 +57,14 @@ export function provideSettings(storage: Storage) {
       }
     }),
     IonicModule.forRoot(MyApp),
-    IonicStorageModule.forRoot(),
+    IonicStorageModule.forRoot(),  
     MenuPageModule, 
     LoginPageModule,
     SignupStepsModule, 
     DashboardPageModule,
     MyProfilePageModule,
-    PipesModule
+    PipesModule,
+    ChartModule
   ],
   exports: [],
   bootstrap: [IonicApp],

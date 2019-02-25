@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ToastController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -41,50 +42,83 @@ export class MyProfileGeneralStatsComponent {
 
     public statsFields: any[] = [];
 
-    private static $getProfile: string = 'user/self';
+    public addFormData: any;
+
+    public visibility: any;
 
     constructor(
         public user: User,
         public api: Api,
-        public toastCtrl: ToastController,
         public viewCtrl: ViewController,
         public translateService: TranslateService) {
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
         })
-    }
 
-    //Função que inicializa
-    ngOnInit() {
-        this.currentUser();
-    }
-
-    private currentUser() {
-
-        this.user._userObservable.subscribe((resp: any) => {
-
-            //Se não existir items a exibir
-            if (resp.length <= 0) {
-                return;
-            }
+        //Função a ser executada após requisição de dados de usuário
+        this.addFormData = function ($this:any) {
 
             //Adicionando valores a classe user
-            let atributes = resp;
+            let atributes = $this.user._user;
 
             //Intera sobre objeto e atribui valor aos modelos de metadata
             for (var key in atributes.metadata) {
-                if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
-                    this[key] = atributes.metadata[key];
+                if (atributes.metadata.hasOwnProperty(key) && $this[key] != undefined) {
+                    $this[key] = atributes.metadata[key];
                 }
             }
 
             //Atribuindo dados aos modelos
-            this.type = atributes.type.ID;
+            $this.type = atributes.type.ID;
 
-        }, err => {
-            return;
+            //Lista de Visibilidades
+            $this.getVisibility();
+        }
+    }
+
+    //Função que inicializa
+    ngOnInit() {
+        this.user.subscribeUser(this.addFormData, this);
+    }
+
+    getVisibility(){
+        //Retorna opções de visibilidade
+        this.user._visibilityObservable.subscribe((resp:any) => {
+            if(Object.keys(resp).length > 0){
+                this.visibility = resp;
+            }
         });
+    }
+
+    //Salvar dados do formulário
+    save(form: NgForm, $event) {
+
+        $event.preventDefault();
+
+        //Campos válidos
+        let saveFields:any = {
+            jogos: null,
+            vitorias: null,
+            derrotas: null, 
+            empates: null,        
+            titulos: null 
+        }
+
+        //Intera sobre objeto e atribui valor aos modelos de metadata
+        for (var key in saveFields) {
+            if (this.hasOwnProperty(key) && this[key] != undefined) {
+                saveFields[key] = this[key];
+            }
+        }
+
+        //Realiza update de dados do usuario
+        let resp = this.user.update(saveFields);
+
+        if(resp){
+            this.dismiss();
+        }
+
     }
 
     //Fechar modal

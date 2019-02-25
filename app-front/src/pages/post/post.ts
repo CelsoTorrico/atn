@@ -6,81 +6,135 @@ import { TranslateService } from '@ngx-translate/core';
 
 @IonicPage()
 @Component({
-  selector: 'post',
-  templateUrl: 'post.html'
+    selector: 'post',
+    templateUrl: 'post.html'
 })
 export class PostPage {
-  
-  public $ID:number;
 
-  public currentPostItem:any = {
-    ID: '',
-    attachment: '',
-    guid: '',
-    post_author: {
-      ID: '',
-      display_name: '',
-      profile_img: {
+    public $ID: number;
 
-      }
-    },
-    post_content: '',
-    post_date: '',
-    post_type: '',
-    quantity_comments: ''
-  }; 
+    public currentUser:any = {
+        ID: "",
+        display_name: "",
+        metadata: {
+            profile_img:{
+                value: ""
+            }
+        }
+    };
 
-  public favoriteMembers:any[];
+    public currentPostItem: any = {
+        ID: '',
+        attachment: '',
+        guid: '',
+        post_author: {
+            ID: '',
+            display_name: '',
+            profile_img: {
 
-  public loginErrorString;
+            }
+        },
+        post_content: '',
+        post_date: '',
+        post_type: '',
+        quantity_comments: ''
+    };
 
-  private $getPostUrl:string = 'learn/';
-  
-  constructor(
-      public navCtrl: NavController,
-      public user: User,
-      public api: Api,
-      public toastCtrl: ToastController,
-      public translateService: TranslateService,
-      private params: NavParams ) {
+    public commentText: string;
+    public currentCommentItems: any;
 
-      this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-          this.loginErrorString = value;
-      })
+    public loginErrorString;
 
-      //Adicionando enviadors da view anterior
-      this.$ID = this.params.get('post_id');
+    private $getPostUrl: string = 'learn/';
 
-  }
+    constructor(
+        public navCtrl: NavController,
+        public user: User,
+        public api: Api,
+        public toastCtrl: ToastController,
+        public translateService: TranslateService,
+        private params: NavParams) {
+
+        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
+            this.loginErrorString = value;
+        })
+
+        //Adicionando enviadors da view anterior
+        this.$ID = this.params.get('post_id');
+
+    }
 
     //Função que inicializa
     ngOnInit() {
 
+        this.user.subscribeUser(function ($this) {
+            $this.currentUser = $this.user._user;
+        }, this);
+
         //Carrega dados do usuário de contexto
         this.getPost();
-    
-    }   
-    
-    public setPostUrl(){
-        //Adiciona url para exibir perfis de conexão
-        return this.$getPostUrl = ''; 
+
     }
 
-    public getPost(){
+    public setPostUrl() {
+        //Adiciona url para exibir perfis de conexão
+        return this.$getPostUrl = '';
+    }
+
+    public getPost() {
 
         //Retorna a lista de esportes do banco e atribui ao seletor
-        this.user._user = this.api.get(this.$getPostUrl + this.$ID).subscribe((resp:any) => {
+        this.user._user = this.api.get(this.$getPostUrl + this.$ID).subscribe((resp: any) => {
 
             //Se não existir items a exibir
-            if(resp.length <= 0){
+            if (resp.length <= 0) {
                 return;
             }
-            
+
             //Adicionando valores a variavel global
             this.currentPostItem = resp;
 
-        }, err => { 
-            return; 
+            //Adiciona lista de comentários
+            this.currentCommentItems = this.currentPostItem.list_comments;
+
+        }, err => {
+            return;
+        });
+
+    }
+
+    //Submeter um comentário ao post
+    submitComment($postID: number, $event) {
+
+        $event.preventDefault();
+
+        //Enviado um comentário a determinada timeline
+        let items = this.api.post('timeline/' + $postID, { comment_content: this.commentText }).subscribe((resp: any) => {
+
+            //Se não existir items a exibir
+            if (resp.length <= 0) {
+                return;
+            }
+
+            //Sucesso 
+            if (resp.success != undefined) {
+
+                //Reseta formulário e esconde
+                this.commentText = '';
+
+                let toast = this.toastCtrl.create({
+                    message: resp.success.comment,
+                    duration: 8000,
+                    position: 'bottom'
+                });
+
+                toast.present();
+
+                this.getPost();
+            }
+
+        }, err => {
+            return;
         });
 
     }

@@ -1,67 +1,82 @@
-import { ToastController, NavParams } from 'ionic-angular';
+import { ToastController, NavParams, AlertController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { Api } from '../../../../providers';
+import { Api, User } from '../../../../providers';
 
 @Component({
   selector: 'timeline-single',
-  templateUrl: 'timeline-single.html',
-  styles: [`
-    ion-note{
-      margin: auto 0px auto auto;
-      display: inline-block;
-      float: right;
-    }
-  `]
+  templateUrl: 'timeline-single.html'
 })
-export class TimelineSingle{
+export class TimelineSingle {
 
-  public $postID:number;
-  
-  @Input() public currentTimeline:any = {
+  public $postID: number;
+
+  public currentUser:any = {
+      ID: "",
+      display_name: "",
+      metadata: {
+          profile_img:{
+              value: ""
+          }
+      }
+  };
+
+  @Input() public currentTimeline: any = {
     ID: '',
     post_author: {
       ID: '',
       display_name: '',
-      profile_img: {}
+      profile_img: { 
+        value: null
+      }
     },
     post_date: '',
     post_content: '',
     attachment: '',
     quantity_comments: ''
-  }; 
+  };
 
-  public commentText:string; 
+  @Output() timelineDeleted = new EventEmitter();
 
-  public commentShow:any;
+  public commentText: string;
+
+  public commentShow: any;
 
   constructor(
+    public user: User,
     private toastCtrl: ToastController,
+    private alert: AlertController,
     private api: Api,
-    private navCtrl:NavController) {} 
+    private navCtrl: NavController) {}
 
   //Retorna
   ngOnInit() {
-    
+    this.getCurrentUser();
+  }
+
+  getCurrentUser(){
+    this.user.subscribeUser(function($this){
+      $this.currentUser = $this.user._user; 
+    }, this);
   }
 
   //Carregar comentários
-  setLike($postID:number, event) {
-    
+  setLike($postID: number, event) {
+
     event.preventDefault();
 
-    this.api.get('like/' + $postID).subscribe((resp:any) => {
-        
-      if(resp.success != undefined){
-          let el = event.target.parentNode;
-          if(el.classList.contains("active")){ 
-            el.classList.remove("active");
-            el.classList.add("inactive");
-          } else { 
-            el.classList.add("active")
-            el.classList.remove("inactive"); 
-          }
+    this.api.get('like/' + $postID).subscribe((resp: any) => {
+
+      if (resp.success != undefined) {
+        let el = event.target.parentNode;
+        if (el.classList.contains("active")) {
+          el.classList.remove("active");
+          el.classList.add("inactive");
+        } else {
+          el.classList.add("active")
+          el.classList.remove("inactive");
+        }
       }
 
     });
@@ -75,51 +90,80 @@ export class TimelineSingle{
   }
 
   //Deletar um comentário
-  deleteTimeline($postID:number, $event) {
-    
+  deleteTimeline() {
+
+    let confirmDelete = this.alert.create({
+      title: 'YOU_WILL_EXCLUDE_POST',
+      subTitle: 'You sure about this action?',
+      buttons: [{
+        text: 'DELETE',
+        handler: data => {
+          this.api.delete('timeline/' + this.currentTimeline.ID).subscribe((resp: any) => {
+
+            //Se não existir items a exibir
+            if (Object.keys(resp).length <= 0) {
+              return;
+            }
+
+            //Sucesso 
+            if (resp.success != undefined) {
+              //Emite um evento para ser capturado pelo componente pai
+              this.timelineDeleted.emit(this.currentTimeline.ID);
+            }
+
+          }, err => {
+            return;
+          });
+        }
+      }, {
+        text: 'CANCEL',
+      }]
+    });
+
+    confirmDelete.present();
+
   }
 
-  
   //Submeter um comentário ao post
-  submitComment($postID:number, $event) {
-    
+  submitComment($postID: number, $event) {
+
     $event.preventDefault();
 
     //Enviado um comentário a determinada timeline
-    let items = this.api.post('timeline/'+ $postID, {comment_content : this.commentText}).subscribe((resp:any) => {
-       
+    let items = this.api.post('timeline/' + $postID, { comment_content: this.commentText }).subscribe((resp: any) => {
+
       //Se não existir items a exibir
-      if(resp.length <= 0){
+      if (resp.length <= 0) {
         return;
       }
 
       //Sucesso 
-      if(resp.success != undefined){
+      if (resp.success != undefined) {
 
         //Reseta formulário e esconde
         this.commentText = '';
         this.commentShow = false;
-        
+
         let toast = this.toastCtrl.create({
           message: resp.success.comment,
           duration: 8000,
-          position:'bottom'
+          position: 'bottom'
         });
 
         toast.present();
-      }     
+      }
 
-    }, err => { 
-        return; 
-    }); 
-    
+    }, err => {
+      return;
+    });
+
   }
 
   //Abre uma nova página de profile
-  goToProfile($user_id:number){
+  goToProfile($user_id: number) {
     this.navCtrl.push('ProfilePage', {
       user_id: $user_id
-    }); 
+    });
   }
 
 

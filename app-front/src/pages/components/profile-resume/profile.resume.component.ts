@@ -1,15 +1,22 @@
 import { Observable } from 'rxjs/Observable';
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { NavController, ModalController } from 'ionic-angular';
 import { Api, User } from '../../../providers';
+import { ChartComponent } from 'angular2-chartjs';
 
 @Component({
     selector: 'profile-resume',
-    templateUrl: "profile-resume.html",
+    templateUrl: "profile-resume.html", 
 })
 export class ProfileResumeComponent implements OnInit{
 
+    @Input() user:User;
+
+    @Input() isLogged:boolean;
+
     @Output() changeViewEvent = new EventEmitter<any>();
+
+    @ViewChild(ChartComponent) chart: ChartComponent;
 
     ID: number = null;
 
@@ -37,7 +44,32 @@ export class ProfileResumeComponent implements OnInit{
 
     public views: any[] = null;
 
-    constructor(public navCtrl: NavController, private user: User, private api: Api) {
+    /** Upload de Photo */
+    uploadPhoto:any;
+
+    //Chart - Estatistica
+    // Pie
+    typeChart = 'doughnut';
+    data = {
+        labels: ["Vitórias", "Empates", "Derrotas"],
+        datasets: [
+            {
+            label: "",
+            data: [0,0,0]
+            }
+        ]
+    };
+    options = {
+        legend:{
+            display: false
+        },
+        responsive: true,
+        maintainAspectRatio: false
+    };
+
+    constructor(
+        public navCtrl: NavController, 
+        private api: Api) {
 
         // used for an example of ngFor and navigation
         this.views = 
@@ -50,6 +82,23 @@ export class ProfileResumeComponent implements OnInit{
         this.fillUserData();
     }
 
+    changePhoto($event) {
+
+        if ($event.target.files[0] == undefined) {            
+            return false;
+        }
+        
+        //Convertendo data em objeto FormData
+        let formData = new FormData();        
+
+        //O campo de imagem deve permanecer na ordem
+        let file = $event.target.files[0];
+        formData.append('profile_img', file, file.name);
+
+        //Para envio de imagens {{ options }}
+        let response = this.user.update(formData, true);        
+    }
+
     //Adiciona valores as variaveis globais
     fillUserData() {
 
@@ -57,7 +106,7 @@ export class ProfileResumeComponent implements OnInit{
         this.user._userObservable.subscribe((resp: any) => {
 
             //Se não existir items a exibir
-            if (resp.length <= 0) {
+            if (Object.keys(resp).length <= 0) { 
                 return;
             }
 
@@ -69,6 +118,7 @@ export class ProfileResumeComponent implements OnInit{
             this.display_name = atributes.display_name;
             this.type = atributes.type.ID;
             this.sport = atributes.sport;
+            this.favorite = atributes.favorite;
 
             if(atributes.metadata.hasOwnProperty('profile_img')){
                 this.profile_img = atributes.metadata.profile_img.value;
@@ -118,14 +168,22 @@ export class ProfileResumeComponent implements OnInit{
                 }
             }
 
+            this.data.datasets[0].data = [
+                Number(this.aproveitamento['%-vitorias']),
+                Number(this.aproveitamento['%-empates']),
+                Number(this.aproveitamento['%-derrotas']),
+            ]
+
+            this.chart.chart.update();
+
         }, err => {
             return;
         });
     }
 
-    //Abre Modal e envia dados do usuário atual
+    //Seleciona uma novo componente a exibir emitindo evento 
     loadView($view: any) {
-        //Emite um evento para ser capturado pelo pais
+        //Emite um evento para ser capturado pelo componente pai
         this.changeViewEvent.emit($view.component);
     }
 

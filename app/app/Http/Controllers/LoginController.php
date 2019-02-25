@@ -34,7 +34,12 @@ class LoginController extends Controller
      * @param string $driver = [facebook|google] 
      * */
     public function socialProvider($driver)
-    {
+    {   
+        //Se for resposta para ser processada
+        if($driver == 'authorized'){
+            return $this->socialCallback($driver);
+        }
+
         return Socialite::driver($driver)->stateless()->redirect();
     }
 
@@ -128,9 +133,30 @@ class LoginController extends Controller
     }
 
     /** Logout */
+    function forgetPassword(Request $request){
+        
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->has('user_email')){
+            return response(['error' =>["forget-password", "Email de usuário não fornecido! Tente novamente!"]]); 
+        }
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->filled('user_email')){
+            return response(['error' =>["forget-password", "Email válido não enviado. Tente novamente"]]); 
+        }
+        
+        //Realiza o login
+        return $this->login->forgetPassword($request->input('user_email'));
+    }
+
+    /** Logout */
     function logout(){
-        $result = $this->login->setLogout();
-        return response()->json($result);
+        
+        //Expira o cookie atual
+        $expiredCookie = app('cookie')->forget(env('APPCOOKIE'), '/', env('APP_DOMAIN'));
+
+        //Retorna resposta com cookie expirado
+        return response(['success' => ['logout' => 'Deslogado com sucesso!']])->withCookie($expiredCookie);
     }
 
     //Retorna token na classe 'Login'

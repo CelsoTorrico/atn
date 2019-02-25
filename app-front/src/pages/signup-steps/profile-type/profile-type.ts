@@ -103,7 +103,7 @@ export class ProfileType{
         //Adiciona tipo de usuário selecionado
         this.$account.type  = this.$typeUserSelected;
 
-        //Inicializa array
+        //Inicializa objeto com array
         this.$account.sport = [];
         
         //Define ID's dos esportes selecionados
@@ -117,7 +117,11 @@ export class ProfileType{
     }
 
     //Insere novo usuário no banco
-    private insertRegister(body:any){        
+    private insertRegister(body:any){    
+        
+        //Injetando navControler
+        this.user.injectNavCtrl(this.navCtrl);
+
         //executa função de registrar
         this.user.signup(body);
     }

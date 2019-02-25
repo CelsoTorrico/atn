@@ -1,4 +1,3 @@
-import { style } from '@angular/core/src/animation/dsl';
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
@@ -9,17 +8,15 @@ import { NavController } from 'ionic-angular';
     <ion-item-divider>
     <ion-row>
     <ion-col col-md-8>
-        <ion-list>           
-            
-          <ion-thumbnail slot="start" *ngIf='currentLearnItem.post_image'>
-              <img />
-          </ion-thumbnail>
-          
-          <h2>{{ currentLearnItem.post_title }}</h2>
-          
-          <p>{{ currentLearnItem.post_excerpt }}</p>           
+        
+        <ion-thumbnail float-left margin-right slot="start" *ngIf='currentLearnItem.attachment'>
+            <img [src]="currentLearnItem.attachment" />
+        </ion-thumbnail> 
 
-        </ion-list>    
+        <h2>{{ currentLearnItem.post_title }}</h2>
+
+        <p>{{ currentLearnItem.post_excerpt }}</p>
+
         <ion-list>
           <ion-list>
                 <p>
@@ -54,6 +51,11 @@ import { NavController } from 'ionic-angular';
     h2{
       font-size: 2.0rem;
       margin-bottom: 20px;
+      white-space: normal !important;
+    }
+
+    ion-label{
+      white-space: normal !important;
     }
 
   `]

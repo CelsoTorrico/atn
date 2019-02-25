@@ -12,14 +12,6 @@ import { Api } from '../../../../providers';
     ion-card{
       position:relative;
     }
-
-    .close-button{
-      position:absolute;
-      padding: 5px;
-      top: 5px;
-      right: 5px;
-      cursor: pointer;
-    }
   `]
 })
 export class NotifySingle {

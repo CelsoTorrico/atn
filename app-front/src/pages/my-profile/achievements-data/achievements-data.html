@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-        {{ "IMPORTANTS_ACHIEVEMENTS" | translate}}
+      {{ "IMPORTANTS_ACHIEVEMENTS" | translate}}
     </ion-title>
     <ion-buttons start>
       <button ion-button (click)="dismiss()">
@@ -12,33 +12,49 @@
 </ion-header>
 <ion-content>
 
-  <form #sportsData="ngForm" (submit)="save(sportsData, $event)">
+  <form #achievementsData="ngForm" (submit)="save(achievementsData, $event)">
 
-    <ion-list ngModelGroup="groupTitulos" #titulosCtrl="ngModelGroup" ngControl="test">
 
-      <ion-select name="visibility" [(ngModel)]="titulos_conquistas.visibility" interface="popover">
-        <ion-option *ngFor="let item of visibility" [value]="item.value">
-          {{item.option}}
-        </ion-option>
-      </ion-select>
+    <ion-item-group>
 
-      <ion-grid>
-        <ion-row *ngFor="let item of titulos_conquistas.value; let i = index;">
-          <ion-col col-md-4 *ngFor="let n of ['INSTITUTE','COURSE','YEAR']; let a = index">
-            <ion-item>
-              <ion-label stacked>{{ n | translate}} </ion-label>
-              <ion-input type="text" [ngModel]="titulos_conquistas.value[i][a]" [name]="titulos_conquistas.value[i][a]"></ion-input>
-            </ion-item>
-          </ion-col>
-        </ion-row>
+      <ion-list ngModelGroup="groupFormacao" #formacaoCtrl="ngModelGroup" ngControl="test">
 
-        <ion-item>
-          <button ion-button item-end (click)="addMore(titulos_conquistas, $event)">{{ "ADD_MORE" | translate }}</button>
-        </ion-item>
+        <ion-list-header>
+          {{ "FORMATION" | translate}}
+        </ion-list-header>
 
-      </ion-grid>
+        <ion-select name="visibility" [(ngModel)]="titulos_conquistas.visibility" interface="popover">
+          <ion-option *ngFor="let item of visibility" [value]="item.value">
+            {{item.option}}
+          </ion-option>
+        </ion-select>
 
-    </ion-list>
+        <ion-grid>
+          <ion-row *ngFor="let item of titulos_conquistas.value; let i = index; trackBy:customTrackBy">
+            <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index; first as isFirst;">
+              <ion-item>
+                <ion-label stacked>{{ n | translate}} </ion-label>
+                <ion-input [type]="(isFirst == true)? 'number' : 'text'" min="0" 
+                [(ngModel)]="titulos_conquistas.value[i][a]" [name]="'titulos_conquistas.value['+ i +']['+ a +'][]'"></ion-input>
+              </ion-item>
+            </ion-col>
+            <div class="close-button" (click)="remove('titulos_conquistas', i)">
+              <ion-icon name="close-circle"></ion-icon>
+              {{ "REMOVE" | translate }}
+            </div>
+          </ion-row>
+
+          <ion-item>
+            <button ion-button outline item-end (click)="addMore('titulos_conquistas', $event)">
+              <ion-icon item-start name="add-circle"></ion-icon>
+              {{ "ADD_MORE" | translate }}
+            </button>
+          </ion-item>
+
+        </ion-grid>
+      </ion-list>
+
+    </ion-item-group>
 
     <ion-item>
       <button type="submit" ion-button full>{{'SAVE' | translate}}</button>

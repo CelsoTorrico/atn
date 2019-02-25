@@ -4,6 +4,7 @@
     padding: 25px;
     margin-bottom: 0px;
     background-color: #f9edeb;
+    border: 1px solid #ddd;
 
     .ballon-message {
       padding: 15px;
@@ -38,6 +39,7 @@
     background-color: $branco;
     width: 100%;
     box-shadow: 0px -5px 30px -10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ddd;
   }
 
 }

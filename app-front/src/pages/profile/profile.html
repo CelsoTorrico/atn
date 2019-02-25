@@ -6,7 +6,7 @@
 
   </ion-navbar>
 
-  <profile-resume (changeViewEvent)="changeComponentView($event)">
+  <profile-resume (changeViewEvent)="changeComponentView($event)" [user]="currentUser" [isLogged]="isLogged">
   </profile-resume><!-- Resumo de Perfil -->
 
 </ion-header>
@@ -21,17 +21,22 @@
 
         <ion-buttons item-end>
 
-          <button ion-button small icon-end favorite (click)="followProfile($event)" [ngClass]="{'outline': favorite === true, 'clear': favorite != true}">
-            {{ "FOLLOW" | translate }}
-            <ion-icon md="md-checkmark"></ion-icon>
+          <button *ngIf="isLogged == false"  ion-button small icon-end clear 
+          (click)="followProfile($event)"> 
+            {{ (following == true)? 'FOLLOWING': 'FOLLOW' | translate }}
+            <ion-icon item-end [name]="(following == true)? 'checkmark-circle': ''"></ion-icon>
           </button>
 
           <button ion-button small outline (click)="downloadProfilePDF()">
             {{ "DOWNLOAD_PROFILE" | translate }}
           </button>
 
-          <button ion-button small outline (click)="sendProfileMessage()">
+          <button *ngIf="following" ion-button small outline (click)="sendChatMessage()">
             {{ "MESSAGE" | translate }}
+          </button>
+
+          <button *ngIf="following" ion-button small outline (click)="sendProfileMessage()">
+            {{ "SEND_EMAIL" | translate }}
           </button>
 
         </ion-buttons>

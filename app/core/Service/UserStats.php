@@ -116,7 +116,12 @@ class UserStats {
     public function setStats():void{
         
         //Se não houver estatisticas
-        if (!isset($this->meta['stats']) || empty($this->meta['stats'])) {
+        if (!isset($this->meta['stats']) || empty($this->meta['stats'] )) {
+            return;
+        }
+
+        //Se não houve carregamento de esportes para comparação
+        if(is_null($this->attr)){
             return;
         }
 
@@ -134,7 +139,7 @@ class UserStats {
             //Percorre array de atributos de vários esportes
             //Função para atribuir vários esportes
             foreach ($diff as $key => $value) {
-                $this->arrangeInsertedData($userstats['value'][$key]);
+                $this->arrangeInsertedData([$key => $userstats['value'][$key]]);
             }
         }
 
@@ -147,8 +152,8 @@ class UserStats {
      */
     public function arrangeStatsToUpdate(array $meta_value):void {
 
-        foreach ($this->attr as $key => $value) {
-            $this->arrangeInsertedData($meta_value[$key]);
+        foreach ($meta_value['value'] as $key => $value) {
+            $this->arrangeInsertedData($value);
         }
     }
 
@@ -160,7 +165,7 @@ class UserStats {
      * */
     public function getStatsToUpdate():array{
 
-        //Se estatisticas nã forem encontradas criar um novo
+        //Se parametro de estatisticas não forem encontradas criar um novo
         if (!array_key_exists('stats', $this->meta)) {
             $this->meta['stats']['value'] = [];
         }
@@ -168,8 +173,13 @@ class UserStats {
         //Atribui estatisticas existentes a var
         $currentStats = $this->meta['stats']['value'];
 
+        //Se estatisticas estiveren nula, atribuir atributos vazios
+        if(is_null($this->stats)){
+            $this->stats = $this->attr;
+        }
+
         //Percorrer estatisticas e atribuir novos dados
-        foreach ($this->stats as $sport => $stats) {
+        foreach ($this->stats as $sport => $stats) { 
 
             //Se esporte existir no perfil, atualiza os dados já preenchidos
             if (array_key_exists($sport, $currentStats)) {
@@ -199,33 +209,47 @@ class UserStats {
      * */
     private function arrangeInsertedData($stats) {
 
+        //Se estatisticas não estiver no formato de array
+        if(!is_array($stats)){
+            return;
+        } 
+        
         //Retorna a chave atual
-        $currentSport = key($this->attr);
+        $currentSport = key($stats);
         
         //Key escapados para coincidir
         $arr = [];
-        foreach ($stats as $item => $content) {
+        /*foreach ($stats[$currentSport] as $item => $content) {
             $arr[$this->subsChar($item)] = $content; //escape    
+        }*/
+
+        $arr = $stats[$currentSport];
+        //Verifica se esporte existe no array de atributos
+        if(!array_key_exists($currentSport, $this->attr)){
+            return false;
         }
 
         //Percorre array para atribuir dados
         foreach ($this->attr[$currentSport] as $key => $value) {   
             
             //Setando variavel
-            $key = $this->subsChar($key); //escape            
+            //$key = $this->subsChar($key); //escape            
 
             foreach($value as $i => $c){
                 
                 //Converte key em formato escapado
-                $i = $this->subsChar($i);  
+                //$i = $this->subsChar($i);  
                 
                 //Se key não existir, próximo key
                 if (!isset( $arr[$key]) || !array_key_exists($i, $arr[$key])){
                     continue;
                 }
 
+                //Campos de strings comuns
+                $this->stats[$currentSport][$key][$i] = $arr[$key][$i];
+
                 //Verifica se chaves coincidem e que valor deve ser número
-                if (!in_array($i, ['time']) && !empty($arr[$key][$i])) {
+                /*if (!in_array($i, ['time']) && !empty($arr[$key][$i])) {
                     preg_match('/[-0-9]+/', $arr[$key][$i], $insert);
                     //Atribui valor via regex
                     $this->stats[$currentSport][$key][$i] = (int) $insert[0];
@@ -233,7 +257,7 @@ class UserStats {
                 else {
                     //Campos de strings comuns
                     $this->stats[$currentSport][$key][$i] = $arr[$key][$i];
-                }
+                }*/
 
             }  
 

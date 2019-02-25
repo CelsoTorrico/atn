@@ -25,7 +25,7 @@
     }
 
     @media screen and (min-width:1024px){
-        &.login, &.page-signup-steps, &.page-profile-type{
+        &.login, &.page-signup-steps, &.page-profile-type, &.page-success{
             .scroll-content{
                 padding-left: 100px !important;
                 padding-right: 100px !important;
@@ -44,6 +44,43 @@
 
     .item-inner{
         border-color: #ddd !important;
+    }
+
+    .steps-count{
+        position: relative;
+        font-weight: 100;
+
+        &::before{
+            content: '';
+            display: block;
+            position: absolute;
+            width: 100%;
+            bottom: 50px;
+            border-bottom: 1px solid $titulos;
+        }
+
+        ion-col{
+            text-align: center;
+            color: #222;
+
+            span{
+                display: block;
+                width: 40px;
+                height: 40px;
+                padding: 10px;
+                border-radius: 50%;
+                background-color: $branco;
+                border: 1px solid $titulos;
+                color: $titulos;
+                font-weight: 400;
+                margin: auto auto 10px;
+
+                &.actived{
+                    background-color: $titulos;
+                    color: $branco;
+                }
+            }
+        }
     }
 
 }

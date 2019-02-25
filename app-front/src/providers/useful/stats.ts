@@ -2,2146 +2,2142 @@ import { Injectable } from "@angular/core";
 
 @Injectable()
 
-export class StatsList{
+export class StatsList {
 
-	statsList: any;
-
-	constructor() {
-		
-		this.statsList = {
-			"tenis": {
-				"default": [
-					"Overall Vitórias",
-					"Overall Vitórias Liga",
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Estatística/Temporada" : [
-					{
-						"Tipo/Partida": "V-D"
-					},
-					"Overall Vitórias/Derrotas"
-				],
-				"Estatística/Partida" : [
-					"Tipo/Partida",
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Campeonato",
-					"Oponente",
-					"Rodada",
-					"Colocação",
-					"Set 1",
-					"Set 2",
-					"Set 3",
-					"DQ",
-					"V/D"
-				]
+	sportList = {
+		"tenis": {
+			"default": {
+				"Overall Vitórias": null,
+				"Overall Vitórias Liga": null,
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
 			},
-			"bmx": {
-				"Estatística Carreira" : [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento": [
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
+			"Estatística/Temporada": {
+				"Tipo/Partida": null,
+				"V-D": null,
+				"Overall Vitórias/Derrotas": null
 			},
-			"golfe": {
-				"default": [
-					"Número Handicap",
-					"Overall Vitórias",
-					"Overall Vitórias Liga",
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Rodada 9 Buracos" : [
-					"Tipo/Partida",
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Campeonato",
-					"Oponente",
-					"Rodada",
-					"Colocação",
-					"RD's",
-					"Par 3s",
-					"Par 4s",
-					"Par 5s"
-				],
-				"Rodada 18 Buracos" : [
-					"Tipo/Partida",
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Campeonato",
-					"Oponente",
-					"Rodada",
-					"Colocação",
-					"RDs",
-					"Par 3s",
-					"Par 4s",
-					"Par 5s"
-				]
-			},
-			"basquete": {
-				"Estatísticas Carreira": [
-					"Partidas Jogadas",
-					"Pontos/Partida",
-					"Assistências/Partida",
-					"Total Pontos",
-					"% Lance Livre",
-					"% Aproveitamento Geral"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Pontos/Partida",
-					"Rebotes/Defesa",
-					"Rebotes Ofensa",
-					"Rebotes/Partida",
-					"Assistências/Partida",
-					"Interferência/Partida",
-					"Bloqueios/Partida",
-					"Erros/Jogo (Turnover)"
-				],
-				"Arremesso" : [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Pontos/Partida",
-					"Arremessos/Partida",
-					"Arremessos 2 PTS",
-					"Arremessos 3 PTS",
-					"Lance Livre/Partida",
-					"% Lance Livre",
-					"% Aproveitamento Geral"
-				],
-				"Estatística Arremesso" : [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Pontos/Partida",
-					"2 PTS Conv",
-					"3 PTS Conv",
-					"2 PTS %",
-					"3 PTS %"
-				],
-				"Estatísticas Totais": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Pontos/Partida",
-					"Rebotes Ofensa",
-					"Rebotes/Defesa",
-					"Rebotes/Partida",
-					"Assistências/Partida",
-					"Interferência/Partida",
-					"Bloqueios/Partida",
-					"Erros/Jogo (Turnover)"
-				]
-			},
-			"polo-aquatico": {
-				"Estatísticas Carreira": [
-					"Partidas Jogadas",
-					"Gols/Partida",
-					"Arremessos/Partida",
-					"Assistências/Partida",
-					"Interferência/Partida"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Partida",
-					"Gols/Total",
-					"Assistências/Partida",
-					"Assistências/Total",
-					"Interferência/Partida",
-					"Arremesso/Partida",
-					"Arremesso/Total",
-					"% Arremesso"
-				]
-			},
-			"atletismo": {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Especialidade/Categoria",
-					"Resultado"
-				],
-				"Estatística Evento": [
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Corrida",
-					"Oponente",
-					"Rodada",
-					"Colocação",
-					"Pontuação",
-					"Vento",
-					"Timer",
-					"Tempo"
-				]
-			},
-			"hoquei-de-gelo": {
-				"Estatísticas Carreira": [
-					"Partidas Jogadas",
-					"Gols/Partida",
-					"Pontos"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Partida",
-					"Gols/Total",
-					"Assistências/Partida",
-					"Assistências/Total",
-					"Interferência/Partida",
-					"Arremesso/Partida",
-					"Arremesso/Total",
-					"% Arremesso/Eficiência"
-				]
-			},
-			"hoquei": {
-				"Estatísticas Carreira": [
-					"Partidas Jogadas",
-					"Gols/Partida",
-					"Pontos"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Partida",
-					"Gols/Total",
-					"Assistências/Partida",
-					"Assistências/Total",
-					"Interferência/Partida",
-					"Arremesso/Partida",
-					"Arremesso/Total",
-					"% Arremesso/Eficiência"
-				]
-			},
-			"boxe" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total Vitórias/Derrotas"
-				],
-				"Estatísticas Luta" : [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Vitórias/KO",
-					"Derrotas",
-					"Empates",
-					"Total Vitórias/Derrotas"
-				]
-			},
-			"voleibol" : {
-				"Estatísticas Carreira": [
-					"Sets Disputados",
-					"PTS/Partida",
-					"% Eficiência/Ataque",
-					"Bloqueios Individuais",
-					"Bloqueios/Partida",
-					"Aces"
-				],
-				"Manipulação de Bola": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Assistências/Partida",
-					"Assistências/Sets"
-				],
-				"Recebimento de Saque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Saques Recebidos/Partida",
-					"Saques Recebidos/Set",
-					"Saques Recebidos/Acerto",
-					"Saques Recebidos/Erro",
-					"% Recebimento/Saque"
-				],
-				"Ataque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"PTS/Partida",
-					"PTS/Set",
-					"% Ataque/Eficiência"
-				],
-				"Saque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Ace/Partida",
-					"Ace/Set",
-					"Ace %",
-					"Saques/Acerto",
-					"Saques/Erro",
-					"Saque %",
-					"PTS/Saque"
-				],
-				"Bloqueio": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Bloqueio/Partida",
-					"Bloqueio Indiv/Partida",
-					"Bloqueio Indiv/Set",
-					"% Bloqueio/Eficiência"
-				]
-			},
-			"handebol" : {
-				"Estatísticas Carreira": [
-					"Partidas Disputados",
-					"Gols/Partida",
-					"Arremessos/Partida",
-					"Assistências/Partida",
-					"Interferências/Partida"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Total",
-					"Gols/Partidas",
-					"Assistências/Total",
-					"Assistências/Partida",
-					"Interferência/Partida",
-					"Arremesso/Total",
-					"Arremesso/Partida",
-					"% Arremesso/Eficiência",
-					"Arremessos/9m",
-					"Arremessos/7m"
-				]
-				
-			},
-			"futebol" : {
-				"Estatísticas Carreira": [
-					"Partidas Disputados",
-					"Gols/Total",
-					"Assistências/Total",
-					"Gols/Partida",
-					"Assistências/Partida"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Total",
-					"Gols/Partidas",
-					"Assistências/Total",
-					"Assistências/Partida",
-					"Interferência/Partida",
-					"Finalizações/Gol",
-					"Finalizações/Partida",
-					"Finalizações/Fora",
-					"% Finalizações/Eficiência",
-					"Passes/Partida",
-					"Passes/Certos",
-					"Passes/Errados"
-		
-				]
-				
-			},
-			"cross-country" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Resultado/Tempo"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Corrida",
-					"Colocação",
-					"Pontuação",
-					"Tempo"
-				]
-			},
-			"natacao" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Especialidade/Categoria",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Colocação",
-					"Pontuação",
-					"Tempo"
-				]
-			},
-			"rugby" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Estatística Evento":[
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Coverções/Partida",
-					"Interferências/Partida",
-					"Drop Goals/Partida",
-					"Corridas/Partida",
-					"Corridas/Metros",
-					"Linebreaks/Partida",
-					"Tackles/Partida",
-					"Tackles Perdidos",
-					"Passes/Partida",
-					"Passes Certos",
-					"Passes Errados",
-					"Chutes/Partida",
-					"Chute/Metros",
-					"Gol/Penalty",
-					"PTS",
-					"Erro/Partida (Turnover)"
-		
-				]
-			},
-			"esgrima" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/Vitórias-Derrotas"
-				],
-				"Melhores Marcas":[
-					"Evento",
-					"Arma/Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Arma",
-					"Tempo",
-					"Colocação"
-		
-				],
-				"Florete":[
-						"Estatísticas Combate",
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Combates/Total",
-						"Vitórias",
-						"Derrotas",
-						"Empates",
-						"Total/Vitórias-Derrotas"
-		
-				],"Espada":[
-						"Estatísticas Combate",
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Combates/Total",
-						"Vitórias",
-						"Derrotas",
-						"Empates",
-						"Total/Vitórias-Derrotas"
-		
-				],"Sabre":[
-						"Estatísticas Combate",
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Combates/Total",
-						"Vitórias",
-						"Derrotas",
-						"Empates",
-						"Total/Vitórias-Derrotas"
-		
-				]
-			},"ginastica-artistica" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Aparelho/Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Aparelho/Especialidade",
-					"Colocação",
-					"Pontuação"
-					
-				]
-			},"futebol-americano" : {
-				"Estatísticas Carreira": [
-					"Partidas Jogadas",
-					"Touchdowns/Partida",
-					"Pontos/Partida",
-					"Tackles/Partida"
-				],"ofensa":
-				{
-					"Passes" :[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Passes Completos Total",
-						"Tentativas de Passes Total",
-						"Passes/Yards",
-						"Passes Completos %",
-						"Passes/Média",
-						"Passes-Yards/Jogo",
-						"Passes Completos/Jogo",
-						"Passes/Touchdowns"
-		
-					],
-					"Corridas":[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Corridas/Yards",
-						"Corridas/Média",
-						"Corridas-Yards/Jogo",
-						"Corridas/Touchdowns"
-		
-					],
-					"Fumbles/Ofensa":[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Fumbles/Total",
-						"Fumbles/Perdidos",
-						"Fumbles/Bloqueio"
-		
-					],
-					"Yards Geral":[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Corridas/Yards",
-						"Passes/Yards",
-						"Recepções/Yards",
-						"Yards/Jogo",
-						"Yards/Total"
-		
-					]
-				},"defesa":
-				{
-					"Tackles" :[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Tackels/Individual",
-						"Assistências/Total",
-						"Tackles/Total"
-					],
-					"Estatísticas Defensivas/Geral":[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Jogadas/Recuperadas",
-						"Yards/Recuperadas",
-						"Yards-Recuperadas/Média",
-						"Jogadas-Recuperadas/Jogo",
-						"Fumbles/Ganhos",
-						"Bloqueios/Punts",
-						"Bloqueios/Jogo",
-						"Bloqueios/Total"
-					]
-				},"Times Especiais":
-				{
-					"Kickoffs" :[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Kickoff/Total",
-						"Kickoff/Yards",
-						"Kickoff/Média"
-		
-					],
-					"Punts":[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Punts/Total",
-						"Punts/Yards",
-						"Punts/Média"
-		
-					],
-					"Retorno de Kickoff e Punt":
-					[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Retorno/Kickoff",
-						"Retorno-Kickoff/Yards",
-						"Retorno-Kickoff/Média",
-						"Retorno /Punt",
-						"Retorno-Punt/Yards",
-						"Retorno-Punt/Média"
-		
-					]
-				},
-				"Pontos Convertidos Geral":
-				{
-					"Pontos" :[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Touchdown/Total",
-						"Touchdown/Jogo",
-						"Touchdown/Pontos",
-						"Chutes/Pontos",
-						"Pontos/Jogo",
-						"Pontos/Total"
-		
-					],
-					"Aproveitamento %":[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Passe Completos %",
-						"Passes Recebidos %",
-						"Chutes/Acerto %",
-						"Aproveiatmento Geral %"
-		
-					],
-					"Conversões":
-					[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Conversões/Corrida",
-						"Conversões/Passes Recebidos",
-						"Conversões/Jogo",
-						"Conversões/Total"
-					],
-					"Touchdowns":[
-						"Ano",
-						"Ano Escolar",
-						"Time",
-						"Partidas Jogadas",
-						"Minutos/Partida",
-						"Touchdown/Corridas",
-						"Touchdown/Passes Completos",
-						"Touchdown/Passes Recebidos",
-						"Touchdown/Jogo",
-						"Touchdown/Total"
-		
-					]
-				}	
-			},
-			"kickboxing" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Vitórias/KO",
-					"Derrotas",
-					"Empates",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Tempo/Luta": [
-					"Categoria"
-				]
-			},"mma" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Vitórias/KO",
-					"Derrotas",
-					"Empates",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Tempo/Luta": [
-					"Categoria"
-				]
-			},"taekwondo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Vitórias/KO",
-					"Derrotas",
-					"Empates",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Tempo/Luta": [
-					"Categoria"
-				]
-			},"luta-olimpica" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Vitórias/KO",
-					"Derrotas",
-					"Empates",
-					"Categoria",
-					"Total/ Vitórias-Derrotas"
-				]	
-			},"jiu-jitsu" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Derrotas",
-					"Categoria",
-					"Total/ Vitórias-Derrotas"
-				]
-			},"karate" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Vitórias/KO",
-					"Derrotas",
-					"Empates",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Tempo/Luta": [
-					"Categoria"
-				]
-			},"judo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Vitórias/KO",
-					"Derrotas",
-					"Empates",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Tempo/Luta": [
-					"Categoria"
-				]
-			},"badminton" : {
-				"Overall Vitórias": [
-					"Overall Vitórias",
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Estatística/Temporada" : [
-					{
-						"Tipo/Partida": "V-D"
-					},
-					"Overall Vitórias/Derrotas"
-				],
-				"Estatística/Partida" : [
-					"Tipo/Partida",
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Campeonato",
-					"Oponente",
-					"Rodada",
-					"Colocação",
-					"Game 1",
-					"Game 2",
-					"Game 3",
-					"DQ",
-					"V/D"
-				]
-			},"beachtennis" : {
-				"Overall Vitórias": [
-					"Overall Vitórias",
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Estatística/Temporada" : [
-					{
-						"Tipo/Partida": "V-D"
-					},
-					"Overall Vitórias/Derrotas"
-				],
-				"Estatística/Partida" : [
-					"Tipo/Partida",
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Campeonato",
-					"Oponente",
-					"Rodada",
-					"Colocação",
-					"Game 1",
-					"Game 2",
-					"Game 3",
-					"DQ",
-					"V/D"
-				]
-			},"tenis-de-mesa": {
-				"default": [
-					"Overall Vitórias",
-					"Overall Vitórias Liga",
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas" : [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística/Partida" : [
-					"Tipo/Partida",
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Campeonato",
-					"Oponente",
-					"Rodada",
-					"Colocação",
-					"Set 1",
-					"Set 2",
-					"Set 3",
-					"DQ",
-					"V/D"
-				]
-			},"futebol-de-areia" : {
-				"Estatísticas Carreira": [
-					"Partidas Disputados",
-					"Gols/Total",
-					"Assistências/Total",
-					"Gols/Partida",
-					"Assistências/Partida"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Total",
-					"Gols/Partidas",
-					"Assistências/Total",
-					"Assistências/Partida",
-					"Interferência/Partida",
-					"Finalizações/Gol",
-					"Finalizações/Partida",
-					"Finalizações/Fora",
-					"% Finalizações/Eficiência",
-					"Passes/Partida",
-					"Passes/Certos",
-					"Passes/Errados"
-		
-				]
-				
-			}, 
-			"futsal" : {
-				"Estatísticas Carreira": [
-					"Partidas Disputados",
-					"Gols/Total",
-					"Assistências/Total",
-					"Gols/Partida",
-					"Assistências/Partida"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Total",
-					"Gols/Partidas",
-					"Assistências/Total",
-					"Assistências/Partida",
-					"Interferência/Partida",
-					"Finalizações/Gol",
-					"Finalizações/Partida",
-					"Finalizações/Fora",
-					"% Finalizações/Eficiência",
-					"Passes/Partida",
-					"Passes/Certos",
-					"Passes/Errados"
-				]
-			},
-			"voleibol-de-praia" : {
-				"Estatísticas Carreira": [
-					"Sets Disputados",
-					"PTS/Partida",
-					"% Eficiência/Ataque",
-					"Bloqueios Individuais",
-					"Bloqueios/Partida",
-					"Aces",
-					"Grupo/Individual"
-				],
-				"Manipulação de Bola": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Assistências/Partida",
-					"Assistências/Sets"
-				],
-				"Recebimento de Saque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Saques Recebidos/Partida",
-					"Saques Recebidos/Set",
-					"Saques Recebidos/Acerto",
-					"Saques Recebidos/Erro",
-					"% Recebimento/Saque"
-				],
-				"Ataque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"PTS/Partida",
-					"PTS/Set",
-					"% Ataque/Eficiência"
-				],
-				"Saque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Ace/Partida",
-					"Ace/Set",
-					"Ace %",
-					"Saques/Acerto",
-					"Saques/Erro",
-					"Saque %",
-					"PTS/Saque"
-				],
-				"Bloqueio": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Bloqueio/Partida",
-					"Bloqueio Indiv/Partida",
-					"Bloqueio Indiv/Set",
-					"% Bloqueio/Eficiência"
-				]
-			},"futevolei" : {
-				"Estatísticas Carreira": [
-					"Sets Disputados",
-					"PTS/Partida",
-					"% Eficiência/Ataque"
-				],
-				"Manipulação de Bola": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Assistências/Partida"
-				],
-				"Recebimento de Saque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Sets Disputados",
-					"Saques Recebidos/Partida",
-					"Saques Recebidos/Acerto",
-					"Saques Recebidos/Erro",
-					"% Recebimento/Saque"
-				],
-				"Ataque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"PTS/Partida",
-					"% Ataque/Eficiência"
-				],
-				"Saque": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Ace/Partida",
-					"Ace %",
-					"Saques/Acerto",
-					"Saques/Erro",
-					"Saque %",
-					"PTS/Saque"
-				]
-			},"saltos-ornamentais" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Tipo/Especialidade",
-					"Dificuldade",
-					"Altura"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Aparelho/Especialidade",
-					"Colocação",
-					"Pontuação"
-					
-				]
-			},"corrida-de-rua" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado/Tempo"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Corrida",
-					"Pontuação"
-					
-				]
-			},"skate" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Aparelho/Especialidade",
-					"Colocação",
-					"Pontuação"
-					
-				]
-			},"levantamento-de-peso" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Aparelho/Especialidade",
-					"Peso(kg)",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Aparelho/Especialidade",
-					"Colocação",
-					"Pontuação"
-					
-				]
-			},"hipismo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Aparelho/Especialidade",
-					"Erros/Tentativas",
-					"Pontuação",
-					"Tempo",
-					"Cavalo/Raça",
-					"Colocação"
-					
-				]
-			},"ginastica-ritmica" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Grupo/Individual",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Tipo/Especialidade",
-					"Grupo/Individual",
-					"Pontuação",
-					"Colocação"
-				]
-			},"nado-artistico" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Grupo/Individual",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Grupo/Individual",
-					"Pontuação",
-					"Colocação"
-				]
-			},"surfe-(classic-e-longboard)" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Colocação"
-				]
-			},"ciclismo-de-pista" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Grupo/Individual",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"ciclismo-de-estrada" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Grupo/Individual",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"mountain-bike" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Grupo/Individual",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"boliche" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Competição",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"xadrez" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Competição",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"dama" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Oponente",
-					"Evento/Competição",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"triathlon" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Competição",
-					"Tempo",
-					"Colocação"
-				]
-			},"hoquei-de-grama": {
-				"Estatísticas Carreira": [
-					"Partidas Jogadas",
-					"Gols/Partida",
-					"Pontos"
-				],
-				"Estatísticas Partida": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Gols/Partida",
-					"Gols/Total",
-					"Assistências/Partida",
-					"Assistências/Total",
-					"Interferência/Partida",
-					"Arremesso/Partida",
-					"Arremesso/Total",
-					"% Arremesso/Eficiência"
-				]
-			},"remo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Tempo",
-					"Colocação"
-				]
-			},"tiro-esportivo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Categoria(m)",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Categoria(m)",
-					"Tempo",
-					"Colocação"
-				]
-			},"stand-up-paddle" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"escalada-esportiva" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"patinacao" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"patinacao-de-velocidade-no-gelo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"patinacao-artistica-no-gelo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"bobsled" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"luge" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"skeleton" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},	"curling" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"snowboard-esportivo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"ski-esportivo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},
-			"capoeira" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"jogo-de-malha" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"biribol" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"windsurf" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Colocação"
-				]
-			},"kitesurf" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Colocação"
-				]
-			},"automobilismo" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar"
-				],
-				"Melhores Marcas": [
-					"Evento",
-					"Data",
-					"Especialidade",
-					"Resultado"
-				],
-				"Estatística Evento":[
-					"Data",
-					"Ano",
-					"Ano Escolar",
-					"Evento/Nome",
-					"Especialidade/Categoria",
-					"Pontuação",
-					"Tempo",
-					"Colocação"
-				]
-			},"wrestling" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Derrotas",
-					"Empates",
-					"Categoria",
-					"Total/Vitórias-Derrotas"
-				]
-			},"kung-fu" : {
-				"Estatísticas Carreira": [
-					"1st Lugar",
-					"2st Lugar",
-					"3st Lugar",
-					"Combates/Total",
-					"Vitórias",
-					"Derrotas",
-					"Total/ Vitórias-Derrotas"
-				],
-				"Estatísticas Luta": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Lutas/Total",
-					"Vitórias",
-					"Derrotas",
-					"Empates",
-					"Categoria",
-					"Total/Vitórias-Derrotas"
-				]
-			},
-			"softball": {
-				"Estatísticas Carreira": [
-					"Média de Corridas Merecidas",
-					"Vitórias",
-					"Entradas Arremessadas",
-					"Total Strike Outs",
-					"% Fielding"
-				],
-				"Arremessando - Pitching": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Jogos Iniciados",
-					"Entradas Arremessadas",
-					"Rebatedores Enfrentados",
-					"Vitórias",
-					"Derrotas ",
-					"Porcentagem de Vitórias ",
-					"Corridas Merecidas ",
-					"Média de Corridas Merecidas ",
-					"Corrida Não Merecida",
-					"Inherited Runs Allowed",
-					"Quality Start",
-					"Strikeouts",
-					"Walks",
-					"Strikeouts por Nove Entradas",
-					"Walks por Nove Entradas",
-					"Strikeouts por Walks",
-					"Hit By Pitch",
-					"Jogos Completos",
-					"Shutout ",
-					"No-Hitter",
-					"Wild Pitches",
-					"Oportunidades de Save",
-					"Hold",
-					"Save",
-					"Blown Save",
-					"Walks Plus Hits per Inning"
-				],
-				"Rebatendo - Hitting" : [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Rebatidas Válidas",
-					"Rebatidas Duplas",
-					"Rebatidas Triplas",
-					"Home Run",
-					"Grand Slam Home Run",
-					"Walks",
-					"Oportunidades no Bastão",
-					"Aproveitamento no Bastão",
-					"Walks Intencionais",
-					"Hit by Pitch",
-					"Corridas",
-					"Corridas Impulsionadas ",
-					"Total Bases",
-					"Slugging Percentage",
-					"On Base Percentage",
-					"Bases Roubadas ",
-					"Capturado Roubando",
-					"Rebatidas Extra Bases",
-					"On Base Plus Slugging Percentage",
-					"Groundouts ",
-					"Flyouts ou Air Outs ",
-					"Bunt de Sacrifício",
-					"Sacrifice Flies",
-					"Grounded Into Double Play"
-				],
-				"Defendendo - Fielding": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Assistências",
-					"Putouts",
-					"Double Plays",
-					"Erros",
-					"Fielding Percentage",
-					"Entradas Jogadas",
-					"Passed Balls",
-					"Triple Play",
-					"Outfield Assists",
-					"Total Chances"
-				]
-			},
-			"beisebol": {
-				"Estatísticas Carreira": [
-					"Média de Corridas Merecidas",
-					"Vitórias",
-					"Entradas Arremessadas",
-					"Total Strike Outs",
-					"% Fielding"
-				],
-				"Arremessando - Pitching": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Jogos Iniciados",
-					"Entradas Arremessadas",
-					"Rebatedores Enfrentados",
-					"Vitórias",
-					"Derrotas ",
-					"Porcentagem de Vitórias ",
-					"Corridas Merecidas ",
-					"Média de Corridas Merecidas ",
-					"Corrida Não Merecida",
-					"Inherited Runs Allowed",
-					"Quality Start",
-					"Strikeouts",
-					"Walks",
-					"Strikeouts por Nove Entradas",
-					"Walks por Nove Entradas",
-					"Strikeouts por Walks",
-					"Hit By Pitch",
-					"Jogos Completos",
-					"Shutout ",
-					"No-Hitter",
-					"Wild Pitches",
-					"Oportunidades de Save",
-					"Hold",
-					"Save",
-					"Blown Save",
-					"Walks Plus Hits per Inning"
-				],
-				"Rebatendo - Hitting" : [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Rebatidas Válidas",
-					"Rebatidas Duplas",
-					"Rebatidas Triplas",
-					"Home Run",
-					"Grand Slam Home Run",
-					"Walks",
-					"Oportunidades no Bastão",
-					"Aproveitamento no Bastão",
-					"Walks Intencionais",
-					"Hit by Pitch",
-					"Corridas",
-					"Corridas Impulsionadas ",
-					"Total Bases",
-					"Slugging Percentage",
-					"On Base Percentage",
-					"Bases Roubadas ",
-					"Capturado Roubando",
-					"Rebatidas Extra Bases",
-					"On Base Plus Slugging Percentage",
-					"Groundouts ",
-					"Flyouts ou Air Outs ",
-					"Bunt de Sacrifício",
-					"Sacrifice Flies",
-					"Grounded Into Double Play"
-				],
-				"Defendendo - Fielding": [
-					"Ano",
-					"Ano Escolar",
-					"Time",
-					"Partidas Jogadas",
-					"Minutos/Partida",
-					"Assistências",
-					"Putouts",
-					"Double Plays",
-					"Erros",
-					"Fielding Percentage",
-					"Entradas Jogadas",
-					"Passed Balls",
-					"Triple Play",
-					"Outfield Assists",
-					"Total Chances"
-				]
+			"Estatística/Partida": {
+				"Tipo/Partida": null,
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Campeonato": null,
+				"Oponente": null,
+				"Rodada": null,
+				"Colocação": null,
+				"Set 1": null,
+				"Set 2": null,
+				"Set 3": null,
+				"DQ": null,
+				"V/D": null
 			}
-		};
+		},
+		"bmx": {
+			"Estatística Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		},
+		"golfe": {
+			"default": {
+				"Número Handicap": null,
+				"Overall Vitórias": null,
+				"Overall Vitórias Liga": null,
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Rodada 9 Buracos": {
+				"Tipo/Partida": null,
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Campeonato": null,
+				"Oponente": null,
+				"Rodada": null,
+				"Colocação": null,
+				"RD's": null,
+				"Par 3s": null,
+				"Par 4s": null,
+				"Par 5s": null
+			},
+			"Rodada 18 Buracos": {
+				"Tipo/Partida": null,
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Campeonato": null,
+				"Oponente": null,
+				"Rodada": null,
+				"Colocação": null,
+				"RDs": null,
+				"Par 3s": null,
+				"Par 4s": null,
+				"Par 5s": null
+			}
+		},
+		"basquete": {
+			"Estatísticas Carreira": {
+				"Partidas Jogadas": null,
+				"Pontos/Partida": null,
+				"Assistências/Partida": null,
+				"Total Pontos": null,
+				"% Lance Livre": null,
+				"% Aproveitamento Geral": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Pontos/Partida": null,
+				"Rebotes/Defesa": null,
+				"Rebotes Ofensa": null,
+				"Rebotes/Partida": null,
+				"Assistências/Partida": null,
+				"Interferência/Partida": null,
+				"Bloqueios/Partida": null,
+				"Erros/Jogo (Turnover)": null
+			},
+			"Arremesso": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Pontos/Partida": null,
+				"Arremessos/Partida": null,
+				"Arremessos 2 PTS": null,
+				"Arremessos 3 PTS": null,
+				"Lance Livre/Partida": null,
+				"% Lance Livre": null,
+				"% Aproveitamento Geral": null
+			},
+			"Estatística Arremesso": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Pontos/Partida": null,
+				"2 PTS Conv": null,
+				"3 PTS Conv": null,
+				"2 PTS %": null,
+				"3 PTS %": null
+			},
+			"Estatísticas Totais": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Pontos/Partida": null,
+				"Rebotes Ofensa": null,
+				"Rebotes/Defesa": null,
+				"Rebotes/Partida": null,
+				"Assistências/Partida": null,
+				"Interferência/Partida": null,
+				"Bloqueios/Partida": null,
+				"Erros/Jogo (Turnover)": null
+			}
+		},
+		"polo-aquatico": {
+			"Estatísticas Carreira": {
+				"Partidas Jogadas": null,
+				"Gols/Partida": null,
+				"Arremessos/Partida": null,
+				"Assistências/Partida": null,
+				"Interferência/Partida": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Partida": null,
+				"Gols/Total": null,
+				"Assistências/Partida": null,
+				"Assistências/Total": null,
+				"Interferência/Partida": null,
+				"Arremesso/Partida": null,
+				"Arremesso/Total": null,
+				"% Arremesso": null
+			}
+		},
+		"atletismo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Especialidade/Categoria": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Corrida": null,
+				"Oponente": null,
+				"Rodada": null,
+				"Colocação": null,
+				"Pontuação": null,
+				"Vento": null,
+				"Timer": null,
+				"Tempo": null
+			}
+		},
+		"hoquei-de-gelo": {
+			"Estatísticas Carreira": {
+				"Partidas Jogadas": null,
+				"Gols/Partida": null,
+				"Pontos": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Partida": null,
+				"Gols/Total": null,
+				"Assistências/Partida": null,
+				"Assistências/Total": null,
+				"Interferência/Partida": null,
+				"Arremesso/Partida": null,
+				"Arremesso/Total": null,
+				"% Arremesso/Eficiência": null
+			}
+		},
+		"hoquei": {
+			"Estatísticas Carreira": {
+				"Partidas Jogadas": null,
+				"Gols/Partida": null,
+				"Pontos": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Partida": null,
+				"Gols/Total": null,
+				"Assistências/Partida": null,
+				"Assistências/Total": null,
+				"Interferência/Partida": null,
+				"Arremesso/Partida": null,
+				"Arremesso/Total": null,
+				"% Arremesso/Eficiência": null
+			}
+		},
+		"boxe": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total Vitórias/Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Vitórias/KO": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total Vitórias/Derrotas": null
+			}
+		},
+		"voleibol": {
+			"Estatísticas Carreira": {
+				"Sets Disputados": null,
+				"PTS/Partida": null,
+				"% Eficiência/Ataque": null,
+				"Bloqueios Individuais": null,
+				"Bloqueios/Partida": null,
+				"Aces": null
+			},
+			"Manipulação de Bola": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Assistências/Partida": null,
+				"Assistências/Sets": null
+			},
+			"Recebimento de Saque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Saques Recebidos/Partida": null,
+				"Saques Recebidos/Set": null,
+				"Saques Recebidos/Acerto": null,
+				"Saques Recebidos/Erro": null,
+				"% Recebimento/Saque": null
+			},
+			"Ataque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"PTS/Partida": null,
+				"PTS/Set": null,
+				"% Ataque/Eficiência": null
+			},
+			"Saque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Ace/Partida": null,
+				"Ace/Set": null,
+				"Ace %": null,
+				"Saques/Acerto": null,
+				"Saques/Erro": null,
+				"Saque %": null,
+				"PTS/Saque": null
+			},
+			"Bloqueio": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Bloqueio/Partida": null,
+				"Bloqueio Indiv/Partida": null,
+				"Bloqueio Indiv/Set": null,
+				"% Bloqueio/Eficiência": null
+			}
+		},
+		"handebol": {
+			"Estatísticas Carreira": {
+				"Partidas Disputados": null,
+				"Gols/Partida": null,
+				"Arremessos/Partida": null,
+				"Assistências/Partida": null,
+				"Interferências/Partida": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Total": null,
+				"Gols/Partidas": null,
+				"Assistências/Total": null,
+				"Assistências/Partida": null,
+				"Interferência/Partida": null,
+				"Arremesso/Total": null,
+				"Arremesso/Partida": null,
+				"% Arremesso/Eficiência": null,
+				"Arremessos/9m": null,
+				"Arremessos/7m": null
+			}
 
+		},
+		"futebol": {
+			"Estatísticas Carreira": {
+				"Partidas Disputados": null,
+				"Gols/Total": null,
+				"Assistências/Total": null,
+				"Gols/Partida": null,
+				"Assistências/Partida": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Total": null,
+				"Gols/Partidas": null,
+				"Assistências/Total": null,
+				"Assistências/Partida": null,
+				"Interferência/Partida": null,
+				"Finalizações/Gol": null,
+				"Finalizações/Partida": null,
+				"Finalizações/Fora": null,
+				"% Finalizações/Eficiência": null,
+				"Passes/Partida": null,
+				"Passes/Certos": null,
+				"Passes/Errados": null
+
+			}
+
+		},
+		"cross-country": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Resultado/Tempo": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Corrida": null,
+				"Colocação": null,
+				"Pontuação": null,
+				"Tempo": null
+			}
+		},
+		"natacao": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Especialidade/Categoria": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Colocação": null,
+				"Pontuação": null,
+				"Tempo": null
+			}
+		},
+		"rugby": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Estatística Evento": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Coverções/Partida": null,
+				"Interferências/Partida": null,
+				"Drop Goals/Partida": null,
+				"Corridas/Partida": null,
+				"Corridas/Metros": null,
+				"Linebreaks/Partida": null,
+				"Tackles/Partida": null,
+				"Tackles Perdidos": null,
+				"Passes/Partida": null,
+				"Passes Certos": null,
+				"Passes Errados": null,
+				"Chutes/Partida": null,
+				"Chute/Metros": null,
+				"Gol/Penalty": null,
+				"PTS": null,
+				"Erro/Partida (Turnover)": null
+
+			}
+		},
+		"esgrima": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/Vitórias-Derrotas": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Arma/Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Arma": null,
+				"Tempo": null,
+				"Colocação": null
+
+			},
+			"Florete": {
+				"Estatísticas Combate": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/Vitórias-Derrotas": null
+
+			}, "Espada": {
+				"Estatísticas Combate": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/Vitórias-Derrotas": null
+
+			}, "Sabre": {
+				"Estatísticas Combate": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/Vitórias-Derrotas": null
+
+			}
+		}, "ginastica-artistica": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Aparelho/Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Aparelho/Especialidade": null,
+				"Colocação": null,
+				"Pontuação": null
+
+			}
+		}, "futebol-americano": {
+			"Estatísticas Carreira": {
+				"Partidas Jogadas": null,
+				"Touchdowns/Partida": null,
+				"Pontos/Partida": null,
+				"Tackles/Partida": null
+			}, "ofensa":
+			{
+				"Passes": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Passes Completos Total": null,
+					"Tentativas de Passes Total": null,
+					"Passes/Yards": null,
+					"Passes Completos %": null,
+					"Passes/Média": null,
+					"Passes-Yards/Jogo": null,
+					"Passes Completos/Jogo": null,
+					"Passes/Touchdowns": null
+
+				},
+				"Corridas": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Corridas/Yards": null,
+					"Corridas/Média": null,
+					"Corridas-Yards/Jogo": null,
+					"Corridas/Touchdowns": null
+
+				},
+				"Fumbles/Ofensa": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Fumbles/Total": null,
+					"Fumbles/Perdidos": null,
+					"Fumbles/Bloqueio": null
+
+				},
+				"Yards Geral": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Corridas/Yards": null,
+					"Passes/Yards": null,
+					"Recepções/Yards": null,
+					"Yards/Jogo": null,
+					"Yards/Total": null
+
+				}
+			}, "defesa":
+			{
+				"Tackles": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Tackels/Individual": null,
+					"Assistências/Total": null,
+					"Tackles/Total": null
+				},
+				"Estatísticas Defensivas/Geral": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Jogadas/Recuperadas": null,
+					"Yards/Recuperadas": null,
+					"Yards-Recuperadas/Média": null,
+					"Jogadas-Recuperadas/Jogo": null,
+					"Fumbles/Ganhos": null,
+					"Bloqueios/Punts": null,
+					"Bloqueios/Jogo": null,
+					"Bloqueios/Total": null
+				}
+			}, "Times Especiais":
+			{
+				"Kickoffs": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Kickoff/Total": null,
+					"Kickoff/Yards": null,
+					"Kickoff/Média": null
+
+				},
+				"Punts": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Punts/Total": null,
+					"Punts/Yards": null,
+					"Punts/Média": null
+
+				},
+				"Retorno de Kickoff e Punt":
+				{
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Retorno/Kickoff": null,
+					"Retorno-Kickoff/Yards": null,
+					"Retorno-Kickoff/Média": null,
+					"Retorno /Punt": null,
+					"Retorno-Punt/Yards": null,
+					"Retorno-Punt/Média": null
+
+				}
+			},
+			"Pontos Convertidos Geral":
+			{
+				"Pontos": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Touchdown/Total": null,
+					"Touchdown/Jogo": null,
+					"Touchdown/Pontos": null,
+					"Chutes/Pontos": null,
+					"Pontos/Jogo": null,
+					"Pontos/Total": null
+
+				},
+				"Aproveitamento %": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Passe Completos %": null,
+					"Passes Recebidos %": null,
+					"Chutes/Acerto %": null,
+					"Aproveiatmento Geral %": null
+
+				},
+				"Conversões":
+				{
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Conversões/Corrida": null,
+					"Conversões/Passes Recebidos": null,
+					"Conversões/Jogo": null,
+					"Conversões/Total": null
+				},
+				"Touchdowns": {
+					"Ano": null,
+					"Ano Escolar": null,
+					"Time": null,
+					"Partidas Jogadas": null,
+					"Minutos/Partida": null,
+					"Touchdown/Corridas": null,
+					"Touchdown/Passes Completos": null,
+					"Touchdown/Passes Recebidos": null,
+					"Touchdown/Jogo": null,
+					"Touchdown/Total": null
+
+				}
+			}
+		},
+		"kickboxing": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Vitórias/KO": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Tempo/Luta": {
+				"Categoria": null
+			}
+		}, "mma": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Vitórias/KO": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Tempo/Luta": {
+				"Categoria": null
+			}
+		}, "taekwondo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Vitórias/KO": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Tempo/Luta": {
+				"Categoria": null
+			}
+		}, "luta-olimpica": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Vitórias/KO": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Categoria": null,
+				"Total/ Vitórias-Derrotas": null
+			}
+		}, "jiu-jitsu": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Categoria": null,
+				"Total/ Vitórias-Derrotas": null
+			}
+		}, "karate": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Vitórias/KO": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Tempo/Luta": {
+				"Categoria": null
+			}
+		}, "judo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Vitórias/KO": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Tempo/Luta": {
+				"Categoria": null
+			}
+		}, "badminton": {
+			"Overall Vitórias": {
+				"Overall Vitórias": null,
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Estatística/Temporada": {
+				"Tipo/Partida": null,
+				"V-D": null,
+				"Overall Vitórias/Derrotas": null
+			},
+			"Estatística/Partida": {
+				"Tipo/Partida": null,
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Campeonato": null,
+				"Oponente": null,
+				"Rodada": null,
+				"Colocação": null,
+				"Game 1": null,
+				"Game 2": null,
+				"Game 3": null,
+				"DQ": null,
+				"V/D": null
+			}
+		}, "beachtennis": {
+			"Overall Vitórias": {
+				"Overall Vitórias": null,
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Estatística/Temporada": {
+				"Tipo/Partida": null,
+				"V-D": null,
+				"Overall Vitórias/Derrotas": null
+			},
+			"Estatística/Partida": {
+				"Tipo/Partida": null,
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Campeonato": null,
+				"Oponente": null,
+				"Rodada": null,
+				"Colocação": null,
+				"Game 1": null,
+				"Game 2": null,
+				"Game 3": null,
+				"DQ": null,
+				"V/D": null
+			}
+		}, "tenis-de-mesa": {
+			"default": {
+				"Overall Vitórias": null,
+				"Overall Vitórias Liga": null,
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística/Partida": {
+				"Tipo/Partida": null,
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Campeonato": null,
+				"Oponente": null,
+				"Rodada": null,
+				"Colocação": null,
+				"Set 1": null,
+				"Set 2": null,
+				"Set 3": null,
+				"DQ": null,
+				"V/D": null
+			}
+		}, "futebol-de-areia": {
+			"Estatísticas Carreira": {
+				"Partidas Disputados": null,
+				"Gols/Total": null,
+				"Assistências/Total": null,
+				"Gols/Partida": null,
+				"Assistências/Partida": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Total": null,
+				"Gols/Partidas": null,
+				"Assistências/Total": null,
+				"Assistências/Partida": null,
+				"Interferência/Partida": null,
+				"Finalizações/Gol": null,
+				"Finalizações/Partida": null,
+				"Finalizações/Fora": null,
+				"% Finalizações/Eficiência": null,
+				"Passes/Partida": null,
+				"Passes/Certos": null,
+				"Passes/Errados": null
+
+			}
+
+		},
+		"futsal": {
+			"Estatísticas Carreira": {
+				"Partidas Disputados": null,
+				"Gols/Total": null,
+				"Assistências/Total": null,
+				"Gols/Partida": null,
+				"Assistências/Partida": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Total": null,
+				"Gols/Partidas": null,
+				"Assistências/Total": null,
+				"Assistências/Partida": null,
+				"Interferência/Partida": null,
+				"Finalizações/Gol": null,
+				"Finalizações/Partida": null,
+				"Finalizações/Fora": null,
+				"% Finalizações/Eficiência": null,
+				"Passes/Partida": null,
+				"Passes/Certos": null,
+				"Passes/Errados": null
+			}
+		},
+		"voleibol-de-praia": {
+			"Estatísticas Carreira": {
+				"Sets Disputados": null,
+				"PTS/Partida": null,
+				"% Eficiência/Ataque": null,
+				"Bloqueios Individuais": null,
+				"Bloqueios/Partida": null,
+				"Aces": null,
+				"Grupo/Individual": null
+			},
+			"Manipulação de Bola": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Assistências/Partida": null,
+				"Assistências/Sets": null
+			},
+			"Recebimento de Saque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Saques Recebidos/Partida": null,
+				"Saques Recebidos/Set": null,
+				"Saques Recebidos/Acerto": null,
+				"Saques Recebidos/Erro": null,
+				"% Recebimento/Saque": null
+			},
+			"Ataque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"PTS/Partida": null,
+				"PTS/Set": null,
+				"% Ataque/Eficiência": null
+			},
+			"Saque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Ace/Partida": null,
+				"Ace/Set": null,
+				"Ace %": null,
+				"Saques/Acerto": null,
+				"Saques/Erro": null,
+				"Saque %": null,
+				"PTS/Saque": null
+			},
+			"Bloqueio": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Bloqueio/Partida": null,
+				"Bloqueio Indiv/Partida": null,
+				"Bloqueio Indiv/Set": null,
+				"% Bloqueio/Eficiência": null
+			}
+		}, "futevolei": {
+			"Estatísticas Carreira": {
+				"Sets Disputados": null,
+				"PTS/Partida": null,
+				"% Eficiência/Ataque": null
+			},
+			"Manipulação de Bola": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Assistências/Partida": null
+			},
+			"Recebimento de Saque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Sets Disputados": null,
+				"Saques Recebidos/Partida": null,
+				"Saques Recebidos/Acerto": null,
+				"Saques Recebidos/Erro": null,
+				"% Recebimento/Saque": null
+			},
+			"Ataque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"PTS/Partida": null,
+				"% Ataque/Eficiência": null
+			},
+			"Saque": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Ace/Partida": null,
+				"Ace %": null,
+				"Saques/Acerto": null,
+				"Saques/Erro": null,
+				"Saque %": null,
+				"PTS/Saque": null
+			}
+		}, "saltos-ornamentais": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Tipo/Especialidade": null,
+				"Dificuldade": null,
+				"Altura": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Aparelho/Especialidade": null,
+				"Colocação": null,
+				"Pontuação": null
+
+			}
+		}, "corrida-de-rua": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado/Tempo": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Corrida": null,
+				"Pontuação": null
+
+			}
+		}, "skate": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Aparelho/Especialidade": null,
+				"Colocação": null,
+				"Pontuação": null
+
+			}
+		}, "levantamento-de-peso": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Aparelho/Especialidade": null,
+				"Peso(kg)": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Aparelho/Especialidade": null,
+				"Colocação": null,
+				"Pontuação": null
+
+			}
+		}, "hipismo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Aparelho/Especialidade": null,
+				"Erros/Tentativas": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Cavalo/Raça": null,
+				"Colocação": null
+
+			}
+		}, "ginastica-ritmica": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Grupo/Individual": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Tipo/Especialidade": null,
+				"Grupo/Individual": null,
+				"Pontuação": null,
+				"Colocação": null
+			}
+		}, "nado-artistico": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Grupo/Individual": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Grupo/Individual": null,
+				"Pontuação": null,
+				"Colocação": null
+			}
+		}, "surfe-(classic-e-longboard)": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Colocação": null
+			}
+		}, "ciclismo-de-pista": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Grupo/Individual": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		},
+		"ciclismo-de-estrada": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Grupo/Individual": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "mountain-bike": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Grupo/Individual": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "boliche": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Competição": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "xadrez": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Competição": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "dama": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Oponente": null,
+				"Evento/Competição": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "triathlon": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Competição": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "hoquei-de-grama": {
+			"Estatísticas Carreira": {
+				"Partidas Jogadas": null,
+				"Gols/Partida": null,
+				"Pontos": null
+			},
+			"Estatísticas Partida": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Gols/Partida": null,
+				"Gols/Total": null,
+				"Assistências/Partida": null,
+				"Assistências/Total": null,
+				"Interferência/Partida": null,
+				"Arremesso/Partida": null,
+				"Arremesso/Total": null,
+				"% Arremesso/Eficiência": null
+			}
+		}, "remo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "tiro-esportivo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Categoria(m)": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Categoria(m)": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "stand-up-paddle": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "escalada-esportiva": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "patinacao": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "patinacao-de-velocidade-no-gelo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "patinacao-artistica-no-gelo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "bobsled": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "luge": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "skeleton": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "curling": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "snowboard-esportivo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "ski-esportivo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		},
+		"capoeira": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "jogo-de-malha": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "biribol": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "windsurf": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Colocação": null
+			}
+		}, "kitesurf": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Colocação": null
+			}
+		}, "automobilismo": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null
+			},
+			"Melhores Marcas": {
+				"Evento": null,
+				"Data": null,
+				"Especialidade": null,
+				"Resultado": null
+			},
+			"Estatística Evento": {
+				"Data": null,
+				"Ano": null,
+				"Ano Escolar": null,
+				"Evento/Nome": null,
+				"Especialidade/Categoria": null,
+				"Pontuação": null,
+				"Tempo": null,
+				"Colocação": null
+			}
+		}, "wrestling": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Categoria": null,
+				"Total/Vitórias-Derrotas": null
+			}
+		}, "kung-fu": {
+			"Estatísticas Carreira": {
+				"1st Lugar": null,
+				"2st Lugar": null,
+				"3st Lugar": null,
+				"Combates/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Total/ Vitórias-Derrotas": null
+			},
+			"Estatísticas Luta": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Lutas/Total": null,
+				"Vitórias": null,
+				"Derrotas": null,
+				"Empates": null,
+				"Categoria": null,
+				"Total/Vitórias-Derrotas": null
+			}
+		},
+		"softball": {
+			"Estatísticas Carreira": {
+				"Média de Corridas Merecidas": null,
+				"Vitórias": null,
+				"Entradas Arremessadas": null,
+				"Total Strike Outs": null,
+				"% Fielding": null
+			},
+			"Arremessando - Pitching": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Jogos Iniciados": null,
+				"Entradas Arremessadas": null,
+				"Rebatedores Enfrentados": null,
+				"Vitórias": null,
+				"Derrotas ": null,
+				"Porcentagem de Vitórias ": null,
+				"Corridas Merecidas ": null,
+				"Média de Corridas Merecidas ": null,
+				"Corrida Não Merecida": null,
+				"Inherited Runs Allowed": null,
+				"Quality Start": null,
+				"Strikeouts": null,
+				"Walks": null,
+				"Strikeouts por Nove Entradas": null,
+				"Walks por Nove Entradas": null,
+				"Strikeouts por Walks": null,
+				"Hit By Pitch": null,
+				"Jogos Completos": null,
+				"Shutout ": null,
+				"No-Hitter": null,
+				"Wild Pitches": null,
+				"Oportunidades de Save": null,
+				"Hold": null,
+				"Save": null,
+				"Blown Save": null,
+				"Walks Plus Hits per Inning": null
+			},
+			"Rebatendo - Hitting": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Rebatidas Válidas": null,
+				"Rebatidas Duplas": null,
+				"Rebatidas Triplas": null,
+				"Home Run": null,
+				"Grand Slam Home Run": null,
+				"Walks": null,
+				"Oportunidades no Bastão": null,
+				"Aproveitamento no Bastão": null,
+				"Walks Intencionais": null,
+				"Hit by Pitch": null,
+				"Corridas": null,
+				"Corridas Impulsionadas ": null,
+				"Total Bases": null,
+				"Slugging Percentage": null,
+				"On Base Percentage": null,
+				"Bases Roubadas ": null,
+				"Capturado Roubando": null,
+				"Rebatidas Extra Bases": null,
+				"On Base Plus Slugging Percentage": null,
+				"Groundouts ": null,
+				"Flyouts ou Air Outs ": null,
+				"Bunt de Sacrifício": null,
+				"Sacrifice Flies": null,
+				"Grounded Into Double Play": null
+			},
+			"Defendendo - Fielding": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Assistências": null,
+				"Putouts": null,
+				"Double Plays": null,
+				"Erros": null,
+				"Fielding Percentage": null,
+				"Entradas Jogadas": null,
+				"Passed Balls": null,
+				"Triple Play": null,
+				"Outfield Assists": null,
+				"Total Chances": null
+			}
+		},
+		"beisebol": {
+			"Estatísticas Carreira": {
+				"Média de Corridas Merecidas": null,
+				"Vitórias": null,
+				"Entradas Arremessadas": null,
+				"Total Strike Outs": null,
+				"% Fielding": null
+			},
+			"Arremessando - Pitching": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Jogos Iniciados": null,
+				"Entradas Arremessadas": null,
+				"Rebatedores Enfrentados": null,
+				"Vitórias": null,
+				"Derrotas ": null,
+				"Porcentagem de Vitórias ": null,
+				"Corridas Merecidas ": null,
+				"Média de Corridas Merecidas ": null,
+				"Corrida Não Merecida": null,
+				"Inherited Runs Allowed": null,
+				"Quality Start": null,
+				"Strikeouts": null,
+				"Walks": null,
+				"Strikeouts por Nove Entradas": null,
+				"Walks por Nove Entradas": null,
+				"Strikeouts por Walks": null,
+				"Hit By Pitch": null,
+				"Jogos Completos": null,
+				"Shutout ": null,
+				"No-Hitter": null,
+				"Wild Pitches": null,
+				"Oportunidades de Save": null,
+				"Hold": null,
+				"Save": null,
+				"Blown Save": null,
+				"Walks Plus Hits per Inning": null
+			},
+			"Rebatendo - Hitting": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Rebatidas Válidas": null,
+				"Rebatidas Duplas": null,
+				"Rebatidas Triplas": null,
+				"Home Run": null,
+				"Grand Slam Home Run": null,
+				"Walks": null,
+				"Oportunidades no Bastão": null,
+				"Aproveitamento no Bastão": null,
+				"Walks Intencionais": null,
+				"Hit by Pitch": null,
+				"Corridas": null,
+				"Corridas Impulsionadas ": null,
+				"Total Bases": null,
+				"Slugging Percentage": null,
+				"On Base Percentage": null,
+				"Bases Roubadas ": null,
+				"Capturado Roubando": null,
+				"Rebatidas Extra Bases": null,
+				"On Base Plus Slugging Percentage": null,
+				"Groundouts ": null,
+				"Flyouts ou Air Outs ": null,
+				"Bunt de Sacrifício": null,
+				"Sacrifice Flies": null,
+				"Grounded Into Double Play": null
+			},
+			"Defendendo - Fielding": {
+				"Ano": null,
+				"Ano Escolar": null,
+				"Time": null,
+				"Partidas Jogadas": null,
+				"Minutos/Partida": null,
+				"Assistências": null,
+				"Putouts": null,
+				"Double Plays": null,
+				"Erros": null,
+				"Fielding Percentage": null,
+				"Entradas Jogadas": null,
+				"Passed Balls": null,
+				"Triple Play": null,
+				"Outfield Assists": null,
+				"Total Chances": null
+			}
+		}
+	};
+
+	constructor() {}
+
+	getSportProperty(sport_name:string) { 
+		return this.sportList[sport_name];
 	}
+		
 }

@@ -69,14 +69,8 @@ class TimelineController extends Controller
 
     function add(Request $request){
 
-        //Verifica se campos obrigatórios estão presentes
-        if(!$request->has('post_content') || !$request->filled('post_content')){
-            //TODO: Melhorar resposta json
-            return response("Campo obrigatório não submetido! Tente novamente!"); 
-        }
-
         //Atribui conteúdo a variável
-        $data = ['post_content' => $request->input('post_content')];
+        $data = ['post_content' => ($request->has('post_content'))? $request->input('post_content') : ''];
 
         //Se foi definido a visibilidade do post
         if ($request->has('post_visibility') && $request->filled('post_visibility')) {

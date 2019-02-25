@@ -1,4 +1,4 @@
-import { NavController, ToastController } from 'ionic-angular';
+import { ToastController } from 'ionic-angular';
 import { SuccessStep } from './../../pages/signup-steps/success/success';
 import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
@@ -6,33 +6,20 @@ import { Api } from '../api/api';
 import { loadNewPage } from '../load-new-page/load-new-page';
 import { DashboardPage } from '../../pages/dashboard/dashboard';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 /**
- * Most apps have the concept of a User. This is a simple provider
- * with stubs for login/signup/etc.
- *
- * This User provider makes calls to our API at the `login` and `signup` endpoints.
- *
- * By default, it expects `login` and `signup` to return a JSON object of the shape:
- *
- * ```json
- * {
- *   status: 'success',
- *   user: {
- *     // User fields your app needs, like "id", "name", "email", etc.
- *   }
- * }Ø
- * ```
- *
- * If the `status` field is not `success`, then an error is detected and returned.
+ * User Context
  */
 @Injectable()
 export class User {
 
   _user: any;
-  _userObservable:  Observable<ArrayBuffer>;
+  _userObservable: Observable<ArrayBuffer>;
   _statsObservable: Observable<ArrayBuffer>;
+  _visibilityObservable: Observable<ArrayBuffer>;
 
+  private filteredData = new Subject<any>();
   private navCtrl: any;
 
   private requiredFields: string[] = [
@@ -41,16 +28,23 @@ export class User {
 
   constructor(
     private api: Api,
-    private loadPageService: loadNewPage,
-    private toast: ToastController) {
-       //Carrega Observables
-      this.getSelfUser();
-      this.getSelfStats();
-    }
+    protected loadPageService: loadNewPage,
+    protected toast: ToastController) {
+    
+    //Carrega Observables
+    this.getSelfUser();
+    this.getSelfStats();
+    this.getSelfVisibility();
+  }
 
   /** Implementa variavel com controlador de navegação */
-  injectNavCtrl(navComponent: NavController) {
+  injectNavCtrl(navComponent) {
     this.navCtrl = navComponent;
+  }
+
+  /** Adiciona dados já recebidos */
+  setFilteredData(data) {
+    this.filteredData.next(data);
   }
 
   /**
@@ -63,15 +57,18 @@ export class User {
     seq.subscribe((res: any) => {
       // Se mensagem contiver parametro 'success'
       if (res.success != undefined) {
-        //Registra sucesso de login
-        this._loggedIn(res);
+
+        //Exibe erro de login
+        let message = this.loadPageService.createToast(res.success.login, 'bottom');
+        message.present();
 
         //Redireciona para página dashboard
-        this.loadPageService.getPage(res, this.navCtrl, DashboardPage);
+        this.navCtrl.push(DashboardPage);
       }
       else {
         //Exibe erro de login
-        this.loadPageService.getPage(res.error.login, this.navCtrl, null);
+        let message = this.loadPageService.createToast(res.error.login, 'bottom');
+        message.present();
       }
     }, err => {
       console.error('ERROR', err);
@@ -82,8 +79,7 @@ export class User {
 
   //Executa login via Redes Sociais
   socialLogin(app: string) {
-    let seq = this.api.getSocial('login/' + app);
-    return seq;
+    let req = this.api.getSocial(app);
   }
 
   /**
@@ -104,11 +100,8 @@ export class User {
       else {
         let $errors: string = '';
         this.requiredFields.forEach(element => {
-          res.error.forEach(el => {
-            //Após confirmação de cadastro redireciona para página de sucesso
-            $errors += (el[element] != undefined) ? element + ' : ' + el[element] + '\n' : '';
-          });
-
+          //Após confirmação de cadastro redireciona para página de sucesso
+          $errors += (res.error[element] != undefined) ? element + ' : ' + res[element] + '\n' : '';
         });
         this.loadPageService.getPage($errors, this.navCtrl, 'bottom');
       }
@@ -124,9 +117,12 @@ export class User {
    * Atualiza dados de usuário logado
    * @param accountData 
    */
-  update(accountData: any) {
+  update(accountData: any, isPhoto:boolean = false) {
 
-    let seq = this.api.put('user/update', accountData);
+    //Define método de update de dados de usuário
+    let method = (isPhoto)? 'post' : 'put';
+
+    let seq = this.api[method]('user/update', accountData);
 
     seq.subscribe((res: any) => {
       // Se mensagem contiver parametro 'success'
@@ -180,24 +176,41 @@ export class User {
 
   }
 
+  //Retorna observable de visibilidade
+  private getSelfVisibility(): Observable<ArrayBuffer> {
+
+    //Retorna a lista de visibilidades do usuário
+    return this._visibilityObservable = this.api.get('timeline/visibility');
+
+  }
+
   /**
-   * Retorna observable de usuário requisitado
+   * Retorna classe User para perfil visualizado usuário requisitado
    */
-  getUser($user_id:number):User {
+  getUser($user_id: number): User {
 
     //Atribui observable
-    this._userObservable  = this.api.get('user/' + $user_id);
-    this._statsObservable = this.api.get('user/stats/' + $user_id);
+    let $user = new User(this.api, this.loadPageService, this.toast);
+    $user._userObservable =  this.api.get('user/' + $user_id);
+    $user._statsObservable = this.api.get('user/stats/' + $user_id);
 
     //Retorna instancia da classe
-    return this;
+    return $user;
   }
 
   /**
    * Log the user out, which forgets the session
    */
-  logout() {
+  logout(): Observable<ArrayBuffer> {
+
+    //Reseta dados do usuário na variavel
     this._user = null;
+
+    //Define Observable
+    let logout = this.api.get('logout');
+
+    //Retorna observable
+    return logout;
   }
 
   /**
@@ -208,12 +221,12 @@ export class User {
   }
 
   /** Subscribe ao userdata */
-  subscribeUser($optionalFn = null, $component = null) {
+  subscribeUser($optionalFn = function($v){}, $component = null) {
     return this._userObservable.subscribe(
-      (resp:any) => {
+      (resp: any) => {
 
         //Se não existir items a exibir
-        if (resp.length <= 0) {
+        if (Object.keys(resp).length <= 0) {
           return;
         }
 
@@ -231,7 +244,7 @@ export class User {
   }
 
   //Define os campos definidos para o usuário
-  fillMyProfileData() {
+  private fillMyProfileData() {
 
     //Retorna campos por tipo de usuaŕio
     let campos = this.userLoggedFields();
@@ -258,8 +271,8 @@ export class User {
 
     //Campos gerais
     let $fields: string[] = [
-      'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email'
-    ]
+      'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email', 'sport', 'clubes'
+    ] 
 
     //Se usuario for atleta e profissional
     if (this._user.type.ID == (1 || 2)) {

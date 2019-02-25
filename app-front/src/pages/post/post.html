@@ -1,54 +1,43 @@
 <ion-header>
 
-  <ion-toolbar>
-
+  <ion-navbar>
     <ion-title>{{ "POST" | translate }}</ion-title>
-
-  </ion-toolbar>
+  </ion-navbar>
 
 </ion-header>
 
 <ion-content class="page-post">
 
-  <ion-grid>
+  <ion-grid fixed>
     <ion-row padding>
 
-      <ion-col col-12 col-md-9>
+      <ion-col col-12 col-md-8>
 
         <ion-card>
 
           <ion-grid>
             <ion-row>
 
-              <ion-col id="feature" col-md-6>
-                
+              <ion-col *ngIf="currentPostItem.attachment" id="feature" col-12>
+                <img [src]="currentPostItem.attachment" [alt]="currentPostItem.post_title" />
               </ion-col>
 
-              <ion-col>
+              <ion-col col-12>
 
                 <ion-card-content>
 
                   <h1>{{ currentPostItem.post_title }}</h1>
 
                   <p>
-                      <small>
-                        {{ "BY"}} {{ currentPostItem.post_author.display_name }}
-                      </small> 
-                      <br />                   
+                    <small>
+                      {{ "BY"}} {{ currentPostItem.post_author.display_name }}
+                    </small>
+                    <br />
                   </p>
 
                   <hr />
 
                   <div [innerHTML]="currentPostItem.post_content"></div>
-
-                  <ion-footer>
-                    <ion-item>
-                      <ion-badge end>
-                        {{ "COMMENTS" | translate }} : {{ currentPostItem.quantity_comments }}
-                      </ion-badge>
-                    </ion-item>
-
-                  </ion-footer>
 
                 </ion-card-content>
 
@@ -61,35 +50,52 @@
 
       </ion-col>
 
-      <ion-col col-md-3>
+      <ion-col col-md-4>
         <!-- Comentário -->
 
         <ion-card>
 
           <ion-card-header>
-            {{ "COMMENTS" | translate }}
+
+            <ion-item>
+              <ion-badge end>
+                {{ "COMMENTS" | translate }} : {{ currentPostItem.quantity_comments }}
+              </ion-badge>
+            </ion-item>
+
           </ion-card-header>
+          <ion-card-content>
 
-          <ion-item-group>
+            <ion-item-group class="comment-section">
 
-            <ion-row>
-              <ion-col col-auto>
-                <ion-item>
-                  <ion-avatar item-start>
-                    <ion-img [src]=""></ion-img>
-                  </ion-avatar>
-                </ion-item>
-              </ion-col>
-              <ion-col>
-                <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
-                  required></ion-textarea>
-                <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" |
-                  translate
-                  }}</button>
-              </ion-col>
-            </ion-row>
+              <ion-row>
+                <ion-col col-auto>
+                  <ion-item>
+                    <ion-avatar class="btn-cursor" item-start>
+                      <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+                      <ng-template #elseBlock>
+                        <img src="assets/img/user.png" alt="currentUser.display_name" />
+                      </ng-template>
+                    </ion-avatar>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
+                    required></ion-textarea>
+                  <button ion-button small end (click)="submitComment(currentPostItem.ID, $event)">{{ "PUBLISH" |
+                    translate
+                    }}</button>
+                </ion-col>
+              </ion-row>
 
-          </ion-item-group>
+            </ion-item-group>
+
+            <ion-item-group class="postCommentsContainer">
+              <comments [currentCommentItems]="currentCommentItems" [$postID]="currentPostItem.ID"></comments>
+            </ion-item-group>
+
+          </ion-card-content>
+
         </ion-card>
 
 

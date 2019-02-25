@@ -5,6 +5,7 @@ import { User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
 import { MyProfileGeneralStatsComponent } from '../../my-profile/general-stats-data/general-stats-data.component';
 import { MyProfileAchievementsComponent } from '../../my-profile/achievements-data/achievements-data.component';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'profile-stats',
@@ -14,6 +15,11 @@ import { MyProfileAchievementsComponent } from '../../my-profile/achievements-da
   ]
 })
 export class StatsComponent {
+
+  profile: Observable<ArrayBuffer> 
+  stats: Observable<ArrayBuffer> 
+
+  isLogged:boolean = false;
 
   type: number = null; 
 
@@ -39,7 +45,6 @@ export class StatsComponent {
   }
 
   constructor(
-    private user: User,
     private modalCtrl: ModalController,
     public statsList: StatsList) { }
 
@@ -51,7 +56,7 @@ export class StatsComponent {
   //Adiciona valores as variaveis globais
   fillUserData() {
 
-    this.user._userObservable.subscribe((resp: any) => {
+    this.profile.subscribe((resp: any) => {
 
       //Se não existir items a exibir
       if (resp.length <= 0) { 
@@ -76,7 +81,7 @@ export class StatsComponent {
 
   //Retorna estatisticas
   getStats() {
-    this.user._statsObservable.subscribe((resp: any) => {
+    this.stats.subscribe((resp: any) => {
 
       //Se não existir items a exibir
       if (resp.length <= 0) {

@@ -2,8 +2,6 @@
 
 namespace Core\Utils;
 
-use Core\Database\PostModel;
-use Core\Database\UsermetaModel;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class SendEmail {
@@ -24,10 +22,10 @@ class SendEmail {
     }
 
     /** Seta destinatarios das mensagens */
-    public function setToEmail($emails) {
+    public function setToEmail(array $emails) {
 
         //Verifica se é array de dados
-        if (!is_array($emails) || count($emails) <= 1) {
+        if (!is_array($emails) || count($emails) < 1) {
             throw new Exception('Email deve ser array de email');
         } 
 
@@ -71,7 +69,7 @@ class SendEmail {
     }
 
     /** Seta conteúdo da mensagem */
-    public function setContent($content) {
+    public function setContent(string $content) {
 
         if(!is_string($content)){
             throw new Exception('Nome deve ser string');
@@ -90,7 +88,7 @@ class SendEmail {
             $mail = $this->mail;   
 
             //Server settings
-            $mail->SMTPDebug = 2;                       // Enable verbose debug output
+            $mail->SMTPDebug = 0;                       // Enable verbose debug output
             $mail->isSMTP();                            // Set mailer to use SMTP
             $mail->Host = env('SMTP_HOST');             // Specify main and backup SMTP servers
             $mail->SMTPAuth = true;                     // Enable SMTP authentication
@@ -116,17 +114,18 @@ class SendEmail {
             //Content
             $mail->isHTML(true);       // Set email format to HTML
             $mail->Subject = $this->subject;
+            $mail->isHTML(true);
             $mail->Body    = $this->content;
             $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
             //Envia email
             $mail->send();
 
-            return ['success' => ['Email' => 'Mensagem enviada.']];
+            return ['success' => ['email' => 'Mensagem enviada.']];
 
         } catch (Exception $e) {
             
-            return ['error' => ['Email' => 'Mensagem não pode ser enviada. Erro: '. $mail->ErrorInfo]];
+            return ['error' => ['email' => 'Mensagem não pode ser enviada. Erro: '. $mail->ErrorInfo]];
         }        
 
     }

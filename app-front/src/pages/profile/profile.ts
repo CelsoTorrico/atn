@@ -1,4 +1,3 @@
-import { MyProfilePersonalDataComponent } from './../my-profile/personal-data/personal-data.component';
 import { ProfileViewDirective } from './profile-view.directive';
 import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
@@ -10,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ProfileComponent } from './profile-components/profile.component';
 import { StatsComponent } from './profile-components/stats.component';
+import { ChatPage } from '../chat/chat';
 
 @IonicPage()
 @Component({
@@ -29,8 +29,15 @@ export class ProfilePage {
 
   //Variveis de template de usuario
 
-  ID: number = null;
+  //Current logged user
+  currentUser: User;
+  ID: number = null; 
+  display_name: string = null;
+  favorite:boolean = false;
+  following:boolean = false;
+  isLogged:boolean = false;
 
+  //Profile visited
   public $user_ID: number = null;
 
   public showMessageBox: boolean = false;
@@ -38,11 +45,11 @@ export class ProfilePage {
   public loginErrorString;
 
   constructor(
-    public navCtrl: NavController,
-    public modalCtrl: ModalController,
+    public  navCtrl: NavController,
+    public  modalCtrl: ModalController,
     private api: Api,
-    public user: User,
-    public translateService: TranslateService,
+    public  user: User,
+    public  translateService: TranslateService,
     private params: NavParams,
     private browser: InAppBrowser,
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -56,21 +63,31 @@ export class ProfilePage {
     this.$user_ID = this.params.get('user_id');
 
     //Define requisiçaõ para mostrar dados
-    if (this.$user_ID != null) {
-      //Adiciona url para exibir perfis de conexão
-      this.user.getUser(this.$user_ID);
+    if (this.$user_ID != undefined) {
+      //Atribui classe de usuário definido pelo $user_id
+      this.currentUser = this.user.getUser(this.$user_ID);
     }
+    else {
+      //Atribui classe do usuário logado
+      this.currentUser = this.user;
+      this.isLogged = true;
+    }
+
+    //Retorna dados do usuário
+    this.currentUser.subscribeUser(function ($this) {
+      //Funções realizadas após requisição com dados sucesso
+      $this.ID = $this.currentUser._user.ID;
+      $this.profile_name = $this.currentUser._user.profile_name;
+      $this.following = $this.currentUser._user.following;
+    }, this);
 
   }
 
   //Função que inicializa
   ngOnInit() {
-
     //Carrega componente
     this.loadComponent();
-
   }
-
 
   ngAfterViewInit() {
     //Move profile-resume quando mobile
@@ -99,6 +116,17 @@ export class ProfilePage {
 
     let componentRef = viewContainerRef.
       createComponent(componentFactory);
+
+    //Injeta classe de usuário no componente filho
+    componentRef.instance.isLogged  = this.isLogged;
+    componentRef.instance.profile   = this.currentUser._userObservable;
+    componentRef.instance.stats     = this.currentUser._statsObservable; 
+
+    //Se component for stats envia observable 
+    if(StatsComponent == componentRef.componentType){
+      
+    } 
+    
   }
 
   //Mudar a visualização de componentes
@@ -108,7 +136,9 @@ export class ProfilePage {
   }
 
 
-  /** Funções de botões */
+  /** --------------------------------------------------
+   * Funções de botões 
+   * */
 
   followProfile($event) {
 
@@ -125,9 +155,11 @@ export class ProfilePage {
         if (el.classList.contains("active")) {
           el.classList.remove("active");
           el.classList.add("inactive");
+          this.following = false;
         } else {
           el.classList.add("active")
           el.classList.remove("inactive");
+          this.following = true; 
         }
       }
     });
@@ -143,6 +175,25 @@ export class ProfilePage {
 
     //Abre uma nova aba para download
     this.browser.create($url + $id, '_blank');
+  }
+
+  sendChatMessage() {
+    
+    //Adiciona Id do usuário corrente
+    let $id = this.ID;
+
+    //Iniciar uma sala de chat
+    this.api.get('chat/room/' + $id).subscribe((resp: any) => {
+
+      if(resp.error != undefined){
+        return;
+      }
+
+      this.navCtrl.push('ChatPage', {
+        room_open: resp.chat_room
+      });
+    });
+
   }
 
   sendProfileMessage() {

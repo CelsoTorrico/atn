@@ -6,7 +6,6 @@ import { User, Api } from '../../../providers';
 import { BrazilStates } from '../../../providers/useful/states';
 import { FormControl, NgForm } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { viewClassName } from '@angular/compiler';
 
 @Component({
     selector: 'personal-data-edit',
@@ -132,7 +131,7 @@ export class MyProfilePersonalDataComponent {
             //Intera sobre objeto e atribui valor aos modelos de metadata
             for (var key in atributes.metadata) {
                 if (atributes.metadata.hasOwnProperty(key) && $this[key] != undefined) {
-                    $this[key] = atributes.metadata[key];
+                    $this[key] = atributes.metadata[key]; 
                 }
             }
 
@@ -145,7 +144,14 @@ export class MyProfilePersonalDataComponent {
 
     //Função que inicializa
     ngOnInit() {
+        //Atribui dados do usuário
         this.user.subscribeUser(this.addFormData, this);
+        //Retorna seleção de visibilidade
+        this.user._visibilityObservable.subscribe((resp:any) => {
+            if(Object.keys(resp).length > 0){
+                this.visibility = resp;
+            }
+        });
     }
 
     //Salvar dados do formulário

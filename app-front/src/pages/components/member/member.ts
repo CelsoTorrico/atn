@@ -11,7 +11,7 @@ export class Member {
 
     @Input() public listMembers:any[];
 
-    private getMemberUrl:string = 'user';
+    private getMemberUrl:string = 'follow'; 
   
     constructor(
         public api: Api,

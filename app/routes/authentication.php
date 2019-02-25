@@ -7,15 +7,7 @@ $router->group(['prefix' => 'login'], function () use ($router) {
     $router->post('/', 'LoginController@login');
 
     //SOCIAL LOGIN
-    $router->group(['prefix' => 'facebook'], function() use ($router) {
-        $router->get('/',  'LoginController@facebookProvider');
-        $router->get('/authorized',  'LoginController@socialCallback');
-    }); //facebook
-
-    $router->group(['prefix' => 'google'], function() use ($router) {
-        $router->get('/',  'LoginController@googleProvider');
-        $router->get('/authorized',  'LoginController@socialCallback');
-    }); //google
+    $router->get('/{social:facebook|google|authorized}',  'LoginController@socialProvider');
 
 });
 
@@ -27,5 +19,10 @@ $router->group(['prefix' => 'register'], function () use ($router) {
 
 });
 
-//Desloga e finaliza sessão
+/** ####### LOGOUT ################# */
 $router->get('/logout', 'LoginController@logout');
+
+/** ####### FORGET PASSWORD ################# */
+$router->post('/forget-pass', 'LoginController@forgetPassword');
+
+

@@ -3,27 +3,30 @@
   <img src="assets/img/dashboard/notify-icon.png" />
   <ion-badge class="messageCount" *ngIf="notifyCount">{{ notifyCount }}</ion-badge>
 
-  <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
-
     <div class="popover-notify popup">
+
+        <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
       
-        <ion-grid class="notification-container">
+          <ion-grid class="notification-container">
 
-        <ion-list>
+            <ion-list>
 
-          <ion-card *ngIf="currentNotifyItems.length <= 0">
-            <ion-card-content>
-              {{ "NOT_TO_SHOW" | translate }}
-            </ion-card-content>
-          </ion-card>
+              <ion-card *ngIf="currentNotifyItems.length <= 0">
+                <ion-card-content>
+                  {{ "NOT_TO_SHOW" | translate }}
+                </ion-card-content>
+              </ion-card>
 
-          <notify-single class="notifyItem" *ngFor="let data of currentNotifyItems" [currentNotify]="data"></notify-single>
+              <notify-single class="notifyItem" *ngFor="let data of currentNotifyItems" [currentNotify]="data"></notify-single>
 
-        </ion-list>
-       </ion-grid>
+            </ion-list>
+
+            
+          </ion-grid>
+         </ion-scroll>
     </div>
 
-  </ion-scroll>
+  <
 
   <!--<ion-infinite-scroll (ionInfinite)="loadMore($event)"> 
     <ion-infinite-scroll-content></ion-infinite-scroll-content>

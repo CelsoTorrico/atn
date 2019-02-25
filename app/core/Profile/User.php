@@ -484,7 +484,8 @@ class User extends GenericUser{
         $usermeta = new UsermetaModel();
 
         //Variavel para montar query
-        $where  = [];
+        $where = [];
+        $whereJoin = [];
 
         //Intera sobre array executando função
         foreach($search as $k => $v) {
@@ -546,10 +547,21 @@ class User extends GenericUser{
             }
 
             //Define os conteúdos de forma estruturada em query
-            if (!count($where)>0) {
-                $where['AND'] = $content;
-            } else {
-                $where['AND']['AND #'.$k] = $content;
+            if ($k == 'display_name') {
+                $where = $content;
+            }
+
+            //Após aqui não é mais usado display_name para atribuição
+            if($k == 'display_name'){
+                continue;
+            }
+
+            //Atributos para join
+            if (count($where) <= 0){
+                $whereJoin['AND'] = $content;
+            }
+            else {
+                $whereJoin['AND']['AND #'.$k] = $content;
             }
             
             continue;
@@ -567,16 +579,34 @@ class User extends GenericUser{
 
         //Paginação de membros
         $limit = [$initPageCount, $perPage];
+        $result = null;
+
+        if(count($where) > 0){
+            //Lista de ids de usuários via table 'users'
+            $result = $db->select('users', ['users.ID'], $where);
+            
+            //Atribuindo apenas valores
+            foreach ($result as $key => $value) {
+                $whereJoin['user_id'][] = $value['ID'];
+            }
+        }
 
         //Define o limite de posts
-        $where = array_merge($where,  ['LIMIT' => $limit]);
+        $whereJoin = array_merge($whereJoin,  ['LIMIT' => $limit]);
 
-        //Executa query (Medoo)
-        $result = $db->select('users',[
-            '[>]usermeta' => ['ID' => 'user_id']
-        ],[
-            'users.ID'
-        ], $where);
+        //Se existir outros filtros selecionados
+        if(key_exists('AND', $whereJoin)){
+            //Executa query (Medoo)
+            $result = $db->select('usermeta', [
+                'usermeta.user_id(ID)'
+            ], $whereJoin);
+        }
+
+        //Em caso de não houver nenhum tipo de filtragem solicitada, retornar usuários
+        if(count($where) <= 0 && is_null($result)){
+            //Lista de ids de usuários via table 'users'
+            $result = $db->select('users', ['ID'], $whereJoin);
+        }
 
         //Inicializa array
         $users = [];
@@ -654,18 +684,10 @@ class User extends GenericUser{
         }  
 
         //Filtrar inputs e validação de dados
-        $checked = $this->verifySentData($data);
+        $filtered = $this->verifySentData($data, $isUpdate);
 
-        //Checkando data e erros e avisa que é update de perfil
-        $filtered = $this->checkSentData($checked, $isUpdate);
-
-        //Se retornar null é que campos obrigatórios foram enviados vazios
-        if(is_null($filtered)){
-            return ["error" => ['register' => "Campos obrigatórios vazios. Preencha todos os campos solicitados."]];
-        }
-
-        //Verifica se houve erro retorna
-        if( array_key_exists('error', $filtered) && count($filtered['error']) > 0 ){
+        //Se houver algum campo inválidado obrigatório: display_name || user_email
+        if (array_key_exists('error', $filtered) && in_array(['display_name', 'user_email'], $filtered['error'])) {
             return array('error' => $filtered['error']);
         }
 
@@ -675,7 +697,7 @@ class User extends GenericUser{
             $filtered['user_pass'] = $this->hashPassword($filtered['user_pass']);
         }
 
-        //Colunas válidas
+        //Colunas principais válidas
         $userColumns = array(
             'user_login','user_pass','user_email','display_name'
         );
@@ -773,6 +795,11 @@ class User extends GenericUser{
     /** Registra usermeta baseado nos parametros */
     private function register_usermeta($meta_key, $meta_value, $user_id, $check = true) {
 
+        //Se valor for false (validação não permitida), não registrar usermeta e encerrar execução da função
+        if(!$meta_value){
+            return;
+        }
+
         //Retorna instancia de modelo
         $meta = $this->metaModel->getInstance(['user_id' => $user_id,'meta_key' => $meta_key]);
 
@@ -798,7 +825,7 @@ class User extends GenericUser{
             $meta_value = ['value' => $itemTagged];
         }
 
-        //Enviar notificação para clube e adicionar marcador
+        //Arranjando dados de estatísticas
         if(is_array($meta_value) && $meta_key == 'stats') {
             
             //Campos gerais de estatisticas
@@ -815,7 +842,18 @@ class User extends GenericUser{
 
         //Se for update atributos
         if (!is_null($meta) && !$meta->isFresh()) {
-            
+
+            if(in_array($meta->meta_key, ['sport', 'clubes'])){
+                
+                //Atribui array de IDS
+                $meta->meta_value = $meta_value;
+
+                //Faz update e retorna ID de resultado
+                return $saveResult = [
+                    $meta->meta_key => ($meta->update('meta_value')) ? $meta->getPrimaryKey() : false
+                ];
+            }
+
             //Atribui valor ao meta_value
             $meta->meta_value = $meta_value['value'];
             
@@ -824,7 +862,8 @@ class User extends GenericUser{
 
             //Verifica se visibilidade foi definida e add novo valor
             if(isset($meta_value['visibility'])){
-                $meta->visibility = $this->appVal->check_user_inputs(['visibility' => $meta_value['visibility']]);
+                //Verifica se visibilidade enviada é válida
+                $meta->visibility = $this->appVal->check_user_input_visibility($meta_value['visibility']);
                 $fields[] = 'visibility';
             }
             
@@ -834,17 +873,38 @@ class User extends GenericUser{
             ];
 
         } else {
+
+            //Se valor for nulo
+            if(is_null($meta_value)){
+                return;
+            }
+
+            //Valor default para visibilidade
+            $meta_visibility = 0;
+
+            //Verifica se valor enviado está em forma de array
+            //Se aplica em casos do usuário não ter campo preenchido quando dentro da plataforma
+            if(is_array($meta_value)){
+
+                //Atribui valor para var correta
+                $meta_value = $meta_value['value'];
+
+                //Se valor for nulo
+                if(is_null($meta_value)){
+                    return;
+                }
+
+                //Atribui visibilidade
+                $meta_visibility = (key_exists('visibility', $meta_value)) ? $this->appVal->check_user_input_visibility($meta_value['visibility']) : 0;
+            }
+
             //Cria novos atributos e valores para salvar
             $metaData = [
-                'user_id'    => $user_id,
-                'meta_key'   => $meta_key,
-                'meta_value' => $meta_value
+                'user_id'       => $user_id,
+                'meta_key'      => $meta_key,
+                'meta_value'    => $meta_value,
+                'visibility'    => $meta_visibility
             ];            
-
-            //Verifica se visibilidade foi definida e add novo valor
-            if( is_array($meta_value) && isset($meta_value['visibility'])){
-                $metaData['visibility'] = $this->appVal->check_user_inputs('visibility', $meta_value['visibility']);
-            }
 
             //Instancia novo modelo
             $meta = new UsermetaModel();
@@ -983,10 +1043,29 @@ class User extends GenericUser{
             //Em formato JSON
             } elseif (in_array($meta_key, $is_json) && !empty($meta_value)) {
                 $addValue = ($uns = @unserialize($meta_value)) ? $uns : $meta_value;
+            //Formatar data 
+            } elseif ($meta_key == 'birthdate'){
+                //Formata data em formato permitido
+                $meta_value = str_replace('/', '-', $meta_value);
+                //Converte em objeto data
+                $date = date_create($meta_value);
+                //Formata para data válida
+                $addValue = date_format($date, 'Y-m-d');
+            } 
             //Outros formatos
-            } else {
+            else {
                 $addValue = $meta_value;
             }
+
+            /** Compatibilidade de dados com versão anterior - dados armazenados */
+            if(is_null($addValue) && in_array($meta_key, $is_array)){
+                $addValue = ($uns = @unserialize($meta_value)) ? $uns : $meta_value;
+            }
+
+            if(is_null($addValue) && in_array($meta_key, $is_json)){
+                $addValue = json_decode(utf8_encode($meta_value));
+            }
+            /** Fim de tentativa */
 
             //Retorna visibilidade
             $addVisibility = $value['visibility'];
@@ -1068,8 +1147,12 @@ class User extends GenericUser{
         $sportValue = $this->sport['value'];
 
         //Verifica se dado armazenado é array ou string com nome do esporte (v2.0)
-        //Se for array de ids
-        if(is_array($sportValue)) {
+        //Se for array de ids contendo key 'value'
+        if(is_array($sportValue) && key_exists('value', $sportValue)) {
+            $result = $model->dump(['ID' => $sportValue['value']]);
+        }
+        //No caso de array comum
+        elseif(is_array($sportValue)){
             $result = $model->dump(['ID' => $sportValue]);
         //Se retornado uma string de array serializado
         } elseif ( preg_match('/^a\:[0-9]+\:{/', $sportValue)) {
@@ -1233,51 +1316,43 @@ class User extends GenericUser{
 
     }
 
-    //Verifica os dados enviados pelo usuário, faz validação e formata
-    protected function verifySentData($data):array{
+    //Verifica os dados enviados pelo usuário possue a formatação exigida, faz validação e formata
+    protected function verifySentData($data, $isUpdate = false):array{
         
         //Inicia classe Validação
         $val = $this->appVal;
         
-        //Executa função de checar inputs
-        return $val->check_user_inputs($data);
+        //Executa função de checar formato dos inputs via regular expressions e outras funções
+        $formated = $val->check_user_inputs($data);
+
+        //Executa função verificar existência de erros
+        $checked = array_merge($data, $val->check_filtered_inputs($formated, $isUpdate));
+
+        //Se troca de email foi requisitada, fazer verificação se existe algum usuário com mesmo email
+        if (key_exists('user_email', $checked)) {
+            //Adiciona erro se houver algo que impeça o update do email
+            $checked = array_merge($checked, $this->can_update_user_email($checked['user_email']));
+        }
+        
+        //Se não houve nenhum erro, retornar array vazio
+        return $checked;
 
     }
 
-    //TODO: Formatar para PHP
-    protected function checkSentData($data, $isUpdate = false){
-
-        //Inicia classe Validation
-        $val = $this->appVal;
-
-        //Executa função de checar inputs
-        $checked = $val->check_filtered_inputs($data, $isUpdate);
-
-        //Se troca de email foi requisitada, fazer verificação se existe algum usuário com mesmo email
-        if(key_exists('user_email', $data)){
-            
-            //Carrega base e verifica se retorna sucesso
-            $searchQuery = $this->model->load([
-                'user_email' => $data['user_email']
-            ]);
-
-            //SE não existe retorna
-            if(!$searchQuery){
-                return null;
-            }
-
-            //Se email pertencer a outro usuário diferente do logado (requisidor)
-            if($this->model->ID != $this->ID){
-                $checked['error'] = ['user_email' => "E-mail já atribuido a um usuário."]; 
-            } 
-            
-        }
-
-        //Se houver algum campo inválidado obrigatório: display_name || user_email
-        if (array_key_exists('error', $checked) && in_array(['display_name', 'user_email'], $checked['error'])) {
-            return $checked;
-        }
+    /** Verifica a existência de usuário com mesmo e-mail */
+    private function can_update_user_email(string $email):array {
         
+        //Carrega base e verifica se retorna sucesso
+        $searchQuery = $this->model->load([
+            'user_email' => $email
+        ]);
+
+        //Se email pertencer a outro usuário diferente do logado (requisidor)
+        if($this->model->ID != $this->ID){
+            return $checked['error'] = ['user_email' => "E-mail já atribuido a um usuário."]; 
+        } 
+
+        //Habilitado para update de email
         return [];
     }
 
@@ -1455,12 +1530,12 @@ class User extends GenericUser{
 
     //Keys formatados como array
     private static function getArrayUsermeta(){
-        return ['my-videos', 'titulos-conquistas', 'eventos', 'cursos'];
+        return ['my-videos', 'titulos-conquistas', 'eventos'];
     }
 
     //Keys formatados como json
     private static function getJsonUsermeta(){
-        return ['stats', 'formacao', 'meus-atletas', 'sport', 'clubes'];
+        return ['stats', 'formacao', 'cursos', 'meus-atletas', 'sport', 'clubes'];
     }
 
     //Retorna ID

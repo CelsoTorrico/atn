@@ -1,5 +1,6 @@
+import { loadNewPage } from './../../providers/load-new-page/load-new-page';
 import { NgForm } from '@angular/forms';
-import { Component } from '@angular/core';
+import { Component, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController } from 'ionic-angular';
 import { User, Api } from '../../providers';
@@ -15,11 +16,11 @@ export class DashboardPage {
     public loginErrorString;
 
     //Informações básicas de usuário
-    public currentUserData: any = { 
+    public currentUserData: any = {
         ID: '',
         display_name: '',
         metadata: {
-            profile_img: { 
+            profile_img: {
                 value: ''
             }
         }
@@ -28,7 +29,7 @@ export class DashboardPage {
     //Timeline
     public addTimeline: any = {
         post_content: <string>'',
-        post_visibility: <number>0, 
+        post_visibility: <number>0,
         post_image: <any>null,
     }
 
@@ -36,25 +37,30 @@ export class DashboardPage {
     public visibility: string[];
 
     //Atividades
-    public activity:any[] = [];
+    public activity: any[] = [];
 
     //Informações de visualização
-    public info:any = {
+    public info: any = {
         views: <number>null,
         messages: <number>null,
         favorite: <any>[]
     }
 
+    private user: User;
+
     constructor(
         public navCtrl: NavController,
-        public user: User, 
         public api: Api,
         public toastCtrl: ToastController,
-        public translateService: TranslateService) {
+        public translateService: TranslateService,
+        public loadNewPage: loadNewPage) {
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
         })
+
+        //Instanciando classe 'User' desse modo, devido imcompatibilidade dentro do construtor
+        this.user = new User(this.api, this.loadNewPage, this.toastCtrl);
     }
 
     //Função que inicializa
@@ -64,30 +70,35 @@ export class DashboardPage {
         this.getLastActivity();
     }
 
+    //Quando um input tem valor alterado
+    fileChangeEvent(fileInput: any) {
+        if (fileInput.target.files && fileInput.target.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e: any) {
+                let prev = document.getElementById('preview');
+                prev.style.backgroundImage = 'url(' + e.target.result + ')';
+                prev.style.display = 'block';
+            }
+
+            reader.readAsDataURL(fileInput.target.files[0]);
+        }
+    }
+
     //Retorna dados do usuário
     public currentUser() {
 
-        //Retorna a lista de esportes do banco e atribui ao seletor
-        this.user._user = this.api.get('user/self').subscribe((resp: any) => {
-
-            //Se não existir items a exibir
-            if (resp.length <= 0) {
-                return;
-            }
+        this.user.subscribeUser(function ($this) {
 
             //Adicionando valores a variavel global
-            this.currentUserData = resp;
-            
+            $this.currentUserData = $this.user._user;
+
             //Campos específicos para dados básicos
-            this.info.views = resp.metadata.views.value;
-            this.info.favorite = resp.totalFavorite;
-            this.info.messages = resp.totalMessages; 
+            $this.info.views = $this.user._user.metadata.views.value;
+            $this.info.favorite = $this.user._user.totalFavorite;
+            $this.info.messages = $this.user._user.totalMessages;
 
-        }, err => {
-            return;
-        });
-
-        return this.currentUserData;
+        }, this);
 
     }
 
@@ -128,14 +139,14 @@ export class DashboardPage {
         //Convertendo data em objeto FormData
         let formData = new FormData();
 
-        if ($event.target[2].files[0] != undefined){
+        if ($event.target[2].files[0] != undefined) {
             //O campo de imagem deve permanecer na ordem
             let file = $event.target[2].files[0];
-            formData.append('post_image', file, file.name); 
+            formData.append('post_image', file, file.name);
         }
-        
-        formData.append('post_content',     this.addTimeline.post_content);
-        formData.append('post_visibility',   this.addTimeline.post_visibility);
+
+        formData.append('post_content', this.addTimeline.post_content);
+        formData.append('post_visibility', this.addTimeline.post_visibility);
 
         //Para envio de imagens {{ options }}
         this.api.post('/timeline', formData).subscribe((resp: any) => {
@@ -178,10 +189,10 @@ export class DashboardPage {
     }
 
     //Abre uma nova página de profile
-    goToProfile($user_id:number){
+    goToProfile($user_id: number) {
         this.navCtrl.push('ProfilePage', {
-        user_id: $user_id
-        }); 
+            user_id: $user_id
+        });
     }
 
 }

@@ -1,2 +1,5 @@
 <learn-item *ngFor="let item of learnItems" [currentLearnItem]="item"></learn-item>
 
+<ion-infinite-scroll (ionInfinite)="loadMore($event)">
+  <ion-infinite-scroll-content></ion-infinite-scroll-content>
+</ion-infinite-scroll>

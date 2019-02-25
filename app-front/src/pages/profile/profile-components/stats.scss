@@ -13,9 +13,8 @@
 .box-stats{
     display: inline-block;
     height: 100%;
-    max-width: 140px;
     max-height: 110px;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
     padding: 20px;
     color: $titulos;
     font-size: 4.0rem;
@@ -94,9 +93,12 @@
 
     h3{
         font-size: 2.5rem;
+        margin-top: 25px !important;
     }
 
-    ion-item{
+    .sport-category-info{
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 20px;
         h4{
             font-size: 1.5rem;
             color: $titulos;
@@ -106,11 +108,14 @@
         margin-top: 10px;
 
         li{
-            border: 0px;
-            margin-bottom: 3px;
-            padding: 15px 10px 0px 0px;
+            margin: 10px 5px 10px;
+            padding: 10px;
             font-size: 2.5rem;
-            color: $titulos;
+            color: #555;
+            border: 1px solid #ddd;
+            min-height: 70px;
+            float: left;
+            box-shadow: 1px 1px 1px antiquewhite;
 
             strong{
                 font-size: 1.2rem;

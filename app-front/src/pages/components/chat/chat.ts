@@ -18,6 +18,8 @@ export class Chat {
 
     public $message: string = '';
 
+    openChat:number;
+
     private messageModel:any = {
         author: {
             ID: <string>''
@@ -31,6 +33,11 @@ export class Chat {
 
     constructor(public api: Api, public params: NavParams, public user: User, private socket: Socket) {
 
+        //Função para adicionar chat para abrir inicialmente
+        this.openChat = this.params.get('room_open');
+
+        //Função que executa após o envio de mensagens
+        //Recupea dados do socket.IO
         this.getMessages().subscribe((message:any) => {
 
             //Se string estiver vazia
@@ -52,6 +59,11 @@ export class Chat {
 
     //Quando iniciar classe
     ngOnInit() {
+        
+        if(this.openChat != undefined){
+            this.$roomID = this.openChat;
+        }
+
         if (this.$roomID != undefined) {
             this.getRoomMessages();
         }
@@ -65,7 +77,7 @@ export class Chat {
         }
     }
 
-    //Abre uma nova página de profile
+    //Abre chat com mensagens
     private getRoomMessages() {
 
         //Retorna a lista de esportes do banco e atribui ao seletor
@@ -98,24 +110,22 @@ export class Chat {
     }
 
     //Abre uma nova página de profile
-    public addRoomMessage($event) {
+    addRoomMessage($event) {
 
         $event.preventDefault();
 
         //Retorna a lista de esportes do banco e atribui ao seletor
         this.api.post(this.$getChatMessagesUrl + this.$roomID, { chat_content: this.$message })
             .subscribe((resp: any) => {
-
                 //Limpa o campo
                 this.$message = '';
-
             }, err => {
                 return;
             });
 
     }
 
-    getMessages() {
+    getMessages():Observable<{}> {
         let observable = new Observable(observer => {
             this.socket.on('addMessage', (data) => {
                 observer.next(data);

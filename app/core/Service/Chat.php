@@ -38,14 +38,8 @@ class Chat{
         }
     }
 
-    /* Abre uma room nova ou existente */
-    function getRoom($suser_id) {
-
-        //Se usuários não estão conectados
-        if(!$this->isConnected($suser_id)){
-            return ['error' => ['chat' => 'Vocês não estão conectados. Impossível enviar mensagem a esse usuário.']];
-        }
-
+    function setRoom(int $suser_id){
+        
         //Instancia classe de usuário
         $user = new User();
 
@@ -64,18 +58,30 @@ class Chat{
         $room = $this->room->load($roomData);
 
         //Verifica se room existe
-        if ($this->room->isFresh() && !$room) {
+        if (!$room) {
             //Preenche modelo
             $this->room->fill($roomData);            
             //Cria uma nova room
             $this->room->save();
-        } 
+        }
+
+        //Retorna dados da room
+        return $this->room->getData();
+    }
+
+    /* Abre uma room nova ou existente */
+    function getRoom($suser_id) {
+
+        //Se usuários não estão conectados
+        if(!$this->isConnected($suser_id)){
+            return ['error' => ['chat' => 'Vocês não estão conectados. Impossível enviar mensagem a esse usuário.']];
+        }
 
         //Dados da Room
-        $result = $this->room->getData();
+        $room = $this->setRoom($suser_id);
 
         //Retorna todas as mensagens baseado no usuário
-        $messages = $this->getMessages($result);
+        $messages = $this->getMessages($room);
         
         //Retorna mensagens
         return $messages;
@@ -259,6 +265,8 @@ class Chat{
             'content'       => $content,
             'author_id'     => $author_id
         ];
+
+        if($this->redis)
 
         //Insere no banco de dados 'Redis' para chat em realtime
         $this->redis->publish($room_id, json_encode($contentArray));

@@ -1,32 +1,37 @@
+<ion-card-header>
+
+  <ion-list>
+    <ion-item>
+
+      <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
+        <img *ngIf="currentTimeline.post_author.profile_img, else elseBlock" [src]="currentTimeline.post_author.profile_img.value" />
+        <ng-template #elseBlock>
+          <img src="assets/img/user.png" />
+        </ng-template>
+      </ion-avatar>
+
+      <h2>{{ currentTimeline.post_author.display_name}}</h2>
+      <h3>{{ currentTimeline.post_date | date }}</h3>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="currentUser.ID == currentTimeline.post_author.ID"  class="close-button" (click)="deleteTimeline()">
+    <ion-icon name="close-circle"></ion-icon>
+  </div>
+
+</ion-card-header>
+
 <ion-card-content>
-  <ion-card-title>
 
-    <ion-list>
-      <ion-item>
+  <div class="timeline-content">
+    {{ currentTimeline.post_content }}
+  </div>
 
-        <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
-          <img *ngIf="currentTimeline.post_author.profile_img.value, else elseBlock" [src]="currentTimeline.post_author.profile_img.value" />
-          <ng-template #elseBlock>
-            <img src="assets/img/user.png" />
-          </ng-template>
-        </ion-avatar>
-
-        <h2>{{ currentTimeline.post_author.display_name}}</h2>
-        <h3>{{ currentTimeline.post_date | date }}</h3>
-      </ion-item>
-    </ion-list>
-
-  </ion-card-title>
+  <ion-item class="image-content btn-cursor" *ngIf="currentTimeline.attachment">
+    <img [src]="currentTimeline.attachment" />
+  </ion-item>
 
   <ion-item-group>
-
-    <ion-item>
-      {{ currentTimeline.post_content }}
-    </ion-item>
-
-    <ion-item *ngIf="currentTimeline.attachment">
-      <img [src]="currentTimeline.attachment" />
-    </ion-item>
 
     <ion-item-divider>
 
@@ -41,7 +46,7 @@
           <ion-icon md="ios-chatbubbles-outline"></ion-icon>
         </button>
 
-        <ion-note end>
+        <ion-note float-right class="btn-cursor count-responses" end>
           {{ "ANSWERS" | translate }}
           <ion-badge item-end badge-sm>
             {{ currentTimeline.quantity_comments }}
@@ -54,24 +59,26 @@
 
   </ion-item-group>
 
+  <ion-item-group class="comment-section" *ngIf='commentShow'>
+
+    <ion-row>
+      <ion-col col-auto>
+        <ion-item>
+          <ion-avatar class="btn-cursor" item-start>
+            <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+            <ng-template #elseBlock>
+              <img src="assets/img/user.png" alt="currentUser.display_name" />
+            </ng-template>
+          </ion-avatar>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
+          required></ion-textarea>
+        <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" | translate }}</button>
+      </ion-col>
+    </ion-row>
+
+  </ion-item-group>
+
 </ion-card-content>
-
-<ion-item-group *ngIf='commentShow'>
-
-  <ion-row>
-    <ion-col col-auto>
-      <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
-        <img *ngIf="currentTimeline.post_author.profile_img.value, else elseBlock" [src]="currentTimeline.post_author.profile_img.value" />
-        <ng-template #elseBlock>
-          <img src="assets/img/user.png" />
-        </ng-template>
-      </ion-avatar>
-    </ion-col>
-    <ion-col>
-      <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
-        required></ion-textarea>
-      <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" | translate }}</button>
-    </ion-col>
-  </ion-row>
-
-</ion-item-group>
