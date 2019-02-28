@@ -27,7 +27,7 @@ class UserClub extends User{
         $this->privatemeta  = new PrivatemetaModel();
 
         //Retorna instancia do usuario
-        return $this->selfUserInstance($args);
+        $this->selfUserInstance($args);
         
     }
 
@@ -43,13 +43,17 @@ class UserClub extends User{
                 //Retorna array de dados
                 $user = $this->model->getData(); 
                 //Verifica se há dados
-                if (!is_array($user) || count($user)<=0)  return null;
+                if (!is_array($user) || count($user) <= 0)  return null;
+                
                 //Instanciando classe user
-                $userClass = $this->get($user['ID']);
+                $this->get($user['ID']);
+                
                 //Inicia atributos únicos dessa classe
-                $this->_initClasses($userClass); 
+                $this->_setAttributes(); 
+
                 //Retorna usuário
-                return $userClass;
+                return;
+
             } else {
                 return null;
             } 
@@ -59,26 +63,26 @@ class UserClub extends User{
         }
     }
 
-    /** Função para inicializar classes e variaveis */
-    private function _initClasses(object $user) {
+    /** Função para inicializar atributos exclusivos da classe */
+    private function _setAttributes() {
 
         //parent_user => Id do clube
         //type => tipo de usuario profissional do esporte
         $this->fixedParam = [
             'meta_key'      => 'parent_user',
-            'meta_value'    => $user->ID                  
+            'meta_value'    => $this->ID                  
         ];
 
         //Retornar numero de usuários cadastrados
         $this->current_users = $this->_currentNumUsers();
 
         //Retornar qtd maximo de usuários permitidos
-        $this->max_users = $this->_getMaxUsers($user->type);
+        $this->max_users = $this->_getMaxUsers($this->type);
 
     }
 
     /** Retorna todos os usuários pertencentes ao clube */
-    public function getUsers() {
+    public function getTeamUsers() {
         
         //Retorna se houve erro ou nenhum usuário
         if(count($this->current_users['ids']) <= 0){
@@ -94,7 +98,7 @@ class UserClub extends User{
             $user = new parent;
             
             //Se houve erro, por causa de usuário inativado
-            if (array_key_exists('error', $item = $user->get($id))) {
+            if (array_key_exists('error', $item = $user->getMinProfile($id))) {
                 continue;
             }
 

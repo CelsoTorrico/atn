@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Nav, NavController } from 'ionic-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 interface PageItem {
   title: string
@@ -14,7 +15,7 @@ type PageList = PageItem[]
         <nav>
             <ul class="list-inline">
                 <li *ngFor="let p of pages" (click)="goToPage(p)">
-                  <span class="button-atletas">{{ p.title }}</span>
+                  <span class="button-atletas">{{ p.title | translate }}</span>
                 </li>
             </ul>                        
         </nav>
@@ -33,12 +34,17 @@ export class NavMenu {
 
   pages: PageList;
 
-  constructor(public navCtrl: NavController) {
+  constructor(
+    public navCtrl: NavController,
+    public translateService: TranslateService) { 
+    
+    this.translateService.setDefaultLang('pt-br');
+    
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Favorite',  component: 'FavoritePage' },
-      { title: 'Learn',     component: 'LearnPage' },
-      { title: 'Messages',  component: 'ChatPage' }
+      { title: 'FAVORITE',  component: 'FavoritePage' },
+      { title: 'LEARN',     component: 'LearnPage' },
+      { title: 'MESSAGES',  component: 'ChatPage' }
     ];
   }
 

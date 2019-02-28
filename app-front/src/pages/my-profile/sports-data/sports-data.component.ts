@@ -29,7 +29,7 @@ export class MyProfileSportsComponent {
     }
 
     posicao = {
-        value: [<string>''],
+        value: <string>'',
         visibility: <number>null
     }
 
@@ -39,11 +39,6 @@ export class MyProfileSportsComponent {
     }
 
     cursos: any = {
-        value: <any>[],
-        visibility: <number>null
-    }
-
-    conquistas: any = {
         value: <any>[],
         visibility: <number>null
     }
@@ -92,12 +87,10 @@ export class MyProfileSportsComponent {
         public api: Api,
         public toastCtrl: ToastController,
         public viewCtrl: ViewController,
-        public translateService: TranslateService,
-        public modal: ModalController) {
-
-        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
-        })
+        public modal: ModalController,
+        public translateService: TranslateService) { 
+    
+        this.translateService.setDefaultLang('pt-br');
 
         //Função a ser executada após requisição de dados de usuário
         this.addFormData = function ($this:any) {
@@ -279,6 +272,7 @@ export class MyProfileSportsComponent {
         this.$sportsSelected.forEach(element => {
             this.setChooseSports(element); 
         });
+        
         this.clubes = [];
         //Define ID's dos clubes selecionados
         this.$clubsSelected.forEach(element => {
@@ -293,28 +287,54 @@ export class MyProfileSportsComponent {
             height: {},
             posicao: {},
             formacao: {},
-            cursos: {}
+            cursos: {}, 
+            conquistas: {
+                value: <any>[],
+                visibility: <number>null
+            },      
+            eventos: {
+                value: <any>[],
+                visibility: <number>null
+            },        
+            club_site: {
+                value: <string>'',
+                visibility: <number>null
+            },        
+            club_liga: {
+                value: <any>[],
+                visibility: <number>null
+            },        
+            club_sede: {
+                value: <string>'',
+                visibility: <number>null
+            }
         }
 
         //Intera sobre objeto e atribui valor aos modelos de metadata
         for (var key in saveFields) {
-            if (this.hasOwnProperty(key) && this[key] != undefined) {
-                saveFields[key] = this[key];
+            if (this.hasOwnProperty(key) && this[key] != undefined) {    
+                saveFields[key] = this[key];                
             }
         }
 
         //Realiza update de dados do usuario
-        let resp = this.user.update(saveFields);
+        let respObservable = this.user.update(saveFields);
+        respObservable.subscribe((resp:any) => {
+            
+            // Se mensagem contiver parametro 'success'
+            if (Object.keys(resp).length <= 0) {
+                return; 
+            }
 
-        if(resp){
-            this.dismiss();
-        }
+            //Fechar modal e retornar data
+            this.dismiss(resp); 
+        });
 
     }
 
     //Fechar modal
-    dismiss() {
-        this.viewCtrl.dismiss();
+    dismiss($data:any = null) {
+        this.viewCtrl.dismiss($data);
     }
 
     customTrackBy(index: number, item: any): number { return index; }

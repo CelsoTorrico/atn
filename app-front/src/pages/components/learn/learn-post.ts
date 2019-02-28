@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api } from '../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'learn-post',
@@ -62,7 +63,10 @@ export class LearnPost {
     public api: Api,
     public navCtrl: NavController, 
     private toastCtrl: ToastController,
-    private params: NavParams ) {
+    private params: NavParams,  
+    public translateService: TranslateService) { 
+        this.translateService.setDefaultLang('pt-br');
+        
         //Adicionando enviadors da view anterior
         this.$postID = this.params.get('post_id');  
     } 

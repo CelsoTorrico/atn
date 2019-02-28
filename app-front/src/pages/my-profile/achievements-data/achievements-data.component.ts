@@ -27,8 +27,10 @@ export class MyProfileAchievementsComponent {
         public user: User,
         public api: Api,
         public viewCtrl: ViewController,
-        public translateService: TranslateService,
-        public statsList: StatsList) {
+        public statsList: StatsList,
+        public translateService: TranslateService) { 
+    
+            this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
@@ -101,17 +103,23 @@ export class MyProfileAchievementsComponent {
         }
 
         //Realiza update de dados do usuario
-        let resp = this.user.update(saveFields);
+        let respObservable = this.user.update(saveFields);
+        respObservable.subscribe((resp: any) => {
 
-        if(resp){
-            this.dismiss();
-        }
+            // Se mensagem contiver parametro 'success'
+            if (Object.keys(resp).length <= 0) {
+                return;
+            }
+
+            //Fechar modal e retornar data
+            this.dismiss(resp);
+        });
 
     }
 
     //Fechar modal
-    dismiss() {
-        this.viewCtrl.dismiss();
+    dismiss(data:any = null) {
+        this.viewCtrl.dismiss(data);
     }
 
     customTrackBy(index: number, item: any): number {

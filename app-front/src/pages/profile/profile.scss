@@ -10,7 +10,7 @@
     }
   }
 
-  .about {
+  .about, .institute-about{
 
     p{
       margin-top: 20px;
@@ -52,12 +52,21 @@
 
   }
 
+  .institute-about{
+    display: inline-block;
+    margin-bottom: 15px; 
+    ul li{
+      width: 100%;
+      font-size: 12px;
+    }
+  }
+
   .my-sports{
     
     font-weight: 100;
 
     ion-item-group{
-      margin-bottom: 30px;
+      margin-bottom: 15px;
 
       &.sports{
         .sport-badge, .club-badge{
@@ -70,9 +79,37 @@
     .about-item {
       padding: 10px;
       margin-top: 5px;
-      border-bottom: 1px solid #ddd;
+      background-color: #f0f0f0;
+      border-bottom: 2px solid rgba(100,100,100,0.1);
       font-weight: 100;
     }
+  }
+
+  .my-team{
+    
+    background: linear-gradient(to top, #eee, #f9f9f9); 
+
+    .member{
+      border: 1px solid #c1c1c1;
+      text-align: center;
+      border-radius: 5px;
+      
+      ion-card{
+        background-color: transparent;
+        color: $branco;
+        border:0px;
+        margin: 0px;
+        width: 100%;
+
+        .item-md h2{
+          font-size: 1.1rem;
+          color: #333 !important; 
+        }
+
+      }
+    }
+
+    
   }
 
  

@@ -11,11 +11,19 @@
 ✔ Criar uma método para que não envie diversas solicitações ao clicar em algum botão. Ex: login, registro e etc. @done(19-01-22 20:03)
 ✔ Fazer validação de formulário, campos obrigatórios não impedindo envio. @done(19-01-21 15:57)
 ✔ Verificar inserção (INSERT | UPDATE) de dados no ambiente de teste @done(19-01-22 20:03)
-☐ Envio de email em Perfil >> Fazer mostrar resposta de sucesso.
-☐ comment-form >> Exibir botão de envio de mensagem
+✔ Envio de email em Perfil >> Fazer mostrar resposta de sucesso. @done(19-02-28 02:18)
+☐ Envio de email >> Verificar conversão UTF 8
+☐ PDF >> Melhorar a exibição dos dados
+✔ comment-form >> Exibir botão de envio de mensagem @done(19-02-27 14:57)
 ✔ Timeline >> Adicionar um botão para excluir post @done(19-02-24 18:56)
 ✔ Datas >> Corrigir a exibição de datas convertendo para formato suportado @done(19-02-25 03:25)
-☐ Notificação >> Melhorar a exibição
+☐ Notificação e Menu >> Melhorar a exibição do popup
 ☐ Font Web >> Donwload e adicionar ao projeto
 ✔ Chat >> Envio de mensagem quando iniciar via perfil de usuário @done(19-02-22 02:12)
 ☐ Profile >> Fazer requisição única utilizando classe Subject
+☐ Profile >> Meus Esportes >> Corrigir a inclusão de clubes
+☐ Chat >> layout:Melhorar exibição da página
+☐ Chat >> code: mostrar para cada usuário lista de rooms disponíveis
+☐ Profile >> Insituições >> Mostrar membros pertencentes
+✔ Timeline >> Adicionar comentários e remover posts @done(19-02-28 05:16)
+✔ Pesquisa >> Fazer query única limitando para x usuários @done(19-02-28 01:51)

@@ -41,9 +41,12 @@ export class DashboardPage {
 
     //Informações de visualização
     public info: any = {
-        views: <number>null,
-        messages: <number>null,
-        favorite: <any>[]
+        views: <number>0,
+        messages: <number>0,
+        favorite: {
+            myFavorites:0, 
+            otherFavorite:0
+        }
     }
 
     private user: User;
@@ -55,9 +58,7 @@ export class DashboardPage {
         public translateService: TranslateService,
         public loadNewPage: loadNewPage) {
 
-        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
-        })
+        this.translateService.setDefaultLang('pt-br');
 
         //Instanciando classe 'User' desse modo, devido imcompatibilidade dentro do construtor
         this.user = new User(this.api, this.loadNewPage, this.toastCtrl);
@@ -94,12 +95,22 @@ export class DashboardPage {
             $this.currentUserData = $this.user._user;
 
             //Campos específicos para dados básicos
-            $this.info.views = $this.user._user.metadata.views.value;
-            $this.info.favorite = $this.user._user.totalFavorite;
-            $this.info.messages = $this.user._user.totalMessages;
+            $this.info.views =    $this.user._user.metadata.views.value;
+            $this.info.messages = $this.checkNull($this.user._user.totalMessages, 0);
+            $this.info.favorite = $this.checkNull($this.user._user.totalFavorite, $this.info.favorite);
 
         }, this);
 
+    }
+
+    checkNull($data, $valueToExibit){
+        //Se data for nulo ou indefinido
+        if ($data == null || $data == undefined) {
+            return $valueToExibit;
+        }
+
+        //Retorna data normal
+        return $data;
     }
 
     //Retorna dados de visibilidade

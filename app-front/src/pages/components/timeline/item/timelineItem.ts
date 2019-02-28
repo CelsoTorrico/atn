@@ -1,8 +1,9 @@
-import { ToastController, NavParams, ViewController } from 'ionic-angular';
+import { NavParams, ViewController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api } from '../../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'timelineItem',
@@ -36,7 +37,11 @@ export class TimelineItem {
     public api: Api,
     public navCtrl: NavController,
     private params: NavParams,
-    private viewer: ViewController ) {
+    private viewer: ViewController, 
+    public translateService: TranslateService) { 
+    
+      this.translateService.setDefaultLang('pt-br');
+        
         //Adicionando enviadors da view anterior
         this.$postID = this.params.get('post_id');        
     } 
@@ -51,7 +56,7 @@ export class TimelineItem {
     let items = this.api.get(TimelineItem.getTimelineUrl + this.$postID).subscribe((resp:any) => {
 
         //Verifica se existe dados
-        if(resp.lenght <= 0){
+        if(Object.keys(resp).length <= 0){
           return;
         }
        
@@ -65,6 +70,10 @@ export class TimelineItem {
         return;  
     });
 
+  }
+
+  reloadCommentsAfterUpdate($event){
+    this.query();
   }
 
   dismiss(){

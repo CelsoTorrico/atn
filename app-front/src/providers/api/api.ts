@@ -13,7 +13,7 @@ export class Api {
   //static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public';
   
   //Ambiente de testes
-  static readonly url = 'http://testes.makingpie.com.br/atletasNOW/app/public';
+  static readonly url = 'https://testes.makingpie.com.br/atletasNOW/app/public';
   
   protected $headerObject = {
     'Content-Type'    :'application/x-www-form-urlencoded',

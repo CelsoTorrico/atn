@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ModalController, NavController, NavParams } from 'ionic-angular';
 import { Api } from '../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'notify',
@@ -24,7 +25,11 @@ export class Notify {
   constructor(
     public api: Api,
     public navCtrl: NavController, 
-    public modalCtrl: ModalController ) {} 
+    public modalCtrl: ModalController, 
+    public translateService: TranslateService) { 
+    
+      this.translateService.setDefaultLang('pt-br');
+    } 
 
   //Retorna
   ngOnInit() {
@@ -45,24 +50,30 @@ export class Notify {
 
   query(){
     //Retorna a lista de esportes do banco e atribui ao seletor
-    let items = this.api.get(Notify.$getNotify + this.$url).subscribe((resp:any) => {
+    this.api.get(Notify.$getNotify + this.$url).subscribe((resp:any) => {
        
       //Se não existir items a exibir
-      if(resp.length > 0){
+      if(Object.keys(resp).length < 0){
+        return;
+      }
         
-        //Intera sobre elementos
-        resp.forEach(element => {
-          //Retorna array de timelines
-          this.currentNotifyItems.push(element);
-          this.notifyCount = this.currentNotifyItems.length;
-        }); 
-
-      }         
+      //Retorna array de timelines
+      this.currentNotifyItems = resp;
+      this.notifyCount = this.currentNotifyItems.length; 
 
     }, err => { 
         return; 
     });
 
+  }
+
+  //Recarrega os itens de notificação
+  reloadNotify($event, $i){
+      //Exclui item do array
+      this.currentNotifyItems.splice($i, 1);
+      
+      //Diminui um item na contagem
+      this.notifyCount = this.notifyCount - 1;
   }
 
   //Abrir popup notificação

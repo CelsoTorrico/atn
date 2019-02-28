@@ -25,15 +25,21 @@ class ClubController extends Controller
     }
 
     //Retorna lista de usuário que pertencem ao usuario master
-    function getAll() {
+    function getAll(int $id = null) {
         
         //Verifica se é array ao invés de objeto
         if (is_array($this->club) && isset($this->club['error']) || is_null($this->club)) {
             return $this->club;
         }
 
-        //Atribui resposta
-        $result = $this->club->getUsers();
+        //Define tipo de visulização de usuário: visitante e logado
+        if(!is_null($id)){
+            $club = $this->club->getUser($id);
+            $result = $club->getTeamUsers(); 
+        } else {
+            //Atribui resposta
+            $result = $this->club->getTeamUsers();
+        }
         
         //Retorna resposta
         return response()->json($result);

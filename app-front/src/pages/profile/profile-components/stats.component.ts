@@ -1,11 +1,12 @@
 import { MyProfileStatsComponent } from './../../my-profile/stats-data/stats-data.component';
-import { ModalController } from 'ionic-angular';
+import { ModalController, ToastController } from 'ionic-angular';
 import { Component } from '@angular/core';
 import { User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
 import { MyProfileGeneralStatsComponent } from '../../my-profile/general-stats-data/general-stats-data.component';
 import { MyProfileAchievementsComponent } from '../../my-profile/achievements-data/achievements-data.component';
 import { Observable } from 'rxjs/Observable';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'profile-stats',
@@ -46,7 +47,11 @@ export class StatsComponent {
 
   constructor(
     private modalCtrl: ModalController,
-    public statsList: StatsList) { }
+    public statsList: StatsList,
+    private toastCtrl: ToastController,
+    public translateService: TranslateService) { 
+      this.translateService.setDefaultLang('pt-br'); 
+    }
 
   //Retorna
   ngOnInit() {
@@ -102,37 +107,43 @@ export class StatsComponent {
     });
   }
 
-  /*sport() {
-    //Adicionando campos de acordo com os esportes definidos
-    this.sport.forEach(element => {
-
-      //retorna esporte atual
-      let sport = element.sport_name;
-
-      //Faz a modificação de cada letra para padrão usado
-      for (var i = 0; i < element.sport_name; i++) {
-        let currentChar = element.sport_name.charAt(i);
-        let changed = this.subsChar(currentChar);
-        sport.replace(currentChar, changed);
-      }
-
-      //Nome do esporte reformatado
-      let sport_name = sport.toLowerCase();
-
-      //Adiciona ao array de objetos
-      this.statsToPage.push({
-        [sport_name]: this.statsList.statsList[sport_name]
-      });
-
-    });
-  }*/
+  //Abrir modal passando ID do usuário para alteração
+  editMember($user_id:number){
+    this.editData('teamData', $user_id );
+  }
 
   //Abrir modal com dados para atualizar perfil
-  editData($component:string){ 
+  editData($component: string, $data:any = undefined){ 
 
     //Criar modal do respectivo component
-    let modal = this.modalCtrl.create(this.ListComponents[$component], {});
-    
+    let modal = this.modalCtrl.create(this.ListComponents[$component], {data: $data});
+    modal.onDidDismiss((data) => {
+        
+        if (Object.keys(data).length <= 0) {
+          return;
+        }
+
+        if(data.error != undefined){
+          return;
+        }
+
+        //Retorna mensagem proveninete do servidor
+        let responseText = data.success[Object.keys(data.success)[0]];
+
+        //Mostrar resposta
+        let toast = this.toastCtrl.create({
+            message:  responseText,
+            duration: 3000,
+            position: "bottom"
+        });
+
+        toast.present();
+
+        //Recarregar dados do profile
+        this.fillUserData();
+        
+    });
+
     //Inicializar modal
     modal.present();
 

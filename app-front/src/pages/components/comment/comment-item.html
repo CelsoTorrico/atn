@@ -1,45 +1,84 @@
 <ion-item class="comment-item" *ngFor="let currentItem of currentCommentItems">
+  <ion-list>
+    <article>
 
-    <ion-list ng>
-        <header (click)="goToProfile(currentItem.user_id)">
-            {{ currentItem.comment_author }} <span class="date">{{ currentItem.comment_date | date }}</span>
-        </header>                        
-        <article>
+      <header (click)="goToProfile(currentItem.user_id)">
+        {{ currentItem.comment_author }}
+        <span class="date">{{ currentItem.comment_date | date }}</span>
+      </header>
 
-            {{ currentItem.comment_content }}
-            
-            <button ion-button clear (click)="openComment(currentItem.comment_ID, $event)" >
-                <ion-icon md="ios-chatbubbles-outline"></ion-icon> 
-            </button>
+      {{ currentItem.comment_content }}
 
-        </article> 
+      <button ion-button clear (click)="openComment(currentItem.comment_ID, $event)">
+        <ion-icon md="ios-chatbubbles-outline"></ion-icon>
+      </button>
 
-        <comment-form [parentItem]="currentItem.comment_ID"></comment-form>              
-        
-    </ion-list>
+    </article>
 
-    <ion-item-group class="commentResponsesContainer" *ngIf="currentItem.responses" >
+    <ion-item-group no-padding [id]="'form-' + currentItem.comment_ID" style="display:none !important;">
 
-        <ion-item *ngFor="let resp of currentItem.responses">
+      <ion-item>
 
-            <ion-list>
-                <header (click)="goToProfile(resp.user_id)">
-                    {{ resp.comment_author }} <span class="date">{{ resp.comment_date | date }}</span>
-                </header>                        
-                <article>
+        <ion-avatar class="btn-cursor" item-start>
+          <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+          <ng-template #elseBlock>
+            <img src="assets/img/user.png" alt="currentUser.display_name" />
+          </ng-template>
+        </ion-avatar>
 
-                    {{ resp.comment_content }}
+        <ion-input name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
+          required></ion-input>
 
-                    <button ion-button clear (click)="openComment(resp.comment_ID, $event)" >
-                        <ion-icon md="ios-chatbubbles-outline"></ion-icon> 
-                    </button>
+      </ion-item>
 
-                </article>
-                
-            </ion-list>
-            
-        </ion-item>
+      <button ion-button small float-right (click)="submitResponseComment(currentItem.comment_ID, $event)">{{ "PUBLISH"
+        | translate }}</button><!-- Resposta a comentário -->
 
     </ion-item-group>
-    
+
+  </ion-list>
+
+  <ion-item-group class="commentResponsesContainer" *ngIf="currentItem.responses">
+
+    <ion-item *ngFor="let resp of currentItem.responses">
+
+      <article>
+
+        <header (click)="goToProfile(resp.user_id)">
+          {{ resp.comment_author }} <span class="date">{{ resp.comment_date | date }}</span>
+        </header>
+
+        {{ resp.comment_content }}
+
+        <button ion-button clear (click)="openComment(resp.comment_ID, $event)">
+          <ion-icon md="ios-chatbubbles-outline"></ion-icon>
+        </button>
+
+      </article>
+
+      <ion-item-group no-padding [id]="'form-' + resp.comment_ID" style="display:none !important;">
+
+        <ion-item>
+
+          <ion-avatar class="btn-cursor" item-start>
+            <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+            <ng-template #elseBlock>
+              <img src="assets/img/user.png" alt="currentUser.display_name" />
+            </ng-template>
+          </ion-avatar>
+
+          <ion-input name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
+            required></ion-input>
+
+        </ion-item>
+
+        <button ion-button small float-right (click)="submitResponseComment(currentItem.comment_ID, $event)">{{
+          "PUBLISH" | translate }}</button><!-- Resposta a resposta de comentário -->
+
+      </ion-item-group>
+
+    </ion-item>
+
+  </ion-item-group>
+
 </ion-item>

@@ -45,13 +45,13 @@
 
     </ion-item-group>
 
-    <ion-item-group>
+    <ion-item-group *ngIf="type < 3">
 
       <ion-list>
 
         <ion-list-header></ion-list-header>
 
-        <ion-row *ngIf="type < 3">
+        <ion-row>
           <ion-col>
             <ion-item>
               <ion-label stacked>{{ "WEIGHT" | translate }}</ion-label>
@@ -173,13 +173,27 @@
     <ion-item-group *ngIf="type >= 3">
 
       <ion-item>
-        <ion-label stacked>{{ "SITE" | translate}}</ion-label>
+        <ion-label stacked>{{ "WEBSITE" | translate}}</ion-label>
         <ion-input [(ngModel)]="club_site.value" type="url" name="club_site" full></ion-input>
+
+        <ion-select name="visibility" [(ngModel)]="club_site.visibility" interface="popover">
+          <ion-option *ngFor="let item of visibility" [value]="item.value">
+            {{item.option}}
+          </ion-option>
+        </ion-select>
+
       </ion-item>
 
       <ion-item>
-        <ion-label stacked>{{ "LOCAL" | translate}}</ion-label>
+        <ion-label stacked>{{ "HEADQUARTERS" | translate}}</ion-label>
         <ion-input [(ngModel)]="club_sede.value" type="text" name="club_sede" full></ion-input>
+
+        <ion-select name="visibility" [(ngModel)]="club_sede.visibility" interface="popover">
+          <ion-option *ngFor="let item of visibility" [value]="item.value">
+            {{item.option}}
+          </ion-option>
+        </ion-select>
+
       </ion-item>
 
       <ion-list ngModelGroup="groupEventos" #eventosCtrl="ngModelGroup">
@@ -198,7 +212,7 @@
           <ion-col col-md-4 *ngFor="let n of ['NAME','ABOUT','YEAR']; let a = index">
             <ion-item>
               <ion-label stacked>{{ n | translate}} </ion-label>
-              <ion-input type="text" [(ngModel)]="eventos.value[i][a]" [name]="'eventos.value['+ i +']['+ a +'][]'"></ion-input>
+              <ion-input [type]="(a >= 2 )? 'number': 'text'" [(ngModel)]="eventos.value[i][a]" [name]="'eventos.value['+ i +']['+ a +'][]'"></ion-input>
             </ion-item>
           </ion-col>
           <div class="close-button" (click)="remove('eventos', i)">
@@ -219,7 +233,7 @@
       <ion-list ngModelGroup="groupLiga" #eventosCtrl="ngModelGroup">
 
         <ion-list-header>
-          <ion-label stacked>{{ "TOURNAMENT" | translate}}</ion-label>
+          {{ "TOURNAMENT" | translate}}
         </ion-list-header>
 
         <ion-select name="visibility" [(ngModel)]="club_liga.visibility" interface="popover">
@@ -232,7 +246,7 @@
           <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index">
             <ion-item>
               <ion-label stacked>{{ n | translate}} </ion-label>
-              <ion-input type="text" [(ngModel)]="club_liga.value[i][a]" [name]="'eventos.value['+ i +']['+ a +'][]'"></ion-input>
+              <ion-input [type]="(a >= 2 )? 'number': 'text'" [(ngModel)]="club_liga.value[i][a]" [name]="'eventos.value['+ i +']['+ a +'][]'"></ion-input>
             </ion-item>
           </ion-col>
           <div class="close-button" (click)="remove('club_liga', i)">

@@ -1,8 +1,9 @@
 import { Observable } from 'rxjs/Observable';
 import { Component, Input, Output, EventEmitter, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { NavController, ModalController } from 'ionic-angular';
+import { NavController, ModalController, ToastController } from 'ionic-angular';
 import { Api, User } from '../../../providers';
 import { ChartComponent } from 'angular2-chartjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'profile-resume',
@@ -69,12 +70,17 @@ export class ProfileResumeComponent implements OnInit{
 
     constructor(
         public navCtrl: NavController, 
-        private api: Api) {
+        private api: Api,
+        private toastCtrl: ToastController,
+        public translateService: TranslateService) { 
+    
+        this.translateService.setDefaultLang('pt-br');
 
         // used for an example of ngFor and navigation
-        this.views = 
-        [{ title: 'Profile', component: 'personalView' },
-        { title: 'Stats', component: 'statsView' }]; 
+        this.views = [
+            { title: 'PROFILE',    component: 'personalView' },
+            { title:  'STATS',      component: 'statsView' }
+        ]; 
 
     }
 
@@ -96,7 +102,33 @@ export class ProfileResumeComponent implements OnInit{
         formData.append('profile_img', file, file.name);
 
         //Para envio de imagens {{ options }}
-        let response = this.user.update(formData, true);        
+        let changePhotoObservable = this.user.update(formData, true);        
+        changePhotoObservable.subscribe((resp:any) => {
+            
+            //Se não existir items a exibir
+            if (Object.keys(resp).length <= 0) {
+                return; 
+            }
+
+            //Retorna mensagem proveninete do servidor
+            let responseText = resp.success[Object.keys(resp.success)[0]];
+
+            //Mostrar resposta
+            let toast = this.toastCtrl.create({
+                message:  responseText,
+                duration: 3000,
+                position: "bottom"
+            });
+  
+            //Sucesso 
+            if (resp.success != undefined) {
+                //Emite um evento para ser capturado pelo componente pai
+                this.fillUserData();
+            }
+
+            toast.present();
+
+        });
     }
 
     //Adiciona valores as variaveis globais
@@ -146,6 +178,7 @@ export class ProfileResumeComponent implements OnInit{
 
     }
 
+    /** Retorna as estatisticas de usuário */
     private getStats(){
         
         //Retorna dados de estatística

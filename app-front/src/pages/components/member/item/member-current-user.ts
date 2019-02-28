@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { ToastController } from 'ionic-angular';
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
@@ -20,7 +21,7 @@ import { User } from '../../../../providers';
                     <div class="popup popover-menu">
                         <ul class="nomargin-nopadding">
                             <li *ngFor="let nav of menuItems | mapToIterable ">
-                                <a class="btn-cursor" (click)="goToPage(nav.val)">{{ nav.key }}</a>
+                                <a class="btn-cursor" (click)="goToPage(nav.val)">{{ nav.key | translate }}</a>
                             </li>
                             <li>
                                 <a class="btn-cursor" (click)="doLogout()">{{ "LOGOUT" | translate }}</a>
@@ -87,7 +88,10 @@ export class MemberUser {
     constructor(
         public user: User,
         public navCtrl: NavController,
-        public toastCtrl: ToastController) {}
+        public toastCtrl: ToastController,
+        public translateService: TranslateService) { 
+            this.translateService.setDefaultLang('pt-br');
+        }
 
 
     ngOnInit() {

@@ -1,6 +1,7 @@
 import { ToastController, NavParams, AlertController } from 'ionic-angular';
 import { Component } from '@angular/core';
 import { Api } from '../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'forget-password',
@@ -14,7 +15,7 @@ import { Api } from '../../providers';
 
         <h1>{{ "FORGET_PASSWORD" | translate }}</h1>
       
-        <p>{{ "IF_YOU_FORGET_YOU_ACESS_PASS_PUT_YOUR_EMAIL_AND_RECEIVE_A_NEW_PASS" | translate }}</p>
+        <p>{{ "PUT_YOUR_EMAIL_AND_RECEIVE_A_NEW_PASS" | translate }}</p>
 
         <form #loginForm="ngForm" name='form' (ngSubmit)="submitChangePass($event)">
 
@@ -55,7 +56,10 @@ export class ForgetPasswordComponent {
 
   constructor(
     private toastCtrl: ToastController,
-    private api: Api) { }
+    private api: Api,
+    public translateService: TranslateService) { 
+      this.translateService.setDefaultLang('pt-br'); 
+    }
 
   //Retorna
   ngOnInit() {

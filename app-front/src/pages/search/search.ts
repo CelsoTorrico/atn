@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Api } from '../../providers';
 import { BrazilStates } from '../../providers/useful/states';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @IonicPage()
@@ -30,7 +31,7 @@ export class SearchPage {
 
   //Lista de tipos de usuário
   protected $typeUserList = [
-      {valor: '', texto: 'Quaquer Tipo'},
+      {valor: '', texto: 'Qualquer'},
       {valor: 1,  texto: 'Atleta'}, 
       {valor: 2,  texto: 'Profissional do Esporte'},
       {valor: 3,  texto: 'Faculdade'},
@@ -39,7 +40,7 @@ export class SearchPage {
   ];
 
   protected $genderList = [
-      {valor: '',       texto: 'Quaquer Gênero'},
+      {valor: '',       texto: 'Qualquer'},
       {valor: 'male',   texto: 'Masculino'}, 
       {valor: 'female', texto: 'Feminino'}
   ];
@@ -61,7 +62,14 @@ export class SearchPage {
   public $url:string = '';
   public $paged:number = 1;  
 
-  constructor(public api:Api, public navCtrl: NavController, public navParams: NavParams, public states:BrazilStates ) {
+  constructor(
+      public api:Api, 
+      public navCtrl: NavController, 
+      public navParams: NavParams, 
+      public states:BrazilStates,
+      public translateService: TranslateService) { 
+    
+        this.translateService.setDefaultLang('pt-br');
     
       //Carrega lista de estados do provider
       this.$statesList = this.states.statesList;  
@@ -126,9 +134,7 @@ export class SearchPage {
         }
 
         //Lista de Usuários
-        resp.forEach(element => {
-          this.$memberList.push(element);
-        });        
+        this.$memberList = resp;       
 
         //Reseta dados do campo "sport"
         this.query.sport = [];

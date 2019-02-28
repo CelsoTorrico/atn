@@ -7,6 +7,7 @@ import { Component, ViewChild, ComponentFactoryResolver } from '@angular/core';
 import { IonicPage} from 'ionic-angular';
 import { Api, User } from '../../providers';
 import { MyProfileStatsComponent } from './stats-data/stats-data.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @IonicPage()
 @Component({
@@ -29,7 +30,10 @@ export class MyProfilePage {
     constructor(
         public  user: User,
         private api: Api,
-        private componentFactoryResolver: ComponentFactoryResolver) {
+        private componentFactoryResolver: ComponentFactoryResolver,
+        public translateService: TranslateService) { 
+    
+            this.translateService.setDefaultLang('pt-br');
             this.getVisibility();
         }
 

@@ -206,7 +206,7 @@ class Login implements LoginInterface{
         }
 
         //CONTEUDO
-        $html = '<html><img width="275" height="38" src="https://www.atletasnow.com/wp-content/uploads/2018/10/rsz_atletasnow_logoprincipal-01.png" title="AtletasNOW"><p>Sua nova senha gerada para acesso a plataforma AtletasNOW é:</p><p><font size="5">' . $new_pass .'</font></p>. <p>Recomendamos após fazer login em sua conta, trocar a senha.</p></html>';
+        $html = '<img width="275" height="38" src="https://www.atletasnow.com/wp-content/uploads/2018/10/rsz_atletasnow_logoprincipal-01.png" title="AtletasNOW"><p>Sua nova senha gerada para acesso a plataforma AtletasNOW é:</p><p><font size="5">' . $new_pass .'</font></p>. <p>Recomendamos após fazer login em sua conta, trocar a senha.</p>   ';
 
         //SETUP DE EMAIL
         $phpmailer = new SendEmail();

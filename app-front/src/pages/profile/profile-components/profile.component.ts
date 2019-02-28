@@ -1,6 +1,7 @@
+import { MyProfileAddMemberDataComponent } from './../../my-profile/team-data/team-data.component';
 import { MyProfileVideosComponent } from './../../my-profile/videos-data/videos-data.component';
 import { Component, Input } from '@angular/core';
-import { NavController, ToastController, ModalController } from 'ionic-angular';
+import { NavController, ToastController, ModalController, Alert, AlertController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { User, Api } from '../../../providers';
@@ -17,9 +18,11 @@ export class ProfileComponent {
 
   //Variveis de template de usuario
 
-  profile: Observable<ArrayBuffer>;
+  profile: Observable<ArrayBuffer>
 
-  stats: Observable<ArrayBuffer>;
+  stats: Observable<ArrayBuffer>
+
+  team_members: Observable<ArrayBuffer>
 
   isLogged: boolean = false;
 
@@ -95,9 +98,38 @@ export class ProfileComponent {
 
   ['titulos-conquistas'] = {
     value: ''
-  }
+  } 
 
   videos: any = []
+  
+  /* Instituição */
+  
+  team:any[];
+
+  max_users:number;
+
+  current_users: {
+    ids: [''],
+    qtd: 0
+  }
+
+  club_site:any = {
+    value:''
+  }
+
+  club_sede:any = {
+    value:''
+  }
+
+  club_liga:any = { 
+    value:''
+  }
+
+  eventos:any = {
+    value:''
+  }
+
+  /** FIM */
 
   public $getUser: any;
 
@@ -105,24 +137,30 @@ export class ProfileComponent {
 
   public showMessageBox: boolean = false;
 
+  public deleteMessage:any;
+
   private ListComponents: any = {
     personalData: MyProfilePersonalDataComponent,
     sportsData:   MyProfileSportsComponent,
     videosData:   MyProfileVideosComponent,
-    statsData:    MyProfileStatsComponent
+    statsData:    MyProfileStatsComponent,
+    teamData:     MyProfileAddMemberDataComponent
   }
 
   constructor(
     public navCtrl: NavController,
     public api: Api,
     public toastCtrl: ToastController,
+    public alert:AlertController,
     private modalCtrl: ModalController,
-    public translateService: TranslateService,
-    private domSanitizer: DomSanitizer) {
+    private domSanitizer: DomSanitizer,
+    public translateService: TranslateService) { 
+    
+      this.translateService.setDefaultLang('pt-br');
 
-    this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-      this.loginErrorString = value;
-    })
+      this.translateService.get(["YOU_WILL_EXCLUDE_MEMBER", "YOU_SURE"]).subscribe((data) => {
+        this.deleteMessage = data;
+      })
 
   }
 
@@ -152,6 +190,24 @@ export class ProfileComponent {
         }
       }
 
+      //Atribuindo dados aos modelos
+      this.ID = atributes.ID;
+      this.display_name = atributes.display_name;
+      this.type = atributes.type.ID;
+      this.sport = atributes.sport;
+      this.clubes = atributes.clubs;
+
+      //Apenas para instituições
+      if(this.type > 3){
+
+        //Atribui data
+        this.current_users = atributes.current_users;
+        this.max_users = atributes.max_users;
+
+        //executa busca de membros da instituição
+        this.getMyMembersTeam();   
+      }
+
       if (atributes.metadata['my-videos'] != undefined) {
 
         if (atributes.metadata['my-videos'].value.length <= 0)
@@ -171,22 +227,94 @@ export class ProfileComponent {
         this.videos = videos;
       }
 
-      //Atribuindo dados aos modelos
-      this.ID = atributes.ID;
-      this.display_name = atributes.display_name;
-      this.type = atributes.type.ID;
-      this.sport = atributes.sport;
-      this.clubes = atributes.clubs;
-
     });
 
   }
 
+  //Para instituições, carrega lista de usuários pertencentes
+  getMyMembersTeam(){
+    this.team_members.subscribe((resp:any) => { 
+       
+        if(Object.keys(resp).length <= 0){
+          return;
+        }
+
+        //Atribui dados ao modelo
+        this.team = resp; 
+
+    });
+  }
+
+  deleteMember($user_id:number){
+    
+    let confirmDelete = this.alert.create({
+      title: this.deleteMessage.YOU_WILL_EXCLUDE_MEMBER,
+      subTitle: this.deleteMessage.YOU_SURE,
+      buttons: [{
+        text: 'DELETE',
+        handler: data => {
+          this.api.delete('user/self/club_user/' + $user_id).subscribe((resp: any) => {
+
+            //Se não existir items a exibir
+            if (Object.keys(resp).length <= 0) {
+              return;
+            }
+
+            //Sucesso 
+            if (resp.success != undefined) {
+              //Emite um evento para ser capturado pelo componente pai
+              this.currentUserLoadData();
+            }
+
+          }, err => {
+            return;
+          });
+        }
+      }, {
+        text: 'CANCEL',
+      }]
+    });
+
+    confirmDelete.present();
+
+  }
+
+  //Abrir modal passando ID do usuário para alteração
+  editMember($user_id:number){
+    this.editData('teamData', $user_id );
+  }
+
   //Abrir modal com dados para atualizar perfil
-  editData($component: string) {
+  editData($component: string, $data:any = undefined) {
 
     //Criar modal do respectivo component
-    let modal = this.modalCtrl.create(this.ListComponents[$component], {});
+    let modal = this.modalCtrl.create(this.ListComponents[$component], {data: $data});
+    modal.onDidDismiss((data) => {
+        
+        if (Object.keys(data).length <= 0) {
+          return;
+        }
+
+        if(data.error != undefined){
+          return;
+        }
+
+        //Retorna mensagem proveninete do servidor
+        let responseText = data.success[Object.keys(data.success)[0]];
+
+        //Mostrar resposta
+        let toast = this.toastCtrl.create({
+            message:  responseText,
+            duration: 3000,
+            position: "bottom"
+        });
+
+        toast.present();
+
+        //Recarregar dados do profile
+        this.currentUserLoadData();
+        
+    });
 
     //Inicializar modal
     modal.present();

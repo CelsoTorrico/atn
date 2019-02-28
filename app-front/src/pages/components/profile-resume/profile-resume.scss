@@ -83,6 +83,8 @@
   .block {
 
     margin: 0px;
+    border: 1px solid $vermelho-contraste;
+    border-left-width: 0px;
     ion-list{
       font-size: 2.4rem;
       ion-label{
@@ -90,12 +92,6 @@
       }
 
     }
-
-    &:nth-child(1) {
-      border-right: 1px solid $vermelho-contraste;
-      //border-bottom: 1px solid $vermelho;
-    }
-
     
   }
 

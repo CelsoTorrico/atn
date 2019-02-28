@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ page_title | translate }}
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        {{ "CLOSE" | translate }}
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <form #personalData="ngForm" (submit)="save(personalData, $event)">
+
+    <ion-item-group>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label stacked>{{ "NAME" | translate}}</ion-label>
+            <ion-input [(ngModel)]="display_name" name="display_name" type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label stacked>{{ "EMAIL" | translate }}</ion-label>
+            <ion-input [(ngModel)]="user_email" name="user_email" [email]="true" type="email"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label stacked>{{ "PASSWORD" | translate}}</ion-label>
+              <ion-input [(ngModel)]="user_pass" name="user_pass" type="password"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label stacked>{{ "CONFIRM_PASS" | translate }}</ion-label>
+              <ion-input [(ngModel)]="confirm_pass" name="confirm_pass" type="password"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+    </ion-item-group>
+
+    <ion-item>
+      <button type="submit" ion-button full>{{'SAVE' | translate}}</button>
+    </ion-item>
+
+  </form>
+
+</ion-content>

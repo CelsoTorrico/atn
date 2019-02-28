@@ -14,13 +14,14 @@
     
     <ion-card class="timelineItem" *ngIf="TimelineItem">
 
-        <timeline-single [currentTimeline]="TimelineItem"></timeline-single> 
+        <timeline-single [currentTimeline]="TimelineItem" (CommentUpdate)="reloadCommentsAfterUpdate($event)"></timeline-single> 
     
     </ion-card>
 
     <ion-item-group class="timelineCommentsContainer">
-        
-        <comments [currentCommentItems]="currentCommentItems" [$postID]="$postID"></comments>
+
+        <comments [currentCommentItems]="currentCommentItems" [$postID]="$postID" 
+        (CommentUpdate)="reloadCommentsAfterUpdate($event)"></comments>
 
     </ion-item-group>
 

@@ -5,6 +5,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { LoginPage } from '../../login/login';
 import { NgForm } from '@angular/forms';
 import { BrazilStates } from '../../../providers/useful/states';
+import { TranslateService } from '@ngx-translate/core';
 
 
 /* SecondStep Class*/
@@ -46,8 +47,15 @@ export class ProfileType{
 
     public $error = ''; 
 
-    constructor(private navCtrl: NavController, private params: NavParams, private api: Api, 
-        private user: User, public states:BrazilStates){
+    constructor(
+        private navCtrl: NavController, 
+        private params: NavParams, 
+        private api: Api, 
+        private user: User, 
+        public states:BrazilStates,
+        public translateService: TranslateService) { 
+    
+            this.translateService.setDefaultLang('pt-br');
         
         //Adicionando dados provenientes da view anterior
         this.$account = 

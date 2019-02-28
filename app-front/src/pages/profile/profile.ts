@@ -49,11 +49,13 @@ export class ProfilePage {
     public  modalCtrl: ModalController,
     private api: Api,
     public  user: User,
-    public  translateService: TranslateService,
     private params: NavParams,
     private browser: InAppBrowser,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private platform: Platform) {
+    private platform: Platform,
+    public translateService: TranslateService) { 
+    
+      this.translateService.setDefaultLang('pt-br');
 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
       this.loginErrorString = value;
@@ -121,6 +123,7 @@ export class ProfilePage {
     componentRef.instance.isLogged  = this.isLogged;
     componentRef.instance.profile   = this.currentUser._userObservable;
     componentRef.instance.stats     = this.currentUser._statsObservable; 
+    componentRef.instance.team_members   = this.currentUser._teamObservable; 
 
     //Se component for stats envia observable 
     if(StatsComponent == componentRef.componentType){
@@ -140,6 +143,7 @@ export class ProfilePage {
    * Funções de botões 
    * */
 
+  /** Seguir */
   followProfile($event) {
 
     $event.preventDefault();
@@ -165,6 +169,7 @@ export class ProfilePage {
     });
   }
 
+  /** Donwload Currículo */
   downloadProfilePDF() {
 
     //Adiciona Id do usuário corrente
@@ -196,6 +201,7 @@ export class ProfilePage {
 
   }
 
+  /** Envia mensagem */
   sendProfileMessage() {
     //Abre e fecha box de mensagem
     if (this.showMessageBox) {

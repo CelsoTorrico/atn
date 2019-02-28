@@ -45,7 +45,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->group(['prefix' => 'self'], function() use ($router){
 
         //Atualizar usuário de posse
-        $router->get('/club_user', 'ClubController@getAll');
+        $router->get('/club_user[/{id:[0-9]+}]', 'ClubController@getAll');
 
         //Atualizar usuário de posse
         $router->post('/club_user', 'ClubController@addClubUser');

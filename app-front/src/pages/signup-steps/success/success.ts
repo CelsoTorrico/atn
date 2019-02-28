@@ -1,6 +1,7 @@
 import { DashboardPage } from './../../dashboard/dashboard';
 import { Component } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 /* Success Class*/
 @IonicPage({
@@ -13,7 +14,13 @@ import { IonicPage, NavController } from 'ionic-angular';
 
 export class SuccessStep{
 
-    constructor(private navCtrl:NavController){}
+    constructor(
+        private navCtrl:NavController, 
+        public translateService: TranslateService) { 
+    
+        this.translateService.setDefaultLang('pt-br');
+
+    }
 
     goToDashboard() {
         this.navCtrl.push(DashboardPage);

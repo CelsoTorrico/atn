@@ -39,8 +39,9 @@ export class LoginPage implements OnInit{
     public translateService: TranslateService,
     public cookie: CookieService) {
 
+    this.translateService.setDefaultLang('pt-br'); 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-      this.loginErrorString = value;
+      this.loginErrorString = value; 
     })
 
   }

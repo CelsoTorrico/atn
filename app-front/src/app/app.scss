@@ -15,6 +15,9 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
+@import "../../www/assets/fonts/montserrat.scss"; 
+@import "../../www/assets/fonts/opensans.scss";  
+
 $vermelho: #5c0005;
 $vermelho-contraste: rgb(160, 0, 42);
 $background: #f1f1f1;
@@ -24,15 +27,16 @@ $notify-color: rgb(240, 74, 152);
 $titulos: #d03014;
 
 body {
-  font-family: "Axiforma", "Roboto", "Calibri", "Arial", cursive;
+  font-family: "OpenSans", "Calibri", "Arial", cursive !important;
+  font-weight: normal;
 }
 
 h1,
-h2,
+h2, 
 ion-list-header,
 ion-card-header,
 ion-title {
-  font-family: "Axiforma", "Roboto", "Calibri", "Arial", cursive;
+  font-family: "Montserrat", "Calibri", "Arial", cursive !important;
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;
@@ -336,6 +340,19 @@ ion-navbar {
   top: 65px;
   z-index: -50;
   box-shadow: 5px 5px 50px 15px rgba(125, 125, 125, 0.1);
+  border-radius: 5px;
+
+  &::before{
+    position: absolute;
+    content: '';
+    top: -13px;
+    left: 10px; 
+    width: 15px;
+    height: 15px;
+    background-color: $branco;  
+    -webkit-clip-path: polygon(0% 87%, 50% 0%, 50% 0%, 100% 87%);
+		clip-path: polygon(0% 87%, 50% 0%, 50% 0%, 100% 87%);
+  }
 
   &.open {
     opacity: 1;
@@ -347,6 +364,12 @@ ion-navbar {
   &.popover-menu {
     max-width: 250px;
     transform-origin: right top;
+
+    &::before{
+      background-color: $titulos;
+      left: auto;
+      right: 5px;
+    }
 
     ul {
       list-style: none;

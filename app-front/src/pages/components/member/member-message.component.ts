@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Nav, NavController, ModalController } from 'ionic-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'member-chat',
@@ -27,7 +28,10 @@ export class MemberChat {
 
     @Output() clickEvent = new EventEmitter<number>();
 
-    constructor(public modal: ModalController, public navCtrl: NavController, public nav: Nav) { }
+    constructor(
+        public modal: ModalController, public navCtrl: NavController, public nav: Nav,public translateService: TranslateService) { 
+        this.translateService.setDefaultLang('pt-br'); 
+    }
 
     //Abre uma nova página de profile
     openRoom($room_id: number, $event) {

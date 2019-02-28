@@ -16,6 +16,7 @@ export class User {
 
   _user: any;
   _userObservable: Observable<ArrayBuffer>;
+  _teamObservable: Observable<ArrayBuffer>;
   _statsObservable: Observable<ArrayBuffer>;
   _visibilityObservable: Observable<ArrayBuffer>;
 
@@ -34,6 +35,7 @@ export class User {
     //Carrega Observables
     this.getSelfUser();
     this.getSelfStats();
+    this.getTeamMembers();
     this.getSelfVisibility();
   }
 
@@ -122,38 +124,10 @@ export class User {
     //Define método de update de dados de usuário
     let method = (isPhoto)? 'post' : 'put';
 
-    let seq = this.api[method]('user/update', accountData);
+    //Retorna observable
+    let observable = this.api[method]('user/update', accountData);
 
-    seq.subscribe((res: any) => {
-      // Se mensagem contiver parametro 'success'
-      if (res.success != undefined) {
-
-        //Redireciona para página dashboard
-        let message = this.toast.create({
-          message: res.success.register,
-          position: "bottom",
-          showCloseButton: true
-        });
-
-        message.present();
-
-      }
-      else {
-        //Exibe erro de atualização
-        let message = this.toast.create({
-          message: res.error.register,
-          position: "bottom",
-          showCloseButton: true
-        });
-
-        message.present();
-
-      }
-    }, err => {
-      console.error('ERROR', err);
-    });
-
-    return seq;
+    return observable;
   }
 
   /**
@@ -161,7 +135,7 @@ export class User {
    */
   private getSelfUser(): Observable<ArrayBuffer> {
 
-    //Retorna os dados de usuário e atribui ao seletor
+    //Retorna observable
     return this._userObservable = this.api.get('user/self');
 
   }
@@ -171,15 +145,25 @@ export class User {
    */
   private getSelfStats(): Observable<ArrayBuffer> {
 
-    //Retorna os dados de usuário e atribui ao seletor
+    //Retorna observable
     return this._statsObservable = this.api.get('user/stats');
+
+  }
+
+  /**
+   * Retorna observable usuário logado
+   */
+  private getTeamMembers(): Observable<ArrayBuffer> {
+
+    //Retorna observable
+    return this._teamObservable = this.api.get('user/self/club_user');
 
   }
 
   //Retorna observable de visibilidade
   private getSelfVisibility(): Observable<ArrayBuffer> {
 
-    //Retorna a lista de visibilidades do usuário
+    //Retorna observable
     return this._visibilityObservable = this.api.get('timeline/visibility');
 
   }
@@ -189,10 +173,13 @@ export class User {
    */
   getUser($user_id: number): User {
 
-    //Atribui observable
+    //Inicializa classe
     let $user = new User(this.api, this.loadPageService, this.toast);
+
+    //Retorna observable
     $user._userObservable =  this.api.get('user/' + $user_id);
     $user._statsObservable = this.api.get('user/stats/' + $user_id);
+    $user._teamObservable  = this.api.get('user/self/club_user/' + $user_id);
 
     //Retorna instancia da classe
     return $user;
@@ -271,7 +258,7 @@ export class User {
 
     //Campos gerais
     let $fields: string[] = [
-      'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email', 'sport', 'clubes'
+      'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email', 'sport', 'clubes'
     ] 
 
     //Se usuario for atleta e profissional

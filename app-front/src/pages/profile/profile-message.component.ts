@@ -2,6 +2,7 @@ import { ToastController, NavParams } from 'ionic-angular';
 import { Component, Input } from '@angular/core';
 import { NavController, ViewController } from 'ionic-angular';
 import { Api } from '../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'profile-message',
@@ -9,18 +10,19 @@ import { Api } from '../../providers';
       <div id="#profile-message" class="ion-card">
 
           <ion-list>
-            <ion-list-header>
-              {{ "Envie uma mensagem para " | translate }} {{ $display_name }}
-            </ion-list-header>
 
-            <ion-row>
-              <ion-col col-8>
-                <ion-textarea name="comment_content" [(ngModel)]='messageText' placeholder="{{ 'YOUR_MESSAGE' | translate }}" required ></ion-textarea>
-              </ion-col>
-              <ion-col>
-                <button ion-button small end (click)="submitMessage($event)">{{ "PUBLISH" | translate }}</button>
-              </ion-col>              
-            </ion-row> 
+            <ion-item>
+              <h3>{{ "SEND_AN_EMAIL_TO_PROFILE" | translate }} {{ $display_name }}</h3>
+            </ion-item>           
+
+            <ion-item>
+              <ion-label stacked>{{ "YOUR_MESSAGE" | translate }}</ion-label>
+              <ion-textarea name="comment_content" [(ngModel)]='messageText' placeholder="{{ 'YOUR_MESSAGE' | translate }}" required ></ion-textarea>
+            </ion-item>
+            
+            <ion-item>
+              <button ion-button block end (click)="submitMessage($event)">{{ "PUBLISH" | translate }}</button>
+            </ion-item>
 
           </ion-list>    
         
@@ -35,7 +37,7 @@ import { Api } from '../../providers';
       position: fixed;
       right: 30px;
       bottom: 30px;
-      box-shadow: 1px 1px 60px rgba(0,0,0,0.1);
+      box-shadow: -10px -15px 100px 50px rgba(0,0,0,0.2);
       z-index: 1000000;
     }
   `]
@@ -50,7 +52,10 @@ export class ProfileMessage {
   constructor(
     private toastCtrl: ToastController,
     private api: Api,
-    private viewer: ViewController) { }
+    private viewer: ViewController,
+    public translateService: TranslateService) { 
+      this.translateService.setDefaultLang('pt-br'); 
+    }
 
   //Retorna
   ngOnInit() {
@@ -77,7 +82,7 @@ export class ProfileMessage {
         this.messageText = '';
 
         let toast = this.toastCtrl.create({
-          message: resp.success.message,
+          message: resp.success.email,
           duration: 8000,
           position: 'bottom'
         });

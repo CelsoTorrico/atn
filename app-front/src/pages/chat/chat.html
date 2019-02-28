@@ -8,40 +8,31 @@
 
 <ion-content class="page-messages">
 
-  <ion-grid fixed>
+  <ion-grid>
 
-    <ion-row padding> 
+    <ion-row justify-content-end> 
 
-      <ion-col col-12 col-md-6>
+      <ion-col class="list-chat-members" col-12 col-md-3>
 
-        <ion-card class="list-chat-members">
+        <h2>{{ "CHAT_ROOMS" | translate }}</h2>
 
-          <ion-card-header>
-            {{ "CHAT_ROOMS" | translate }}
-          </ion-card-header>
+        <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
 
-          <ion-card-content>
+            <ion-list class="member-select">
 
-            <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
-              <ion-list class="member-select">
+              <ng-container *ngIf="$chatRooms">
 
-                <ng-container *ngIf="$chatRooms">
+                <member-chat (clickEvent)="loadData($event)" *ngFor="let room of $chatRooms" [room]="room"></member-chat>
 
-                  <member-chat (clickEvent)="loadData($event)" *ngFor="let room of $chatRooms" [room]="room"></member-chat>
+              </ng-container>
 
-                </ng-container>
+            </ion-list>
 
-              </ion-list>
-
-            </ion-scroll>
-
-          </ion-card-content>
-
-        </ion-card>
+        </ion-scroll>
 
       </ion-col>
 
-      <ion-col col-12 col-md-6>
+      <ion-col col-12 col-md-9>
         <chat-room [$roomID]="$roomSelected"></chat-room>
       </ion-col>
 

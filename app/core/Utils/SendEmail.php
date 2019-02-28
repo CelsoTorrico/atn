@@ -10,6 +10,7 @@ class SendEmail {
     private  $fromName;
     private  $toEmail;
     private  $content;
+    private  $plainContent;
 
     /** 
      * Instancia classe PHPmailer
@@ -72,10 +73,22 @@ class SendEmail {
     public function setContent(string $content) {
 
         if(!is_string($content)){
-            throw new Exception('Nome deve ser string');
+            throw new Exception('Content must be string');
         }
+
         //Sanitize var
-        $this->content = filter_var($content, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $content = utf8_encode(filter_var($content, FILTER_SANITIZE_STRIPPED));
+        $this->plainContent = $content;
+        $this->content = "
+        <html>
+            <head>
+                <title>Plataforma AtletasNOW</title>
+                <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'>
+            </head>
+            <body>$content</body>
+        </html>
+        ";
     }
 
     /**
@@ -88,6 +101,7 @@ class SendEmail {
             $mail = $this->mail;   
 
             //Server settings
+            $mail->Charset = 'UTF-8';
             $mail->SMTPDebug = 0;                       // Enable verbose debug output
             $mail->isSMTP();                            // Set mailer to use SMTP
             $mail->Host = env('SMTP_HOST');             // Specify main and backup SMTP servers
@@ -96,6 +110,7 @@ class SendEmail {
             $mail->Password = env('USER_PASS');         // SMTP password
             $mail->SMTPSecure = env('SMTP_SECURE');     // Enable TLS encryption, `ssl` also accepted
             $mail->Port = env('SMTP_PORT');             // TCP port to connect to
+            $mail->Encoding = 'base64';
         
             //Recipients
             $mail->setFrom(env('SMTP_FROM_EMAIL'), $this->fromName);
@@ -115,8 +130,8 @@ class SendEmail {
             $mail->isHTML(true);       // Set email format to HTML
             $mail->Subject = $this->subject;
             $mail->isHTML(true);
-            $mail->Body    = $this->content;
-            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+            $mail->Body = $this->content;
+            $mail->AltBody = $this->plainContent;
 
             //Envia email
             $mail->send();

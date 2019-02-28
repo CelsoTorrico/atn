@@ -112,8 +112,10 @@ export class MyProfilePersonalDataComponent {
         public api: Api,
         public toastCtrl: ToastController,
         public viewCtrl: ViewController,
-        public translateService: TranslateService,
-        public states: BrazilStates) {
+        public states: BrazilStates,
+        public translateService: TranslateService) { 
+    
+            this.translateService.setDefaultLang('pt-br');
 
         //Carrega lista de estados do provider
         this.$statesList = this.states.statesList;
@@ -159,44 +161,93 @@ export class MyProfilePersonalDataComponent {
 
         $event.preventDefault();
 
-        //Validação de dados
-        //let email = form.getControl(this.user_email);
-
         //Campos válidos
-        let saveFields = {
-            display_name: {},
-            user_email: {},
-            biography: {},
-            birthdate: {},
-            cpf: {},
-            rg: {},
-            address: {},
-            zipcode: {},
-            neighbornhood: {},
-            city: {},
-            state: {},
-            country: {},
-        }
+        let saveFields:any = {
+            display_name: '',
+            user_email: '',
+            telefone: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            biography: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            birthdate: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            rg: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            cpf: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            cnpj: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            gender: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            address: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            neighbornhood: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            city: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            state: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            country: {
+                value: <string>'',
+                visibility: <number>0
+            },
+            zipcode: {
+                value: <string>'',
+                visibility: <number>0
+            }
+        };
 
         //Intera sobre objeto e atribui valor aos modelos de metadata
         for (var key in saveFields) {
-            if (this.hasOwnProperty(key) && this[key] != undefined) {
-                saveFields[key] = this[key];
+            if (this.hasOwnProperty(key)) {
+                saveFields[key] = this[key]; 
             }
         }
 
         //Realiza update de dados do usuario
-        let resp = this.user.update(saveFields);
+        let updateObservable = this.user.update(saveFields);
 
-        if(resp){
-            this.dismiss();
-        }
+        updateObservable.subscribe((resp: any) => {
+            
+            // Se mensagem contiver parametro 'success'
+            if (Object.keys(resp).length <= 0) {
+                return; 
+            }
+
+            //Fechar modal e retornar data
+            this.dismiss(resp);
+           
+          }, err => {
+            console.error('ERROR', err);
+          });
 
     }
 
     //Fechar modal
-    dismiss(){
-        this.viewCtrl.dismiss();
+    dismiss($data:any = null){
+        this.viewCtrl.dismiss($data);
     }
 
 }

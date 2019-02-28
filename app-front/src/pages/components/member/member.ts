@@ -2,6 +2,7 @@ import { MemberItem } from './item/member-item';
 import { Component, Input } from '@angular/core';
 import { ModalController, NavController } from 'ionic-angular';
 import { Api } from '../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'member-container',
@@ -16,7 +17,10 @@ export class Member {
     constructor(
         public api: Api,
         public navCtrl: NavController, 
-        public modalCtrl: ModalController ) {} 
+        public modalCtrl: ModalController,
+        public translateService: TranslateService) { 
+            this.translateService.setDefaultLang('pt-br');
+        } 
 
     //Retorna
     ngOnInit() {

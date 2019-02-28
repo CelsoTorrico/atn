@@ -3,6 +3,7 @@ import { ToastController } from 'ionic-angular';
 import { Component, Input } from '@angular/core';
 import { ModalController, NavController } from 'ionic-angular';
 import { Api } from '../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'timeline',
@@ -12,6 +13,7 @@ export class Timeline {
   
   //Parametros de URL
   @Input() public timelineID:number;
+ 
   public static $getTimelineUrl:string = 'timeline';
   public $url:string = '';
   public $paged:number = 1;
@@ -27,7 +29,10 @@ export class Timeline {
     public api: Api,
     public navCtrl: NavController, 
     public modalCtrl: ModalController,
-    private toastCtrl: ToastController ) {} 
+    private toastCtrl: ToastController, 
+    public translateService: TranslateService) {     
+      this.translateService.setDefaultLang('pt-br');
+    } 
 
   //Retorna
   ngOnInit() {
@@ -73,9 +78,29 @@ export class Timeline {
   }
 
   //Após excluido item de timeline, eliminar do loop de items
-  hideTimeline($event){
-    let el = document.getElementById('timeline-post-' + $event);
-    el.remove();
+  hideTimeline($event, $index){
+    //Atualiza post com dados atualizados
+    this.currentItems.splice($index, 1);
+  }
+
+  //Após a inserção de um comentário
+  updateTimelineComment($event, $index){
+    
+    //Retorna a lista de esportes do banco e atribui ao seletor
+    this.api.get(Timeline.$getTimelineUrl + '/' + $event).subscribe((resp:any) => {
+
+        //Verifica se existe dados
+        if(resp.lenght <= 0){
+          return;
+        }
+
+        //Atualiza post com dados atualizados
+        this.currentItems[$index] = resp;
+
+    }, err => { 
+        return;  
+    });
+
   }
 
   //Carrega mais items de timeline via infinescroll

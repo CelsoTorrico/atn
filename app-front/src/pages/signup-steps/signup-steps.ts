@@ -26,8 +26,10 @@ export class SignupStepsPage {
     constructor(
         private nav:NavController,
         public service: SignupStepsService,
-        public translateService: TranslateService,
-        public alertCtrl: AlertController ){} 
+        public alertCtrl: AlertController, 
+        public translateService: TranslateService) {     
+            this.translateService.setDefaultLang('pt-br');
+        } 
 
     /* Função de inicialização */
     ngOnInit() {

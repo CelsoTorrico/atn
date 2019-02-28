@@ -3,3 +3,10 @@
     font-size: 12px;
     padding: 5px;
 }
+
+.notification-container{
+    ion-list{
+        border-bottom: 1px solid #ddd;
+        padding: 5px 15px;
+    }
+}

@@ -93,9 +93,11 @@ class User extends GenericUser{
 
     public function getUser(int $id){
         
-        //Retorna classe de usuário preenchida com dados
-        $user = new User();
-        $user->get($id);
+        //Retorna dados básico de usuário
+        $user = $this->get($id);        
+        
+        //Define a classe de usuário respectiva
+        $user = $user::typeUserClass($user->model);        
 
         //Instanciando classe Favorite e retorna status do usuário
         $fav = new Favorite($this);        
@@ -110,7 +112,7 @@ class User extends GenericUser{
 
         //Remover metadados duplicados (os que já estão nos atributos da classe)
         if(!is_null($user->metadata)) {
-            foreach (['type', 'sport', 'clubes'] as $key) {
+            foreach (['type', 'sport', 'clubes', 'session_tokens'] as $key) {
                 unset($user->metadata[$key]);
             }
         }
@@ -146,8 +148,7 @@ class User extends GenericUser{
         if (is_array($usermeta) && count($usermeta)>0) {
             $this->setVars($usermeta);
             $this->metadata = $usermeta;
-        }
-        else{
+        } else {
             unset($this->metadata);
         }
 
@@ -572,13 +573,9 @@ class User extends GenericUser{
         $db = $usermeta->getDatabase();
 
         //Qtd de itens por página
-        $perPage = 24;
+        $limit = 500;
 
-        //A partir de qual item contar
-        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
-
-        //Paginação de membros
-        $limit = [$initPageCount, $perPage];
+        //Inicializando classe
         $result = null;
 
         if(count($where) > 0){
@@ -886,16 +883,17 @@ class User extends GenericUser{
             //Se aplica em casos do usuário não ter campo preenchido quando dentro da plataforma
             if(is_array($meta_value)){
 
-                //Atribui valor para var correta
-                $meta_value = $meta_value['value'];
-
                 //Se valor for nulo
                 if(is_null($meta_value)){
                     return;
                 }
-
+                
                 //Atribui visibilidade
                 $meta_visibility = (key_exists('visibility', $meta_value)) ? $this->appVal->check_user_input_visibility($meta_value['visibility']) : 0;
+
+                //Atribui valor para var correta
+                $meta_value = $meta_value['value'];
+                
             }
 
             //Cria novos atributos e valores para salvar
@@ -998,31 +996,30 @@ class User extends GenericUser{
      * 
      * @return mixed
      */
-    private function _getUsermeta($ID, $only = '') {
+    private function _getUsermeta($ID, $only = ''):array {
 
         if (is_null($ID) || empty($ID) ) {
             return null;
         }
 
-        //Campos válidos
-        if (is_string($only) && empty($only)) {
-            $only = $this->onlyUsermetaValid();
-        }
-
         //Instancia classe de modelo passando filtro
         $metadata = new UsermetaModel();
 
+        //Parametros de query
+        $query = ['user_id' => $ID];
+
+        //Se setados apenas alguns campos a retornar
+        if (is_string($only) && !empty($only)) {
+            $query[] = ['meta_key' => $only];
+        }
+
         //Retorna todos as metadatas filtrando por ID
-        $result = $metadata->dump(['user_id' => $ID,'meta_key' => $only]);
+        $result = $metadata->dump($query);
 
         //Se array estiver vazio retorna nulo
         if (count($result) <= 0 ) {
             return [];
         }
-
-        //campos que estão formatados como serializados
-        $is_array   = self::getArrayUsermeta();
-        $is_json    = self::getJsonUsermeta();
 
         $formated = [];
 
@@ -1037,35 +1034,21 @@ class User extends GenericUser{
                 continue;
             }
 
-            //Em formato ARRAY
-            if (in_array($meta_key, $is_array) ) {
-                $addValue = json_decode(utf8_encode($meta_value));
-            //Em formato JSON
-            } elseif (in_array($meta_key, $is_json) && !empty($meta_value)) {
-                $addValue = ($uns = @unserialize($meta_value)) ? $uns : $meta_value;
-            //Formatar data 
-            } elseif ($meta_key == 'birthdate'){
+            //Decode data
+            $addValue = (!is_null($uns = json_decode(utf8_encode($meta_value), true))) ? $uns : $meta_value;
+
+            //Unserialize data
+            $addValue = ($uns = @unserialize($addValue)) ? $uns : $addValue;
+
+            if ($meta_key == 'birthdate'){
                 //Formata data em formato permitido
+                $meta_value = preg_replace('/([0-9]{2})([0-9]{2})([0-9]{2,4})/i', '$1-$2-$3', $meta_value);
                 $meta_value = str_replace('/', '-', $meta_value);
                 //Converte em objeto data
                 $date = date_create($meta_value);
                 //Formata para data válida
-                $addValue = date_format($date, 'Y-m-d');
-            } 
-            //Outros formatos
-            else {
-                $addValue = $meta_value;
+                $addValue = (!$date)? $date : date_format($date, 'Y-m-d');
             }
-
-            /** Compatibilidade de dados com versão anterior - dados armazenados */
-            if(is_null($addValue) && in_array($meta_key, $is_array)){
-                $addValue = ($uns = @unserialize($meta_value)) ? $uns : $meta_value;
-            }
-
-            if(is_null($addValue) && in_array($meta_key, $is_json)){
-                $addValue = json_decode(utf8_encode($meta_value));
-            }
-            /** Fim de tentativa */
 
             //Retorna visibilidade
             $addVisibility = $value['visibility'];
@@ -1073,6 +1056,15 @@ class User extends GenericUser{
             $formated[$meta_key]['value'] = $addValue;
             $formated[$meta_key]['visibility'] = $addVisibility;
         }
+
+        //Atribuir tipo se usuário contiver, senão atribui 1 = Atleta
+        $type = (key_exists('type', $formated))? $formated['type']['value']:1;
+
+        //Atribuir tipo
+        $only_usermeta_type_user = $this->onlyUsermetaValid($type);
+        
+        //Separa apenas campos válidos do array
+        $formated = array_intersect_key($formated, array_flip($only_usermeta_type_user));       
 
         return $formated;
 
@@ -1261,7 +1253,8 @@ class User extends GenericUser{
 
         //Verifica tipo de ID de usuário
         if (is_null($type = (new self)->_getType($userModel->ID))) {
-            return ['error' => ['type' => 'Tipo de usuário inexistente. Contate o administrador.']];
+            //No caso de tipo de usuário não tiver sido definido
+            $type['ID'] = 1;
         }
 
         //Tipos de usuários e suas classes
@@ -1269,7 +1262,8 @@ class User extends GenericUser{
             1 => User::class,
             2 => UserProfissional::class,
             3 => UserCollege::class,
-            4 => UserClub::class
+            4 => UserClub::class,
+            5 => UserClub::class
         ];
 
         //Se tipo de usuário não estiver dentro do estabelecido
@@ -1530,12 +1524,12 @@ class User extends GenericUser{
 
     //Keys formatados como array
     private static function getArrayUsermeta(){
-        return ['my-videos', 'titulos-conquistas', 'eventos'];
+        return ['my-videos', 'titulos-conquistas'];
     }
 
     //Keys formatados como json
     private static function getJsonUsermeta(){
-        return ['stats', 'formacao', 'cursos', 'meus-atletas', 'sport', 'clubes'];
+        return ['stats', 'formacao', 'cursos', 'meus-atletas', 'sport', 'clubes', 'eventos', 'club_liga'];
     }
 
     //Retorna ID

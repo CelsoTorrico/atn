@@ -34,8 +34,10 @@ export class LearnPage {
         public user: User,
         public api: Api,
         public toastCtrl: ToastController,
-        public translateService: TranslateService,
-        private params: NavParams ) {
+        private params: NavParams,
+        public translateService: TranslateService) { 
+    
+            this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;

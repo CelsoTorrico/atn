@@ -26,6 +26,7 @@ export class ChatPage {
         public toastCtrl: ToastController,
         public translateService: TranslateService) {
 
+        this.translateService.setDefaultLang('pt-br');
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
         })

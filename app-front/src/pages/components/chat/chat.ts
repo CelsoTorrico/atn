@@ -3,6 +3,7 @@ import { Component, Input, SimpleChange } from '@angular/core';
 import { Api, User } from '../../../providers';
 import { Socket } from 'ng-socket-io';
 import { Observable } from 'rxjs/Observable';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chat-room',
@@ -31,7 +32,14 @@ export class Chat {
 
     private $getChatMessagesUrl: string = 'chat/';
 
-    constructor(public api: Api, public params: NavParams, public user: User, private socket: Socket) {
+    constructor(
+        public api: Api, 
+        public params: NavParams, 
+        public user: User, 
+        private socket: Socket,
+        public translateService: TranslateService ) {
+
+        this.translateService.setDefaultLang('pt-br');
 
         //Função para adicionar chat para abrir inicialmente
         this.openChat = this.params.get('room_open');

@@ -29,7 +29,7 @@
 
       <ion-list no-margin *ngIf="views">
         <button ion-button clear *ngFor="let v of views" (click)="loadView(v)">
-          {{ v.title | translate}}
+          {{ v.title | translate }}
         </button>
       </ion-list>
 
@@ -37,27 +37,25 @@
 
     <ion-grid no-padding>
       <ion-row>
-        <ion-col class="block" text-center *ngIf="height">
+        <ion-col col-md-3 class="block" text-center *ngIf="height">
           <ion-list>
             <ion-label>{{ "HEIGHT" | translate }}</ion-label>
             {{ height }}
           </ion-list>
         </ion-col>
-        <ion-col class="block" text-center *ngIf="birthdate">
+        <ion-col col-md-3 class="block" text-center *ngIf="birthdate">
           <ion-list>
             <ion-label>{{ "BIRTHDATE" | translate }}</ion-label>
             {{ birthdate | dateReplaceToTrace | date:'yyyy' }}
           </ion-list>
         </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col class="block" text-center *ngIf="weight">
+        <ion-col col-md-3 class="block" text-center *ngIf="weight">
           <ion-list>
             <ion-label>{{ "WEIGHT" | translate }}</ion-label>
             {{ weight }}
           </ion-list>
         </ion-col>
-        <ion-col class="block" text-center *ngIf="jogos">
+        <ion-col col-md-3 class="block" text-center *ngIf="jogos">
           <ion-list>
             <ion-label>{{ "PLAYED_MATCHES" | translate }}</ion-label>
             {{ jogos }}

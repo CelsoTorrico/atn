@@ -1,3 +1,4 @@
+import { MyProfileAddMemberDataComponent } from './team-data/team-data.component';
 import { MyProfileAchievementsComponent } from './achievements-data/achievements-data.component';
 import { MyProfileSportsComponent } from './sports-data/sports-data.component';
 import { ProfileStepDirective } from './profile-step.directive';
@@ -25,7 +26,8 @@ import { MyProfileVideosComponent } from './videos-data/videos-data.component';
     MyProfileVideosComponent,
     MyProfileGeneralStatsComponent,
     MyProfileAchievementsComponent,
-    MyProfileStatsComponent
+    MyProfileStatsComponent,
+    MyProfileAddMemberDataComponent 
   ],
   imports: [
     IonicPageModule.forChild(MyProfilePage), 
@@ -45,7 +47,8 @@ import { MyProfileVideosComponent } from './videos-data/videos-data.component';
     MyProfileVideosComponent,
     MyProfileGeneralStatsComponent,
     MyProfileAchievementsComponent,
-    MyProfileStatsComponent
+    MyProfileStatsComponent,
+    MyProfileAddMemberDataComponent
   ],
   bootstrap: [MyProfilePage],
   providers: [

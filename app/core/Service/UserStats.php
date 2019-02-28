@@ -158,7 +158,7 @@ class UserStats {
     }
 
     /** 
-     * Função retorna os dado arranjados para serem inseridos no perfil do usuário 
+     * Função retorna os dados arranjados para serem inseridos no perfil do usuário 
      * 
      * @since 2.0
      * @return string serialized string 
@@ -186,8 +186,12 @@ class UserStats {
                 
                 //Atribui Valores armazenados
                 $r = $currentStats[$sport];
-                //Atualiza os valores com novos
-                $currentStats[$sport] = array_replace($r, $stats);
+                
+                //Atualiza os valores com novos, baseado em keys do array
+                //$currentStats[$sport] = array_replace($r, $stats);
+
+                //Sobre com novo dados enviados
+                $currentStats[$sport] = $stats;
 
                 continue;
             }

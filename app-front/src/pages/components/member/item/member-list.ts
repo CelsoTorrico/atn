@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'member-list',
@@ -25,7 +26,10 @@ export class MemberList {
 
     @Input() public member;
 
-    constructor(public navCtrl: NavController) {}
+    constructor(public navCtrl: NavController,
+        public translateService: TranslateService) { 
+            this.translateService.setDefaultLang('pt-br'); 
+        }
 
     //Abre uma nova página de profile
     goToProfile($user_id: number) {

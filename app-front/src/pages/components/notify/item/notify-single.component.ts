@@ -1,22 +1,19 @@
 import { loadNewPage } from './../../../../providers/load-new-page/load-new-page';
-import { ToastController } from 'ionic-angular';
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api } from '../../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'notify-single',
   templateUrl: 'notify-single.html',
-  styles: [`
-    
-    ion-card{
-      position:relative;
-    }
-  `]
+  styles: [``]
 })
 export class NotifySingle {
 
   public $postID: number;
+
+  @Output() updateCounty = new EventEmitter()
 
   @Input() public currentNotify: any = {
     ID: <number>null,
@@ -33,7 +30,10 @@ export class NotifySingle {
   constructor(
     private api: Api,
     private navCtrl: NavController,
-    private msg: loadNewPage) { }
+    private msg: loadNewPage,
+    public translateService: TranslateService) { 
+      this.translateService.setDefaultLang('pt-br'); 
+    }
 
   //Retorna
   ngOnInit() {
@@ -46,16 +46,16 @@ export class NotifySingle {
     $event.preventDefault();
 
     //Enviado um comentário a determinada timeline
-    let items = this.api.delete('notify/' + $postID).subscribe((resp: any) => {
+    this.api.delete('notify/' + $postID).subscribe((resp: any) => {
 
       //Se não existir items a exibir
-      if (resp.length <= 0) {
+      if (Object.keys(resp).length <= 0) {
         return;
       }
 
       //Sucesso 
       if (resp.success != undefined) {
-        
+        this.updateCounty.emit('notify-'+ $postID);
       }
 
     }, err => {
@@ -69,7 +69,7 @@ export class NotifySingle {
     $event.preventDefault();
 
     //Enviado um comentário a determinada timeline
-    let items = this.api.post('notify/' + $postID, { confirm: $resp }).subscribe((resp: any) => {
+    this.api.post('notify/' + $postID, { confirm: $resp }).subscribe((resp: any) => {
 
       //Se não existir items a exibir
       if (resp.length <= 0) {
@@ -80,6 +80,7 @@ export class NotifySingle {
       if (resp.success != undefined) {
         let toast = this.msg.createToast(resp.success.approve_notify, "bottom");
         toast.present();
+        this.updateCounty.emit('notify-hide');
       }
 
       //Error 

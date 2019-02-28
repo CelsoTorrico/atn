@@ -8,7 +8,7 @@ import { LoginPage } from '../pages/login/login';
 
 @Component({
   template: `
-    <ion-nav #content [root]="rootPage"></ion-nav>
+    <ion-nav #content [root]="rootPage"></ion-nav>  
     `
 })
 export class MyApp {
@@ -16,6 +16,10 @@ export class MyApp {
   rootPage = LoginPage;
 
   constructor(private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
+    
+    //Definindo a linguagem default do app
+    this.translate.setDefaultLang('pt-br');
+    
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.

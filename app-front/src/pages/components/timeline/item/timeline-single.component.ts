@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api, User } from '../../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'timeline-single',
@@ -37,18 +38,29 @@ export class TimelineSingle {
     quantity_comments: ''
   };
 
+  @Output() CommentUpdate = new EventEmitter()
+
   @Output() timelineDeleted = new EventEmitter();
 
   public commentText: string;
 
   public commentShow: any;
 
+  deleteMessage:any;
+
   constructor(
     public user: User,
     private toastCtrl: ToastController,
     private alert: AlertController,
     private api: Api,
-    private navCtrl: NavController) {}
+    private navCtrl: NavController,
+    public translateService: TranslateService) { 
+      
+      this.translateService.setDefaultLang('pt-br');
+      this.translateService.get(["YOU_WILL_EXCLUDE_POST", "YOU_SURE"]).subscribe((data) => {
+        this.deleteMessage = data;
+      })
+    }
 
   //Retorna
   ngOnInit() {
@@ -93,8 +105,8 @@ export class TimelineSingle {
   deleteTimeline() {
 
     let confirmDelete = this.alert.create({
-      title: 'YOU_WILL_EXCLUDE_POST',
-      subTitle: 'You sure about this action?',
+      title: this.deleteMessage.YOU_WILL_EXCLUDE_POST,
+      subTitle: this.deleteMessage.YOU_SURE,
       buttons: [{
         text: 'DELETE',
         handler: data => {
@@ -130,7 +142,7 @@ export class TimelineSingle {
     $event.preventDefault();
 
     //Enviado um comentário a determinada timeline
-    let items = this.api.post('timeline/' + $postID, { comment_content: this.commentText }).subscribe((resp: any) => {
+    this.api.post('timeline/' + $postID, { comment_content: this.commentText }).subscribe((resp: any) => {
 
       //Se não existir items a exibir
       if (resp.length <= 0) {
@@ -139,6 +151,9 @@ export class TimelineSingle {
 
       //Sucesso 
       if (resp.success != undefined) {
+
+        //Emite um evento para ser capturado pelo componente pai
+        this.CommentUpdate.emit(this.currentTimeline.ID);
 
         //Reseta formulário e esconde
         this.commentText = '';

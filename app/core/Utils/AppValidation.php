@@ -133,15 +133,16 @@ class AppValidation
             'gender'        => '((fe)?male)',
             'biography'     => '.*',
             'howknowus'     => '.*',
-            'social_tokens' => '.*'
+            'social_tokens' => '.*',
+            'club_sede'     => '.*'
         );
 
         //Endereço
         $address = array(
-            'address'   => '.*',
-            'city'      => '[\sa-zA-Zéêáâãíóôõúûü]+',
-            'state'     => '[a-zA-Z]{2}',
-            'country'   => '[a-zA-Z\s]+',
+            'address'       => '.*',
+            'city'          => '[\sa-zA-Zéêáâãíóôõúûü]+',
+            'state'         => '[a-zA-Z]{2}',
+            'country'       => '[a-zA-Z\s]+',
             'neighbornhood' => '[0-9a-zA-Z\s]+',
         );
         
@@ -150,10 +151,10 @@ class AppValidation
             'stats'     => '.*', 
             'clubes'    => '[0-9]{1,}',
             'sport'     => '[0-9]{1,}',
-            'club_liga' => '.*',
-            'club_sede' => '.*', 
+            'club_liga' => '.*', 
             'stats-sports' => '.*',
             'titulos-conquistas' => '.*',
+            'eventos' => '.*',
             'formacao'  => '.*',
             'cursos'    => '.*',
             'my-videos'     => 'https?\:\/\/www\.youtube\.com\/.*'
@@ -253,13 +254,18 @@ class AppValidation
     }
 
     //Função de verificar se visibilidade enviada está no formato permitido
-    function check_user_input_visibility(int $visibility){
-        
+    function check_user_input_visibility($visibility):int {
+
+        //Se visibilidade não foi enviada retorna visibilidade padrão
+        if(is_null($visibility)){
+            return 0;
+        }
+
         //Expressõe regulares
         $validFormat = '([1-5]{1})'; //ID TYPE USER
 
         //Executa regular expression para validação
-        $filtered = (preg_match('/'.$validFormat.'/', $visibility, $match )) ? filter_var($match[0], FILTER_SANITIZE_STRING) : 0;
+        $filtered = (preg_match('/'.$validFormat.'/', $visibility, $match )) ? (int) filter_var($match[0], FILTER_SANITIZE_STRING) : 0;
         
         //Atribui valor ao array
         return $filtered;

@@ -1,4 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 interface PageItem {
   title: string
@@ -12,7 +13,7 @@ type PageList = PageItem[]
         <ion-buttons>
 
             <button ion-button outline small icon-end *ngFor="let p of pages" (click)="goToStep(p)">
-                {{ p.title }}
+                {{ p.title | translate }}
             </button>
 
         </ion-buttons>
@@ -26,12 +27,15 @@ export class MyProfileMenu {
 
   @Output() changeStepEvent = new EventEmitter<any>();
 
-  constructor() {
+  constructor(public translateService: TranslateService) { 
+    
+    this.translateService.setDefaultLang('pt-br');
+    
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'My Profile',    component: 'personalData' },
-      { title: 'My Sports',     component: 'sportsData' },
-      { title: 'My Stats',      component: 'statsData' }
+      { title: 'MY_PROFILE',    component: 'personalData' },
+      { title: 'MY_SPORTS',     component: 'sportsData' },
+      { title: 'MY_STATS',      component: 'statsData' }
     ];
   }
 

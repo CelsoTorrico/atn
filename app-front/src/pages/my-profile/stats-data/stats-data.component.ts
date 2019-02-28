@@ -38,12 +38,10 @@ export class MyProfileStatsComponent {
         public user: User,
         public api: Api,
         public viewCtrl: ViewController,
-        public translateService: TranslateService,
-        public statsList: StatsList) {
-
-        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
-        })
+        public statsList: StatsList,
+        public translateService: TranslateService) { 
+    
+        this.translateService.setDefaultLang('pt-br');
 
         //Função a ser executada após requisição de dados de usuário
         this.addFormData = function ($this:any) {
@@ -55,7 +53,6 @@ export class MyProfileStatsComponent {
             $this.type  = atributes.type.ID;
             $this.sport = atributes.sport;
 
-
             //Adicionando campos de acordo com os esportes definidos
             $this.sport.forEach(element => {
 
@@ -63,10 +60,16 @@ export class MyProfileStatsComponent {
                 let sport = element.sport_name;
 
                 //Faz a modificação de cada letra para padrão usado
-                for (var i = 0; i < element.sport_name; i++) {
+                for (const i in element.sport_name ) {
+                    
+                    //Caracteres
                     let currentChar = element.sport_name.charAt(i);
                     let changed = $this.subsChar(currentChar);
-                    sport.replace(currentChar, changed);
+
+                    //Se encontrado algum caractere para substituição
+                    if (changed != undefined) {
+                        sport = element.sport_name.replace(currentChar, changed);
+                    }                    
                 }
 
                 //Nome do esporte reformatado
@@ -161,17 +164,23 @@ export class MyProfileStatsComponent {
         }
 
         //Realiza update de dados do usuario
-        let resp = this.user.update(saveFields);
+        let respObservable = this.user.update(saveFields);
+        respObservable.subscribe((resp: any) => {
 
-        if(resp){
-            this.dismiss();
-        }
+            // Se mensagem contiver parametro 'success'
+            if (Object.keys(resp).length <= 0) {
+                return;
+            }
+
+            //Fechar modal e retornar data
+            this.dismiss(resp);
+        });
 
     }
 
     //Fechar modal
-    dismiss() {
-        this.viewCtrl.dismiss();
+    dismiss(data:any = null) {
+        this.viewCtrl.dismiss(data);
     }
 
     //Função para preencher o modelo de estatísticas com datas provenientes do BD

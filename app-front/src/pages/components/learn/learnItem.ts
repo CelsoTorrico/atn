@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'learn-item',
@@ -82,7 +83,9 @@ export class LearnItem {
   };
 
   constructor(
-    public navCtrl: NavController) {
+    public navCtrl: NavController,
+    public translateService: TranslateService) { 
+      this.translateService.setDefaultLang('pt-br')
 
   }
 

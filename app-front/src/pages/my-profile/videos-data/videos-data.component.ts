@@ -31,18 +31,16 @@ export class MyProfileVideosComponent {
         public viewCtrl: ViewController,
         public translateService: TranslateService) {
 
-        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
-        })
+        this.translateService.setDefaultLang('pt-br');
 
         //Função a ser executada após requisição de dados de usuário
-        this.addFormData = function ($this:any) {
+        this.addFormData = function ($this: any) {
 
             //Adicionando valores a classe user
             let atributes = $this.user._user;
 
             //Intera sobre objeto e atribui valor aos modelos de metadata
-            $this.videos.value = (atributes.metadata['my-videos'].value)? atributes.metadata['my-videos'].value : [];
+            $this.videos.value = (atributes.metadata['my-videos'].value) ? atributes.metadata['my-videos'].value : [];
 
             //Lista de Visibilidades
             $this.getVisibility();
@@ -53,30 +51,30 @@ export class MyProfileVideosComponent {
     //Função que inicializa
     ngOnInit() {
         //Retorna dados de usuário
-        this.user.subscribeUser(this.addFormData, this); 
+        this.user.subscribeUser(this.addFormData, this);
     }
 
-    getVisibility(){
+    getVisibility() {
         //Retorna opções de visibilidade
-        this.user._visibilityObservable.subscribe((resp:any) => {
-            if(Object.keys(resp).length > 0){
+        this.user._visibilityObservable.subscribe((resp: any) => {
+            if (Object.keys(resp).length > 0) {
                 this.visibility = resp;
             }
         });
     }
 
     /** Função para definir visibilidade selecionada automaticamente */
-    defaultOptionSelected(var1, var2){
+    defaultOptionSelected(var1, var2) {
         return this.visibility == undefined ? var1.value === var2.value : var1 === var2;
     }
 
     /** Adicionar um novo item para multiplos campos */
-    addMore($parentModel:string, $event, $labels:any = '') { 
+    addMore($parentModel: string, $event, $labels: any = '') {
 
         $event.preventDefault();
 
         //Se valor for nulo, recondicionar para array
-        if(this[$parentModel].value == null){
+        if (this[$parentModel].value == null) {
             this[$parentModel].value = [];
         }
 
@@ -85,10 +83,10 @@ export class MyProfileVideosComponent {
 
     }
 
-    remove($itemToDelete:string, $index:number){
-        
+    remove($itemToDelete: string, $index: number) {
+
         //Se valor for nulo, recondicionar para array
-        if(this[$itemToDelete].value == null){
+        if (this[$itemToDelete].value == null) {
             return;
         }
 
@@ -102,22 +100,28 @@ export class MyProfileVideosComponent {
         $event.preventDefault();
 
         //Campos válidos
-        let saveFields:any = {
+        let saveFields: any = {
             ['my-videos']: this.videos
         }
 
         //Realiza update de dados do usuario
-        let resp = this.user.update(saveFields);
+        let respObservable = this.user.update(saveFields);
+        respObservable.subscribe((resp: any) => {
 
-        if(resp){
-            this.dismiss();
-        }
+            // Se mensagem contiver parametro 'success'
+            if (Object.keys(resp).length <= 0) {
+                return;
+            }
+
+            //Fechar modal e retornar data
+            this.dismiss(resp);
+        });
 
     }
 
     //Fechar modal
-    dismiss() {
-        this.viewCtrl.dismiss();
+    dismiss(data:any = null) {
+        this.viewCtrl.dismiss(data);
     }
 
     customTrackBy(index: number, item: any): number { return index; }

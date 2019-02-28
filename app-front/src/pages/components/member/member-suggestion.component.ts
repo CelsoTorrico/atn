@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Nav, NavController, ModalController } from 'ionic-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'member-suggestion',
@@ -24,13 +25,14 @@ import { Nav, NavController, ModalController } from 'ionic-angular';
     
     ion-card{
         background: linear-gradient(to top, transparent, #ce4f50);
+        border: 0px;
         padding: 10px 15px;
         text-align: center;
         display:block;
-        width: 50%;
+        width: calc(50% - 2px);
+        margin-right: 2px;
         float: left;
         font-size: 1.2rem;
-        border: 0px;
     }
     
     ion-card ion-label{
@@ -65,7 +67,9 @@ export class MemberSuggestion {
         display_name: null
     }
 
-    constructor(public navCtrl: NavController) { }
+    constructor(public navCtrl: NavController,
+        public translateService: TranslateService) { 
+            this.translateService.setDefaultLang('pt-br'); }
 
     ngOnInit() {
         //Atribuindo dados ao modelo
@@ -75,7 +79,6 @@ export class MemberSuggestion {
         if (this.member.profile_img != undefined) {
             this.memberModel.profile_img = this.member.profile_img;
         }
-
     }
 
     //Abre uma nova página de profile

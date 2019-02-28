@@ -2,6 +2,7 @@ import { ToastController, NavParams } from 'ionic-angular';
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api } from '../../../providers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'learn-container',
@@ -19,7 +20,9 @@ export class Learn {
     public api: Api,
     public navCtrl: NavController,
     private toastCtrl: ToastController,
-    private params: NavParams) {
+    private params: NavParams,
+    public translateService: TranslateService) { 
+      this.translateService.setDefaultLang('pt-br');
 
   }
 
