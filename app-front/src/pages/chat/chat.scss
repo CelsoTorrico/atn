@@ -1,25 +1,35 @@
 .page-messages {
-  background-color: $background;
 
-  .list-chat-members{
+  .list-chat-members,
+  .chat-message-container {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+
+    &~ion-col {
+      height: 100%;
+      ;
+    }
+
+    @media screen and (min-width: 768px) {}
+  }
+
+  .list-chat-members {
+    margin: $toolbar-wp-height 0px;
     padding: 25px 0px;
-    background: linear-gradient(to top, $button-primary-color, $vermelho-contraste);
+    background: $branco;
 
-    h2{
+    h1{
       padding: 0px 15px;
-      color: $branco;
     }
+  }
 
-    @media screen and (min-width: 768px) {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;    
-
-        & ~ ion-col{
-          height: 100%;;
-        }
-    }
+  .chat-message-container {
+    right: 0;
+    left: auto;
+    padding: 0;
   }
 
   .member-select,
@@ -36,7 +46,4 @@
     }
   }
 
-  .list-chat-members{
-    margin: 0px;
-  }
 }

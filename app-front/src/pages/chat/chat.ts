@@ -1,6 +1,5 @@
-import { MemberChat } from './../components/member/member-message.component';
 import { Api } from '../../providers/api/api';
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonicPage, ToastController } from 'ionic-angular';
 import { User } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,9 +26,7 @@ export class ChatPage {
         public translateService: TranslateService) {
 
         this.translateService.setDefaultLang('pt-br');
-        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
-        })
+        
     }
 
     //Função que inicializa

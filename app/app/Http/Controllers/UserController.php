@@ -45,7 +45,7 @@ class UserController extends Controller
 
         //Se houve erro
         if(is_array($result) && isset($result['error'])){
-            return $response()->json($result['error']);
+            return response()->json($result['error']);
         }
         else{
             //Retorna string com dados

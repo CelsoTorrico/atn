@@ -24,7 +24,7 @@ export class LoginService{
             } //options           
         );
 
-        console.log( print.subscribe(resposta => resposta) );
+         
         
         
         /*.then(function(response) {

@@ -111,6 +111,7 @@
   "ADD_NEW_MEMBER": "Adicionar novo usuário",
   "UPDATE_MEMBER": "Atualizar dados do usuário",
   "DELETE": "Deletar",
+  "CANCEL": "Cancelar",
   "YOU_WILL_EXCLUDE_MEMBER": "Você irá deletar um usuário de sua equipe.",
   "USERS" : "usuários",
   "EVENTS": "Eventos",
@@ -122,5 +123,6 @@
   "WEBSITE": "Website",
   "HEADQUARTERS": "Matriz",
   "YOUR_MESSAGE": "Escreva sua mensagem",
-  "NOT_MEMBER_SHOW": "Nenhum resultado a exibir"
+  "NOT_MEMBER_SHOW": "Nenhum resultado a exibir",
+  "POST": "No que você está pensando?"
 }

@@ -92,7 +92,10 @@ export class MyProfileStatsComponent {
     }
 
     ionViewDidLoad(){
-        this.user.subscribeUser(this.addFormData, this);
+        //Retorna dados de usuário
+        this.user._userObservable.subscribe((resp:any) => {
+            this.addFormData(this);
+        });
     }
 
     //Função que inicializa
@@ -188,6 +191,8 @@ export class MyProfileStatsComponent {
 
         this.statsFields.forEach(function(element, index, array){
 
+             
+
             //Adiciona ao array de objetos
             this.stats.value.push({ [element]:  this.statsList.getSportProperty(element) });
 
@@ -214,14 +219,14 @@ export class MyProfileStatsComponent {
             'Ê': 'E', 'Ë': 'E', 'Ì': 'I', 'Í': 'I', 'Î': 'I', 'Ï': 'I', 'Ñ': 'N', 'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O', 'Ø': 'O', 'Ù': 'U',
             'Ú': 'U', 'Û': 'U', 'Ü': 'U', 'Ý': 'Y', 'Þ': 'B', 'ß': 'Ss', 'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a', 'æ': 'a', 'ç': 'c',
             'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e', 'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i', 'ð': 'o', 'ñ': 'n', 'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o',
-            'ö': 'o', 'ø': 'o', 'ù': 'u', 'ú': 'u', 'û': 'u', 'ý': 'y', 'þ': 'b', 'ÿ': 'y', '\s' : '-'
+            'ö': 'o', 'ø': 'o', 'ù': 'u', 'ú': 'u', 'û': 'u', 'ý': 'y', 'þ': 'b', 'ÿ': 'y', ' ' : '-'
         };
 
         return chars[c];
     }
 
     customTrackBy(index: number, item: any): number {
-        console.log(item);
+         
         return index;
     }
 

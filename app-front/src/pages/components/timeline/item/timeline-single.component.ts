@@ -15,12 +15,12 @@ export class TimelineSingle {
 
   public currentUser:any = {
       ID: "",
-      display_name: "",
+      display_name: "", 
       metadata: {
           profile_img:{
               value: ""
           }
-      }
+      }    
   };
 
   @Input() public currentTimeline: any = {
@@ -57,7 +57,7 @@ export class TimelineSingle {
     public translateService: TranslateService) { 
       
       this.translateService.setDefaultLang('pt-br');
-      this.translateService.get(["YOU_WILL_EXCLUDE_POST", "YOU_SURE"]).subscribe((data) => {
+      this.translateService.get(["YOU_WILL_EXCLUDE_POST", "YOU_SURE","DELETE", "CANCEL"]).subscribe((data) => {
         this.deleteMessage = data;
       })
     }
@@ -68,8 +68,8 @@ export class TimelineSingle {
   }
 
   getCurrentUser(){
-    this.user.subscribeUser(function($this){
-      $this.currentUser = $this.user._user; 
+    this.currentUser  = this.user.subscribeUser(function($this){
+      $this.currentUser = $this.user._user;
     }, this);
   }
 
@@ -108,7 +108,7 @@ export class TimelineSingle {
       title: this.deleteMessage.YOU_WILL_EXCLUDE_POST,
       subTitle: this.deleteMessage.YOU_SURE,
       buttons: [{
-        text: 'DELETE',
+        text: this.deleteMessage.DELETE,
         handler: data => {
           this.api.delete('timeline/' + this.currentTimeline.ID).subscribe((resp: any) => {
 
@@ -128,7 +128,7 @@ export class TimelineSingle {
           });
         }
       }, {
-        text: 'CANCEL',
+        text: this.deleteMessage.CANCEL, 
       }]
     });
 

@@ -49,7 +49,7 @@ export class NavMenu {
   }
 
   ionViewDidLoad() {
-    console.log('Hello NavMenu Loaded');
+     
   }
 
   //Abre uma nova página de profile

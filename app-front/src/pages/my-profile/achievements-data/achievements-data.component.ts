@@ -53,7 +53,9 @@ export class MyProfileAchievementsComponent {
     //Função que inicializa
     ngOnInit() {
         //Retorna dados de usuário
-        this.user.subscribeUser(this.addFormData, this);
+        this.user._userObservable.subscribe((resp:any) => {
+            this.addFormData(this);
+        });
     }
 
     getVisibility(){

@@ -81,7 +81,10 @@ export class MyProfileGeneralStatsComponent {
 
     //Função que inicializa
     ngOnInit() {
-        this.user.subscribeUser(this.addFormData, this);
+        //Retorna dados de usuário
+        this.user._userObservable.subscribe((resp:any) => {
+            this.addFormData(this);
+        });
     }
 
     getVisibility(){

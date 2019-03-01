@@ -14,10 +14,16 @@ class Chat{
     protected $room;
     protected $messages;
     protected $following;
+    protected $followers; 
     protected $redis;
     public    $channel;
 
-    public function __construct($user){
+    /** 
+     * Chat
+     * Criação de rooms e mensagens de conversas
+     * @param User $user
+    */
+    public function __construct(User $user){
 
         //Instancinando classes
         $this->currentUser  = $user;
@@ -31,6 +37,7 @@ class Chat{
         //Define followers e retorna IDs
         $follow = new Follow($user);
         $this->following = $follow->getFollowing(true);
+        $this->followers = $follow->getFollowers(true);
 
         //Retorna classe usuário ou retorna erro
         if( is_null($this->currentUser) ){
@@ -38,7 +45,11 @@ class Chat{
         }
     }
 
-    function setRoom(int $suser_id){
+    /** Retorna ou cria uma nova room
+     * @param int $user_id : ID de usuário  
+     * @return array
+     */
+    function setRoom(int $suser_id):array{
         
         //Instancia classe de usuário
         $user = new User();
@@ -48,10 +59,18 @@ class Chat{
             return ['error' => ['chat' => 'Usuário inexistente. Impossível enviar mensagem.']];
         }
 
-        //Array de room
+        //Array de pesquisa de room existente entre usuários
         $roomData = [
-            'fuser' => $this->currentUser->ID, 
-            'suser' => $suser_id
+            'AND' => [
+                'fuser' => $this->currentUser->ID,
+                'suser' => $suser_id           
+            ],
+            'OR' => [
+                'AND' =>[
+                    'fuser' => $this->currentUser->ID,
+                    'suser' => $suser_id 
+                ]
+            ]
         ];
         
         //Verifica se existe uma room existente
@@ -59,8 +78,8 @@ class Chat{
 
         //Verifica se room existe
         if (!$room) {
-            //Preenche modelo
-            $this->room->fill($roomData);            
+            //Preenche modelo com dados de usuário
+            $this->room->fill(['fuser' => $this->currentUser->ID,'suser' => $suser_id ]);            
             //Cria uma nova room
             $this->room->save();
         }
@@ -69,8 +88,12 @@ class Chat{
         return $this->room->getData();
     }
 
-    /* Abre uma room nova ou existente */
-    function getRoom($suser_id) {
+    /**
+     * Abre uma room nova ou existente
+    *  @param int $user_id
+    *  @return array
+    */
+    function getRoom($suser_id):array{
 
         //Se usuários não estão conectados
         if(!$this->isConnected($suser_id)){
@@ -88,8 +111,13 @@ class Chat{
 
     }
 
-    /** Retorna todas as mensagens baseado em IDS */
-    private function getMessages(array $room, int $paged = 0) {
+    /** 
+     * Retorna todas as mensagens baseado em IDS 
+     * @param array $room: dados da room
+     * @param int $paged: numero de páginação
+     * @return array
+     * */
+    private function getMessages(array $room, int $paged = 0):array{
 
         if (!$room = $this->isAccessRoom($room['suser'])) {
             //Retorna erro
@@ -141,23 +169,12 @@ class Chat{
 
     }  
     
-    function getLastMessage(int $suser) {
-        
-        if (!$room = $this->isAccessRoom($suser)) {
-            //Retorna erro
-            return ['error' => ['room', 'Você não pode acessar mensagens nesta conversa.']];
-        }
 
-        //Retorna todas as mensagens
-        $messages = $this->getRoom($room_id);
-        
-        //Retorna mensagens
-        return $messages;
-
-    }
-
-    /** Retorna total de mensagens não lidas */
-    function getTotal(){
+    /** 
+     * Retorna total de mensagens não lidas 
+     * @return int
+     * */
+    function getTotal():int{
 
         //Retorna rooms que usuário contém
         $rooms = $this->room->getIterator([
@@ -185,8 +202,11 @@ class Chat{
         return $messages->count();
     }
 
-    /* Retorna lista de timeline */
-    function getAllRooms() {     
+    /** 
+     * Retorna lista de rooms 
+     * @return array
+     * */
+    function getAllRooms():array{     
 
         //Retorna lista de rooms
         $allRooms = $this->room->getIterator([
@@ -247,7 +267,12 @@ class Chat{
         return $this->deregister($ID);        
     }
 
-    private function register(array $data) {
+    /**
+     * Registra uma nova mensagegm
+     * @param array $data: dados mensagem
+     * @return array
+     */
+    private function register(array $data):array {
 
         if (!$room = $this->isAccessRoom($data['suser'])) {
             //Retorna erro
@@ -284,7 +309,12 @@ class Chat{
         return [];
     }
 
-    private function deregister($ID){
+    /**
+     * Remover uma mensagem enviada
+     * @param int $ID: id de usuário
+     * @return array
+     */
+    private function deregister(int $ID):array{
 
         //Preenche colunas com valores
         if(!$this->messages->load(['message_id' => $ID, 'author_id' => $this->currentUser->ID])){
@@ -311,14 +341,17 @@ class Chat{
     /**
      * Verifica em lista de conexão se usuário existe
      * 
-     * @param int $user Id de usuário a verificar 
+     * @param int $id Id de usuário a verificar 
      * @since 2.0
      * @return boolean
      */
-    function isConnected(int $suser):bool{
+    function isConnected(int $id):bool{
         
-        //Verifica se usuários estão conectados
-        if (in_array($suser, $this->following)) {
+        //Verifica se esta seguindo
+        if (in_array($id, $this->following)) {
+            return true;
+        //Verifica se é seguidor
+        } elseif (in_array($id, $this->followers)){
             return true;
         } else {
             return false;

@@ -1,45 +1,47 @@
-.chat-message-container {
+.messages-list {
 
-  .messages-list {
-    padding: 25px;
-    margin-bottom: 0px;
-    background-color: #f9edeb;
-    border: 1px solid #ddd;
+  //Altura do navbar
+  $height: $toolbar-wp-height + 82;
 
-    .ballon-message {
-      padding: 15px;
-      background-color: #fff;
-      border-radius: 5px;
-      display: inline-block;
-      font-weight: 100;
-      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    }
+  padding: 25px 25px 72px;
+  margin: $toolbar-wp-height 0px 0px;
+  height: 100%;
+  background-color: #f9edeb;
+  border: 1px solid #ddd;
+  overflow-y: auto;
 
-    .message-row {
-      display: block;
-      position: relative;
-      margin-bottom: 10px;
+  .ballon-message {
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: 100;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  }
 
-      &.viewer-message {
-        text-align: right;
+  .message-row {
+    display: block;
+    position: relative;
+    margin-bottom: 10px;
 
-        .ballon-message {
-          background-color: orangered;
-          color: #fff;
-        }
+    &.viewer-message {
+      text-align: right;
+
+      .ballon-message {
+        background-color: orangered;
+        color: #fff;
       }
-
     }
 
-
-
   }
 
-  .chatForm {
-    background-color: $branco;
-    width: 100%;
-    box-shadow: 0px -5px 30px -10px rgba(0, 0, 0, 0.2);
-    border: 1px solid #ddd;
-  }
+}
 
+.chatForm {
+  position: absolute;
+  bottom: 0px;
+  background-color: $branco;
+  width: 100%;
+  box-shadow: 0px -5px 30px -10px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ddd;
 }

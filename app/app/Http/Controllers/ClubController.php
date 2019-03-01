@@ -20,22 +20,21 @@ class ClubController extends Controller
     public function __construct(Request $request)
     {
         //Verifica se classe de usuário corresponde a necessária
-        //execução dos métodos
+        //User padrão
+        $this->user = $request->user();
+        //User Instituição
         $this->club = $this->isClass($request->user());
     }
 
     //Retorna lista de usuário que pertencem ao usuario master
     function getAll(int $id = null) {
         
-        //Verifica se é array ao invés de objeto
-        if (is_array($this->club) && isset($this->club['error']) || is_null($this->club)) {
-            return $this->club;
-        }
-
         //Define tipo de visulização de usuário: visitante e logado
         if(!is_null($id)){
-            $club = $this->club->getUser($id);
-            $result = $club->getTeamUsers(); 
+            $club = $this->user->getUser($id);
+            if($club && $club->type['ID'] >= 3){
+                $result = $club->getTeamUsers();
+            }             
         } else {
             //Atribui resposta
             $result = $this->club->getTeamUsers();

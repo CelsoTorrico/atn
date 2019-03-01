@@ -5,8 +5,14 @@
 }
 
 .notification-container{
-    ion-list{
-        border-bottom: 1px solid #ddd;
-        padding: 5px 15px;
+    ion-list {
+        notify-single {
+            padding: 5px 15px;
+            position: relative;
+            display: block; 
+            border-bottom: 1px solid #ddd;
+        }
     }
+
+    
 }

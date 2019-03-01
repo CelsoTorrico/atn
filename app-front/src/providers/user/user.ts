@@ -209,7 +209,8 @@ export class User {
 
   /** Subscribe ao userdata */
   subscribeUser($optionalFn = function($v){}, $component = null) {
-    return this._userObservable.subscribe(
+    
+    let $userRequest = this._user ? Observable.of(this._user) : this._userObservable.subscribe(
       (resp: any) => {
 
         //Se não existir items a exibir
@@ -219,15 +220,18 @@ export class User {
 
         //Adicionando valores a classe user
         this._user = resp;
-        this.fillMyProfileData();
+
+        //Preenche campos de usuário
+        this.fillMyProfileData(); 
 
         //Executa função adicional
         $optionalFn($component);
 
-      },
-      (error) => {
+      }, (error) => {});
 
-      });
+      return $userRequest;
+
+
   }
 
   //Define os campos definidos para o usuário

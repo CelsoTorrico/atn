@@ -120,10 +120,6 @@ export class MyProfilePersonalDataComponent {
         //Carrega lista de estados do provider
         this.$statesList = this.states.statesList;
 
-        this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
-        })
-
         //Função a ser executada após requisição de dados de usuário
         this.addFormData = function ($this:any) {
 
@@ -146,8 +142,12 @@ export class MyProfilePersonalDataComponent {
 
     //Função que inicializa
     ngOnInit() {
+        
         //Atribui dados do usuário
-        this.user.subscribeUser(this.addFormData, this);
+        this.user._userObservable.subscribe((resp:any) => {
+            this.addFormData(this);
+        });
+
         //Retorna seleção de visibilidade
         this.user._visibilityObservable.subscribe((resp:any) => {
             if(Object.keys(resp).length > 0){

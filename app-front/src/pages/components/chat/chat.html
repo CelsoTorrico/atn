@@ -1,41 +1,48 @@
-<ion-list class="chat-message-container">
+<div class="messages-list">
 
-  <ion-scroll class="messages-list" direction="y" scrollY="true" scrollbar-y="true" style="height: 385px;">
+  <div *ngIf="$chatMessages != undefined && $chatMessages.length > 0">
 
-      <ng-container *ngIf="$chatMessages">
+    <!--<ion-infinite-scroll position="top" threshold="10%" (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content 
+      loadingSpinner="bubbles" 
+      loadingText="Loading more data..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>-->
 
-        <ion-list *ngFor="let room of $chatMessages.reverse()" [ngClass]="{'viewer-message' : room.viewer }" class="message-row">
+    <ion-list *ngFor="let room of $chatMessages.reverse(); let $i = index" [ngClass]="{'viewer-message' : room.viewer }"
+      class="message-row">
 
-          <span class="ballon-message">
-            {{ room.content }}
-            <ion-note item-end></ion-note>
-          </span>
-          <p><small>{{ room.date | date }}</small></p>
+      <span class="ballon-message">
+        {{ room.content }}
+        <ion-note item-end></ion-note>
+      </span>
 
-        </ion-list>
+      <p><small>{{ room.date | date }}</small></p>
 
-      </ng-container>
+    </ion-list>
 
-      <ng-container *ngIf="$chatNoMessages">
-        {{ $chatNoMessages }}
-      </ng-container>
+  </div>
 
-  </ion-scroll>
-  <ion-list class="chatForm">
-    <form #chatForm="ngForm" (submit)="addRoomMessage($event)" name='chatForm'>
+  <div *ngIf="$chatNoMessages">
+    <ion-list>
+      {{ $chatNoMessages }}
+    </ion-list>
+  </div>
 
-      <ion-row>
-        <ion-col col-9>
-          <ion-textarea name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}" [(ngModel)]="$message"
-            required></ion-textarea>
-        </ion-col>
-        <ion-col>
-            <button ion-button large type="submit">{{ "SEND" | translate }}</button>
-        </ion-col>
+</div><!-- container de mensagens -->
 
-      </ion-row>
+<div class="chatForm">
+  <form #chatForm="ngForm" (submit)="addRoomMessage($event)" name='chatForm'>
 
-    </form>
-  </ion-list>
+    <ion-item>
 
-</ion-list>
+      <ion-input item-start name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}"
+        [(ngModel)]="$message" required></ion-input>
+
+      <button item-end ion-button large clear icon-only type="submit">
+        <ion-icon name="send"></ion-icon>
+      </button>
+
+    </ion-item>
+
+  </form>
+</div><!-- formulário de chat -->

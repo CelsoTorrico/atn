@@ -121,9 +121,12 @@ export class MyProfileSportsComponent {
     //Função que inicializa
     ngOnInit() {
         //Retorna dados de usuário
-        this.user.subscribeUser(this.addFormData, this);
+        this.user._userObservable.subscribe((resp:any) => {
+            this.addFormData(this);
+        });
     }
 
+    //Função retorna visibilidade
     getVisibility(){
         //Retorna opções de visibilidade
         this.user._visibilityObservable.subscribe((resp:any) => {
@@ -133,7 +136,7 @@ export class MyProfileSportsComponent {
         });
     }
 
-    //REtorna lista de esportes
+    //Retorna lista de esportes
     getSportList() {
         //Retorna a lista de esportes do banco e atribui ao seletor
         let subscriber = this.api.get('/user/sports').subscribe((resp: any) => {
@@ -164,7 +167,7 @@ export class MyProfileSportsComponent {
 
     }
 
-    //REtorna lista de esportes
+    //Retorna lista de esportes
     getClubsList() {
         //Retorna a lista de esportes do banco e atribui ao seletor
         let subscriber = this.api.get('/user/clubs').subscribe((resp: any) => {
@@ -209,6 +212,7 @@ export class MyProfileSportsComponent {
         });
     }
 
+    /** Compara esportes selecionados: array $sportTable */
     private setChooseSports($sportChoose:string) {
         //Intera sobre items
         this.$sportTable.forEach(element => {
@@ -220,13 +224,14 @@ export class MyProfileSportsComponent {
         });
     }
 
+    /** Compara clubes selecionados: object $clubsTable */
     private setChooseClubs($clubsChoose:string) {
         //Intera sobre items
         this.$clubsTable.forEach(element => {
             //Compara valores selecionados com tabela de esportes
-            if (element[1] == $clubsChoose) {
+            if (element.display_name == $clubsChoose) {
                 //Atribui valor a array
-                this.clubes.push(element[0]);
+                this.clubes.push(element.ID);
             }
         });
     }

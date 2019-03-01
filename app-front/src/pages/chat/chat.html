@@ -12,9 +12,9 @@
 
     <ion-row justify-content-end> 
 
-      <ion-col class="list-chat-members" col-12 col-md-3>
+      <ion-col class="list-chat-members" col-3 col-md-4>
 
-        <h2>{{ "CHAT_ROOMS" | translate }}</h2>
+        <h1>{{ "CHAT_ROOMS" | translate }}</h1>
 
         <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
 
@@ -32,7 +32,7 @@
 
       </ion-col>
 
-      <ion-col col-12 col-md-9>
+      <ion-col class="chat-message-container" col-9 col-md-8>
         <chat-room [$roomID]="$roomSelected"></chat-room>
       </ion-col>
 
@@ -40,7 +40,3 @@
   </ion-grid>
 
 </ion-content>
-
-<ion-footer>
-  @2019 - AtletasNow
-</ion-footer>

@@ -93,11 +93,11 @@ class User extends GenericUser{
 
     public function getUser(int $id){
         
-        //Retorna dados básico de usuário
-        $user = $this->get($id);        
+        //Classe Modelo de usuário
+        $model = new UserModel(['ID' => $id]);        
         
         //Define a classe de usuário respectiva
-        $user = $user::typeUserClass($user->model);        
+        $user = User::typeUserClass($model);        
 
         //Instanciando classe Favorite e retorna status do usuário
         $fav = new Favorite($this);        
@@ -792,8 +792,9 @@ class User extends GenericUser{
     /** Registra usermeta baseado nos parametros */
     private function register_usermeta($meta_key, $meta_value, $user_id, $check = true) {
 
-        //Se valor for false (validação não permitida), não registrar usermeta e encerrar execução da função
-        if(!$meta_value){
+        /*Se valor for false (validação não permitida), 
+        não registrar usermeta e encerrar execução da função */
+        if($meta_value == false){
             return;
         }
 
@@ -814,12 +815,14 @@ class User extends GenericUser{
             //Percorre e verifica existencia de clube
             foreach ($meta_value as $item) {
                 //Atribui marcação
-                $itemTagged[] = (is_int($item))? ['ID' => $item, 'certify' => $this->sendNotifyClub($item, $user_id)]: ['club_name' => $item];
+                $itemTagged[] = (\preg_match('/^[0-9]+/', $item))? ['ID' => $item, 'certify' => $this->sendNotifyClub($item, $user_id)]: ['club_name' => $item];
             }
 
-            //Atribui a var para continuar execução
+            //Reseta valor da variavel
             unset($meta_value);
-            $meta_value = ['value' => $itemTagged];
+
+            //Atribui a var para continuar execução
+            $meta_value = $itemTagged;
         }
 
         //Arranjando dados de estatísticas
@@ -840,19 +843,14 @@ class User extends GenericUser{
         //Se for update atributos
         if (!is_null($meta) && !$meta->isFresh()) {
 
-            if(in_array($meta->meta_key, ['sport', 'clubes'])){
-                
+            //sport e clubes não necessitam de ['value', ''visibility] pois são sempre publicos
+            if (in_array($meta->meta_key, ['sport', 'clubes'])) {
                 //Atribui array de IDS
                 $meta->meta_value = $meta_value;
-
-                //Faz update e retorna ID de resultado
-                return $saveResult = [
-                    $meta->meta_key => ($meta->update('meta_value')) ? $meta->getPrimaryKey() : false
-                ];
-            }
-
-            //Atribui valor ao meta_value
-            $meta->meta_value = $meta_value['value'];
+            } else {
+                //Atribui valor ao meta_value
+                $meta->meta_value = $meta_value['value'];
+            }            
             
             //Array de campos a ser atualizado
             $fields = ['meta_value'];

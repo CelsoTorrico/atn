@@ -13,7 +13,7 @@ export class Chat {
 
     @Input() public $roomID: number;
 
-    public $chatMessages: any[];
+    public $chatMessages: any[] = [];
 
     public $chatNoMessages: string;
 
@@ -34,8 +34,8 @@ export class Chat {
 
     constructor(
         public api: Api, 
-        public params: NavParams, 
         public user: User, 
+        public params: NavParams, 
         private socket: Socket,
         public translateService: TranslateService ) {
 
@@ -140,6 +140,11 @@ export class Chat {
             });
         })
         return observable;
+    }
+
+
+    loadMore($event){
+         
     }
 
 }
