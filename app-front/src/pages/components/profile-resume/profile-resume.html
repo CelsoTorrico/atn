@@ -27,6 +27,12 @@
 
       <h1>{{ display_name | titlecase }}</h1>
 
+      <ul class="list-inline">
+        <li padding-right><small>{{ type.type }}</small></li>
+        <li padding-right><small>{{ posicao | titlecase }}</small></li>
+        <li><small>{{ sport[0].sport_name }}</small></li>
+      </ul>
+
       <ion-list no-margin *ngIf="views">
         <button ion-button clear *ngFor="let v of views" (click)="loadView(v)">
           {{ v.title | translate }}

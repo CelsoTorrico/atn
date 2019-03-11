@@ -87,7 +87,8 @@ export class Notify {
     let popup:any = find;
 
     //Define a posicao do elemento popup
-    popup.style.left = ($event.pageX - popup.style.width) + 'px'; 
+    //popup.style.left = ($event.pageX - popup.style.width) + 'px'; 
+    popup.style.left = ($event.pageX - 275) + 'px'; 
     //popup.style.top  = ($event.pageY + 15) + 'px';
     
     //Adicionar popup ao elemento para sobrepor header

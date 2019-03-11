@@ -8,6 +8,7 @@ import { User } from '../../../../providers';
     selector: 'member-current-user',
     template: `
             <button ion-item (click)="openMenu($event)">
+                
                 <h2>Olá, <strong>{{ member.display_name | titlecase }}</strong></h2>
 
                 <ion-avatar class="btn-cursor img-center" item-end>
@@ -19,19 +20,12 @@ import { User } from '../../../../providers';
                     </ng-template>
 
                     <div class="popup popover-menu">
-                        <ul class="nomargin-nopadding">
-                            <li *ngFor="let nav of menuItems | mapToIterable ">
-                                <a class="btn-cursor" (click)="goToPage(nav.val)">{{ nav.key | translate }}</a>
-                            </li>
-                            <li>
-                                <a class="btn-cursor" (click)="doLogout()">{{ "LOGOUT" | translate }}</a>
-                            </li>
-                        </ul>   
+                        <member-current-menu></member-current-menu> 
                     </div>
                 
                 </ion-avatar>
 
-            </button>             
+            </button>
     `,
     styles: [`
     button, button.activated{ 
@@ -53,7 +47,7 @@ import { User } from '../../../../providers';
 
     ion-avatar::after{
         position: absolute;
-        content: "v";
+        content: " ";
         right: -10px;
         color: $fff;
         margin-left: auto;
@@ -74,16 +68,6 @@ export class MemberUser {
             }
         }
     };
-
-    menuItems: any = {
-        "MY_PROFILE": "ProfilePage",
-        "FAVORITE": "FavoritePage",
-        "LEARN": "LearnPage",
-        "MESSAGES": "ChatPage",
-        "SEARCH": "SearchPage",
-        "FAQ": "",
-        "SUPPORT": ""
-    }
 
     constructor(
         public user: User,
@@ -128,34 +112,6 @@ export class MemberUser {
             });
         });
 
-    }
-
-    //Abre uma nova página de profile
-    goToPage($page: string) {
-        this.navCtrl.push($page, { user_id: null });
-    }
-
-    //Abre uma nova página
-    doLogout() {
-        //Atribuindo observable
-        let logoutObservable = this.user.logout();
-
-        //Subscreve sobre a requisição
-        logoutObservable.subscribe((resp: any) => {
-            if (resp.success) {
-
-                let toast = this.toastCtrl.create({
-                    position: 'bottom',
-                    message: resp.success.logout,
-                    duration: 3000
-                })
-
-                toast.present({
-                    ev: this.navCtrl.push('LoginPage')
-                });
-
-            }
-        });
     }
 
 }

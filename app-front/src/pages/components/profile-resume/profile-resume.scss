@@ -9,8 +9,9 @@
     max-width: 24%;
     height: 100%;
     position: fixed;
-    top: 60px;
+    top: 55px;
     left: 0px;
+    z-index: -900;
   }
 
   header, .block{

@@ -1,32 +1,32 @@
 <div class="messages-list">
 
-  <div *ngIf="$chatMessages != undefined && $chatMessages.length > 0">
-
     <!--<ion-infinite-scroll position="top" threshold="10%" (ionInfinite)="loadMore($event)">
-      <ion-infinite-scroll-content 
-      loadingSpinner="bubbles" 
-      loadingText="Loading more data..."></ion-infinite-scroll-content>
-    </ion-infinite-scroll>-->
+        <ion-infinite-scroll-content 
+        loadingSpinner="bubbles" 
+        loadingText="Loading more data..."></ion-infinite-scroll-content>
+      </ion-infinite-scroll>-->
+
+  <ng-template *ngIf="$chatMessages == undefined; else showChats"  #showMessage>
+      <ion-list>
+        {{ $chatNoMessages }}
+      </ion-list>
+  </ng-template>
+
+  <ng-template #showChats>
 
     <ion-list *ngFor="let room of $chatMessages.reverse(); let $i = index" [ngClass]="{'viewer-message' : room.viewer }"
       class="message-row">
 
       <span class="ballon-message">
+
         {{ room.content }}
-        <ion-note item-end></ion-note>
+        <small >{{ room.date | date }}</small>
+        
       </span>
 
-      <p><small>{{ room.date | date }}</small></p>
-
     </ion-list>
 
-  </div>
-
-  <div *ngIf="$chatNoMessages">
-    <ion-list>
-      {{ $chatNoMessages }}
-    </ion-list>
-  </div>
+  </ng-template> 
 
 </div><!-- container de mensagens -->
 
@@ -45,4 +45,5 @@
     </ion-item>
 
   </form>
+
 </div><!-- formulário de chat -->

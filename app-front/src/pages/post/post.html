@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{ "POST" | translate }}</ion-title>
+    <ion-title>{{ currentPostItem.post_title }}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -72,7 +72,7 @@
                 <ion-col col-auto>
                   <ion-item>
                     <ion-avatar class="btn-cursor" item-start>
-                      <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+                      <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" /> 
                       <ng-template #elseBlock>
                         <img src="assets/img/user.png" alt="currentUser.display_name" />
                       </ng-template>
@@ -105,7 +105,3 @@
   </ion-grid>
 
 </ion-content>
-
-<ion-footer>
-  @2019 - AtletasNow
-</ion-footer>

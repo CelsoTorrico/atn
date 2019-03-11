@@ -16,11 +16,7 @@ export class PostPage {
     public currentUser:any = {
         ID: "",
         display_name: "",
-        metadata: {
-            profile_img:{
-                value: ""
-            }
-        }
+        metadata: {}
     };
 
     public currentPostItem: any = {
@@ -29,10 +25,7 @@ export class PostPage {
         guid: '',
         post_author: {
             ID: '',
-            display_name: '',
-            profile_img: {
-
-            }
+            display_name: ''
         },
         post_content: '',
         post_date: '',
@@ -69,12 +62,12 @@ export class PostPage {
     //Função que inicializa
     ngOnInit() {
 
+        //Carrega dados do usuário de contexto
+        this.getPost(); 
+
         this.user.subscribeUser(function ($this) {
             $this.currentUser = $this.user._user;
         }, this);
-
-        //Carrega dados do usuário de contexto
-        this.getPost();
 
     }
 
@@ -86,7 +79,7 @@ export class PostPage {
     public getPost() {
 
         //Retorna a lista de esportes do banco e atribui ao seletor
-        this.user._user = this.api.get(this.$getPostUrl + this.$ID).subscribe((resp: any) => {
+        this.api.get(this.$getPostUrl + this.$ID).subscribe((resp: any) => {
 
             //Se não existir items a exibir
             if (resp.length <= 0) {

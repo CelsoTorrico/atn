@@ -3,20 +3,28 @@
   //Altura do navbar
   $height: $toolbar-wp-height + 82;
 
-  padding: 25px 25px 72px;
+  padding: 25px 25px 0px;
   margin: $toolbar-wp-height 0px 0px;
-  height: 100%;
+  height: calc(100% - 120px);
   background-color: #f9edeb;
   border: 1px solid #ddd;
   overflow-y: auto;
+  scroll-behavior: smooth;
 
   .ballon-message {
-    padding: 15px;
+    padding: 5px 15px;
     background-color: #fff;
     border-radius: 5px;
     display: inline-block;
     font-weight: 100;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+
+    small{
+      color: #555;
+      display: block;
+      font-size: 1.0rem;
+      margin-top: 5px;
+      text-align: right;
+    }
   }
 
   .message-row {
@@ -28,8 +36,7 @@
       text-align: right;
 
       .ballon-message {
-        background-color: orangered;
-        color: #fff;
+        background-color: #ffcfc7;
       }
     }
 

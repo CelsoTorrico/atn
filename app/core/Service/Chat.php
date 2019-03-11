@@ -61,14 +61,14 @@ class Chat{
 
         //Array de pesquisa de room existente entre usuários
         $roomData = [
-            'AND' => [
-                'fuser' => $this->currentUser->ID,
-                'suser' => $suser_id           
-            ],
-            'OR' => [
-                'AND' =>[
+            "OR" => [
+                "AND" => [
                     'fuser' => $this->currentUser->ID,
-                    'suser' => $suser_id 
+                    'suser' => $suser_id
+                ],
+                "AND #cond" => [
+                    'suser' => $this->currentUser->ID,
+                    'fuser' => $suser_id,
                 ]
             ]
         ];
@@ -160,7 +160,6 @@ class Chat{
                 'date'       => $item->date,
                 'content'    => ($item->read == 1)? '(Mensagem Apagada)' : $item->content,
                 'author'     => $user->getMinProfile($item->author_id),
-                'viewer'     => ($item->author_id == $this->currentUser->ID)? true : false
             ];
         }
 
@@ -210,7 +209,10 @@ class Chat{
 
         //Retorna lista de rooms
         $allRooms = $this->room->getIterator([
-            'fuser'  =>  $this->currentUser->ID
+            'OR' => [
+                'fuser' => $this->currentUser->ID,
+                'suser' => $this->currentUser->ID                
+            ] 
         ]);
         
         //Retorna resposta
@@ -232,15 +234,18 @@ class Chat{
                 //Instancia classe de usuário
                 $user = new User();
 
+                //Retornar usuário oposto da conversa
+                $room_user = ($item->suser != $this->currentUser->ID) ? $item->suser : $item->fuser;
+
                 //Se ao retornar usuário vir erro de usuário inexistente
-                if (array_key_exists('error', $room_user = $user->getMinProfile($item->suser))) {
+                if (array_key_exists('error', $room_user = $user->getMinProfile($room_user))) {
                     continue;
                 }
 
                 //Combina array timeline e comentários
                 $rooms[] =  [
                     'room_id'           => $item->room_id,
-                    'user'              => $user->getMinProfile($item->suser),
+                    'user'              => $room_user,
                     'quantity_messages' => $messages->count(),
                     'last_update'       => $item->last_update         
                 ];
@@ -268,7 +273,7 @@ class Chat{
     }
 
     /**
-     * Registra uma nova mensagegm
+     * Registra uma nova mensagem
      * @param array $data: dados mensagem
      * @return array
      */
@@ -290,8 +295,6 @@ class Chat{
             'content'       => $content,
             'author_id'     => $author_id
         ];
-
-        if($this->redis)
 
         //Insere no banco de dados 'Redis' para chat em realtime
         $this->redis->publish($room_id, json_encode($contentArray));
@@ -362,26 +365,33 @@ class Chat{
     /** Verifica o acesso a sala de conversa */
     function isAccessRoom($suser) {
 
-        //Verificar se usuários podem enviar mensagem na conversa
-        $hasAccess = $this->room->getInstance([
-            'AND' => [
-                'fuser' => $this->currentUser->ID,
-                'suser' => $suser           
-            ],
-            'OR' => [
-                'AND' =>[
-                    'fuser' => $this->currentUser->ID,
-                    'suser' => $suser 
+        //Verifica se room esta vazia
+        if (empty($hasAccess = $this->room->getData())) {
+            
+            //Inicializa uma nova instancia da room
+            $this->room->load([
+                "OR" => [
+                    "AND" => [
+                        'fuser' => $this->currentUser->ID,
+                        'suser' => $suser
+                    ],
+                    "AND #cond" => [
+                        'suser' => $this->currentUser->ID,
+                        'fuser' => $suser,
+                    ]
                 ]
-            ]            
-        ]);
+            ]);
 
-        if (!$room = $hasAccess->getData()) {
-            //Retorna erro
-            return false;
-        } else {
+            //Atribui dados
+            $hasAccess = $this->room->getData();
+        }
+
+        if ($suser == $hasAccess['suser'] || $suser == $hasAccess['fuser']) {
             //Retorna dados da room
-            return $room;
+            return $hasAccess;
+        } else {
+            //Retorna false
+            return false;
         }
     }
     

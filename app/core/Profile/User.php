@@ -994,7 +994,7 @@ class User extends GenericUser{
      * 
      * @return mixed
      */
-    private function _getUsermeta($ID, $only = ''):array {
+    private function _getUsermeta($ID, $only = []):array {
 
         if (is_null($ID) || empty($ID) ) {
             return null;
@@ -1007,12 +1007,12 @@ class User extends GenericUser{
         $query = ['user_id' => $ID];
 
         //Se setados apenas alguns campos a retornar
-        if (is_string($only) && !empty($only)) {
-            $query[] = ['meta_key' => $only];
+        if (count($only) > 0 && !empty($only)) {
+            $query['meta_key'] = $only;
         }
 
         //Retorna todos as metadatas filtrando por ID
-        $result = $metadata->dump($query);
+        $result = $metadata->dump($query);  
 
         //Se array estiver vazio retorna nulo
         if (count($result) <= 0 ) {

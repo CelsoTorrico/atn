@@ -92,20 +92,7 @@ export class ProfilePage {
   }
 
   ngAfterViewInit() {
-    //Move profile-resume quando mobile
-    this.platform.ready().then((readySource) => {
-      if (this.platform.width() < 600) {
-
-        let resume = document.querySelector('.profile-resume');
-
-        //Adicionar popup ao elemento para sobrepor header
-        let page = document.querySelector('.scroll-content');
-        //Inserir elemento como primeiro
-        page.insertBefore(resume, page.childNodes[0]);
-
-        //page.style.marginTop = '0px';
-      }
-    });
+    
   }
 
   //Função para carregar componentes 

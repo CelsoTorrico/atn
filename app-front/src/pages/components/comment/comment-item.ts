@@ -27,11 +27,7 @@ export class CommentItem {
   public currentUser: any = {
     ID: "",
     display_name: "",
-    metadata: {
-      profile_img: {
-        value: ""
-      }
-    }
+    metadata: {}
   };
 
   constructor(
@@ -87,7 +83,7 @@ export class CommentItem {
           message: resp.success.comment,
           duration: 8000,
           position: 'bottom' 
-        });
+        }); 
 
         toast.present();
       }

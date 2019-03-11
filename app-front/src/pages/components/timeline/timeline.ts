@@ -27,7 +27,7 @@ export class Timeline {
 
   constructor(
     public api: Api,
-    public navCtrl: NavController, 
+    public navCtrl: NavController,  
     public modalCtrl: ModalController,
     private toastCtrl: ToastController, 
     public translateService: TranslateService) {     
@@ -128,7 +128,8 @@ export class Timeline {
     event.preventDefault();
 
     //Impede de executar ações em cascata em botões com evento
-    if(event.target.tagName == 'IMG' || event.target.classList.contains('count-responses')) {
+    if(event.target.tagName == 'IMG' || event.target.classList.contains('count-responses') 
+    || event.target.classList.contains('badge')) {
       //Invoca um modal passando ID da Timeline
       let modal = this.modalCtrl.create(TimelineItem, { post_id: $postID });
       modal.present(); 

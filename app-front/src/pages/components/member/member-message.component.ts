@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'member-chat',
     template: `
-            <button class="btn-cursor" ion-item (click)="openRoom(room.user.ID, $event)">
+            <button [id]="'chat'+room.user.ID" class="btn-cursor" ion-item (click)="openRoom(room.user.ID, $event)">
 
                 <ion-avatar class="btn-cursor" item-start>
                     <img *ngIf="room.user.profile_img, else elseBlock" 

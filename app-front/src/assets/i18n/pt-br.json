@@ -10,7 +10,7 @@
   "LOGIN": "Entrar",
   "SIGNUP": "Cadastre-se",
   "REGISTER_BUTTON": "Cadastre-se", 
-  "FORGET_PASSWORD": "Esqueci minha SENHA",
+  "FORGET_PASSWORD": "Esqueci minha senha",
   "LOGIN_FB": "Facebook",
   "LOGIN_GOOGLE": "Google",
   "TERMS_LINK": "Termos de Uso",
@@ -124,5 +124,7 @@
   "HEADQUARTERS": "Matriz",
   "YOUR_MESSAGE": "Escreva sua mensagem",
   "NOT_MEMBER_SHOW": "Nenhum resultado a exibir",
-  "POST": "No que você está pensando?"
+  "POST": "No que você está pensando?",
+  "FOLLOWERS": "Seguidores",
+  "INPUT_NAME": "Digite o nome"
 }

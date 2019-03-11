@@ -29,6 +29,11 @@ $titulos: #d03014;
 body {
   font-family: "OpenSans", "Calibri", "Arial", cursive !important;
   font-weight: normal;
+  font-size: 1.5rem;
+}
+
+ion-app.md, .card-content-md, .card-md p, ion-label{
+  font-size: 1.6rem;
 }
 
 h1,
@@ -36,7 +41,7 @@ h2,
 ion-list-header,
 ion-card-header,
 ion-title {
-  font-family: "Montserrat", "Calibri", "Arial", cursive !important;
+  font-family: "OpenSans", "Calibri", "Arial", cursive !important;
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;
@@ -51,13 +56,25 @@ ion-title {
 [col-xl-0] {}
 
 [col-0] {
-  @media screen and (max-width: --ion-grid-width-sm) {
+  @media screen and (max-width: map-get($grid-breakpoints, sm )) {
     display: none !important;
   }
 }
 
 [col-md-0] {
-  @media screen and (min-width: --ion-grid-width-sm) and (max-width: 100%) {
+  @media screen and (min-width: map-get($grid-breakpoints, sm )) and (max-width: 100%) {
+    display: none !important;
+  }
+}
+
+.hidden-mobile{
+  @media screen and (max-width: map-get($grid-breakpoints, sm )) {
+    display: none !important;
+  }
+}
+
+.hidden-desktop{
+  @media screen and (min-width: map-get($grid-breakpoints, sm )) {
     display: none !important;
   }
 }
@@ -84,8 +101,8 @@ ion-title {
 
 .button-atletas {
   display: inline-block;
-  padding: 15px;
-  border-radius: 15px;
+  padding: 10px 15px;
+  border-radius: 5px;
   color: #555;
   text-transform: capitalize;
   font-weight: 500;
@@ -93,7 +110,7 @@ ion-title {
   border: 1px solid transparent;
 
   &::after {
-    content: "v";
+    content: " ";
     color: #888;
     margin-left: 5px;
     font-weight: 100;
@@ -251,6 +268,11 @@ select {
   border-radius: 15px;
 }
 
+.toast-button {
+  background: #fff !important;
+  margin-right: 10px;
+}
+
 /* CLOSE */
 
 .close-button {
@@ -281,6 +303,16 @@ ion-badge,
   }
 }
 
+
+.header-md{
+  box-shadow: 1px 1px 15px rgba(125, 125, 125, 0.3); 
+  &::after, ion-navbar::after{
+    background-image: none;  
+    height: 0px;
+    bottom: -15px;
+  }
+}
+
 ion-avatar {
 
   ion-img,
@@ -297,7 +329,7 @@ ion-avatar {
 
 ion-card.card-md {
   box-shadow: 1px 1px 15px rgba(125, 125, 125, 0.1);
-  border: 1px solid #ddd;
+  border-radius: 10px;
 }
 
 ion-img {
@@ -313,10 +345,10 @@ ion-header .item-md.item-block .item-inner {
 ion-toolbar,
 ion-navbar {
   .toolbar-background-md {
-    background-color: $vermelho !important;
-    background: url('../assets/img/dashboard/background-texture.jpg') no-repeat;
+    background-image: linear-gradient(to left, $button-primary-color, $vermelho-contraste);
+    /*background: url('../assets/img/dashboard/background-texture.jpg') no-repeat;
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat;*/
     color: $branco;
   }
 
@@ -325,6 +357,12 @@ ion-navbar {
   & .bar-button-clear-md-default,
   & .bar-button-md-default {
     color: $branco !important;
+  }
+}
+
+ion-navbar, ion-toolbar{
+  button.bar-button-md, button[menuToggle]{
+    border: 1px solid $branco;
   }
 }
 
@@ -346,7 +384,7 @@ ion-navbar {
     position: absolute;
     content: '';
     top: -13px;
-    left: 10px; 
+    right: 5px; 
     width: 15px;
     height: 15px;
     background-color: $branco;  
@@ -367,29 +405,18 @@ ion-navbar {
 
     &::before{
       background-color: $titulos;
-      left: auto;
-      right: 5px;
     }
 
-    ul {
-      list-style: none;
-
-      li {
-        a {
-          background-color: #fdfdfd;
-          display: block;
-          padding: 15px 25px;
-          color: #222;
-          font-weight: 100;
-          text-align: left;
+    ion-list {
+      button:first-child {
+        background-color: $titulos;
+        ion-label{
+          color: #fff !important;
         }
-
-        &:first-child a {
-          background-color: $titulos;
-          color: #fff;
-        }
+        
       }
     }
+
   }
 
 

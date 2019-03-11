@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from 'ionic-angular';
 import { CommonModule } from '@angular/common';
 import { PipesModule } from '../../../pipes/pipes.module';
+import { MenuPageModule } from '../menu/menu.module';
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { PipesModule } from '../../../pipes/pipes.module';
         FormsModule,
         IonicModule,
         CommonModule,
+        MenuPageModule,
         PipesModule
       ],
       exports: [Member, MemberList, MemberChat, MemberUser,  MemberSuggestion],

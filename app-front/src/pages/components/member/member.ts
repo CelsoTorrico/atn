@@ -11,33 +11,47 @@ import { TranslateService } from '@ngx-translate/core';
 export class Member {
 
     @Input() public listMembers:any[];
+    @Input() public isFollowers:boolean = false;
 
-    private getMemberUrl:string = 'follow'; 
+    private static getFollowingUrl:string = 'follow'; 
+    private static getFollowersUrl:string = 'followers';    
+    private $url:string;
   
     constructor(
         public api: Api,
         public navCtrl: NavController, 
         public modalCtrl: ModalController,
         public translateService: TranslateService) { 
+            
             this.translateService.setDefaultLang('pt-br');
+
+            //Define url padrão de requisição de membros
+            this.$url = Member.getFollowingUrl;
         } 
 
     //Retorna
     ngOnInit() {
-        if (this.listMembers == undefined ){
-            this.queryMembers();
+        
+        //Verifica se foi definido exibir seguidores
+        if(this.isFollowers){
+            this.$url = Member.getFollowersUrl;
         }
+
+        //Se não há membros injetados, fazer query
+        if (this.listMembers == undefined){
+            this.queryMembers();
+        } 
     }
 
     //Seta a url para requisição
     public setMemberUrl($url:string){
-        return this.getMemberUrl = $url;
+        return this.$url = $url;
     }
 
     //Retorna os membros
     queryMembers(){
         //Retorna a lista de esportes do banco e atribui ao seletor
-        let items = this.api.get(this.getMemberUrl).subscribe((resp:any) => {        
+        let items = this.api.get(this.$url).subscribe((resp:any) => {        
             //Se não existir items a exibir
             if(resp.length > 0){            
                 //Retorna array de membros

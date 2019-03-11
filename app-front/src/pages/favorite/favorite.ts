@@ -30,7 +30,7 @@ export class FavoritePage {
         videos: []
     };
 
-    public static getFavoriteUrl:string = 'favorite';
+    public static getFavoriteUrl:string  = 'favorite';
     public static getSuggestionsUrl:string = 'user/suggestions';
 
     public favoriteMembers:any = {
@@ -38,6 +38,8 @@ export class FavoritePage {
         Clubes: [],
         Outros: []
     };
+
+    public followersMembers:any; 
 
     public friendsSuggestion:any = {
         found: [],

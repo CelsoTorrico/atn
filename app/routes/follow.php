@@ -4,7 +4,7 @@
 
 $router->group(['prefix' => 'follow'], function () use ($router) {
 
-    //Começar a seguir
+    //Retornar quem segue
     $router->get('/', 'FollowController@get');
 
     //Começar a seguir
@@ -17,3 +17,6 @@ $router->group(['prefix' => 'follow'], function () use ($router) {
     $router->delete('/{id:[0-9]+}', 'FollowController@delete');
 
 });
+
+//Retornar seguidores
+$router->get('/followers', 'FollowController@getFollowers');

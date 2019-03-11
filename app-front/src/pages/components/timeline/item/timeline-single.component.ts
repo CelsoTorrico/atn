@@ -16,11 +16,7 @@ export class TimelineSingle {
   public currentUser:any = {
       ID: "",
       display_name: "", 
-      metadata: {
-          profile_img:{
-              value: ""
-          }
-      }    
+      metadata: {}    
   };
 
   @Input() public currentTimeline: any = {
@@ -29,7 +25,7 @@ export class TimelineSingle {
       ID: '',
       display_name: '',
       profile_img: { 
-        value: null
+        value: ''
       }
     },
     post_date: '',
@@ -60,6 +56,7 @@ export class TimelineSingle {
       this.translateService.get(["YOU_WILL_EXCLUDE_POST", "YOU_SURE","DELETE", "CANCEL"]).subscribe((data) => {
         this.deleteMessage = data;
       })
+
     }
 
   //Retorna
@@ -68,7 +65,7 @@ export class TimelineSingle {
   }
 
   getCurrentUser(){
-    this.currentUser  = this.user.subscribeUser(function($this){
+    this.user.subscribeUser(function($this){
       $this.currentUser = $this.user._user;
     }, this);
   }

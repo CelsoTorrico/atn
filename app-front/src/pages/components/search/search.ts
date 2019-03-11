@@ -6,29 +6,33 @@ import { TranslateService } from '@ngx-translate/core';
     selector: 'search-member',
     template: `
         <ion-row>
-            <ion-col>
-                <input type="search" placeholder="Encontre alguém" [(ngModel)]="search" class="searchbar-input" />
+            <ion-col align-self-end>
+                <input type="search" [placeholder]="input_name" [(ngModel)]="search" class="searchbar-input" />
             </ion-col>
-            <ion-col text-left>
-                <button ion-button (click)="searchMember($event)">{{ "Pesquisar" | translate }}</button>
+            <ion-col col-auto text-left align-self-end>
+                <button ion-button icon-end (click)="searchMember($event)">
+                    {{ "SEARCH" | translate }}
+                    <ion-icon item-end name="search"></ion-icon>
+                </button>
             </ion-col>
         </ion-row>        
-    `,
-    styles: [`
-        button{
-            margin: 0px;
-        }
-    `]
+    `
 })
 export class searchField{
 
     public search:string;
+
+    public input_name:string;
 
     constructor(
         public navCtrl:NavController,
         public translateService: TranslateService) { 
     
         this.translateService.setDefaultLang('pt-br');
+
+        this.translateService.get("INPUT_NAME").subscribe((data) => {
+            this.input_name = data; 
+        });     
 
     }
 

@@ -1,23 +1,25 @@
+import { MemberCurrentMenu } from './member-current-menu';
 import { MyProfileMenu } from './my-profile-menu';
 import { NavMenu } from './nav-menu';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { MenuPage } from './menu';
 import { IonicModule } from 'ionic-angular';
 import { UserMenu } from './user-menu';
+import { PipesModule } from '../../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
-    MenuPage, NavMenu, MyProfileMenu, UserMenu
+    NavMenu, MyProfileMenu, UserMenu, MemberCurrentMenu
   ],
   imports: [
     TranslateModule.forChild(),
-    IonicModule
+    IonicModule,
+    PipesModule
   ],
   exports: [
-    MenuPage, NavMenu, MyProfileMenu, UserMenu
+    NavMenu, MyProfileMenu, UserMenu, MemberCurrentMenu
   ],
   bootstrap:[NavMenu],
-  entryComponents: [MenuPage, NavMenu, MyProfileMenu, UserMenu] 
+  entryComponents: [NavMenu, MyProfileMenu, UserMenu, MemberCurrentMenu] 
 })
 export class MenuPageModule { }

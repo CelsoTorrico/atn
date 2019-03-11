@@ -1,6 +1,40 @@
-page-dashboard ion-header ion-navbar .toolbar-background-md{
-    background-color: $branco !important;
-    background: initial;
+page-dashboard {
+
+    member-current-menu {
+        ion-list button{
+            border-bottom: 1px solid #ddd !important;
+        }
+    }
+
+    ion-header{
+
+        background-color: $branco;
+    
+        #main-logo{
+            max-width: 200px;
+            width: 100%;
+            margin-left: 15px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%); 
+        }
+    
+        ion-col{
+            padding: 0px !important;
+        }
+    
+        .menu-icons{
+            button{
+                margin: -5px 10px 0px 0px;
+            }
+        }
+        
+        .menu-desktop{
+            background-color: $branco !important;
+            background: initial;
+        }
+    } 
+    
 }
 
 .page-dashboard{
@@ -24,7 +58,7 @@ page-dashboard ion-header ion-navbar .toolbar-background-md{
 
             .grande{
                 display: block;
-                font-family: "Montserrat", "Calibri", "Arial", cursive !important;
+                font-family: "OpenSans", "Calibri", "Arial", cursive !important;
                 font-size: 52px;
                 font-weight: bold;
                 font-style: normal;

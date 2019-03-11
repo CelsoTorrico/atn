@@ -1,50 +1,70 @@
+<!-- Menu-Mobile -->
+<ion-menu side="right" [content]="content">
+  <ion-header>
+    <ion-toolbar>
+
+      <ion-buttons slot="end">
+          <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
+      </ion-buttons>      
+
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <member-current-menu></member-current-menu><!-- Menu-do-Usuário -->
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<!-- /Menu-Mobile -->
+
+<ion-nav #content [root]="DashboardPage"></ion-nav>
+
 <ion-header>
   <ion-toolbar>
     <ion-grid fixed>
       <ion-row>
-        <ion-col col-md-4 col-12>
-          <img width="275" height="38" src="assets/img/atletasnow-logotipo-negativo.svg" id="main-logo" class="img-left"
+        <ion-col col-md-4 col-4 style="position: relative;">
+          <img src="assets/img/atletasnow-logotipo-negativo.svg" id="main-logo" class="img-left"
             title="AtletasNOW" align-self-left />
         </ion-col>
-        <ion-col col-md-8 col-12>
-          <ion-row>
-            <ion-col text-right no-padding>
-              <ion-buttons>
-                  <notify></notify><!-- Notificações -->
-                  <user-menu></user-menu><!-- Icones de navegação -->
-              </ion-buttons>
-            </ion-col>
-            <ion-col col-7 align-self-end>
-              <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
+        <ion-col col-md-8 col-8>
+          <ion-row justify-content-end>
+            <ion-col col-auto no-padding>
+
+              <ul class="list-inline">
+                <li class="menu-icons"><notify></notify><!-- Notificações --></li>
+                <li class="menu-icons"><user-menu></user-menu><!-- Icones de navegação --></li>
+                <li class="hidden-mobile"><member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User --></li>
+                <li class="hidden-desktop"><button ion-button icon-only menuToggle>
+                    <ion-icon name="menu"></ion-icon>
+                </button><!-- Open-menu --></li>
+              </ul>
+
             </ion-col>
           </ion-row>
         </ion-col>
       </ion-row>
     </ion-grid>
-  </ion-toolbar>
+  </ion-toolbar>  
 
-  <ion-navbar>
+  <ion-grid fixed class="menu-desktop hidden-mobile">
 
-    <ion-grid fixed>
+    <ion-row>
+      <ion-col col-auto col-md>
 
-      <ion-row>
-        <ion-col col-md-8 col-0>
+        <nav-menu></nav-menu><!-- Menu de navegação -->
 
-          <nav-menu></nav-menu><!-- Menu de navegação -->
+      </ion-col>
+      <ion-col col-auto col-lg-4 align-self-end>
 
-        </ion-col>
-        <ion-col col-md-4 col-8>
+        <ion-buttons end>
+          <search-member></search-member><!-- Componente de pesquisa de usuário -->
+        </ion-buttons>
 
-          <ion-buttons end>
-            <search-member></search-member><!-- Componente de pesquisa de usuário -->
-          </ion-buttons>
+      </ion-col>
+    </ion-row>
 
-        </ion-col>
-      </ion-row>
-
-    </ion-grid>
-
-  </ion-navbar>
+  </ion-grid><!-- Menu-Desktop -->  
 
 </ion-header>
 
@@ -54,7 +74,7 @@
     <ion-row padding>
 
       <ion-col col-md-4 col-12 no-padding>
-        <ion-card class="profile-info">
+        <div class="profile-info">
           <ion-row>
             <ion-col>
               <ion-card class="views">
@@ -75,7 +95,7 @@
               </ion-card>
             </ion-col>
             <ion-col>
-              <ion-card class="views">
+              <ion-card class="views btn-cursor" (click)="goToPage('ChatPage')">
                 <ion-card-header>
                   <ion-list>
                     <ion-item>
@@ -93,7 +113,7 @@
               </ion-card>
             </ion-col>
             <ion-col>
-              <ion-card class="views">
+              <ion-card class="views btn-cursor" (click)="goToPage('FavoritePage')">
                 <ion-card-header>
                   <ion-list>
                     <ion-item>
@@ -129,7 +149,7 @@
               </ion-card>
             </ion-col>
           </ion-row>
-        </ion-card>
+        </div>
       </ion-col>
 
       <ion-col col-md-5 col-12>
@@ -166,7 +186,7 @@
                     </ion-avatar>
 
                     <ion-textarea name="post_content" [(ngModel)]="addTimeline.post_content" type="textarea"
-                      placeholder="{{ 'POST' | translate }}" required></ion-textarea>
+                      [placeholder]="timeline_placeholder" required></ion-textarea>
                   </ion-item>
                 </ion-col>
                 <ion-col col-6>
@@ -192,7 +212,13 @@
 
         </ion-card>
 
-        <timeline></timeline>
+        <br />
+
+        <ion-title>
+          {{ "LAST_ACTIVITY" | translate }}
+        </ion-title>
+
+        <timeline no-padding></timeline>
 
       </ion-col>
 

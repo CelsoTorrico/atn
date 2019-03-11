@@ -14,6 +14,7 @@ import { User, Api } from '../../providers';
 export class DashboardPage {
 
     public loginErrorString;
+    public timeline_placeholder:string;
 
     //Informações básicas de usuário
     public currentUserData: any = {
@@ -59,6 +60,10 @@ export class DashboardPage {
         public loadNewPage: loadNewPage) {
 
         this.translateService.setDefaultLang('pt-br');
+
+        this.translateService.get("POST").subscribe((data) => {
+            this.timeline_placeholder = data;
+        });
 
         //Instanciando classe 'User' desse modo, devido imcompatibilidade dentro do construtor
         this.user = new User(this.api, this.loadNewPage, this.toastCtrl);

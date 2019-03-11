@@ -1,12 +1,14 @@
+import { isObservable } from '@angular/core/src/util/lang';
 import { ToastController } from 'ionic-angular';
 import { SuccessStep } from './../../pages/signup-steps/success/success';
-import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
 import { Api } from '../api/api';
 import { loadNewPage } from '../load-new-page/load-new-page';
 import { DashboardPage } from '../../pages/dashboard/dashboard';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { timer } from 'rxjs/observable/timer';
+import { switchMap } from 'rxjs/operator/switchMap';
 
 /**
  * User Context
@@ -31,7 +33,7 @@ export class User {
     private api: Api,
     protected loadPageService: loadNewPage,
     protected toast: ToastController) {
-    
+
     //Carrega Observables
     this.getSelfUser();
     this.getSelfStats();
@@ -119,10 +121,10 @@ export class User {
    * Atualiza dados de usuário logado
    * @param accountData 
    */
-  update(accountData: any, isPhoto:boolean = false) {
+  update(accountData: any, isPhoto: boolean = false) {
 
     //Define método de update de dados de usuário
-    let method = (isPhoto)? 'post' : 'put';
+    let method = (isPhoto) ? 'post' : 'put';
 
     //Retorna observable
     let observable = this.api[method]('user/update', accountData);
@@ -177,9 +179,9 @@ export class User {
     let $user = new User(this.api, this.loadPageService, this.toast);
 
     //Retorna observable
-    $user._userObservable =  this.api.get('user/' + $user_id);
+    $user._userObservable = this.api.get('user/' + $user_id);
     $user._statsObservable = this.api.get('user/stats/' + $user_id);
-    $user._teamObservable  = this.api.get('user/self/club_user/' + $user_id);
+    $user._teamObservable = this.api.get('user/self/club_user/' + $user_id);
 
     //Retorna instancia da classe
     return $user;
@@ -208,29 +210,55 @@ export class User {
   }
 
   /** Subscribe ao userdata */
-  subscribeUser($optionalFn = function($v){}, $component = null) {
-    
-    let $userRequest = this._user ? Observable.of(this._user) : this._userObservable.subscribe(
-      (resp: any) => {
+  subscribeUser($optionalFn = function ($v) { }, $component = null) {
 
-        //Se não existir items a exibir
-        if (Object.keys(resp).length <= 0) {
-          return;
+    function requestUserData(user) {
+
+      let observers = [];
+
+      return (observer) => {
+
+        observers.push(observer);
+
+        if (observers.length === 1) {
+          
+          user._userObservable.subscribe((resp) => {
+
+            //Se não existir items a exibir
+            if (Object.keys(resp).length <= 0) {
+              return;
+            }
+
+            //Adicionando valores a classe user
+            user._user = resp;
+
+            //Preenche campos de usuário
+            user.fillMyProfileData();
+
+            //Executa função adicional
+            $optionalFn($component);
+
+          });
+
         }
 
-        //Adicionando valores a classe user
-        this._user = resp;
+        return {
+          unsubscribe() {
+            // Remove from the observers array so it's no longer notified
+            observers.splice(observers.indexOf(observer), 1);
+            // If there's no more listeners, do cleanup
+            if (observers.length === 0) {
 
-        //Preenche campos de usuário
-        this.fillMyProfileData(); 
+            }
+          }
+        };
 
-        //Executa função adicional
-        $optionalFn($component);
+      }
+    }
 
-      }, (error) => {});
+    let source = new Observable(requestUserData(this));
 
-      return $userRequest;
-
+    source.subscribe();
 
   }
 
@@ -263,7 +291,7 @@ export class User {
     //Campos gerais
     let $fields: string[] = [
       'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email', 'sport', 'clubes'
-    ] 
+    ]
 
     //Se usuario for atleta e profissional
     if (this._user.type.ID == (1 || 2)) {

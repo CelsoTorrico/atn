@@ -21,17 +21,24 @@ export class ProfileResumeComponent implements OnInit{
 
     ID: number = null;
 
-    type: number = null;
+    type:any = {
+        ID: null,
+        type: null
+    };
 
     display_name: string = null;
 
     profile_img:string = null;
 
+    posicao:string = null;
+
     favorite: boolean = false;
 
     birthdate:string = null;
 
-    sport: any = { value: null };
+    sport: any[] =  [
+        {ID: null, sport_name: ''}
+    ];
 
     height:number = null;
 
@@ -55,8 +62,11 @@ export class ProfileResumeComponent implements OnInit{
         labels: ["Vitórias", "Empates", "Derrotas"],
         datasets: [
             {
-            label: "",
-            data: [0,0,0]
+                label: "",
+                data: [0,0,0],
+                backgroundColor: ['green','yellow','red'],
+                borderWidth: [0, 0, 0],
+                borderColor: ['rgba(0,0,0,0)']
             }
         ]
     };
@@ -65,7 +75,7 @@ export class ProfileResumeComponent implements OnInit{
             display: false
         },
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
     };
 
     constructor(
@@ -148,7 +158,7 @@ export class ProfileResumeComponent implements OnInit{
             //Atribuindo dados aos modelos
             this.ID = atributes.ID;
             this.display_name = atributes.display_name;
-            this.type = atributes.type.ID;
+            this.type = atributes.type; 
             this.sport = atributes.sport;
             this.favorite = atributes.favorite;
 
@@ -166,6 +176,10 @@ export class ProfileResumeComponent implements OnInit{
             
             if(atributes.metadata.hasOwnProperty('birthdate')){
                 this.birthdate = atributes.metadata.birthdate.value; 
+            }
+
+            if(atributes.metadata.hasOwnProperty('posicao')){
+                this.posicao = atributes.metadata.posicao.value; 
             }
                 
 

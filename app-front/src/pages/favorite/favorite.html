@@ -85,7 +85,21 @@
 
         </ion-card>
 
-        <ion-card id="friends-col">
+        <ion-card id="followers-col">
+
+          <ion-card-header>
+            <ion-title>{{ "FOLLOWERS" | translate }}</ion-title>
+          </ion-card-header>
+
+          <ion-item-group>
+            <ion-item>
+              <member-container [isFollowers]="true"></member-container><!-- Lista de Seguidores -->
+            </ion-item>
+          </ion-item-group>
+
+        </ion-card>
+
+        <ion-card id="following-col">
 
           <ion-card-header>
             <ion-title>{{ "FOLLOWING" | translate }}</ion-title>

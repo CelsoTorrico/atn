@@ -23,9 +23,17 @@ class FollowController extends Controller
     }
 
     /** Retorna todos seguidores */
-    function get(){
+    function getFollowers(){
 
         $response = $this->follow->getFollowers();
+        
+        return response()->json($response);
+    }
+
+    /** Retorna todos que segue */
+    function get(){
+
+        $response = $this->follow->getFollowing();
         
         return response()->json($response);
     }

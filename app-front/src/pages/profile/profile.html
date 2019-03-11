@@ -6,8 +6,7 @@
 
   </ion-navbar>
 
-  <profile-resume (changeViewEvent)="changeComponentView($event)" [user]="currentUser" [isLogged]="isLogged">
-  </profile-resume><!-- Resumo de Perfil -->
+  <profile-resume class="hidden-mobile" (changeViewEvent)="changeComponentView($event)" [user]="currentUser" [isLogged]="isLogged"></profile-resume><!-- Resumo de Perfil -->
 
 </ion-header>
 
@@ -16,6 +15,8 @@
   <ion-grid>
     
     <ion-row padding>
+
+      <profile-resume class="col-12 hidden-desktop" (changeViewEvent)="changeComponentView($event)" [user]="currentUser" [isLogged]="isLogged"></profile-resume><!-- Resumo de Perfil -->
 
       <ion-col col-12 col-md-9 offset-md-3>
 

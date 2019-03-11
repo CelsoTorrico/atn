@@ -15,7 +15,8 @@ class Follow {
 
     public function __construct($user){
         
-        $this->model = new FollowersModel();
+        //to_id = usuário logado, from_id = usuário requisitado
+        $this->model = new FollowersModel();  
         $this->currentUser = $user;
 
         //Retorna classe usuário ou retorna erro
@@ -25,7 +26,7 @@ class Follow {
 
     }
 
-    /** Retorna se usuário está favoritado */
+    /** Retorna se usuário está sendo seguido */
     public function isUserFollowed(int $user_id){
         
         //Filtrar inputs e validação de dados
@@ -46,7 +47,7 @@ class Follow {
 
         //Filtrar inputs e validação de dados
         $followData = [
-            'to_id'     => $this->currentUser->ID,
+            'from_id'     => $this->currentUser->ID,
             'has_block' => 0
         ];
 
@@ -60,13 +61,17 @@ class Follow {
             if (!$followers->valid()) {
                 continue;
             }
+
+            //Se seguidor for mesmo do usuário logado
+            if($item->to_id == $this->currentUser->ID){
+                continue;
+            }
             
-            //Retorna dados
-            $item = $item->getData();
             //Instanciando classe de usuário
             $user = new User();
+            
             //Atribui dados de usuário ao array
-            $listUsers[] = ($only_ids)? $item['from_id'] : $user->getMinProfile($item['from_id']);
+            $listUsers[] = ($only_ids)? $item->to_id : $user->getMinProfile($item->to_id);
         }       
 
         return $listUsers;
@@ -78,7 +83,7 @@ class Follow {
 
         //Filtrar inputs e validação de dados
         $followData = [
-            'to_id'     => $this->currentUser->ID,
+            'to_id'   => $this->currentUser->ID,
             'has_block' => 0
         ];
 
@@ -92,13 +97,17 @@ class Follow {
             if (!$followers->valid()) {
                 continue;
             }
+
+            //Se seguidor for mesmo do usuário logado
+            if($item->from_id == $this->currentUser->ID){
+                continue;
+            }
             
-            //Retorna dados
-            $item = $item->getData();
             //Instanciando classe de usuário
             $user = new User();
+            
             //Atribui dados de usuário ao array
-            $listUsers[] = ($only_ids)? $item['from_id'] : $user->getMinProfile($item['from_id']);
+            $listUsers[] = ($only_ids)? $item->from_id : $user->getMinProfile($item->from_id);
         }       
 
         return $listUsers;
