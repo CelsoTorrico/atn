@@ -82,7 +82,9 @@ class Authenticate
                 $success = $control->insertToken($userData['ID'], $tokenDatabase->__toString());
 
                 //Retorna mensagem juntamente com cookie 
-                return response($c)->withCookie($this->sessionCookie);
+                $response = response($c)->withCookie($this->sessionCookie); 
+                
+                return $response;
             
         }
 

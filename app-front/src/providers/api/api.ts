@@ -1,5 +1,5 @@
 import { InAppBrowser } from '@ionic-native/in-app-browser';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NavController } from 'ionic-angular';
 
@@ -18,18 +18,21 @@ export class Api {
   //Ambiente Produção
   static readonly url = 'http://54.207.47.200/atletasNOW/app/public';
   
-  protected $headerObject = {
-    'Content-Type'    :'application/x-www-form-urlencoded',
-    'withCredentials' : true,
-    'Origin'          : 'http://localhost:8100' 
-  }
+  protected $headerObject:any;
 
   private $httpParams;
   private $optionsParams = { withCredentials: true };
 
   constructor(
     public http: HttpClient, 
-    public appBrowser: InAppBrowser) {}
+    public appBrowser: InAppBrowser) {
+      this.$headerObject = {
+        'Content-Type'    : 'application/x-www-form-urlencoded',
+        'withCredentials' : true,
+        'Origin'          : 'http://app.atletasnow.s3-website-sa-east-1.amazonaws.com' 
+        //'Origin'        : 'http://localhost' 
+      }
+    }
 
   /** TODO: Todas as requisições após login deve usar parametro Options = {withCredentials: true} para enviar cookie setado na seção */
   get(endpoint: string, params?: any, reqOpts?: any) {
@@ -48,7 +51,6 @@ export class Api {
       }
     }
 
-    reqOpts = this.$headerObject;
     return this.http.get(Api.url + '/' + endpoint, reqOpts);
   }
 

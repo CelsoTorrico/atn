@@ -3,5 +3,9 @@
   "integrations": {
     "cordova": {}
   },
+  "proxies" :[{
+    "path": "/",
+    "proxyUrl": "http://54.207.47.200/atletasNOW/app/public"
+  }],
   "type": "ionic-angular"
 }

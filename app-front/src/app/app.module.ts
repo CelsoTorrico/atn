@@ -6,8 +6,6 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { Camera } from '@ionic-native/camera';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { StatusBar } from '@ionic-native/status-bar';
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -75,8 +73,6 @@ export function provideSettings(storage: Storage) {
     Api,
     User,
     Camera,
-    SplashScreen,
-    StatusBar,
     InAppBrowser,
     loadNewPage,
     BrazilStates,

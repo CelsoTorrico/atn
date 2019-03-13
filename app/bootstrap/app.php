@@ -1,13 +1,11 @@
 <?php
 
-require_once __DIR__.'/../core/autoload.php';
 require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../core/autoload.php';
 
-try {
-    (new Dotenv\Dotenv(__DIR__.'/../'))->load();
-} catch (Dotenv\Exception\InvalidPathException $e) {
-    //
-}
+(new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
+    dirname(__DIR__)
+))->bootstrap();
 
 /*
 |--------------------------------------------------------------------------
@@ -73,8 +71,8 @@ $app->bind('Illuminate\Contracts\Cookie\QueueingFactory', 'cookie');
 
 //Carrega middleware (auth e cors)
 $app->middleware([
-    App\Http\Middleware\Authenticate::class,
     App\Http\Middleware\Cors::class,
+    App\Http\Middleware\Authenticate::class
 ]);
 
 //Carregando Middlewares do App
