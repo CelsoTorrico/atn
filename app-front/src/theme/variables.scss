@@ -2,6 +2,14 @@
 // http://ionicframework.com/docs/v2/theming/
 $font-path: "../assets/fonts";
 
+@import "../../www/assets/fonts/montserrat.scss"; 
+@import "../../www/assets/fonts/opensans.scss";  
+
+$font-family-base:      "Open Sans";
+$font-family-md-base:   "Open Sans";
+$font-family-ios-base:  "Open Sans";
+$font-family-wp-base: " Open Sans";
+
 @import "ionic.globals";
 
 
@@ -14,11 +22,6 @@ $font-path: "../assets/fonts";
 
 $text-color:        #000;
 $background-color:  #fff;
-
-$font-family-base: "OpenSans";
-$font-family-md-base: "OpenSans";
-$font-family-ios-base: "OpenSans";
-$font-family-wp-base: "OpenSans";
 
 
 // Named Color Variables

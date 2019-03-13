@@ -15,9 +15,6 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
-@import "../../www/assets/fonts/montserrat.scss"; 
-@import "../../www/assets/fonts/opensans.scss";  
-
 $vermelho: #5c0005;
 $vermelho-contraste: rgb(160, 0, 42);
 $background: #f1f1f1;
@@ -27,7 +24,7 @@ $notify-color: rgb(240, 74, 152);
 $titulos: #d03014;
 
 body {
-  font-family: "OpenSans", "Calibri", "Arial", cursive !important;
+  font-family: "Open Sans", "Calibri", "Arial", cursive !important;
   font-weight: normal;
   font-size: 1.5rem;
 }
@@ -41,7 +38,7 @@ h2,
 ion-list-header,
 ion-card-header,
 ion-title {
-  font-family: "OpenSans", "Calibri", "Arial", cursive !important;
+  font-family: "Open Sans", "Calibri", "Arial", cursive !important;
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;

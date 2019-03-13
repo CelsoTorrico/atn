@@ -16,7 +16,8 @@ class Cors
     public function handle($request, Closure $next)
     {
         $headers = [
-            'Access-Control-Allow-Origin'      => '*',
+            'Access-Control-Allow-Origin'      => 'http://app.atletasnow.s3-website-sa-east-1.amazonaws.com',
+            'Vary' => 'Origin',
             'Access-Control-Allow-Methods'     => 'POST, GET, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age'           => '86400',
