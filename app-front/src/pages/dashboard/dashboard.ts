@@ -74,7 +74,14 @@ export class DashboardPage {
         this.currentUser();
         this.getVisibility();
         this.getLastActivity();
+
+        //Recarregar dados de usuário a cada 5 minutos
+        setInterval(function($class){
+            $class.currentUser();
+        }, 1080000, this)
     }
+
+    
 
     //Quando um input tem valor alterado
     fileChangeEvent(fileInput: any) {

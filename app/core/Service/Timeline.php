@@ -9,6 +9,8 @@ use Core\Utils\FileUpload;
 
 use Core\Database\PostModel;
 use Core\Database\PostmetaModel;
+use Core\Database\UsertypeModel;
+use Illuminate\Support\Facades\Storage;
 
 class Timeline {
 
@@ -69,7 +71,8 @@ class Timeline {
         $timelineData['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
 
         //Se item tiver foto anexada
-        if ($attach = $this->model->getInstance(['post_parent' => $id, 'post_type' => 'attachment'])) {
+        if ($attach = $this->model->getInstance(['post_parent' => $id, 'post_type' => 'attachment']))
+        {
             $timelineData['attachment'] = $attach->guid;
         }
 
@@ -443,14 +446,14 @@ class Timeline {
             return true;            
         }
 
-        //Se for 1: Post privado, apenas seguidores podem ver
-        if ($visibility->meta_value == 1) {
+        //Se for 99: Post privado, apenas seguidores podem ver
+        if ($visibility->meta_value == 99) {
             return in_array($viewer_user_id, $this->following);
         }
 
         //Se for maior que 1: Visualizaçõa definida por pertencer a um club
         //TODO: Verificar essa implementação
-        if ($visibility->meta_value > 1) {
+        if ($visibility->meta_value > 1 && $visibility->meta_value != 99) {
             
             $check = false;
             
@@ -473,17 +476,35 @@ class Timeline {
 
     /** Define e retorna os levels de visibilidades de post */
     private function  getVisibilityLevels() {
-        
-        //Tipo de visualização
+
+        //Tipo de visualização padrão
         $levels = [
             ['option' => 'Público', 'value' => 0],
-            ['option' => 'Privado', 'value' => 1]
+            ['option' => 'Privado', 'value' => 99]
         ];
 
-        //Se usuário for pertecente a um clube, adicionar visibilidade para posts privados para somente os pertencentes ao grupo
-        if (!is_null($this->currentUser->clubs) && $this->currentUser->type['ID'] == 2) {
+        //Retornando tipos de usuário do BD
+        $usertypeModel = new UsertypeModel();
+        $usertypes = $usertypeModel->getIterator([]);
+        
+        //Aplicando a lista de visibilidade
+        foreach ($usertypes as $item) {
+            $levels[] = ['option' => $item->type, 'value' => $item->ID];
+        }        
+
+        //Se usuário for um clube, adicionar visibilidade para posts privados para somente os pertencentes ao grupo
+        if ((int)$this->currentUser->type['ID'] > 2) {
+            $levels[] = [
+                'option'    => $this->currentUser->display_name, 
+                'value'     => $this->currentUser->ID];
+        }
+
+        //Se usuário for pertecente a um clube, adicionar visibilidade para posts privados para somente os pertencentes ao clube
+        if (!is_null($this->currentUser->clubs)) {
             foreach ($this->currentUser->clubs as $key => $value) {
-                $levels[] = ['option' => $value['club_name'], 'value' => $value['ID']];
+                if(key_exists('ID', $value)){
+                    $levels[] = ['option' => $value['club_name'], 'value' => $value['ID']];
+                }                
             } 
         }
 

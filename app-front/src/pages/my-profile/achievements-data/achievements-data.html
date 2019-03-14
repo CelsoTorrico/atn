@@ -31,12 +31,12 @@
 
         <ion-grid>
           <ion-row *ngFor="let item of titulos_conquistas.value; let i = index; trackBy:customTrackBy">
-            <ion-col col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index; first as isFirst;">
+            <ion-col col-12 col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index; first as isFirst;">
               <ion-item>
                 <ion-label stacked>{{ n | translate}} </ion-label>
                 <ion-input [type]="(isFirst == true)? 'number' : 'text'" min="0" 
                 [(ngModel)]="titulos_conquistas.value[i][a]" [name]="'titulos_conquistas.value['+ i +']['+ a +'][]'"></ion-input>
-              </ion-item>
+              </ion-item> 
             </ion-col>
             <div class="close-button" (click)="remove('titulos_conquistas', i)">
               <ion-icon name="close-circle"></ion-icon>

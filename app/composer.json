@@ -12,6 +12,8 @@
         "illuminate/session": "^5.8",
         "laravel/lumen-framework": "^5.8",
         "laravel/socialite": "^3.2",
+        "league/flysystem-aws-s3-v3": "1.0.22",
+        "league/flysystem-rackspace": "^1.0",
         "mpdf/mpdf": "^7.1",
         "phpmailer/phpmailer": "^6.0.5",
         "repat/laravel-medoo": "^1.0",

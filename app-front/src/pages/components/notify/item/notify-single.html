@@ -1,19 +1,25 @@
-<ion-item>
-    <ion-avatar item-start (click)="goToProfile(currentNotify.user_profile.ID)">
-        <img [src]="currentNotify.user_profile.profile_img.value" />
+<ion-item>   
+
+    <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentNotify.user_profile.ID)">
+        <img *ngIf="currentNotify.user_profile.profile_img, else elseBlock" [src]="currentNotify.user_profile.profile_img.value" />
+        <ng-template #elseBlock>
+            <img src="assets/img/user.png" alt="currentUser.display_name" />
+        </ng-template>
     </ion-avatar>
+
     <h2>{{ currentNotify.user_profile.display_name }}</h2>
     <p>{{currentNotify.date | date }}</p>
+
 </ion-item>
 
 {{ currentNotify.message }}
 
 <ion-row *ngIf="currentNotify.type == 3"><!-- Em caso de aprovação de usuário de clube -->
     <ion-col>
-        <button ion-button (click)="approveCertify(currentNotify.ID, $event, 1)">{{ "APPROVE" | translate }}</button>
+        <button ion-button (click)="approveCertify(currentNotify.ID, 1, $event)">{{ "APPROVE" | translate }}</button>
     </ion-col>
     <ion-col>
-        <button ion-button (click)="approveCertify(currentNotify.ID, $event, 0)">{{ "RECUSE" | translate }}</button>
+        <button ion-button (click)="approveCertify(currentNotify.ID, 0, $event)">{{ "RECUSE" | translate }}</button>
     </ion-col>
 </ion-row>
 

@@ -158,9 +158,20 @@ class Chat{
                 'room_id'    => $item->room_id,
                 'message_id' => $item->message_id,
                 'date'       => $item->date,
-                'content'    => ($item->read == 1)? '(Mensagem Apagada)' : $item->content,
+                'content'    => $item->content,
                 'author'     => $user->getMinProfile($item->author_id),
             ];
+        }
+
+        //Fazer todas mensagens como lidas
+        $setMessagesAsRead = $this->messages->getIterator([
+            'room_id'   => $room['room_id'], 
+            'author_id[!]' => $this->currentUser->ID,
+        ]);
+        
+        //Seta todas as mensagens como lidas
+        foreach ($setMessagesAsRead as $item) {
+            $deleted = $item->delete();
         }
 
         //Retorna mensagens
@@ -246,7 +257,7 @@ class Chat{
                 $rooms[] =  [
                     'room_id'           => $item->room_id,
                     'user'              => $room_user,
-                    'quantity_messages' => $messages->count(),
+                    'quantity_messages' => $this->getTotal(),
                     'last_update'       => $item->last_update         
                 ];
                 

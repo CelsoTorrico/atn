@@ -33,16 +33,12 @@
 <div class="chatForm">
   <form #chatForm="ngForm" (submit)="addRoomMessage($event)" name='chatForm'>
 
-    <ion-item>
-
-      <ion-input item-start name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}"
+    <ion-input item-start name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}"
         [(ngModel)]="$message" required></ion-input>
 
-      <button item-end ion-button large clear icon-only type="submit">
-        <ion-icon name="send"></ion-icon>
-      </button>
-
-    </ion-item>
+    <button item-end ion-button large clear icon-only type="submit">
+      <ion-icon name="send"></ion-icon>
+    </button>
 
   </form>
 

@@ -38,7 +38,7 @@
             <ion-item>
               <h3>{{ e.key | translate | titlecase }}</h3>
             </ion-item>
-            <ion-col col-md-4 *ngFor="let arr of e.val | mapToIterable">
+            <ion-col col-6 col-md-4 *ngFor="let arr of e.val | mapToIterable">
               <ion-item>
                 <ion-label stacked>{{ arr.key }}</ion-label>
                 <ion-input min="0" [type]="defineTypeInput(arr.key)" full 

@@ -30,6 +30,7 @@ body {
 }
 
 ion-app.md, .card-content-md, .card-md p, ion-label{
+  font-family: "Open Sans", "Calibri", "Arial", cursive !important;
   font-size: 1.6rem;
 }
 
@@ -311,12 +312,10 @@ ion-badge,
 }
 
 ion-avatar {
-
   ion-img,
   img {
-    //background-color: #fafafa;
-    //border:1px solid $titulos;
     border-radius: 50%;
+    background-color: #f0f0f0;
   }
 }
 
@@ -416,5 +415,24 @@ ion-navbar, ion-toolbar{
 
   }
 
+}
 
+
+ion-select:not(.select-state){
+  font-size: 10px;
+  right: 0;
+  top: 0;
+  position: absolute;
+
+  .item-cover{
+    border:0px;
+  }
+}
+
+/** Mobile */
+
+@media screen and (max-width: map-get($grid-breakpoints, sm )) {
+  ion-app.md [padding], .row{
+    padding: 0 !important;
+  }
 }

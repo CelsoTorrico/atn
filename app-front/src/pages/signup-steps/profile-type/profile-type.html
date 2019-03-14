@@ -88,7 +88,7 @@
               </ion-col>
               <ion-col col-4>
                 <ion-item no-padding>
-                  <ion-select id="state" [(ngModel)]="$account.state" name="state" placeholder="{{ 'STATE' | translate }}"
+                  <ion-select class="select-state" id="state" [(ngModel)]="$account.state" name="state" placeholder="{{ 'STATE' | translate }}"
                     full required>
                     <ion-option *ngFor="let item of $statesList" [value]="item">
                       {{item}}

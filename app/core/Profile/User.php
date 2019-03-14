@@ -405,46 +405,15 @@ class User extends GenericUser{
 
         //Se id for null, mostrar dados do usuário corrente
         $user = (is_null($id))? $this : $this->get($id); 
-        
-        //Carreg classe de composição de PDFS e especifica caminho de download
-        $mpdf = new \Mpdf\Mpdf(['tempDir' => env("APP_FILES") .'/pdf']);
 
         //Carrega classe de Resume e implementa os dados do usuário
-        $resume = new Resume();
-
-        //Atribuindo alguns valores a classe de resume
-        $resume->display_name = $user->display_name;
-        $resume->user_email = $user->user_email;
-        $resume->clubes = $user->clubs;
-        
-        //Verifica se usuário tem metadata para imprimir
-        if( count($user->metadata) > 0){
-            
-            foreach ($user->metadata as $key => $value) {
-
-                //TODO: Verifica permissão bater com quem requisita
-                if(!isset($value['visibility']) 
-                || !in_array($value['visibility'], ["0", $this->type['ID']]) )
-                    continue; 
-
-                //Pula para proximo
-                if (!in_array($key, ['telefone', 'profile_img', 'biography', 'formacao', 'cursos', 'titulos-conquistas'])){
-                    continue;
-                }
-
-                //Mudando valor de key, devido a não suporte PHP
-                if($key == 'titulos-conquistas'){
-                    $key = 'titulos';
-                }
-
-                //Atribuindo valor a variavel
-                $resume->$key = $value['value'];                
-
-            }
-        }    
+        $resume = new Resume($user, $this->onlyUsermetaValid($user->type['ID']));
 
         //Retorna html
         $html = $resume->returnHTML();
+
+        //Carreg classe de composição de PDFS e especifica caminho de download
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => env("APP_FILES") .'/pdf']);
 
         //Escreve dados no PDF
         $mpdf->WriteHTML($html);
@@ -890,7 +859,9 @@ class User extends GenericUser{
                 $meta_visibility = (key_exists('visibility', $meta_value)) ? $this->appVal->check_user_input_visibility($meta_value['visibility']) : 0;
 
                 //Atribui valor para var correta
-                $meta_value = $meta_value['value'];
+                if(key_exists('value', $meta_value)){
+                    $meta_value = $meta_value['value'];
+                }                
                 
             }
 
@@ -1036,7 +1007,8 @@ class User extends GenericUser{
             $addValue = (!is_null($uns = json_decode(utf8_encode($meta_value), true))) ? $uns : $meta_value;
 
             //Unserialize data
-            $addValue = ($uns = @unserialize($addValue)) ? $uns : $addValue;
+            $uns = @unserialize($addValue);
+            $addValue = (is_bool($uns) && !$uns ) ? $addValue : $uns;
 
             if ($meta_key == 'birthdate'){
                 //Formata data em formato permitido
@@ -1368,6 +1340,21 @@ class User extends GenericUser{
             return true;
         }
 
+        //Se visibilidade foi definida como privada, apenas próprio usuário pode ver
+        if( $data['visibility'] == 99){
+            return false;
+        }
+
+        //Visibilidade permitida para usuários que pertecem a um clube
+        if($this->clubs){
+            $bool = false;
+            //Percorre array de clubes
+            foreach($this->clubs as $c => $v ){
+                $bool = ($v['ID'] == $data['visibility']) ?: true;
+            }
+            return $bool;
+        }
+
         //Verifica se visibilidade é compatível com tipo de perfil
         if( $data['visibility'] != $this->type['ID']){
             return false;
@@ -1378,7 +1365,7 @@ class User extends GenericUser{
         
     }
 
-    /** Aumenta quantidade 'views' em metada */
+    /** Aumenta quantidade 'views' em metadata */
     public function increaseView($id){
 
         //Filtro
@@ -1431,6 +1418,11 @@ class User extends GenericUser{
         //Selo a ser atribuido ao perfil do usuário
         $certify = ($confirm)? env("CLUBE_VERIFICADO") : env("CLUBE_REPROVADO");
 
+        //Se já existir key 'value'
+        if(key_exists('value', $meta_value)){
+            $meta_value = $meta_value['value'];
+        }
+
         //Procurar clube em array de dados
         foreach ($meta_value as $key => $value) {
             if (is_array($value) && key_exists('ID', $value) && $value['ID'] == $club_id) {
@@ -1444,7 +1436,7 @@ class User extends GenericUser{
         $user->metaModel = $userData;
         
         //Função de adicionar metadados de usuário
-        $response = $user->register_usermeta('clubes', ['value' => $meta_value], $user_id, false);
+        $response = $user->register_usermeta('clubes', $meta_value, $user_id, false);
 
         return $response;
     }

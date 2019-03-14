@@ -16,13 +16,13 @@
 
     <ion-item-group>
       <ion-row>
-        <ion-col>
+        <ion-col col-12 col-md-4>
           <ion-item>
             <ion-label stacked>{{ "NAME" | translate}}</ion-label>
             <ion-input [(ngModel)]="display_name" name="display_name" type="text"></ion-input>
           </ion-item>
         </ion-col>
-        <ion-col>
+        <ion-col col-12 col-md-4>
           <ion-item>
             <ion-label stacked>{{ "TELEPHONE" | translate }}</ion-label>
             <ion-input [(ngModel)]="telefone.value" name="telefone" type="telefone"></ion-input>
@@ -35,7 +35,7 @@
 
           </ion-item>
         </ion-col>
-        <ion-col>
+        <ion-col col-12 col-md-4>
           <ion-item>
             <ion-label stacked>{{ "EMAIL" | translate }}</ion-label>
             <ion-input [(ngModel)]="user_email" name="user_email" [email]="true" type="email"></ion-input>
@@ -52,7 +52,7 @@
     <ion-item-group *ngIf="type < 3">
       <!-- Dados para pessoas físicas -->
       <ion-row>
-        <ion-col>
+        <ion-col col-12 col-md-4>
           <ion-item>
 
             <ion-label stacked>{{ "BIRTHDATE" | translate }}</ion-label>
@@ -67,7 +67,7 @@
 
           </ion-item>
         </ion-col>
-        <ion-col>
+        <ion-col col-12 col-md-4>
           <ion-item>
             <ion-label stacked>{{ "CPF" | translate }}</ion-label>
             <ion-input [(ngModel)]="cpf.value" name="cpf" type="text" pattern="[0-9]+"></ion-input>
@@ -80,7 +80,7 @@
 
           </ion-item>
         </ion-col>
-        <ion-col>
+        <ion-col col-12 col-md-4>
           <ion-item>
             <ion-label stacked>{{ "RG" | translate }}</ion-label>
             <ion-input [(ngModel)]="rg.value" name="rg" type="text" pattern="[0-9]+"></ion-input>
@@ -180,10 +180,11 @@
     </ion-row>
 
     <ion-row>
-      <ion-col col-4>
+      <ion-col col-6 col-md-4>
         <ion-item>
-          <ion-label>{{ "STATE" | translate }}</ion-label>
-          <ion-select [(ngModel)]="state.value" name="state" full>
+          <ion-label stacked>{{ "STATE" | translate }}</ion-label>
+          
+          <ion-select class="select-state" [(ngModel)]="state.value" name="state" full>
             <ion-option *ngFor="let item of $statesList" [value]="item" [selected]="state.value == item">
               {{item}}
             </ion-option>
@@ -198,7 +199,7 @@
         </ion-item>
       </ion-col>
 
-      <ion-col col-4>
+      <ion-col col-6 col-md-4>
         <ion-item>
           <ion-label stacked>{{ "COUNTRY" | translate}}</ion-label>
           <ion-input [(ngModel)]="country.value" name="country" pattern="[^0-9]+" type="text"></ion-input>

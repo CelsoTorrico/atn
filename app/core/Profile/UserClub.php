@@ -120,7 +120,11 @@ class UserClub extends User{
     public function addUser(Array $data) {
 
         //Define parametros de dados para inserção
-        $userData = array_merge($data, ['parent_user' => $this->ID, 'type' => self::TYPE_CHILD]);
+        $userData = array_merge($data, [
+            'parent_user' => $this->ID, 
+            'type' => self::TYPE_CHILD,
+            'clubes' => [$this->ID]
+        ]);
 
         //Verifica se ainda é possível adicionar usuários
         if(!$this->current_users['qtd'] > $this->max_users){
@@ -130,9 +134,19 @@ class UserClub extends User{
         //Adiciona usuário e pega resposta
         $response = $this->add($userData);
 
+        //Se houve algum erro na inserção de usuário
+        if(key_exists('error', $response)){
+            return $response;
+        }
+
+        //Carrega dados do usuário inserido
+        $this->model->load(['user_email' => $userData['user_email']]);
+
+        //Atribui selo de verificado para clube
+        $this::updateClubCertify($this->model->ID, $this->ID, true);
+
         //Retorna resposta
         return $response;
-
 
     }
 

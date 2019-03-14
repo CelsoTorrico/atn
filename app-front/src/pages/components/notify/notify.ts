@@ -15,7 +15,7 @@ export class Notify {
   //Parametros de URL
   @Input() public notifyID:number;
 
-  public static $getNotify:string = 'notify';
+  public static $getNotify:string = 'notify'; 
   public $url:string = '';
   public $paged:number = 0;
   

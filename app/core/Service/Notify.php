@@ -154,6 +154,14 @@ class Notify {
         //Retorna informação de usuário
         $response = User::updateClubCertify($notify['from_id'], $notify['user_id'], $confirm);
 
+        if($confirm){
+            //Envia notificação de aprovação
+            $this->register(8, $notify['user_id'], $id);
+        } else {
+            //Envia notificação de reprovação
+            $this->register(9, $notify['user_id'], $id);
+        } 
+
         //Se resultado for true, continua execução
         if($response){
             //Mensagem de sucesso no cadastro
@@ -185,6 +193,12 @@ class Notify {
                 break; 
             case 7:
                 $response = $this->messageContent($notify);
+                break; 
+            case 8:
+                $response = $this->approvedClub($notify);
+                break; 
+            case 9:
+                $response = $this->repprovedClub($notify);
                 break; 
             default:
                 $response = '';
@@ -265,6 +279,46 @@ class Notify {
             "ID"            => $notify['ID'],
             "type"          => $notify["type"],
             "message"       => "Enviou uma mensagem para você.",
+            "date"          => $notify["date"],
+            "user_profile"  => $user
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    //Formatação de notificação para aprovação de perfil
+    private function approvedClub(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->getMinProfile($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify["ID"],
+            "type"          => $notify["type"],
+            "message"       => "A informação preenchida em seu perfil foi verificada pelo clube!",
+            "date"          => $notify["date"],
+            "user_profile"  => $user
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    //Formatação de notificação para aprovação de perfil
+    private function repprovedClub(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->getMinProfile($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify["ID"],
+            "type"          => $notify["type"],
+            "message"       => "A informação preenchida em seu perfil foi reprovada pelo clube.",
             "date"          => $notify["date"],
             "user_profile"  => $user
         ];

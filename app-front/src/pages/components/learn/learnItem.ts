@@ -21,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
         <ion-list>
           <ion-list>
                 <p>
-                  {{ "FROM" | translate }} {{ currentLearnItem.post_author.display_name }}
+                  {{ "BY" | translate }} {{ currentLearnItem.post_author.display_name }}
                 </p>
                 <p><small>{{ currentLearnItem.post_date | date }}</small></p>
               </ion-list>
@@ -85,7 +85,7 @@ export class LearnItem {
   constructor(
     public navCtrl: NavController,
     public translateService: TranslateService) { 
-      this.translateService.setDefaultLang('pt-br')
+      this.translateService.setDefaultLang('pt-br');
 
   }
 

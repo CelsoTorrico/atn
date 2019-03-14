@@ -89,6 +89,9 @@ export class PostPage {
             //Adicionando valores a variavel global
             this.currentPostItem = resp;
 
+            //Adiciona os paragrafos via sequencia de caracteres = &nbsp;
+            this.currentPostItem.post_content = this.currentPostItem.post_content.replace(/\n/g, '<br />');
+
             //Adiciona lista de comentários
             this.currentCommentItems = this.currentPostItem.list_comments;
 

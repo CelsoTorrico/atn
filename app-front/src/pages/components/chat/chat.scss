@@ -1,11 +1,16 @@
+chat-room{
+  display: block;
+  height: 100%;
+}
+
 .messages-list {
 
   //Altura do navbar
   $height: $toolbar-wp-height + 82;
 
   padding: 25px 25px 0px;
-  margin: $toolbar-wp-height 0px 0px;
-  height: calc(100% - 120px);
+  //margin: $toolbar-wp-height 0px 0px;
+  height: calc(100% - 60px);
   background-color: #f9edeb;
   border: 1px solid #ddd;
   overflow-y: auto;
@@ -51,4 +56,9 @@
   width: 100%;
   box-shadow: 0px -5px 30px -10px rgba(0, 0, 0, 0.2);
   border: 1px solid #ddd;
+
+  ion-input{
+    max-width: calc(100% - 80px);
+    float: left;
+  }
 }

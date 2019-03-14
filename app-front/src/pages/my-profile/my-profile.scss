@@ -7,15 +7,3 @@
 ion-list, ion-row, ion-col{
   position: relative;
 }
-
-
-ion-select[name="visibility"]{
-  font-size: 10px;
-  right: 0;
-  top: 0;
-  position: absolute;
-
-  .item-cover{
-    border:0px;
-  }
-}

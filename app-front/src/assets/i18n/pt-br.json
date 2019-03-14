@@ -92,7 +92,7 @@
   "city": "Cidade",
   "YOU_WILL_EXCLUDE_POST": "Você vai deletar essa publicação.",
   "YOU_SURE" : "Tem certeza?",
-  "SEARCH": "Encontrar Usuários",
+  "SEARCH": "Pesquisar",
   "SEARCH_MEMBERS": "Pesquisa de Usuários",
   "FAQ": "FAQ",
   "SUPPORT": "Suporte",
@@ -126,5 +126,12 @@
   "NOT_MEMBER_SHOW": "Nenhum resultado a exibir",
   "POST": "No que você está pensando?",
   "FOLLOWERS": "Seguidores",
-  "INPUT_NAME": "Digite o nome"
+  "INPUT_NAME": "Digite o nome",
+  "BY": "Por:",
+  "YOUR_COMMENT": "Deixe seu comentário",
+  "APPROVE": "Aprovar",
+  "RECUSE" : "Recusar",
+  "[Disapproved]" : "Verificação Reprovada",
+  "[Verified]"    : "Verificado",
+  "[NotVerified]" : "Não Verificado"
 }

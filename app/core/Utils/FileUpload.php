@@ -2,9 +2,11 @@
 
 namespace Core\Utils;
 
+
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Core\Database\PostModel;
 use Core\Database\UsermetaModel;
+use Illuminate\Support\Facades\Storage;
 
 class FileUpload {
 
@@ -15,12 +17,17 @@ class FileUpload {
     public    $filename;
     public    $mimeType;
 
+    private $disk;
+
     /** 
      * @param $postID  ID do post_parent ou user photo 
      * @param $fileClass Classe de UploadFile referenciada no controller
      * @param $type Tipo de modelo a ser aplicado para inserção no banco
      * */
     public function __construct(int $userID, int $postID=null, UploadedFile $fileClass, string $type='timeline'){
+
+        //Definindo storage do arquivo >> AMAZON S3
+        $this->disk = Storage::disk('s3');
         
         //Inicializando variaveis
         $this->ID           = $userID;
@@ -93,27 +100,26 @@ class FileUpload {
         $date = date('Y/m/d');
 
         //Atribuindo informações de arquivo nas variaveis de classe
-        $this->filename = password_hash($file->getClientOriginalName(), PASSWORD_DEFAULT).'.'.$file->getClientOriginalExtension();
+        $this->filename = $file->getClientOriginalName();
         
         //mime-type
         $this->mimeType = $file->getMimetype();
 
-        //nome gerado do arquivo
-        $filename = $this->filename;
-
         //Diretório para upload do arquivo
-        $dir = __DIR__.env('APP_FILES').$date.'/';
+        $dir = env('APP_FILES').$date;
 
-        //Movendo arquivo para a pasta de arquivos
-        $result = $file->move($dir, $filename);
+        $result = $this->disk->put($dir, $file, 'public');
 
         //Se falso, retorna falso
         if(!$result){
             return false;
         }
 
+        //Atribui url do arquivo
+        $url = $this->disk->url($result);
+
         //Retorna caminho onde arquivo foi inserido
-        return env('APP_IMAGES').$date.'/'.$result->getFilename();
+        return $url;
     }
 
 }

@@ -75,7 +75,7 @@
       <ion-col>
         <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
           required></ion-textarea>
-        <button ion-button small end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" | translate }}</button>
+        <button ion-button small float-right end (click)="submitComment(currentTimeline.ID, $event)">{{ "PUBLISH" | translate }}</button>
       </ion-col>
     </ion-row>
 

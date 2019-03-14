@@ -58,8 +58,8 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 2 - Login Social -> Validação de cookies @done(18-12-13 12:59)
 ✔ Semana 2 - Comentários em timelines @done(18-12-06 15:56)
 ✔ Semana 2 - Timeline -> Novo e Update de timeline com imagens @done(18-12-27 01:27)
-☐ Semana 2 - Timeline -> Definir público de publicação (Publico, atleta, profissional e clubes)
-☐ Semana 2 - Upload de Fotos, verificar permissões de criação de pastas
+✔ Semana 2 - Timeline -> Definir público de publicação (Publico, atleta, profissional e clubes) @done(19-03-14 04:52)
+✔ Semana 2 - Upload de Fotos, verificar permissões de criação de pastas @done(19-03-14 01:36)
 ✔ Semana 2 - Sistema de Like de posts @done(19-01-30 19:51)
 ✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
 ✔ Semana 3 - Perfil Instituição -> deletar e atualizar @done(17-12-12 16:00)
@@ -67,16 +67,15 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 3 - Quando solicitado um usuário, fazer update de view @done(18-11-27 19:11)
 ✔ Semana 3 - Download CV (PDF) -> Estruturar o conteúdo de forma visualmente organizado (Precisamos de um modelo de arquivo) @done(19-01-28 01:44)
 ✔ Semana 3 - Quando requisição de perfil de usuário, incluir campo de Favorito: Sim | Não (boolean) @done(19-01-28 03:52)
-☐ Semana 3 - Fazer verificação de resiquição de privacidade(visibilidade) na visualização de perfil, no momento retorna somente parametro visibilidade. !!Não mostrar campos com outras visibilidades!!
+✔ Semana 3 - Fazer verificação de resiquição de privacidade(visibilidade) na visualização de perfil, no momento retorna somente parametro visibilidade. !!Não mostrar campos com outras visibilidades!! @done(19-03-14 05:43)
 ✔ Semana 3 - Perfil de está sempre retornando 'following = true' @done(19-02-28 22:26)
 ✔ Semana 3 - Download CV: Qualquer um pode baixar currículos de qualquer outro @done(19-01-28 02:15)
 ☐ Semana 4 - Edição de Perfil, quando campo estiver vazio enviar notificação ao usuário
 ✔ Semana 5 - Sugestões de Amigos | Arrumar ordenação de usuários 2 critérios @done(19-01-28 02:16)
-☐ Semana 5 - Compressão de imagens via classe PHP
 ✔ Semana 5 - Implementar notificação quando usuário cadastrar clube existente como usuário @done(18-12-16 23:10)
 ✔ Semana 5 - Corrigir inserção de dados [notVerified] Arquivo 'User.php:755' @done(18-12-19 19:39)
 ✔ Semana 5 - Sistema de Notificações Completo @done(18-12-19 19:38)
-☐ Semana 6 - Ao adicionar um usuário colocar clube já autenticado
+✔ Semana 6 - Ao adicionar um usuário colocar clube já autenticado @done(19-03-14 06:20)
 ✔ Semana 7 - Quando retornar lista de 'learn'(aprenda) retornar em modo lista somente resumo, nome do author(invés do ID) e implementar um campo de thumbnail @done(19-02-28 22:26)
 ✔ Fazer validação do cookie (https://lumen.laravel.com/docs/5.7/authorization) a cada requisição via Middleware | Existe classe Symfony para Sessões >> /home/iran/www/desenvolvimento/app-atletasnow-2.0/app/vendor/symfony/http-foundation/Session/Session.php @done(18-11-22 11:35)
 

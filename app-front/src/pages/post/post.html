@@ -30,14 +30,14 @@
 
                   <p>
                     <small>
-                      {{ "BY"}} {{ currentPostItem.post_author.display_name }}
+                      {{ "BY" | translate }} {{ currentPostItem.post_author.display_name }}
                     </small>
                     <br />
                   </p>
 
                   <hr />
 
-                  <div [innerHTML]="currentPostItem.post_content"></div>
+                  <article [innerHTML]="currentPostItem.post_content"></article>
 
                 </ion-card-content>
 

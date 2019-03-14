@@ -13,16 +13,19 @@
       ;
     }
 
-    @media screen and (min-width: 768px) {}
+    @media screen and (min-width: map-get($grid-breakpoints, sm )) {}
   }
 
   .list-chat-members {
-    margin: $toolbar-wp-height 0px;
-    padding: 25px 0px;
+    //margin: $toolbar-wp-height 0px;
+    padding: 0px 0px;
     background: $branco;
 
     h1{
       padding: 0px 15px;
+      @media screen and (max-width: map-get($grid-breakpoints, sm )) {
+        display: none;
+      }
     }
   }
 
@@ -42,6 +45,9 @@
 
       button {
         border-bottom: 1px solid #ddd;
+        @media screen and (max-width: map-get($grid-breakpoints, sm )) {
+          padding-left: 10px;
+        }
       }
     }
   }

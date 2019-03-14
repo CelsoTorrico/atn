@@ -70,7 +70,8 @@
             <div class="about-item" *ngFor="let club of clubes">
               <h4>
                 {{ club.club_name }}
-                <ion-badge class="club-badge" *ngIf='club.certify != undefined' [ngClass]="{'verified': club.certify === true}">
+                <ion-badge class="club-badge" *ngIf='club.certify != undefined' [ngClass]="{'verified': club.certify == '[Verified]'}">
+                  <ion-icon name="bookmarks"></ion-icon> 
                   {{ club.certify | translate }}
                 </ion-badge>
               </h4>

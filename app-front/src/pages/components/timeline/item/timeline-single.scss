@@ -23,4 +23,12 @@ ion-card-content{
         margin-right: -16px;
     }
 
+    .comment-section{
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        margin-left: -16px;
+        width: calc(100% + 32px);
+        background: #f8f8f8;
+    }
+
 }
