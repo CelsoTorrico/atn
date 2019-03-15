@@ -16,7 +16,7 @@ export class Api {
   //static readonly url = 'https://testes.makingpie.com.br/atletasNOW/app/public';
 
   //Ambiente Produção
-  //static readonly url = 'http://54.207.47.200/atletasNOW/app/public';
+  //static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/atletasNOW/app/public';
   
   protected $headerObject:any;
 
@@ -29,8 +29,8 @@ export class Api {
       this.$headerObject = {
         'Content-Type'    : 'application/x-www-form-urlencoded',
         'withCredentials' : true,
-        'Origin'          : 'http://app.atletasnow.s3-website-sa-east-1.amazonaws.com' 
-        //'Origin'        : 'http://localhost' 
+        //'Origin'          : 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/app-atletasnow-front' 
+        'Origin'        : 'http://localhost' 
       }
     }
 

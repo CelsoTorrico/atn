@@ -1,6 +1,9 @@
 <?php 
 
+
 namespace Core\Profile\Resume;
+use Core\Database\SportModel;
+use Core\Database\UserModel;
 
 class Resume {
 
@@ -22,15 +25,34 @@ class Resume {
 
         $data = $this->data;
 
-        //Atribui array ao array de detalhes
-        $$data->profileDetails = [
-            'Clubes' => $data->metadata->clubs, 
-            'Formação' => $data->metadata->formacao, 
-            'Cursos' => $data->metadata->cursos,
-            'Títulos | Conquistas' => $data->metadata->titulos,
-            'Eventos' => $data->metadata->eventos
+        //Array de dados do usuário
+        $profileMain = [
+            'Telefone' => 'telefone',
+            'Gênero' => 'gender',
+            'Data de Nascimento' => 'birthdate', 
+            'CPF' => 'cpf', 
+            'RG' => 'rg', 
+            'CNPJ' => 'cnpj',
+            'Endereço' => 'address', 
+            'Bairro' => 'neighbornhood', 
+            'Cidade' => 'city', 
+            'Estado' => 'state', 
+            'País' => 'country',
+            'CEP'   => 'zipcode'
         ];
 
+        //Array de dados do usuário
+        $profileDetails = [
+            'Esportes'  => 'sport',
+            'Clubes'    => 'clubes', 
+            'Formação'  => 'formacao', 
+            'Cursos'    => 'cursos',
+            'Eventos'   => 'eventos',
+            'Torneios'  => 'club_liga',
+            'Títulos | Conquistas' => 'titulos-conquistas',
+        ];
+
+        /** Dados Pessoais e Empresariais */
         $html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -39,7 +61,7 @@ class Resume {
 <head>
      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>';
      
-     $html = '<title>'.  $data->display_name . '</title>;
+     $html.= '<title>'.  $data->display_name . '</title>;
 
      <style type="text/css">
         * { margin: 0; padding: 0; }
@@ -51,30 +73,99 @@ class Resume {
 
     <div id="page-wrap" style="width: 800px; margin: 40px auto 60px;">';
     
-        $html .= '<img src="' . $data->profile_img .'" alt="Photo" id="pic" style="position:absolute;float: right; margin: -30px 0 0 0;width:100px;" />
-    
-        <div id="contact-info" class="vcard">
-        
-            <!-- Microformats! -->';
+        $html .= '<table style="width:100%;margin:0;padding:0;border:0;">
+                    <tr>
+                        <td valign="top" style="margin:0 15px 0 0;padding:0;border:0;">
+                            <img src="' . 
+                                $this->isAtributeSet('profile_img', $data->metadata) 
+                            .'" alt="Photo" id="pic" style="position:relative; float:left; margin: 30px 15px 15px 0px;width:100px;" />
+                        </td>
+                        <td valign="top" style="margin:0;padding:0;border:0;">
+                            <div id="contact-info" class="vcard">        
+                            <!-- Microformats! -->
+                            <h1 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 32px; font-weight: bold; letter-spacing: -2px; border-bottom: 1px solid #999;">' . $data->display_name .'</h1><br />
+                            <div id="objective">
+                                <p style="margin: 0 0 16px 0;">'
+                                . $this->isAtributeSet('biography', $data->metadata)
+                                .'</p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
 
-        $html .= '<h1 class="fn" style="margin: 0 0 16px 0; padding: 0 0 16px 0; font-size: 32px; font-weight: bold; letter-spacing: -2px; border-bottom: 1px solid #999;">' . $data->display_name .'</h1>';
+                <hr />
+
+                <table style="width:100%;margin:0;padding:0;border:0;">
+                    <tr>
+                        <td valign="top" style="margin:0 15px 0 0;padding:0;border:0;width:50%;">
+                            <h2 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 18px; font-weight: bold; letter-spacing: -2px;">Dados Pessoais</h2>
+                            <p style="margin: 0 0 16px 0;font-size:13px;">';
+
+        foreach ($profileMain as $key => $value) {
+
+            //Se não existir pula
+            if(!key_exists($value, $data->metadata)){
+                continue;
+            }
+
+            //Adicionado ao metadata
+            $value = $this->isAtributeSet($value, $data->metadata);
+
+            $html .= '<strong>'. ucwords($key) .':</strong> <span>' . $value  .'</span><br />';
+
+        }
         
-        $html .= '<p style="margin: 0 0 16px 0;">
-                Telefone: <span class="tel">' . $data->telefone  .'</span><br />
-                Email: ' . $data->user_email  .'</a>
-            </p>
-        </div>
+        $html .= '          </p>
+                        </td>
+                        <td valign="top" style="margin:0;padding:0 0 0 10px;border:0;">
+                            <h2 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 18px; font-weight: bold; letter-spacing: -2px;">Dados Esportivos</h2>
+                            <p style="margin: 0 0 0 16px;font-size:13px;">';
+
+        //Criando array com apenas dados não mostrados 
+        $keys = array_keys(array_flip(array_merge($profileMain, $profileDetails)));
+        $metadata = array_diff_key(array_flip($this->valid), array_flip($keys));
+
+        foreach( $metadata as $key => $value){
+            
+            //Se não existir pula
+            if(!key_exists($key, $data->metadata)){
+                continue;
+            }
+
+            //Ignorar estes dados
+            if(in_array($key, ['my-videos', 'profile_img', 'type', 'views', 'searched_profile', 'biography', 'session_tokens', 'stats'])){
+                continue;
+            }
+
+            //Adicionado ao metadata
+            $value = $this->isAtributeSet($key, $data->metadata);
+
+            $html .= '<strong>'. ucwords($key) .':</strong> <span>' . $value  .'</span><br />';
+        }
+                            
+        $html .=        '</p>
+                        </td>
+                    </tr>
+                </table>  
                 
-        <div id="objective">
-            <p style="margin: 0 0 16px 0;">'. $data->biography .'</p>
+                <hr />
+                
         </div>
         
         <div class="clear" style="clear: both;"></div>
         
-        <dl>
-            <dd class="clear" style="clear: both;width: 600px; float: right;"></dd>';
+        <dl><dd class="clear" style="clear: both;width: 600px; float: right;"></dd>';        
+        
 
-        foreach ($data->profileDetails as $key => $value) {
+        foreach ($profileDetails as $key => $value) {
+
+            //Se não existir pula
+            if(!key_exists($value, $data->metadata)){
+                continue;
+            }
+
+            //Adicionado ao metadata
+            $value = (key_exists('value', $data->metadata[$value])) ? $data->metadata[$value]['value'] : $data->metadata[$value];
 
             //Se não for array de valores
             if (!is_array($value) || count($value) <= 0) {
@@ -87,11 +178,25 @@ class Resume {
             foreach ($value as $k => $v) {
 
                 //Se for array atribui valores 
-                if (is_array($v) && key_exists('club_name', $v)) {
-                    $t = $v['club_name'];
+                if ($key == 'Clubes') {
+                    
+                    $model = new UserModel;
+                    $club = $model->load(['ID' => $v['ID']]);
+
                     $v = (key_exists('certify', $v))? '<span style="position: absolute; bottom: 0; right: 0; font-style: italic; font-family: Georgia, Serif; font-size: 16px; color: #999; font-weight: normal;">'. $v['certify'] . '</span>':'';
+                    
                     //Atribui ao html
-                    $html .= '<h2 style="font-size: 20px; margin: 0 0 6px 0; position: relative;">'. $t .'</h2><p style="margin: 0 0 16px 0;">'. $v .'<br />';
+                    $html .= '<p style="margin: 0 0 16px 0;">'. $model->display_name .'<br />';
+
+                }//Se for array atribui valores 
+                else if ($key == 'Esportes') {
+                    
+                    $model = new SportModel;
+                    $sport = $model->load(['ID' => $v]);
+                    
+                    //Atribui ao html
+                    $html .= ($sport)? '<div style="margin: 0 10px 10px 0;">'. $model->sport_name .'</div>': '';
+
                 }//Se for array atribui valores 
                 else{
                     //Atribui ao html
@@ -111,4 +216,20 @@ class Resume {
         $this->defineHTML();
         return $this->html;
     }
+
+    private function isAtributeSet($key, $array) {
+
+        //Adicionado ao metadata
+        $value = (key_exists($key, $array)) ? $array[$key] : null;
+
+        //Se não existir retornar vazio
+        if(is_null($value)){
+            return '';
+        }
+
+        //Retorna dados armazenado na key 'value' se existir
+        return (key_exists('value', $value))? $value['value'] : $value;
+
+    }
+
 }
