@@ -179,14 +179,18 @@ class Resume {
 
                 //Se for array atribui valores 
                 if ($key == 'Clubes') {
-                    
-                    $model = new UserModel;
-                    $club = $model->load(['ID' => $v['ID']]);
 
-                    $v = (key_exists('certify', $v))? '<span style="position: absolute; bottom: 0; right: 0; font-style: italic; font-family: Georgia, Serif; font-size: 16px; color: #999; font-weight: normal;">'. $v['certify'] . '</span>':'';
+                    $club_certify = (key_exists('certify', $v))? '<span style="position: absolute; bottom: 0; right: 0; font-style: italic; font-family: Georgia, Serif; font-size: 16px; color: #999; font-weight: normal;">'. $v['certify'] . '</span>':'';
                     
-                    //Atribui ao html
-                    $html .= '<p style="margin: 0 0 16px 0;">'. $model->display_name .'<br />';
+                    if (!key_exists('ID', $v)){
+                        //Atribui ao html
+                        $html .= '<p style="margin: 0 0 16px 0;">'. $v['club_name'] . $club_certify.'<br />';
+                    } else {
+                        $model = new UserModel;
+                        $club = $model->load(['ID' => $v['ID']]);                        
+                        //Atribui ao html
+                        $html .= '<p style="margin: 0 0 16px 0;">'. $model->display_name . $club_certify.'<br />';
+                    }                   
 
                 }//Se for array atribui valores 
                 else if ($key == 'Esportes') {
