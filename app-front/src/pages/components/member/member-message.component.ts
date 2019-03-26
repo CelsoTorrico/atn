@@ -15,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
                     </ng-template>
                 </ion-avatar>
 
-                <h2>{{ room.user.display_name | titlecase }}</h2>
+                <h2>{{ room.user.display_name | stringTitlecaseSpecialChars }}</h2>
                 <p *ngIf="room.last_update">{{ room.last_update | date }}</p>
                 <ion-note item-end ><ion-badge>{{ room.quantity_messages }}</ion-badge></ion-note>
             </button>             

@@ -10,8 +10,8 @@ import { StatsList } from '../../providers/useful/stats';
 import { ProfileComponent } from './profile-components/profile.component';
 import { StatsComponent } from './profile-components/stats.component';
 import { ProfileViewDirective } from './profile-view.directive';
-import { NgChartjsModule } from 'ng-chartjs';
-import { PipesModule } from '../../pipes/pipes.module';
+import { NgChartjsModule } from 'ng-chartjs'; 
+import { PipesModule } from '../../pipes/pipes.module'; 
 import { MyProfilePersonalDataComponent } from '../my-profile/personal-data/personal-data.component';
 
 @NgModule({

@@ -1,0 +1,7 @@
+#node_modules
+/app/node_modules/
+/app-front/node_modules/
+
+#diretórios a ignorar
+/app/storage/
+/app/uploaded-images/

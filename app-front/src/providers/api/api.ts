@@ -10,13 +10,13 @@ import { NavController } from 'ionic-angular';
 export class Api {
   
   //Development
-  static readonly url = 'http://localhost/desenvolvimento/app-atletasnow-2.0/app/public';
+  //static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
   
   //Ambiente de testes | Godzilla
   //static readonly url = 'https://testes.makingpie.com.br/atletasNOW/app/public';
 
   //Ambiente Produção
-  //static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/atletasNOW/app/public';
+  static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/atletasNOW/app/public';
   
   protected $headerObject:any;
 

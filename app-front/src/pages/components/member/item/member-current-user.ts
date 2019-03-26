@@ -9,9 +9,9 @@ import { User } from '../../../../providers';
     template: `
             <button ion-item (click)="openMenu($event)">
                 
-                <h2>Olá, <strong>{{ member.display_name | titlecase }}</strong></h2>
+                <h2>Olá, <strong>{{ member.display_name | stringTitlecaseSpecialChars }}</strong></h2>
 
-                <ion-avatar class="btn-cursor img-center" item-end>
+                <ion-avatar class="btn-cursor img-center" item-end> 
                     
                     <img *ngIf="member.metadata.profile_img, else elseBlock" 
                     [src]="member.metadata.profile_img.value" />

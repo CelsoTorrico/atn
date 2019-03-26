@@ -19,7 +19,7 @@ import { TranslateService } from '@ngx-translate/core';
                                 </ng-template>
                             </ion-avatar>
                                              
-                        {{ member.display_name | titlecase }}
+                        {{ member.display_name | stringTitlecaseSpecialChars }}
                     </ion-item>
                 </ion-col> 
             </ion-row>

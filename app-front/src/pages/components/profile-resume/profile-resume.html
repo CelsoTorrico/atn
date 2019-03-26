@@ -25,11 +25,11 @@
 
       </ion-list>
 
-      <h1>{{ display_name | titlecase }}</h1>
+      <h1>{{ display_name | stringTitlecaseSpecialChars }}</h1>
 
       <ul class="list-inline">
         <li padding-right><small>{{ type.type }}</small></li>
-        <li padding-right><small>{{ posicao | titlecase }}</small></li>
+        <li padding-right><small>{{ posicao | stringTitlecaseSpecialChars }}</small></li>
         <li><small>{{ sport[0].sport_name }}</small></li>
       </ul>
 

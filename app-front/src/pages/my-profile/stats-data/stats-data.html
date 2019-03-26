@@ -31,12 +31,12 @@
         <ion-list *ngFor="let obj of sportArray | mapToIterable">
 
           <ion-list-header>
-            <h2>{{ obj.key | translate | titlecase | removeTrace }}</h2>
+            <h2>{{ obj.key | translate | stringTitlecaseSpecialChars | removeTrace }}</h2>
           </ion-list-header>
 
           <ion-row *ngFor="let e of obj.val | mapToIterable">
             <ion-item>
-              <h3>{{ e.key | translate | titlecase }}</h3>
+              <h3>{{ e.key | translate | stringTitlecaseSpecialChars }}</h3>
             </ion-item>
             <ion-col col-6 col-md-4 *ngFor="let arr of e.val | mapToIterable">
               <ion-item>

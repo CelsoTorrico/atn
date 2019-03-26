@@ -290,12 +290,19 @@ export class ProfileComponent {
     //Criar modal do respectivo component
     let modal = this.modalCtrl.create(this.ListComponents[$component], {data: $data});
     modal.onDidDismiss((data) => {
-        
-        if (Object.keys(data).length <= 0) {
+
+        //Se modal foi fechado sem enviar dados  
+        if(data == null || data == undefined){
           return;
         }
 
+        //Se houve erro
         if(data.error != undefined){
+          return;
+        }
+
+        //Verificar há mais de um dado no array 
+        if (Object.keys(data).length <= 0) {
           return;
         }
 

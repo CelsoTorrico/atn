@@ -81,6 +81,7 @@
   "FAVORITES": "Favoritos",
   "MESSAGE": "Mensagem",
   "SEND_EMAIL": "Enviar E-mail",
+  "SEND_AN_EMAIL_TO_PROFILE": "Envie um e-mail para o usuário!",
   "DISPLAY_NAME": "Nome do usuário",
   "TYPE_USER": "Tipo de Usuário",
   "PROFILES_FOUND": "Perfis Encontrados",
@@ -133,5 +134,7 @@
   "RECUSE" : "Recusar",
   "[Disapproved]" : "Verificação Reprovada",
   "[Verified]"    : "Verificado",
-  "[NotVerified]" : "Não Verificado"
+  "[NotVerified]" : "Não Verificado",
+  "NEW_USER_REGISTER_SUCCESS": "Cadastro realizado com sucesso!",
+  "WELCOME_IN_ATLETASNOW": "Bem Vindo. Clique aqui para entrar!"
 }

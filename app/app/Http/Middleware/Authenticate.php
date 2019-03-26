@@ -73,7 +73,16 @@ class Authenticate
                 }
 
                 //Seta cookie de sessão : cookie HTTP_ONLY=false
-                $this->sessionCookie = app('cookie')->forever(env('APPCOOKIE'), $control->getToken(), '/', env('APP_DOMAIN'), false, false);  
+                //25.03 = remover domínio e habilitar SameSite para funcionar no Edge
+                $this->sessionCookie = app('cookie')->forever(
+                    env('APPCOOKIE'), 
+                    $control->getToken(), 
+                    '/', 
+                    '', //env('APP_DOMAIN'), 
+                    false, 
+                    false, 
+                    false, 
+                    'strict');  
 
                 //Atribui a variavel
                 $tokenDatabase = $this->sessionCookie;
@@ -174,6 +183,12 @@ class Authenticate
         if ($request->is('user/clubs') || $request->is('user/sports')) {
             //Retorna mensagem juntamente com cookie 
             return $next($request);            
+        }
+
+        //Permitir logout mesmo se usuário não estiver logado
+        if ($request->method() == 'GET' && $request->is('logout')) {
+            //Retorna requisição com dados
+            return $next($request);
         }
 
         //Se usuário não está autenticado
