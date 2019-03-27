@@ -1,8 +1,9 @@
 import { Api } from '../../providers/api/api';
 import { Component } from '@angular/core';
-import { IonicPage, ToastController } from 'ionic-angular';
-import { User } from '../../providers';
+import { IonicPage, ToastController, NavController } from 'ionic-angular';
+import { User, Cookie } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
+import { CookieService } from 'ng2-cookies';
 
 @IonicPage()
 @Component({
@@ -23,10 +24,17 @@ export class ChatPage {
         public user: User,
         public api: Api,
         public toastCtrl: ToastController,
-        public translateService: TranslateService) {
+        public navCtrl: NavController,
+        public translateService: TranslateService,
+        private cookieService: CookieService) {
 
         this.translateService.setDefaultLang('pt-br');
         
+    }
+
+    ionViewDidLoad() {        
+        //Verifica existência do cookie e redireciona para página
+        Cookie.checkCookie(this.cookieService, this.navCtrl); 
     }
 
     //Função que inicializa

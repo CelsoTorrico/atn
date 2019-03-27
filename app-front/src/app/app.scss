@@ -369,8 +369,8 @@ ion-navbar, ion-toolbar{
   transform-origin: left top;
   transition: ease-out 0.2s;
   background-color: $branco;
-  max-width: 300px;
-  width: 100%;
+  width: calc(100% - 30px);
+  margin: auto 15px;
   top: 65px;
   z-index: -50;
   box-shadow: 5px 5px 50px 15px rgba(125, 125, 125, 0.1);
@@ -413,6 +413,10 @@ ion-navbar, ion-toolbar{
       }
     }
 
+  }
+
+  @media screen and (min-width: map-get($grid-breakpoints, sm )) {
+    max-width: 300px; 
   }
 
 }

@@ -50,7 +50,7 @@
     "ng-chartjs": "0.1.1"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "3.2.2",
+    "@ionic/app-scripts": "3.2.3",
     "typescript": "~2.6.2"
   },
   "description": "An Ionic project",

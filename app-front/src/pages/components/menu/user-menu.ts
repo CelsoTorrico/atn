@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Nav, NavController, ToastController } from 'ionic-angular';
 import { User } from '../../../providers';
+import { CookieService } from 'ng2-cookies';
 
 @Component({
   selector: 'user-menu',
@@ -23,7 +24,8 @@ export class UserMenu {
   constructor(
     public navCtrl: NavController,
     public toastCtrl: ToastController,
-    public user: User) { }
+    public user: User,
+    private cookieService: CookieService) { }
 
   //Função que inicializa
   ngOnInit() {
@@ -49,6 +51,9 @@ export class UserMenu {
           message: resp.success.logout,
           duration: 3000
         })
+
+        //Exclui dados do cookie
+        this.cookieService.delete('app_atletas_now');
 
         toast.present({
           ev: this.navCtrl.push('LoginPage')

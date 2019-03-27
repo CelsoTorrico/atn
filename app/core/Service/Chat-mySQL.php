@@ -8,7 +8,7 @@ use Core\Utils\FileUpload;
 use Core\Database\ChatRoomModel;
 use Core\Database\ChatMessagesModel;
 
-class Chat {
+class ChatBackup{
 
     protected $currentUser;
     protected $room;

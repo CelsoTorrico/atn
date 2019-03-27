@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs/Observable';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -7,20 +8,23 @@ import { NavController } from 'ionic-angular';
  * Api is a generic REST Api handler. Set your API url first.
  */
 @Injectable()
-export class Api {
-  
+export class Api { 
+
   //Development
+  //static readonly origin = 'http://localhost/desenvolvimento/atletasNOW/app-front/www';
   //static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
   
   //Ambiente de testes | Godzilla
   //static readonly url = 'https://testes.makingpie.com.br/atletasNOW/app/public';
 
   //Ambiente Produção
+  static readonly origin = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/app-atletasnow-front';
   static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/atletasNOW/app/public';
   
   protected $headerObject:any;
 
   private $httpParams;
+
   private $optionsParams = { withCredentials: true };
 
   constructor(
@@ -29,12 +33,13 @@ export class Api {
       this.$headerObject = {
         'Content-Type'    : 'application/x-www-form-urlencoded',
         'withCredentials' : true,
-        //'Origin'          : 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/app-atletasnow-front' 
-        'Origin'        : 'http://localhost' 
+        'Origin'          : Api.origin
       }
     }
 
-  /** TODO: Todas as requisições após login deve usar parametro Options = {withCredentials: true} para enviar cookie setado na seção */
+  /** Todas as requisições após login deve usar parametro Options = {withCredentials: true} 
+   * para enviar cookie setado na seção */
+
   get(endpoint: string, params?: any, reqOpts?: any) {
     
     if (!reqOpts) {
@@ -78,13 +83,9 @@ export class Api {
   }
 
   //Login Social - Abre uma nova página no app
-  getSocial(endpoint: string) {
-    //Versão para app nativo
-    //let ob = this.appBrowser.create(Api.url + '/login/' + endpoint);
-    
+  getSocial(endpoint: string) {    
     //Nativamente redirecionar para página de login social
-    window.location.assign(Api.url + '/login/' + endpoint)
-
+    window.location.assign(Api.url + '/login/' + endpoint);
   }
 
   getUrl(){

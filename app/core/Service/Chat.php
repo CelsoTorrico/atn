@@ -49,7 +49,7 @@ class Chat{
      * @param int $user_id : ID de usuário  
      * @return array
      */
-    function setRoom(int $suser_id):array{
+    public function setRoom(int $suser_id):array{
         
         //Instancia classe de usuário
         $user = new User();

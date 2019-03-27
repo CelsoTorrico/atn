@@ -12,7 +12,7 @@ import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'profile',
-  templateUrl: 'profile.html'
+  templateUrl: 'profile.html' 
 })
 export class ProfileComponent {
 
@@ -193,8 +193,10 @@ export class ProfileComponent {
       //Atribuindo dados aos modelos
       this.ID = atributes.ID;
       this.display_name = atributes.display_name;
-      this.type = atributes.type.ID;
-      this.sport = atributes.sport;
+
+      if (atributes.type != null) this.type = atributes.type.ID; 
+      if (atributes.sport != null) this.sport = atributes.sport;
+
       this.clubes = atributes.clubs;
 
       //Apenas para instituições

@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, OnInit, SimpleChanges, ViewChil
 import { NavController, ModalController, ToastController } from 'ionic-angular';
 import { Api, User } from '../../../providers';
 import { ChartComponent } from 'angular2-chartjs';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core'; 
 
 @Component({
     selector: 'profile-resume',
@@ -36,8 +36,8 @@ export class ProfileResumeComponent implements OnInit{
 
     birthdate:string = null;
 
-    sport: any[] =  [
-        {ID: null, sport_name: ''}
+    sport: any[] = [
+        { ID: null, sport_name: null }
     ];
 
     height:number = null;
@@ -158,9 +158,9 @@ export class ProfileResumeComponent implements OnInit{
             //Atribuindo dados aos modelos
             this.ID = atributes.ID;
             this.display_name = atributes.display_name;
-            this.type = atributes.type; 
-            this.sport = atributes.sport;
-            this.favorite = atributes.favorite;
+            if (atributes.type != null) this.type = atributes.type; 
+            if (atributes.sport != null) this.sport = atributes.sport; 
+            this.favorite = atributes.favorite; 
 
             if(atributes.metadata.hasOwnProperty('profile_img')){
                 this.profile_img = atributes.metadata.profile_img.value;

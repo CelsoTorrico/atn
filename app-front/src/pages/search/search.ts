@@ -1,9 +1,10 @@
 import { NgForm } from '@angular/forms';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { Api } from '../../providers';
+import { Api, Cookie } from '../../providers';
 import { BrazilStates } from '../../providers/useful/states';
 import { TranslateService } from '@ngx-translate/core';
+import { CookieService } from 'ng2-cookies';
 
 
 @IonicPage()
@@ -67,7 +68,8 @@ export class SearchPage {
       public navCtrl: NavController, 
       public navParams: NavParams, 
       public states:BrazilStates,
-      public translateService: TranslateService) { 
+      public translateService: TranslateService,
+      private cookieService: CookieService) { 
     
         this.translateService.setDefaultLang('pt-br');
     
@@ -80,8 +82,13 @@ export class SearchPage {
 
       //Se widget tiver dados enviados
       if(this.query.display_name != ''){
-        this.widgetSearch();
+        this.widgetSearch(); 
       }  
+  }
+
+  ionViewDidLoad() {        
+      //Verifica existência do cookie e redireciona para página
+      Cookie.checkCookie(this.cookieService, this.navCtrl); 
   }
 
   ngOnInit() {
@@ -128,7 +135,7 @@ export class SearchPage {
       this.api.post('/user/search' + this.$url + '/paged/' + this.$paged, this.query).subscribe((resp:any) => {
 
         //Se reposta não existir
-        if(resp.error != undefined){
+        if(resp.error != undefined || resp == null){
           $fn();
           return;
         }

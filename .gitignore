@@ -5,3 +5,7 @@
 #diretórios a ignorar
 /app/storage/
 /app/uploaded-images/
+
+#files
+/app/.env.backup
+/app/.env

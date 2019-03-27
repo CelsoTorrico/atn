@@ -87,6 +87,11 @@ export class MemberUser {
 
         $event.preventDefault();
 
+        //Se tamanho da tela menor que definido, não exibir menu
+        if (window.innerWidth < 576) {
+            return false;  
+        } 
+
         //Adiciona ao elemento pai
         let page = document.getElementsByTagName('page-dashboard');        
         let find = page[0].querySelector('.popover-menu');
@@ -94,7 +99,6 @@ export class MemberUser {
 
         //Define a posicao do elemento popup
         popup.style.left = ($event.pageX - 250) + 'px';
-        //popup.style.top  = ($event.pageY + 15) + 'px';
 
         //Adicionar popup ao elemento para sobrepor header
         page[0].appendChild(popup);

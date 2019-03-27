@@ -1,14 +1,11 @@
 import { ForgetPasswordComponent } from './forget-password.component';
-import { DashboardPage } from './../dashboard/dashboard';
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController, ModalController } from 'ionic-angular';
-
-import { User } from '../../providers';
 import { SignupStepsPage } from '../signup-steps/signup-steps';
 import { NgForm } from '@angular/forms';
 import { CookieService } from 'ng2-cookies';
-
+import { User, Cookie } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -37,26 +34,18 @@ export class LoginPage implements OnInit{
     public modal: ModalController,
     public toastCtrl: ToastController,
     public translateService: TranslateService,
-    public cookie: CookieService) {
+    private cookieService: CookieService) {
 
     this.translateService.setDefaultLang('pt-br'); 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-      this.loginErrorString = value; 
+      this.loginErrorString = value;  
     })
 
   }
 
-  ionViewDidLoad(){
-    
-    //Se cookie de sessão já estiver setado direcionar para dashboard
-    let existsCookie = this.cookie.check('app_atletas_now');
-    
-    //Se cookie da plataforma estiver presente direcionar para dashboard
-    if(existsCookie){
-      //Não tem como verificar se cookie está expirado, portanto no momento somente direcionar 
-      this.navCtrl.push(DashboardPage);
-    }
-
+  ionViewDidLoad() {
+    //Verifica existência do cookie e redireciona para página
+    Cookie.checkCookie(this.cookieService, this.navCtrl);  
   }
 
   ngOnInit(){

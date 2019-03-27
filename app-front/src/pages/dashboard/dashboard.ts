@@ -3,7 +3,8 @@ import { NgForm } from '@angular/forms';
 import { Component, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController } from 'ionic-angular';
-import { User, Api } from '../../providers';
+import { User, Api, Cookie } from '../../providers';
+import { CookieService } from 'ng2-cookies';
 
 
 @IonicPage()
@@ -14,7 +15,7 @@ import { User, Api } from '../../providers';
 export class DashboardPage {
 
     public loginErrorString;
-    public timeline_placeholder:string;
+    public timeline_placeholder: string;
 
     //Informações básicas de usuário
     public currentUserData: any = {
@@ -45,8 +46,8 @@ export class DashboardPage {
         views: <number>0,
         messages: <number>0,
         favorite: {
-            myFavorites:0, 
-            otherFavorite:0
+            myFavorites: 0,
+            otherFavorite: 0
         }
     }
 
@@ -57,7 +58,8 @@ export class DashboardPage {
         public api: Api,
         public toastCtrl: ToastController,
         public translateService: TranslateService,
-        public loadNewPage: loadNewPage) {
+        public loadNewPage: loadNewPage,
+        private cookieService: CookieService) {
 
         this.translateService.setDefaultLang('pt-br');
 
@@ -69,19 +71,23 @@ export class DashboardPage {
         this.user = new User(this.api, this.loadNewPage, this.toastCtrl);
     }
 
+    ionViewDidLoad() {  
+        //Verifica existência do cookie e redireciona para página
+        Cookie.checkCookie(this.cookieService, this.navCtrl);
+    }
+
     //Função que inicializa
     ngOnInit() {
+
         this.currentUser();
         this.getVisibility();
         this.getLastActivity();
 
         //Recarregar dados de usuário a cada 5 minutos
-        setInterval(function($class){
+        setInterval(function ($class) {
             $class.currentUser();
         }, 1080000, this)
     }
-
-    
 
     //Quando um input tem valor alterado
     fileChangeEvent(fileInput: any) {
@@ -107,7 +113,7 @@ export class DashboardPage {
             $this.currentUserData = $this.user._user;
 
             //Campos específicos para dados básicos
-            $this.info.views =    $this.user._user.metadata.views.value;
+            $this.info.views = $this.user._user.metadata.views.value;
             $this.info.messages = $this.checkNull($this.user._user.totalMessages, 0);
             $this.info.favorite = $this.checkNull($this.user._user.totalFavorite, $this.info.favorite);
 
@@ -115,7 +121,7 @@ export class DashboardPage {
 
     }
 
-    checkNull($data, $valueToExibit){
+    checkNull($data, $valueToExibit) {
         //Se data for nulo ou indefinido
         if ($data == null || $data == undefined) {
             return $valueToExibit;

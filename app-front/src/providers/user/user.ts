@@ -293,6 +293,11 @@ export class User {
       'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email', 'sport', 'clubes'
     ]
 
+    //Se usuário não tiver tipo definido, definir como usuário padrão
+    if (this._user.type == null){
+      this._user.type = { ID: 1, type: 'Atleta'}
+    }
+
     //Se usuario for atleta e profissional
     if (this._user.type.ID == (1 || 2)) {
       let arr: string[] = ['birthdate', 'gender', 'rg', 'cpf', 'formacao', 'cursos', 'parent_user'];

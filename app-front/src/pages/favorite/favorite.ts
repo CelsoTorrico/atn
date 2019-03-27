@@ -1,7 +1,8 @@
+import { CookieService } from 'ng2-cookies';
 import { Api } from '../../providers/api/api';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
-import { User } from '../../providers';
+import { User, Cookie } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 
 @IonicPage()
@@ -56,7 +57,8 @@ export class FavoritePage {
         public api: Api,
         public toastCtrl: ToastController,
         private params: NavParams, 
-        public translateService: TranslateService) { 
+        public translateService: TranslateService,
+        private cookieService: CookieService) { 
     
             this.translateService.setDefaultLang('pt-br');
 
@@ -75,12 +77,16 @@ export class FavoritePage {
 
     }
 
+    ionViewDidLoad() {        
+        //Verifica existência do cookie e redireciona para página
+        Cookie.checkCookie(this.cookieService, this.navCtrl); 
+    }
+
     //Função que inicializa
     ngOnInit() {
         this.getFavoriteMembers();
         this.getFriendsSuggestions();
     }
-
 
     private getFavoriteMembers(){    
         //Retorna a lista de esportes do banco e atribui ao seletor

@@ -86,16 +86,18 @@ export class Notify {
     let find = page[0].querySelector('.popover-notify');
     let popup:any = find;
 
-    //Define a posicao do elemento popup
-    //popup.style.left = ($event.pageX - popup.style.width) + 'px'; 
-    popup.style.left = ($event.pageX - 275) + 'px'; 
-    //popup.style.top  = ($event.pageY + 15) + 'px';
+    //Define a posicao do elemento popup 
+    if (window.innerWidth > 768) {
+      popup.style.left = ($event.pageX - 275) + 'px'; 
+    } else {
+      popup.style.left = 'inherit'; 
+    } 
     
     //Adicionar popup ao elemento para sobrepor header
     page[0].appendChild(popup);
 
     setTimeout(function(){
-      popup.classList.add('open');
+      popup.classList.add('open'); 
     }, 300)
 
     //Ao clicar fora da área de notificação >> fechar

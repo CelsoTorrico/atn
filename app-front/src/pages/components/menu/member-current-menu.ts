@@ -1,3 +1,4 @@
+import { CookieService } from 'ng2-cookies';
 import { ToastController } from 'ionic-angular';
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
@@ -25,7 +26,8 @@ export class MemberCurrentMenu {
         public navCtrl: NavController,
         private user: User,
         private toastCtrl: ToastController,
-        public translateService: TranslateService) {
+        public translateService: TranslateService,
+        private cookieService: CookieService) {
 
         this.translateService.setDefaultLang('pt-br');
 
@@ -59,11 +61,15 @@ export class MemberCurrentMenu {
         logoutObservable.subscribe((resp: any) => {
             if (resp.success) {
 
+                //Exibe mensagem
                 let toast = this.toastCtrl.create({
                     position: 'bottom',
                     message: resp.success.logout,
                     duration: 3000
-                })
+                });
+
+                //Exclui dados do cookie
+                this.cookieService.delete('app_atletas_now'); 
 
                 toast.present({
                     ev: this.navCtrl.push('LoginPage')

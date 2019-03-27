@@ -4,12 +4,13 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Api } from './../../providers/api/api';
 import { Component, ComponentFactoryResolver, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController, ModalController, Platform } from 'ionic-angular';
-import { User } from '../../providers';
+import { User, Cookie } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ProfileComponent } from './profile-components/profile.component';
 import { StatsComponent } from './profile-components/stats.component';
 import { ChatPage } from '../chat/chat';
+import { CookieService } from 'ng2-cookies';
 
 @IonicPage()
 @Component({
@@ -52,8 +53,8 @@ export class ProfilePage {
     private params: NavParams,
     private browser: InAppBrowser,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private platform: Platform,
-    public translateService: TranslateService) { 
+    public translateService: TranslateService,
+    private cookieService: CookieService) { 
     
       this.translateService.setDefaultLang('pt-br');
 
@@ -83,6 +84,11 @@ export class ProfilePage {
       $this.following = $this.currentUser._user.following;
     }, this);
 
+  }
+
+  ionViewDidLoad() {        
+      //Verifica existência do cookie e redireciona para página
+      Cookie.checkCookie(this.cookieService, this.navCtrl); 
   }
 
   //Função que inicializa
