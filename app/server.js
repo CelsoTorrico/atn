@@ -5,10 +5,6 @@ var redis = require('redis');
 
 io.on('connection', (socket) => {
 
-  app.get('/', function(){
-    console.log('OK'); 
-  })
-
   //Inicializando lib 'redis'
   var redisClient = redis.createClient();
 
