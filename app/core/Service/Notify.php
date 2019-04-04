@@ -33,8 +33,7 @@ class Notify {
 
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
-            'user_id'   =>  $this->currentUser->ID,
-            'read'      =>  0,
+            'user_id'   => $this->currentUser->ID,
             'ORDER'     => ['date' => 'DESC']
         ]);
         
@@ -67,7 +66,40 @@ class Notify {
             return ['error' => ['notify', 'Nenhum item a exibir.']];
         }   
         
-    }  
+    } 
+    
+    /* Retorna lista de notify e marcar todas como lidas */
+    function update(){
+
+        //Retorna interador de todas as notificações 
+        $allnotifys = $this->model->getIterator([
+            'user_id'   => $this->currentUser->ID,
+            'read'      => 0,
+        ]);
+        
+        //Retorna resposta
+        if( $allnotifys->count() > 0){
+
+            foreach ($allnotifys as $item) {
+
+                //Verifica se é valido
+                if ( !$allnotifys->valid() ) {
+                    continue;
+                }
+
+                //Marcar como lida
+                $item->read = 1;
+
+                //Salvar informação no banco
+                $item->update(['read']);
+                
+            }
+
+            //Resposta de mensagens lidas
+            return ['success' => ['notify' => 'Notificações Lidas!']];;
+        }    
+        
+    } 
 
     /* Adiciona um item de notify */
     public function add($type, $toID, $fromID ) {
@@ -120,7 +152,7 @@ class Notify {
         //SE resultado for true, continua execução
         if($result){
             //Mensagem de sucesso no cadastro
-            return ['success' => ['notify' => 'Atualização Lida!']];
+            return ['success' => ['notify' => 'Atualização Deletada!']];
         }
         else{
             //Mensagem de erro no cadastro
@@ -128,6 +160,18 @@ class Notify {
         }
     }
 
+    /** Lista de quantidade de notificações não lidas */
+    public function getTotal(){
+
+        //Retorna interador de todas as notificações 
+        $allnotifys = $this->model->getIterator([
+            'user_id'   => $this->currentUser->ID,
+            'read'      => 0
+        ]);
+        
+        //Retorna totol de notificações
+        return $allnotifys->count();
+    }
 
     /** Função de aprovar notificação */
     public function approveNotify(int $id, bool $confirm){

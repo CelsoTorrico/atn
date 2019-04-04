@@ -20,7 +20,8 @@ class CommentModel extends Medools\Model
         'comment_date',
         'comment_content',
         'user_id',
-        'comment_parent'
+        'comment_parent',
+        'comment_status'
     ];
 
     const OPTIONAL_COLUMNS = [
@@ -37,5 +38,9 @@ class CommentModel extends Medools\Model
             'ID'
         ]
     ];
+
+    const SOFT_DELETE = 'comment_status';
+
+    const SOFT_DELETE_MODE = 'deleted';
 
 }

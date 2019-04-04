@@ -134,7 +134,6 @@ class Chat{
         $limit = [$initPageCount, $perPage];
 
         //Retorna mensagens da room ordenando de data menor para mais recente
-        //TODO: Fazer paginação de mensagens
         $messages = $this->messages->getIterator([
             'room_id'   => $room['room_id'], 
             'LIMIT'     => $limit,
@@ -184,21 +183,30 @@ class Chat{
      * Retorna total de mensagens não lidas 
      * @return int
      * */
-    function getTotal():int{
+    function getTotal(int $room_id = null):int{
 
-        //Retorna rooms que usuário contém
-        $rooms = $this->room->getIterator([
-            'OR' => [
-                'fuser' => $this->currentUser->ID,
-                'suser' => $this->currentUser->ID 
-            ]
-        ]);
-
+        //Variavel para ids de rooms
         $rooms_ids = [];
 
-        //Atribui ids das rooms encontradas
-        foreach ($rooms as $item) {
-            $rooms_ids[] = $item->room_id;
+        //Se for nulo, retornar todas as mensagens não lidas
+        if(is_null($room_id)) {
+            
+            //Retorna rooms que usuário contém
+            $rooms = $this->room->getIterator([
+                'OR' => [
+                    'fuser' => $this->currentUser->ID,
+                    'suser' => $this->currentUser->ID 
+                ]
+            ]);
+
+            //Atribui ids das rooms encontradas
+            foreach ($rooms as $item) {
+                $rooms_ids[] = $item->room_id;
+            }
+
+        } else {
+            //Atribui a room a var
+            $rooms_ids = $room_id;
         }
         
         //Insere dados no modelo
@@ -257,7 +265,7 @@ class Chat{
                 $rooms[] =  [
                     'room_id'           => $item->room_id,
                     'user'              => $room_user,
-                    'quantity_messages' => $this->getTotal(),
+                    'quantity_messages' => $this->getTotal($item->room_id), 
                     'last_update'       => $item->last_update         
                 ];
                 

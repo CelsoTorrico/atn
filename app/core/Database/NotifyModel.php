@@ -20,19 +20,21 @@ class NotifyModel extends Medools\Model
         'read',
         'user_id',
         'from_id',
-        'date'
+        'date',
+        'deleted'
     ];
 
     const OPTIONAL_COLUMNS = [
         'approve',
-        'read'
+        'read',
+        'deleted'
     ];
 
     const STAMP_COLUMNS = [
         'date' => 'datetime',
     ];
 
-    const SOFT_DELETE = 'read';
+    const SOFT_DELETE = 'deleted';
 
     const SOFT_DELETE_MODE = 'deleted';
 

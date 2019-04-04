@@ -173,6 +173,12 @@ class Authenticate
 
         }
 
+        //Permitir logout mesmo se usuário não estiver logado
+        if ($request->method() == 'POST' && $request->is('register/exist')) {
+            //Retorna requisição com dados
+            return $next($request);
+        }
+
         //Se usuário estiver com perfil desativado, permitir requisição de esqueci minha senha
         if ($request->method() ==  'POST' && $request->is('forget-pass')) {
             //Retorna requisição com dados

@@ -38,6 +38,9 @@ export class DashboardPage {
     //Visibilidade
     public visibility: string[];
 
+    //Preview Foto
+    public preview: any;
+
     //Atividades
     public activity: any[] = [];
 
@@ -46,9 +49,10 @@ export class DashboardPage {
         views: <number>0,
         messages: <number>0,
         favorite: {
-            myFavorites: 0,
-            otherFavorite: 0
-        }
+            myFavorites: <number>0,
+            otherFavorite: <number>0
+        },
+        notifications: <number>0
     }
 
     private user: User;
@@ -82,22 +86,30 @@ export class DashboardPage {
         this.currentUser();
         this.getVisibility();
         this.getLastActivity();
+    }
 
-        //Recarregar dados de usuário a cada 5 minutos
-        setInterval(function ($class) {
-            $class.currentUser();
-        }, 1080000, this)
+    //Recarrega dados
+    doRefresh($refreshEvent){
+        
+        this.currentUser();
+        this.getLastActivity();
+
+        setTimeout(() => {
+            $refreshEvent.complete();
+          }, 2000);
+        
     }
 
     //Quando um input tem valor alterado
     fileChangeEvent(fileInput: any) {
         if (fileInput.target.files && fileInput.target.files[0]) {
+            
             var reader = new FileReader();
 
             reader.onload = function (e: any) {
-                let prev = document.getElementById('preview');
-                prev.style.backgroundImage = 'url(' + e.target.result + ')';
-                prev.style.display = 'block';
+                let preview = document.getElementById('preview');
+                preview.style.backgroundImage = 'url(' + e.target.result + ')';
+                preview.style.display = 'block';
             }
 
             reader.readAsDataURL(fileInput.target.files[0]);
@@ -113,9 +125,10 @@ export class DashboardPage {
             $this.currentUserData = $this.user._user;
 
             //Campos específicos para dados básicos
-            $this.info.views = $this.user._user.metadata.views.value;
-            $this.info.messages = $this.checkNull($this.user._user.totalMessages, 0);
+            $this.info.views = $this.checkNull($this.user._user.metadata.views.value, $this.info.views );
+            $this.info.messages = $this.checkNull($this.user._user.totalMessages, $this.info.messages);
             $this.info.favorite = $this.checkNull($this.user._user.totalFavorite, $this.info.favorite);
+            $this.info.notifications = $this.checkNull($this.user._user.totalNotifications, $this.info.notifications);
 
         }, this);
 
@@ -186,6 +199,11 @@ export class DashboardPage {
                 //Reseta campos de atualização de timeline
                 this.addTimeline.post_content = '';
                 this.addTimeline.post_image = null;
+
+                //Reseta container de foto
+                this.preview = document.getElementById('preview');
+                this.preview.style.backgroundImage = 'none';
+                this.preview.style.display = 'none';
 
                 //Mostrar alerta de sucesso
                 let toast = this.toastCtrl.create({

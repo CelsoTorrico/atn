@@ -9,7 +9,7 @@ import { LoginPage } from '../login/login';
 @IonicPage()
 @Component({
     selector: 'page-signup',
-    templateUrl: 'signup-steps.html'  
+    templateUrl: 'signup-steps.html'   
 })
 
 export class SignupStepsPage {  
@@ -60,14 +60,18 @@ export class SignupStepsPage {
         if($userData.user_pass != $userData.confirm_pass) {
             return this.showAlert('Senha não confere.');
         }
-        
-        //Se true, dados existentes
-        /*if( this.service.checkIfExistUser($userData) ){  
-            return this.showAlert("Usuário já existe. Faça o login!"); 
-        }*/
 
-        //Carrega a próxima View passando os dados preencheidos
-        this.nav.push(ProfileType, $userData);
+        //Verifica existencia de email, se já usado ou não 
+        let $emailExist = this.service.checkIfExistUser($userData);
+        $emailExist.subscribe((data:any) => { 
+            if(data.error != undefined){
+                this.showAlert("Usuário já existe. Faça o login!");
+            } else {
+                //Carrega a próxima View passando os dados preencheidos
+                this.nav.push(ProfileType, $userData);
+            }
+        });
+        
     }
 
     private showAlert($msg){

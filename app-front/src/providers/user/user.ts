@@ -1,6 +1,5 @@
 import { isObservable } from '@angular/core/src/util/lang';
 import { ToastController } from 'ionic-angular';
-import { SuccessStep } from './../../pages/signup-steps/success/success';
 import { Injectable } from '@angular/core';
 import { Api } from '../api/api';
 import { loadNewPage } from '../load-new-page/load-new-page';
@@ -98,8 +97,12 @@ export class User {
       if (res.success != undefined) {
         this._loggedIn(res);
 
+        //Exibe mensagem de cadastro
+        let message = this.loadPageService.createToast("Cadastro realizado com sucesso. Bem Vindo a AtletasNOW.", 'bottom');
+        message.present();
+
         //Após confirmação de cadastro redireciona para página de sucesso
-        this.loadPageService.getPage(res, this.navCtrl, SuccessStep);
+        this.loadPageService.getPage(res, this.navCtrl, DashboardPage); 
       }
       else {
         let $errors: string = '';

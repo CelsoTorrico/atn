@@ -32,6 +32,7 @@ class Learn extends Timeline {
         //TODO: Retorna todos posts de feed baseado nas conexões
         $allTimelines = $this->model->getIterator([
             'post_type'     =>  static::TYPE,
+            'post_status'   => ['open', 'publish', 0],
             'ORDER'         => ['post_date' => 'DESC'],
             'LIMIT'         => $limit
         ]);

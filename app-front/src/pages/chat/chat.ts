@@ -12,7 +12,7 @@ import { CookieService } from 'ng2-cookies';
 })
 export class ChatPage {
 
-    public $chatRooms: string = '';
+    public $chatRooms:any = [];
 
     public $roomSelected;
 
@@ -45,11 +45,11 @@ export class ChatPage {
 
     private getChatRooms() {
 
-        //Retorna a lista de esportes do banco e atribui ao seletor
+        //Retorna a lista de chat rooms
         this.api.get(this.$getChat).subscribe((resp: any) => {
 
             //Se não existir items a exibir
-            if (resp.length <= 0) {
+            if (Object.keys(resp).length <= 0) {
                 return;
             }
 

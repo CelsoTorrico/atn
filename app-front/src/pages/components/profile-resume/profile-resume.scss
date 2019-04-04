@@ -85,8 +85,9 @@
     text-align: center;
   }
 
-  button[clear]{
-    color: #fff;
+  button[outline], button[clear]{
+    border-color: $branco;
+    color: $branco;
   }
 
   .block {

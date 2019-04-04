@@ -6,7 +6,11 @@ import { CommonModule } from '@angular/common';
 import { Chat } from './chat';
 import { SocketIoModule, SocketIoConfig} from 'ng-socket-io'
 
+//Produção
 const config: SocketIoConfig = {url: 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com:8890', options:{} }
+
+//Development
+//const config: SocketIoConfig = {url: 'http:/localhost:8890', options:{} }
 
 @NgModule({
   declarations: [

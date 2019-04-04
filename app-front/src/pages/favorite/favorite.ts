@@ -84,8 +84,16 @@ export class FavoritePage {
 
     //Função que inicializa
     ngOnInit() {
+        
         this.getFavoriteMembers();
         this.getFriendsSuggestions();
+
+        /*let colSuggestion = document.querySelector('.profile-suggestions');
+        let colScroll = document.querySelector('.page-favorite .scroll-content');
+
+        colScroll.addEventListener('scroll', function($event){
+           colSuggestion[0].style.position = 'fixed';
+        });*/ 
     }
 
     private getFavoriteMembers(){    

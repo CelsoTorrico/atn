@@ -4,8 +4,8 @@
     <ion-toolbar>
 
       <ion-buttons slot="end">
-          <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
-      </ion-buttons>      
+        <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
+      </ion-buttons>
 
     </ion-toolbar>
   </ion-header>
@@ -24,20 +24,27 @@
     <ion-grid fixed>
       <ion-row>
         <ion-col col-md-4 col-4 style="position: relative;">
-          <img src="assets/img/atletasnow-logotipo-negativo.svg" id="main-logo" class="img-left"
-            title="AtletasNOW" align-self-left />
+          <img src="assets/img/atletasnow-logotipo-negativo.svg" id="main-logo" class="img-left" title="AtletasNOW"
+            align-self-left />
         </ion-col>
         <ion-col col-md-8 col-8>
           <ion-row justify-content-end>
             <ion-col col-auto no-padding>
 
               <ul class="list-inline">
-                <li class="menu-icons"><notify></notify><!-- Notificações --></li>
-                <li class="menu-icons"><user-menu></user-menu><!-- Icones de navegação --></li>
-                <li class="hidden-mobile"><member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User --></li>
+                <li class="menu-icons">
+                  <notify [notifyCount]="info.notifications"></notify><!-- Notificações -->
+                </li>
+                <li class="menu-icons">
+                  <user-menu></user-menu><!-- Icones de navegação -->
+                </li>
+                <li class="hidden-mobile">
+                  <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
+                </li>
                 <li class="hidden-desktop"><button ion-button icon-only menuToggle>
                     <ion-icon name="menu"></ion-icon>
-                </button><!-- Open-menu --></li>
+                  </button><!-- Open-menu -->
+                </li>
               </ul>
 
             </ion-col>
@@ -45,7 +52,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  </ion-toolbar>  
+  </ion-toolbar>
 
   <ion-grid fixed class="menu-desktop hidden-mobile">
 
@@ -64,13 +71,53 @@
       </ion-col>
     </ion-row>
 
-  </ion-grid><!-- Menu-Desktop -->  
+  </ion-grid><!-- Menu-Desktop -->
 
 </ion-header>
 
 <ion-content class="page-dashboard">
 
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Puxe para carregar" refreshingSpinner="circles"
+      refreshingText="Carregando..."></ion-refresher-content>
+  </ion-refresher>
+
   <ion-grid fixed>
+
+    <h1 text-center no-margin margin-top margin-horizontal class="title">{{ "WELCOME_LOGIN" | translate }}</h1>
+
+    <p text-center no-margin margin-bottom margin-horizontal class="lead">{{ "WELCOME_LOGIN_TEXT" | translate }}</p>
+
+    <ion-row padding text-center justify-content-center>
+
+      <ion-card col-12 col-md-4 margin-horizontal>
+        <ion-card-header>
+          <h2 class="bolder">{{ "WELCOME_TITLE_VIDEO" | translate }}</h2>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="video-container">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/c0Qu8T0a3KI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card col-12 col-md-5 margin-horizontal style="margin-top:10px;">
+        <ion-card-header>
+          <h2 class="bolder">{{ "WELCOME_TITLE_PROFILE" | translate }}</h2>
+        </ion-card-header>
+        <ion-card-content>
+          <p>
+              {{ "WELCOME_TEXT_PROFILE" | translate }}
+          </p>
+          <p>&nbsp;</p>
+
+          <button ion-button full (click)="goToProfile(null);">{{ "WELCOME_BUTTON_PROFILE" | translate }}</button>
+
+        </ion-card-content>
+      </ion-card>
+
+    </ion-row>
+
     <ion-row padding>
 
       <ion-col col-md-4 col-12 no-padding>
@@ -154,7 +201,7 @@
 
       <ion-col col-md-5 col-12>
 
-        <ion-card>
+        <ion-card margin-horizontal>
 
           <ion-card-header>
             {{ "ADD_PUBLICATION" | translate }}
@@ -166,7 +213,8 @@
 
               <ion-list>
                 <ion-item>
-                  <ion-select float-right name="post_visibility" interface="popover" [(ngModel)]="addTimeline.post_visibility">
+                  <ion-select float-right name="post_visibility" interface="popover"
+                    [(ngModel)]="addTimeline.post_visibility">
                     <ion-option *ngFor="let item of visibility" [value]="item.value" [selected]="item.value == 0">
                       {{item.option}}
                     </ion-option>
@@ -175,11 +223,13 @@
               </ion-list>
 
               <ion-row>
-                <ion-col col-12>
-                  <ion-item no-padding>
+                <ion-col col-12 no-padding>
+
+                  <ion-item>
 
                     <ion-avatar class="btn-cursor" item-start>
-                      <img *ngIf="currentUserData.metadata.profile_img.value, else elseBlock" [src]="currentUserData.metadata.profile_img.value" />
+                      <img *ngIf="currentUserData.metadata.profile_img.value, else elseBlock"
+                        [src]="currentUserData.metadata.profile_img.value" />
                       <ng-template #elseBlock>
                         <img src="assets/img/user.png" />
                       </ng-template>
@@ -187,11 +237,13 @@
 
                     <ion-textarea name="post_content" [(ngModel)]="addTimeline.post_content" type="textarea"
                       [placeholder]="timeline_placeholder" required></ion-textarea>
+
                   </ion-item>
+
                 </ion-col>
                 <ion-col col-6>
                   <div class="input-image">
-                    
+
                     <label class="item btn-cursor" for="post_image">
                       <ion-icon item-start name="images"></ion-icon>
                       <span>{{ "ATTACH_IMAGE" | translate }}</span>
@@ -199,8 +251,9 @@
 
                     <div id="preview" class="image-container"></div>
 
-                    <input ion-button outline id="post_image" (change)="fileChangeEvent($event)" type="file" name="post_image" [(ngModel)]="addTimeline.post_image" />
-                    
+                    <input ion-button outline id="post_image" (change)="fileChangeEvent($event)" type="file"
+                      name="post_image" [(ngModel)]="addTimeline.post_image" />
+
                   </div>
                 </ion-col>
                 <ion-col col-6>
@@ -222,9 +275,9 @@
 
       </ion-col>
 
-      <ion-col col-md-3 no-padding>
+      <ion-col col-md-3>
 
-        <ion-card class="profile-activity">
+        <ion-card margin-horizontal class="profile-activity">
 
           <ion-card-header>
             <h2>{{ "ACTIVITY" | translate }}</h2>

@@ -18,7 +18,20 @@ class SendEmail {
     public function __construct(){
         
         //Inicializando variaveis
-        $this->mail = new PHPMailer();      
+        $this->mail = new PHPMailer();    
+        $this->mail->CharSet = 'UTF-8';  
+        $this->mail->Encoding = 'base64';
+        $this->mail->isHTML(true);                  // Set email format to HTML
+        
+        //Server settings
+        $this->mail->SMTPDebug = 0;                       // Enable verbose debug output
+        $this->mail->isSMTP();                            // Set mailer to use SMTP
+        $this->mail->Host = env('SMTP_HOST');             // Specify main and backup SMTP servers
+        $this->mail->SMTPAuth = true;                     // Enable SMTP authentication
+        $this->mail->Username = env('USER_EMAIL');        // SMTP username
+        $this->mail->Password = env('USER_PASS');         // SMTP password
+        $this->mail->SMTPSecure = env('SMTP_SECURE');     // Enable TLS encryption, `ssl` also accepted
+        $this->mail->Port = env('SMTP_PORT');             // TCP port to connect to
 
     }
 
@@ -66,7 +79,7 @@ class SendEmail {
         if(!is_string($subject)){
             throw new Exception('Assunto deve ser string');
         }
-        $this->subject = $subject;
+        $this->subject = html_entity_decode($subject);
     }
 
     /** Seta conteúdo da mensagem */
@@ -77,16 +90,15 @@ class SendEmail {
         }
 
         //Sanitize var
-        $content = utf8_encode(filter_var($content, FILTER_SANITIZE_STRIPPED));
+        $content = html_entity_decode(htmlspecialchars($content));
         $this->plainContent = $content;
         $this->content = "
         <html>
             <head>
                 <title>Plataforma AtletasNOW</title>
                 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-                <meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'>
             </head>
-            <body>$content</body>
+            <body>" . $content ."</body>
         </html>
         ";
     }
@@ -98,19 +110,7 @@ class SendEmail {
         try {
             
             //Atribui classe a var da classe para reutilização em metodos
-            $mail = $this->mail;   
-
-            //Server settings
-            $mail->Charset = 'UTF-8';
-            $mail->SMTPDebug = 0;                       // Enable verbose debug output
-            $mail->isSMTP();                            // Set mailer to use SMTP
-            $mail->Host = env('SMTP_HOST');             // Specify main and backup SMTP servers
-            $mail->SMTPAuth = true;                     // Enable SMTP authentication
-            $mail->Username = env('USER_EMAIL');        // SMTP username
-            $mail->Password = env('USER_PASS');         // SMTP password
-            $mail->SMTPSecure = env('SMTP_SECURE');     // Enable TLS encryption, `ssl` also accepted
-            $mail->Port = env('SMTP_PORT');             // TCP port to connect to
-            $mail->Encoding = 'base64';
+            $mail = $this->mail;
         
             //Recipients
             $mail->setFrom(env('SMTP_FROM_EMAIL'), $this->fromName);
@@ -126,10 +126,7 @@ class SendEmail {
                 $mail->addAddress($this->toEmail['email'], $this->toEmail['name']); 
             }
         
-            //Content
-            $mail->isHTML(true);       // Set email format to HTML
             $mail->Subject = $this->subject;
-            $mail->isHTML(true);
             $mail->Body = $this->content;
             $mail->AltBody = $this->plainContent;
 

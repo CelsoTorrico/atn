@@ -8,7 +8,7 @@
 
 </ion-header>
 
-<ion-content class="page-profile">
+<ion-content class="page-favorite">
 
   <ion-grid fixed>
 
@@ -24,13 +24,22 @@
 
             <p>{{ "SUGGESTIONS_MESSAGE" | translate}}</p>
 
-            <ion-list>
+            <ion-list *ngIf="friendsSuggestion.found.length > 0">
               <ion-badge *ngFor="let message of friendsSuggestion.success.criterio">
                 {{ message | translate }}
               </ion-badge>
             </ion-list>
 
             <member-suggestion *ngFor="let userSugg of friendsSuggestion.found" [member]="userSugg"></member-suggestion>
+
+            <div *ngIf="friendsSuggestion.found.length <= 0">
+              <hr />
+              <h2 text-center>
+                <ion-icon name="sad"></ion-icon>
+              </h2>
+              <p ion-text color="light"><small>{{ "SUGGESTION_NOT_FOUND" | translate }}</small></p>
+            </div>
+
 
           </div>
 
@@ -46,42 +55,37 @@
             <ion-title>{{ "FAVORITES" | translate }}</ion-title>
           </ion-card-header>
 
-          <ion-item-group>
+          <ion-card-content>
 
-            <ion-item>
+            <ng-container class="atletas" *ngIf="favoriteMembers.Atletas">
 
-              <ion-list class="atletas" *ngIf="favoriteMembers.Atletas">
+              <ion-title><h2>{{ "ATLETAS" | translate }}</h2></ion-title>
 
-                <ion-list-header>
-                  {{ "ATLETAS" | translate }}
-                </ion-list-header>
+              <member-container [listMembers]="favoriteMembers.Atletas"></member-container>
 
-                <member-container [listMembers]="favoriteMembers.Atletas"></member-container>
+              <hr />
 
-              </ion-list>
+            </ng-container>
 
-              <ion-list class="clubs" *ngIf="favoriteMembers.Clubes">
+            <ng-container class="clubs" *ngIf="favoriteMembers.Clubes">
 
-                <ion-list-header>
-                  {{ "CLUBS" | translate }}
-                </ion-list-header>
+              <ion-title><h2>{{ "CLUBS" | translate }}</h2></ion-title>
 
-                <member-container [listMembers]="favoriteMembers.Clubes"></member-container>
+              <member-container [listMembers]="favoriteMembers.Clubes"></member-container>
 
-              </ion-list>
+              <hr />
+              
+            </ng-container>
 
-              <ion-list class="outros" *ngIf="favoriteMembers.Outros">
+            <ng-container class="outros" *ngIf="favoriteMembers.Outros">
 
-                <ion-list-header>
-                  {{ "OTHERS" | translate }}
-                </ion-list-header>
+              <ion-title><h2>{{ "OTHERS" | translate }}</h2></ion-title>
 
-                <member-container [listMembers]="favoriteMembers.Outros"></member-container>
+              <member-container [listMembers]="favoriteMembers.Outros"></member-container>
 
-              </ion-list>
+            </ng-container>
 
-            </ion-item>
-          </ion-item-group>
+          </ion-card-content>
 
         </ion-card>
 
@@ -91,11 +95,9 @@
             <ion-title>{{ "FOLLOWERS" | translate }}</ion-title>
           </ion-card-header>
 
-          <ion-item-group>
-            <ion-item>
-              <member-container [isFollowers]="true"></member-container><!-- Lista de Seguidores -->
-            </ion-item>
-          </ion-item-group>
+          <ion-card-content>
+            <member-container [isFollowers]="true"></member-container><!-- Lista de Seguidores -->
+          </ion-card-content>
 
         </ion-card>
 
@@ -105,18 +107,17 @@
             <ion-title>{{ "FOLLOWING" | translate }}</ion-title>
           </ion-card-header>
 
-          <ion-item-group>
-            <ion-item>
-              <member-container></member-container><!-- Lista de Friends -->
-            </ion-item>
-          </ion-item-group>
+          <ion-card-content>
+            <member-container></member-container><!-- Lista de Friends -->
+          </ion-card-content>
+          
 
         </ion-card>
 
       </ion-col>
 
     </ion-row>
-    
+
   </ion-grid>
 
 </ion-content>

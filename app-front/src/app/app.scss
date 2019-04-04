@@ -23,14 +23,16 @@ $button-primary-color: rgb(255, 95, 0);
 $notify-color: rgb(240, 74, 152);
 $titulos: #d03014;
 
+$font-family: "Open Sans", "Calibri", "Arial", cursive !important;
+
 body {
-  font-family: "Open Sans", "Calibri", "Arial", cursive !important;
+  font-family: $font-family;
   font-weight: normal;
   font-size: 1.5rem;
 }
 
 ion-app.md, .card-content-md, .card-md p, ion-label{
-  font-family: "Open Sans", "Calibri", "Arial", cursive !important;
+  font-family: $font-family;
   font-size: 1.6rem;
 }
 
@@ -39,7 +41,7 @@ h2,
 ion-list-header,
 ion-card-header,
 ion-title {
-  font-family: "Open Sans", "Calibri", "Arial", cursive !important;
+  font-family: $font-family;
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;
@@ -75,6 +77,19 @@ ion-title {
   @media screen and (min-width: map-get($grid-breakpoints, sm )) {
     display: none !important;
   }
+}
+
+.title{
+  font-size: 36px;
+  font-weight: bolder;
+}
+
+.bolder{
+  font-weight: bolder !important;
+}
+
+.lead{
+  font-size: 24px;
 }
 
 .nomargin-nopadding {
@@ -130,9 +145,15 @@ select {
   color: #444;
 }
 
+ion-input{
+  input.text-input-md, input.text-input {
+    margin: 10px 0px; 
+  }
+}
+
 ion-label,
 .item-input .label-md {
-  font-weight: 300;
+  font-weight: bolder;
   color: #111;
 }
 
@@ -140,14 +161,26 @@ ion-label,
 .searchbar-input,
 .text-input,
 .item-cover,
-textarea {
+textarea,
+rl-tag-input,
+select, ion-select:not([name="visibility"]) {
+  font-family: $font-family;
   border-radius: 5px;
   min-height: 36px;
   padding: 6px 55px;
+  margin: 10px 0px; 
   background: linear-gradient(to top, #f5f5f5, $branco);
   border: 1px solid #cccccc;
-  box-shadow: none;
+  box-shadow: none !important;
   font-weight: 100;
+}
+
+rl-tag-input,
+select, ion-select:not([name="visibility"]){
+  padding: 6px 10px !important;  
+  input{
+    font-family: $font-family;
+  }
 }
 
 .item-cover {
@@ -165,8 +198,16 @@ input.text-input {
 
 rl-tag-input,
 select {
-  background-color: #fff;
-  box-shadow: none !important;
+
+  rl-tag-input-item, input {
+    font-family: $font-family;
+    font-size: 14px !important;
+  }
+
+  input{
+    background-color: transparent !important;
+  }
+
 }
 
 .item-md {
@@ -281,6 +322,9 @@ select {
   cursor: pointer;
   font-size: 10px;
   font-weight: 100;
+  ion-icon{
+    font-size: 2.1em;
+  }
 }
 
 /* Badge */
@@ -366,7 +410,7 @@ ion-navbar, ion-toolbar{
   position: absolute;
   opacity: 0;
   transform: translateY(-15px) scale(0, 0);
-  transform-origin: left top;
+  transform-origin: center top;
   transition: ease-out 0.2s;
   background-color: $branco;
   width: calc(100% - 30px);
@@ -422,16 +466,41 @@ ion-navbar, ion-toolbar{
 }
 
 
-ion-select:not(.select-state){
-  font-size: 10px;
+ion-select[name="visibility"], ion-select[name="post_visibility"]{
+  font-size: 11px;
   right: 0;
   top: 0;
   position: absolute;
+  font-weight: bolder;
+  color: $button-primary-color;
+
+  .select-md .select-icon .select-icon-inner{
+    color: $button-primary-color;
+  }
 
   .item-cover{
     border:0px;
   }
+
 }
+
+/** Video Embed */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 30px; height: 0; overflow: hidden;
+}
+
+.video-container iframe,
+.video-container object,
+.video-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 
 /** Mobile */
 

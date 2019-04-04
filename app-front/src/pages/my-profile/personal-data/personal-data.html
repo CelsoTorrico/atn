@@ -16,13 +16,13 @@
 
     <ion-item-group>
       <ion-row>
-        <ion-col col-12 col-md-4>
+        <ion-col col-12>
           <ion-item>
             <ion-label stacked>{{ "NAME" | translate}}</ion-label>
             <ion-input [(ngModel)]="display_name" name="display_name" type="text"></ion-input>
           </ion-item>
         </ion-col>
-        <ion-col col-12 col-md-4>
+        <ion-col col-12 col-md-6>
           <ion-item>
             <ion-label stacked>{{ "TELEPHONE" | translate }}</ion-label>
             <ion-input [(ngModel)]="telefone.value" name="telefone" type="telefone"></ion-input>
@@ -35,7 +35,7 @@
 
           </ion-item>
         </ion-col>
-        <ion-col col-12 col-md-4>
+        <ion-col col-12 col-md-6>
           <ion-item>
             <ion-label stacked>{{ "EMAIL" | translate }}</ion-label>
             <ion-input [(ngModel)]="user_email" name="user_email" [email]="true" type="email"></ion-input>
@@ -46,7 +46,7 @@
 
     <ion-item>
       <ion-label stacked>{{ "BIOGRAPHY" | translate }}</ion-label>
-      <ion-textarea [(ngModel)]="biography.value" name="biography" type="text"></ion-textarea>
+      <ion-input [(ngModel)]="biography.value" name="biography" type="text" maxlength="250"></ion-input>
     </ion-item>
 
     <ion-item-group *ngIf="type < 3">

@@ -19,8 +19,12 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class ProfileType{ 
 
-    public $account:any = {};
-    public $typeUserSelected:string;   
+    public $account:any = {
+        gender: 'male'
+    };
+
+    public $typeUserSelected:number = 1;    
+    
     public $sportSelected = [];    
 
     //Lista de Esportes
@@ -74,7 +78,7 @@ export class ProfileType{
     //Função que inicializa
     ngOnInit() {
         //Retorna a lista de esportes do banco e atribui ao seletor
-        this.api.get('/user/sports').subscribe((resp:any) => {
+        this.api.get('/user/sports').subscribe((resp:any) => { 
 
             //Tabela de Esportes com ID e nome
             this.$sportTable = resp;

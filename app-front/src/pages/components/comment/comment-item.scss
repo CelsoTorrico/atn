@@ -12,7 +12,10 @@
     }
 
     article{
-        padding: 15px;
+        position: relative;
+        max-width: 95%;
+        white-space: normal;
+        padding: 15px 30px 15px 15px; 
         border-radius: 5px;
         margin-bottom: 3px;
         display: inline-block;

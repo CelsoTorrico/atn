@@ -42,7 +42,7 @@
             <ion-row>
               <ion-col col-12 col-sm-6 col-md-4 class="box-titulo" *ngFor="let titulo of general['titulos-conquistas']">
                 <h4 class="box-stats">
-                  <ion-icon start name="medal" [ngClass]="{'gold': titulo[0].search('1'), 'silver': titulo[0].search('2'), 'bronze': titulo[0].search('3') }"></ion-icon>
+                  <ion-icon start name="medal" [ngClass]="{'gold': titulo[0] == 1, 'silver': titulo[0] == 2, 'bronze': titulo[0] == 3 }"></ion-icon>
                   {{ titulo[0] }}
                 </h4>
                 <p class="championship">{{ titulo[1] }}</p>
@@ -90,10 +90,12 @@
                 <ion-col class="sport-category-info" col-12 *ngFor="let item of sport.val | mapToIterable">
                   <h4>{{ item.key | translate | stringTitlecaseSpecialChars }}</h4>
                   <ul>
-                    <li class="box-stats" *ngFor="let i of item.val  | mapToIterable">
-                      <strong>{{ i.key }}</strong>
-                      {{ i.val }}
-                    </li>
+                    <ng-container *ngFor="let i of item.val | mapToIterable">
+                        <li class="box-stats" *ngIf="i.val">
+                            <strong>{{ i.key }}</strong>
+                            {{ i.val }} 
+                          </li>
+                    </ng-container>                    
                   </ul>
                 </ion-col>
               </ion-row>

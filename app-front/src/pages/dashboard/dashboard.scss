@@ -46,6 +46,7 @@ page-dashboard {
     background-color: #f1f1f1;
 
     .profile-info{
+        margin-top: 10px;
         background-color: #f0f0f0; 
 
         ion-card{
@@ -62,7 +63,7 @@ page-dashboard {
 
             .grande{
                 display: block;
-                font-family: "OpenSans", "Calibri", "Arial", cursive !important;
+                font-family: $font-family;
                 font-size: 52px;
                 font-weight: bold;
                 font-style: normal;
@@ -92,6 +93,12 @@ page-dashboard {
             }
 
         }
+    }
+
+    ion-select[name="post_visibility"]{
+        background: none;
+        background-color: none;
+        border: 0px;
     }
 
 }

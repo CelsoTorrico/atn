@@ -23,7 +23,8 @@
             "port": 9000,
             "pathMappings": {
                 "/mnt/f" : "f:/"
-            }
+            },
+            "log": true
         },
         {
             "name": "Launch currently open script",

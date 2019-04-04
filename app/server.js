@@ -5,6 +5,10 @@ var redis = require('redis');
 
 io.on('connection', (socket) => {
 
+  app.get('/', function(){
+    console.log('OK'); 
+  })
+
   //Inicializando lib 'redis'
   var redisClient = redis.createClient();
 
@@ -25,7 +29,7 @@ io.on('connection', (socket) => {
 
 });
 
-var port = process.env.PORT || 8890;
+var port = 8890;
 
 server.listen(port, function () {
   console.log('listening in http://localhost:' + port);

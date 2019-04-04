@@ -132,6 +132,21 @@ class LoginController extends Controller
         
     }
 
+    /** Verifica se usuário existe */
+    function isUserExist(Request $request){
+        
+        //Campos obrigatórios
+        $require = ['user_email'];
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->has($require) || !$request->filled($require)){
+            return response(['error' => ["register", "Email não fornecido! Tente novamente!"]]); 
+        }
+
+        return response($this->user->isUserEmailExist($request->input('user_email')));
+        
+    }
+
     /** Logout */
     function forgetPassword(Request $request){
         

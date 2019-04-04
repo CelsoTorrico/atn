@@ -41,7 +41,7 @@ class Timeline {
     function get($id) {
         
         //Query enviando Id de Timeline
-        $result = $this->model->load(['ID' => $id]);
+        $result = $this->model->load(['ID' => $id, 'post_status'   => ['open', 'publish', '0']]);
 
         //Verifica se post existe
         if (!$result) {
@@ -98,8 +98,9 @@ class Timeline {
 
         //Retorna todos posts de feed baseado nas conexões
         $allTimelines = $this->model->getIterator([
-            'post_author'   =>  $following,
-            'post_type'     =>  static::TYPE,
+            'post_author'   => $following,
+            'post_type'     => static::TYPE,
+            'post_status'   => ['open', 'publish', '0'],
             'ORDER'         => ['post_date' => 'DESC'],
             'LIMIT'         => $limit
         ]);
@@ -176,6 +177,7 @@ class Timeline {
         $allTimelines = $this->model->getIterator([
             'post_author'   =>  $this->currentUser->ID,
             'post_type'     =>  static::TYPE,
+            'post_status'   => ['open', 'publish', '0'],
             'ORDER'         => ['post_date' => 'DESC'],
             'LIMIT'         => $limit
         ]);
@@ -502,8 +504,19 @@ class Timeline {
         //Se usuário for pertecente a um clube, adicionar visibilidade para posts privados para somente os pertencentes ao clube
         if (!is_null($this->currentUser->clubs)) {
             foreach ($this->currentUser->clubs as $key => $value) {
-                if(key_exists('ID', $value)){
-                    $levels[] = ['option' => $value['club_name'], 'value' => $value['ID']];
+                if(key_exists('ID', $value)) {
+                    
+                    //Só permitir clubes que foram verificados com sucesso
+                    if($value['certify'] != 'Verified'){
+                        continue;
+                    }
+
+                    //Instanciando classe de usuário
+                    $user = new User();
+                    $user = $user->getUser($value['ID']);
+
+                    //Atribuindo um novo paarametro ao select
+                    $levels[] = ['option' => $user->display_name, 'value' => $value['ID']];
                 }                
             } 
         }

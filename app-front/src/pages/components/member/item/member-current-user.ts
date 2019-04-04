@@ -13,7 +13,7 @@ import { User } from '../../../../providers';
 
                 <ion-avatar class="btn-cursor img-center" item-end> 
                     
-                    <img *ngIf="member.metadata.profile_img, else elseBlock" 
+                    <img *ngIf="member.metadata.profile_img.value, else elseBlock" 
                     [src]="member.metadata.profile_img.value" />
                     <ng-template #elseBlock>
                         <img src="assets/img/user.png" [title]="member.display_name" />
@@ -69,6 +69,9 @@ export class MemberUser {
         }
     };
 
+    public pageElement:any;
+    public notifyElement:any;
+
     constructor(
         public user: User,
         public navCtrl: NavController,
@@ -79,7 +82,10 @@ export class MemberUser {
 
 
     ngOnInit() {
-        
+        //Adicionar popup ao elemento para sobrepor header
+        this.pageElement = document.getElementsByTagName('ion-app');
+        this.pageElement[0].appendChild(this.pageElement[0].querySelector('.popover-menu')); 
+        this.notifyElement = document.getElementsByClassName('popover-menu');
     }
 
     //Abrir popup notificação
@@ -87,34 +93,25 @@ export class MemberUser {
 
         $event.preventDefault();
 
+        let popup   = this.notifyElement[0]; 
+        let page    = document.querySelector('.page-dashboard');
+
         //Se tamanho da tela menor que definido, não exibir menu
+        //Define a posicao do elemento popup 
         if (window.innerWidth < 576) {
-            return false;  
+           return;
         } 
 
-        //Adiciona ao elemento pai
-        let page = document.getElementsByTagName('page-dashboard');        
-        let find = page[0].querySelector('.popover-menu');
-        let popup: any = find;
+        popup.style.left = ($event.pageX - 250) + 'px'; 
 
-        //Define a posicao do elemento popup
-        popup.style.left = ($event.pageX - 250) + 'px';
-
-        //Adicionar popup ao elemento para sobrepor header
-        page[0].appendChild(popup);
-
-        setTimeout(function () {
-            popup.classList.add('open');
-        }, 300)
-
-        //Ao clicar fora da área de notificação >> fechar
-        popup.addEventListener('mouseout', function () {
-            page[0].addEventListener('click', function (ev) {
-                if (ev.target != popup.children) {
-                    popup.classList.remove('open');
-                }
-            });
-        });
+        //Adicionar classe para visualizar
+        popup.classList.toggle('open');
+        
+        //Ao clicar fora da área de notificação >> fechar    
+        page.addEventListener('click', function(ev){
+            ev.preventDefault(); 
+            popup.classList.remove('open'); 
+        });  
 
     }
 

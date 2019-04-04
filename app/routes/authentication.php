@@ -14,6 +14,9 @@ $router->group(['prefix' => 'login'], function () use ($router) {
 /** ####### REGISTER ################# */
 $router->group(['prefix' => 'register'], function () use ($router) {
 
+    //Verifica se existe usuário com email
+    $router->post('/exist', 'LoginController@isUserExist');
+
     //Registrar uma nova conta
     $router->post('/', 'LoginController@register');
 

@@ -12,6 +12,7 @@ require_once 'follow.php';
 require_once 'like.php';
 require_once 'favorite.php';
 require_once 'chat.php';
+require_once 'comment.php';
 
 /*
 |--------------------------------------------------------------------------

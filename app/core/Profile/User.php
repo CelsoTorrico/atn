@@ -17,6 +17,7 @@ use Core\Profile\Resume\Resume;
 use Core\Service\Favorite;
 use Core\Service\Follow;
 use Core\Service\Chat;
+use Core\Service\Notify;
 
 use Closure;
 use aryelgois\Medools\ModelIterator;
@@ -41,6 +42,7 @@ class User extends GenericUser{
     public $following; //Selo de seguido
     public $totalFavorite; //Selo de favoritado
     public $totalMessages; //Selo de seguido
+    public $totalNotifications; //Quantidade de notificações
     public $user_email; //email
     
     //Contrução da classe
@@ -72,20 +74,20 @@ class User extends GenericUser{
 
         //Retorna usuário
         $this->get($id, $this);
-
-        /** Dados Apenas para usuários logados */
         
         //Carrega classes
-        $messages = new Chat($this);
-        $fav = new Favorite($this);
+        $messages   = new Chat($this);
+        $fav        = new Favorite($this);
+        $notify     = new Notify($this);
 
         //totais de propriedades do usuário
         $this->setVars([
             'totalFavorite'  => [
                 'otherFavorite' => $fav->getTotal('from_id'),
-                'myFavorites' => $fav->getTotal()
+                'myFavorites'   => $fav->getTotal()
             ],
-            'totalMessages'  => $messages->getTotal()
+            'totalMessages'         => $messages->getTotal(),
+            'totalNotifications'    => $notify->getTotal()
         ]); 
 
         return $this;        
@@ -229,7 +231,11 @@ class User extends GenericUser{
     public function getStats(int $id = null){
 
         //Se id for null, mostrar dados do usuário corrente
-        $user = (is_null($id))? $this : $this->get($id); 
+        if (is_null($id)){
+            $user = $this->getUser($this->ID);
+        } else {
+            $user = $this->getUser($id); 
+        }
         
         //Campos gerais de estatisticas
         $stats = new UserStats($user->metadata, $user->type['ID'], $user->sport);
@@ -243,7 +249,7 @@ class User extends GenericUser{
     }
 
     /** REtorna usuários com relevancia ao perfil logado 
-     *  TODO: Fazer validação de somente mostrar usuários com os 2 critérios
+     *
     */
     public function getFriendsSuggestions(){
 
@@ -604,10 +610,14 @@ class User extends GenericUser{
     }
 
     /** Retorna Tipo de usuário */
-    public function getUserType($ID) {
-        return $this->_getType($ID = null);
+    public function getUserType($ID = null) {
+        return $this->_getType($ID);
     }
 
+    /** Retorna erro email de usuário existente */
+    public function isUserEmailExist(string $email) {
+        return $this->can_update_user_email($email);
+    }
 
     /* Addicionar um único usuário */
     public function add($data){
@@ -720,7 +730,7 @@ class User extends GenericUser{
             $this->metaModel = new UsermetaModel();
 
             //Se for novo usuário usa valor enviado
-            if( is_null($getType = $this->_getType($primaryKey)) ){
+            if( is_null($getType = $this->_getType($primaryKey['ID'])) ){
                 //Se não definido usa valor padrão 1
                 $type = (isset($filtered['type']) 
                 && !empty($filtered['type']))? $filtered['type'] : 1;
@@ -770,7 +780,7 @@ class User extends GenericUser{
         //Retorna instancia de modelo
         $meta = $this->metaModel->getInstance(['user_id' => $user_id,'meta_key' => $meta_key]);
 
-        //Enviar notificação para clube e adicionar marcador
+        //Enviar notificação para clube e adicionar marcador 
         if($check && is_array($meta_value) && $meta_key == 'clubes') {
             
             //Inicializa array local
@@ -952,7 +962,7 @@ class User extends GenericUser{
         $email->setFromName($this->display_name);
         $email->setToEmail(['email' => $user->user_email, 'name' => $user->display_name]);
         $email->setSubject($this->display_name . ' enviou uma mensagem para você | AtletasNow');
-        $email->setContent($data['message_content']);
+        $email->setContent('<p style="color:#444;font-size:14px;">' . $data['message_content'] . '</p>');
 
         //Executando disparo
         return $email->send();
@@ -1047,7 +1057,7 @@ class User extends GenericUser{
      * 
      * @return mixed
      */
-    private function _getType($ID = null) {
+    private function _getType(int $ID = null) {
 
         if(is_null($ID)){
             return null;
@@ -1058,7 +1068,6 @@ class User extends GenericUser{
 
         //Verifica se existe metadado 'type'
         if(!$typeExist = $type->load(['user_id' => $ID, 'meta_key' => 'type'])){
-            
             $capabilities = $type->getInstance(['user_id' => $ID, 'meta_key' => 'at_capabilities']);
         }
 
@@ -1068,7 +1077,7 @@ class User extends GenericUser{
         }
         
         //Habilitando compatibilidade com definição de tipo de usuário da v1.0
-        if(isset($capabilities) && is_object($capabilities)){
+        if(!$typeExist && isset($capabilities) && is_object($capabilities)){
             $validTypes = ['atleta' => 1, 'faculdade' => 3, 'clube' => 4];
             $currentTypes = unserialize($capabilities->meta_value);
             $type->meta_value = 1;
@@ -1082,6 +1091,7 @@ class User extends GenericUser{
         //Instancia Modelo de Classe 
         $usertypeModel = new UsertypeModel(['ID' => $type->meta_value]);
 
+        //Se não retornar nenhum resultado retornar nulo
         if (! $result = $usertypeModel->getData() ) {
             return null;
         }
@@ -1266,9 +1276,10 @@ class User extends GenericUser{
             'clubs'         => 'clubs',
             'user_email'    => 'user_email',
             'favorite'      => 'favorite',
+            'following'     => 'following',
             'totalFavorite' => 'totalFavorite',
             'totalMessages' => 'totalMessages',
-            'following'     => 'following'
+            'totalNotifications'   => 'totalNotifications'
         );
 
         foreach ($valid as $key => $value) {

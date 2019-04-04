@@ -28,7 +28,7 @@ class Comment {
         }
         
         //Carrega comentário mais recente do post
-        $commentExist = $this->model->load(['comment_post_ID' => $post_id]);
+        $commentExist = $this->model->load(['comment_post_ID' => $post_id, 'comment_status' => 0]);
             
         //Adiciona valores de usuario as variaveis da classe
         return ($commentExist) ? $this->get($this->model->comment_ID) : null;
@@ -44,7 +44,7 @@ class Comment {
         }
 
         //Pesquisa comentários do post
-        $search = ['comment_ID' => $id];
+        $search = ['comment_ID' => $id, 'comment_status' => 0];
             
         //Inicializa modelo
         $commentExist = $this->model->load($search);
@@ -78,8 +78,9 @@ class Comment {
 
         //Inicializa classe de iteração sobre comentários (BD)
         $allcomments = $this->model->getIterator([
-            'comment_post_ID' => $this->comment_post_ID,
-            'comment_parent'  => 0, //Retornar somente comentários mestres
+            'comment_post_ID'   => $this->comment_post_ID,
+            'comment_parent'    => 0, //Retornar somente comentários mestres,
+            'comment_status'    => 0,
             'ORDER' => ['comment_date' => 'DESC']
         ]);
 
@@ -122,7 +123,10 @@ class Comment {
     public function getQuantity(){
 
         //Retorna todos os comentários do post
-        $allcomments = $this->model->getIterator(['comment_post_ID' => $this->comment_post_ID]);
+        $allcomments = $this->model->getIterator([
+            'comment_post_ID'   => $this->comment_post_ID,
+            'comment_status'    => 0
+        ]);
 
         //Verifica se é nulo = não existe comentário
         if (!$allcomments || $allcomments->count() <= 0) {
@@ -138,7 +142,8 @@ class Comment {
 
         $responseList = $this->model->dump([
             'comment_post_ID'   =>  $this->comment_post_ID,
-            'comment_parent'    =>  $this->comment_ID
+            'comment_parent'    =>  $this->comment_ID,
+            'comment_status'    => 0
         ]);
 
         //Verifica se é nulo = não existe comentário
@@ -188,6 +193,27 @@ class Comment {
         else{
             //Mensagem de erro no cadastro
             return ['error' => ['cooment' => 'Houve erro ao registrar comentário! Tente novamente mais tarde.']];
+        }
+    }
+
+    /** Deletar um comentário  */
+    function delete(int $ID, int $user_id){
+        
+        // Verifica se comentário pertence ao usuário de contexto de ação
+        if(!$this->model->load(['comment_ID' => $ID, 'user_id' => $user_id])){
+            return ['error' => ['comment' => 'O registro do comentário não existe.']];
+        }; 
+
+        //Salva os dados no banco
+        $result = $this->model->delete();
+
+        //SE resultado for true, continua execução
+        if($result){
+            //Mensagem de sucesso no cadastro
+            return ['success' => ['comment' => 'Comentário deletado!']];
+        } else {
+            //Mensagem de erro no cadastro
+            return ['error' => ['comment' => 'Houve erro ao deletar comentário! Tente novamente mais tarde.']];
         }
     }
 

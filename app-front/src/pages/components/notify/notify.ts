@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class Notify {
 
   //Contagem de notificações
-  public notifyCount:number;
+  @Input() public notifyCount:number;
   
   //Parametros de URL
   @Input() public notifyID:number;
@@ -21,6 +21,9 @@ export class Notify {
   
   //Lista de Items
   @Input() public currentNotifyItems:any[] = [];
+
+  public pageElement:any;
+  public notifyElement:any;
 
   constructor(
     public api: Api,
@@ -45,7 +48,12 @@ export class Notify {
     }
 
     this.query();
-    
+
+    //Adicionar popup ao elemento para sobrepor header
+    this.pageElement = document.getElementsByTagName('ion-app');
+    this.pageElement[0].appendChild(this.pageElement[0].querySelector('.popover-notify')); 
+    this.notifyElement = document.getElementsByClassName('popover-notify');
+
   }
 
   query(){
@@ -59,7 +67,6 @@ export class Notify {
         
       //Retorna array de timelines
       this.currentNotifyItems = resp;
-      this.notifyCount = this.currentNotifyItems.length; 
 
     }, err => { 
         return; 
@@ -73,7 +80,21 @@ export class Notify {
       this.currentNotifyItems.splice($i, 1);
       
       //Diminui um item na contagem
-      this.notifyCount = this.notifyCount - 1;
+      //this.notifyCount = this.notifyCount - 1;
+  }
+
+  //Marca todas notificações como lida
+  allNotifyAsRead(){
+
+    if(this.notifyCount > 0){
+      
+      //Diminui um item na contagem
+      this.notifyCount = undefined; 
+
+      //Retorna a lista de esportes do banco e atribui ao seletor
+      this.api.put(Notify.$getNotify + this.$url, []).subscribe();  
+    }
+
   }
 
   //Abrir popup notificação
@@ -81,10 +102,8 @@ export class Notify {
     
     $event.preventDefault();
 
-    //Adiciona ao elemento pai
-    let page = document.getElementsByTagName('page-dashboard');
-    let find = page[0].querySelector('.popover-notify');
-    let popup:any = find;
+    let popup   = this.notifyElement[0]; 
+    let page    = document.querySelector('.page-dashboard');     
 
     //Define a posicao do elemento popup 
     if (window.innerWidth > 768) {
@@ -93,20 +112,15 @@ export class Notify {
       popup.style.left = 'inherit'; 
     } 
     
-    //Adicionar popup ao elemento para sobrepor header
-    page[0].appendChild(popup);
+    //Adicionar classe para visualizar
+    popup.classList.toggle('open');
 
-    setTimeout(function(){
-      popup.classList.add('open'); 
-    }, 300)
-
-    //Ao clicar fora da área de notificação >> fechar
-    popup.addEventListener('mouseout', function(){
-        page[0].addEventListener('click', function(ev){
-          if(ev.target != popup.children){
-            popup.classList.remove('open');
-          }
-        });
+    this.allNotifyAsRead();
+    
+    //Ao clicar fora da área de notificação >> fechar    
+    page.addEventListener('click', function(ev){
+      ev.preventDefault(); 
+      popup.classList.remove('open'); 
     });
 
   }

@@ -18,7 +18,7 @@ import { User } from '../../../providers';
   `,
     styles: [``]
 })
-export class MemberCurrentMenu {
+export class MemberCurrentMenu { 
 
     pages: any;
 

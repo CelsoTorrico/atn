@@ -28,6 +28,12 @@ class NotifyController extends Controller
         return response()->json($response);
     }
 
+    /** Retorna lista de notificações */
+    function update(){
+        $response = $this->notify->update();
+        return response()->json($response);
+    }
+
     /** Esconder notificação */
     function delete($id){
         return response($this->notify->delete($id));

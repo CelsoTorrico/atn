@@ -1,22 +1,33 @@
-$padding-top: $toolbar-wp-height + 40px;
+$padding-top: $toolbar-wp-height+40px;
 
-.profile-suggestions{
-    
+.page-favorite {
+
+  .profile-suggestions {
+
     @media screen and (min-width: 768px) {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;    
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
     }
 
-    
-    
-    padding: $padding-top 25px; 
+    padding: $padding-top 25px;
     background: linear-gradient(to top, $button-primary-color, $vermelho-contraste);
     color: $branco;
 
-    h1, h2, ion-list-header{
-        color: $branco !important;
+    h1,
+    h2,
+    ion-list-header {
+      color: $branco !important;
     }
-    
+
+  }
+
+  #favorites-col {
+
+    ion-list {
+      margin: 30px auto;
+    }
+  }
+
 }

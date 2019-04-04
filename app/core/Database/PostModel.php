@@ -24,7 +24,8 @@ class PostModel extends Medools\Model
         'post_mime_type',
         'post_parent',
         'post_title',
-        'post_excerpt'
+        'post_excerpt',
+        'post_status'
     ];
 
     const OPTIONAL_COLUMNS = [
@@ -37,7 +38,7 @@ class PostModel extends Medools\Model
 
     const STAMP_COLUMNS = [
         'post_date' => 'datetime',
-        'post_modified' => 'auto'
+        'post_modified' => 'datetime'
     ];
 
     const FOREIGN_KEY = [
@@ -46,5 +47,9 @@ class PostModel extends Medools\Model
             'post_id'
         ]
     ];
+
+    const SOFT_DELETE = 'post_status';
+
+    const SOFT_DELETE_MODE = 'deleted';
 
 }

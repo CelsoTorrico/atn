@@ -1,6 +1,12 @@
-<ion-item class="comment-item" *ngFor="let currentItem of currentCommentItems">
-  <ion-list>
+<ion-item class="comment-item" *ngFor="let currentItem of currentCommentItems; let i = index">
+
+  <ion-list> 
+
     <article>
+
+      <div *ngIf="currentUser.ID == currentItem.user_id" class="close-button" (click)="deleteComment(currentItem.comment_ID, i)">
+          <ion-icon name="close-circle"></ion-icon>
+      </div>
 
       <header (click)="goToProfile(currentItem.user_id)">
         {{ currentItem.comment_author }}
@@ -20,14 +26,15 @@
       <ion-item>
 
         <ion-avatar class="btn-cursor" item-start>
-          <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+          <img *ngIf="currentUser.metadata.profile_img.value, else elseBlock"
+            [src]="currentUser.metadata.profile_img.value" />
           <ng-template #elseBlock>
             <img src="assets/img/user.png" alt="currentUser.display_name" />
           </ng-template>
         </ion-avatar>
 
-        <ion-input name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
-          required></ion-input>
+        <ion-input name="comment_content" [(ngModel)]="commentText" type="text"
+          placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-input>
 
       </ion-item>
 
@@ -61,14 +68,15 @@
         <ion-item>
 
           <ion-avatar class="btn-cursor" item-start>
-            <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+            <img *ngIf="currentUser.metadata.profile_img, else elseBlock"
+              [src]="currentUser.metadata.profile_img.value" />
             <ng-template #elseBlock>
               <img src="assets/img/user.png" alt="currentUser.display_name" />
             </ng-template>
           </ion-avatar>
 
-          <ion-input name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
-            required></ion-input>
+          <ion-input name="comment_content" [(ngModel)]="commentText" type="text"
+            placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-input>
 
         </ion-item>
 

@@ -103,7 +103,7 @@ export class StatsComponent {
       this.performance = resp.performance; 
 
     }, err => {
-      return;
+      return; 
     });
   }
 
@@ -118,6 +118,10 @@ export class StatsComponent {
     //Criar modal do respectivo component
     let modal = this.modalCtrl.create(this.ListComponents[$component], {data: $data});
     modal.onDidDismiss((data) => {
+
+        if(data == null){
+          return;
+        }
         
         if (Object.keys(data).length <= 0) {
           return;

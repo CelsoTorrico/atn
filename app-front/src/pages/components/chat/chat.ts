@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class Chat {
 
-    @Input() public $roomID: number;
+    @Input() public $roomID: number; 
 
     public currentUser:any = {
         ID: <number>null
@@ -56,6 +56,8 @@ export class Chat {
         //Função que executa após o envio de mensagens
         //Recupera dados do socket.IO
         this.getMessages().subscribe((message:any) => {
+
+            console.log(message); 
 
             //Se string estiver vazia
             if(message == ''){
@@ -110,7 +112,7 @@ export class Chat {
 
     //Quando a view estiver carregada
     ngAfterContentInit() {
-        this.activeChat();
+        this.activeChat();  
     }
 
     //Quando ocorrer mudança nos atributos da classe
@@ -125,16 +127,19 @@ export class Chat {
     //Abre chat com mensagens
     private getRoomMessages() {
 
+        //Reseta mensagens da room antes de trazer novas mensagens
+        this.$chatMessages = [];
+
         //Retorna a lista de esportes do banco e atribui ao seletor
         this.api.get(Chat.$getChatMessagesUrl + this.$roomID).subscribe((resp: any) => {
 
             //Se não existir items a exibir
-            if (resp.length <= 0) {
+            if (Object.keys(resp).length <= 0) {
                 return;
             }
 
             //Exibe erro
-            if (resp.error) {
+            if (resp.error != undefined) {
                 this.$chatNoMessages = resp.error.chat;
                 this.$chatMessages = [];
                 return;
@@ -167,7 +172,7 @@ export class Chat {
 
     }
 
-    //Abre uma nova página de profile
+    //Abre uma nova room de mensagens
     addRoomMessage($event) {
 
         $event.preventDefault();
@@ -198,10 +203,10 @@ export class Chat {
         let chats:NodeListOf<HTMLElement> = document.querySelectorAll("member-chat button");
         Array.from(chats).forEach(function(element, index) {
             element.style.backgroundColor = "#ffffff";
-            if(element.classList.contains('activated') || element.id == 'chat' + this.$roomID) {
+            if(element.classList.contains('activated') || (this.$roomID != undefined && element.id == 'chat' + this.$roomID)) { 
                 element.style.backgroundColor = "#eeeeee";
-            }        
-        });        
+            }      
+        }, this);        
     }
 
 }

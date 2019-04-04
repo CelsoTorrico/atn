@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Core\Service\Timeline as Timeline;
+use Core\Service\Comment as Comment;
 use Core\Profile\User;
 
 use Closure;
@@ -163,6 +164,13 @@ class TimelineController extends Controller
         
         //Resposta da adicão
         return response()->json($response);
+    }
+
+    function deleteComment(int $id){
+        //Instancia classe de comentário
+        $comment = new Comment();
+        //Executa exclusão e retorna mensagem
+        return response($comment->delete($id, $this->currentUser->ID));
     }
 
 }

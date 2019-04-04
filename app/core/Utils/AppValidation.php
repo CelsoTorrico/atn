@@ -101,8 +101,8 @@ class AppValidation
     function check_user_inputs($data) {
 
         $important = array(
-            'type'          => '[1-4]{1}',
-            'display_name'  => '[\sa-zA-Zéêáâãíóôõúûü]+',
+            'type'          => '[1-5]{1}',
+            'display_name'  => '.*',
             'user_pass'     => FILTER_SANITIZE_STRING,
             'user_email'    => FILTER_VALIDATE_EMAIL, 
             'cpf'           => array('validation', 'cpf'), 

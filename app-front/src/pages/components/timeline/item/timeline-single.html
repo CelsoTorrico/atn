@@ -4,7 +4,8 @@
     <ion-item>
 
       <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
-        <img *ngIf="currentTimeline.post_author.profile_img, else elseBlock" [src]="currentTimeline.post_author.profile_img.value" />
+        <img *ngIf="currentTimeline.post_author.profile_img.value, else elseBlock" 
+        [src]="currentTimeline.post_author.profile_img.value" />
         <ng-template #elseBlock>
           <img src="assets/img/user.png" />
         </ng-template>
@@ -65,7 +66,8 @@
       <ion-col col-auto>
         <ion-item>
           <ion-avatar class="btn-cursor" item-start>
-            <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" />
+            <img *ngIf="currentUser.metadata.profile_img.value, else elseBlock" 
+            [src]="currentUser.metadata.profile_img.value" />
             <ng-template #elseBlock>
               <img src="assets/img/user.png" alt="currentUser.display_name" />
             </ng-template>

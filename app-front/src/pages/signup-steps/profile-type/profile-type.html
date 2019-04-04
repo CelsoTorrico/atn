@@ -3,16 +3,17 @@
   <ion-grid fixed>
 
     <ion-item>
-      <ion-img width="275" height="38" src="assets/img/atletasnow-logotipo.svg" id="main-logo" class="img-center" title="AtletasNOW"></ion-img>
+      <ion-img width="275" height="38" src="assets/img/atletasnow-logotipo.svg" id="main-logo" class="img-center"
+        title="AtletasNOW"></ion-img>
     </ion-item>
 
     <!-- Steps -->
     <ion-row class="steps-count">
       <ion-col>
-        <span class="actived">1</span>{{ 'STEP' | translate }} 1
+        <span>1</span>{{ 'STEP' | translate }} 1
       </ion-col>
       <ion-col>
-        <span>2</span>{{ 'STEP' | translate }} 2
+        <span class="actived">2</span>{{ 'STEP' | translate }} 2
       </ion-col>
     </ion-row>
 
@@ -21,21 +22,24 @@
         <form #registerForm="ngForm" (submit)="submitRegister(registerForm); $event.preventDefault()">
 
           <!-- Selecionar tipo de usuário -->
-          <ion-item no-padding>
-            <ion-label>{{ 'PROFILE' | translate}}</ion-label>
-            <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full required>
-              <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
-                {{item.texto}}
-              </ion-option>
-            </ion-select>
-          </ion-item>
+          <ion-row no-padding>
+            <ion-col col-12>
+              <ion-label stacked>{{ 'PROFILE' | translate}}</ion-label>
+              <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full required>
+                <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
+                  {{item.texto}}
+                </ion-option>
+              </ion-select>
+            </ion-col>
+          </ion-row>
 
           <!-- Selecionar tipo de usuário -->
           <ion-row no-padding>
-            <ion-label>{{ 'SPORT' | translate}}</ion-label>
             <ion-col col-12>
-              <rl-tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false" [autocomplete]="true" [autocompleteItems]="$sportList"
-                placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected" required>
+              <ion-label stacked>{{ 'SPORT' | translate}}</ion-label>
+              <rl-tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false" [autocomplete]="true"
+                [autocompleteItems]="$sportList" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected"
+                required>
               </rl-tag-input>
             </ion-col>
           </ion-row>
@@ -43,26 +47,25 @@
           <!-- Campos especifícos para Atletas e Profissionais -->
           <ion-item-group *ngIf="$typeUserSelected != undefined" no-padding>
 
-            <ion-row *ngIf="$typeUserSelected < 3">
+            <ion-row no-padding *ngIf="$typeUserSelected < 3">
               <ion-col col-12>
-                <ion-item no-padding>
-                  <ion-select id="gender" [(ngModel)]="$account.gender" name='gender' placeholder="{{ 'GENDER' | translate}}"
-                    full required>
-                    <ion-option *ngFor="let item of $genderList" [value]="item.valor">
-                      {{item.texto}}
-                    </ion-option>
-                  </ion-select>
-                </ion-item>
+                <ion-label stacked>{{ 'GENDER' | translate}}</ion-label>
+                <ion-select id="gender" [(ngModel)]="$account.gender" name='gender' full required>
+                  <ion-option *ngFor="let item of $genderList" [selected]="item.valor == 'male'" [value]="item.valor">
+                    {{item.texto}}
+                  </ion-option>
+                </ion-select>
               </ion-col>
             </ion-row>
 
-            <ion-row *ngIf="$typeUserSelected >= 3">
+            <ion-row no-padding *ngIf="$typeUserSelected >= 3">
               <ion-col col-12>
+                <ion-label stacked>{{ 'CNPJ' | translate}}</ion-label>
                 <ion-input type="numero" [(ngModel)]="$account.cnpj" name="cnpj" placeholder="CNPJ"></ion-input>
               </ion-col>
             </ion-row>
 
-            <ion-row>
+            <!--<ion-row>
               <ion-col col-12>
                 <ion-item no-padding>
                   <ion-input id="endereco" [(ngModel)]="$account.address" type="text" name="address" placeholder="{{'ADDRESS' | translate}}"
@@ -101,11 +104,11 @@
                   <ion-input type="text" [(ngModel)]="$account.country" name="country" placeholder="{{'COUNTRY' | translate}}"></ion-input>
                 </ion-item>
               </ion-col>
-            </ion-row>
+            </ion-row>-->
 
           </ion-item-group>
 
-          <button type="submit" ion-button full>{{'NEXT' | translate}}</button>
+          <button type="submit" ion-button full>{{'CONFIRM_REGISTER' | translate}}</button>
 
           <p *ngIf="$error">{{$error}}</p>
 
