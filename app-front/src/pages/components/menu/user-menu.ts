@@ -56,7 +56,7 @@ export class UserMenu {
         this.cookieService.delete('app_atletas_now');
 
         toast.present({
-          ev: this.navCtrl.push('LoginPage')
+          ev: this.navCtrl.setRoot('LoginPage')
         });
 
       }

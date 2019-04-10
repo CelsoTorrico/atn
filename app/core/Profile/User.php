@@ -418,8 +418,8 @@ class User extends GenericUser{
         //Retorna html
         $html = $resume->returnHTML();
 
-        //Carreg classe de composição de PDFS e especifica caminho de download
-        $mpdf = new \Mpdf\Mpdf(['tempDir' => env("APP_FILES") .'/pdf']);
+        //Carrega classe de composição de PDFS e especifica caminho de download
+        $mpdf = new \Mpdf\Mpdf();
 
         //Escreve dados no PDF
         $mpdf->WriteHTML($html);
@@ -431,8 +431,7 @@ class User extends GenericUser{
         $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
 
         //Retorna string com caminho do arquivo
-        //return __DIR__ .'/public/pdf/' . $filename;
-        return env("APP_FILES") . '/pdf/'. $filename;
+        return $filename;
     }
 
     /* Retorna lista de usuários */
@@ -813,9 +812,16 @@ class User extends GenericUser{
             //Setando estatisticas do banco
             $stats->arrangeStatsToUpdate($meta_value);
 
-            //Retorna estatisticas formatada corretamente para inserir
+            //Armazena visibilidade
+            $visibility = $meta_value['visibility'];
+            
             unset($meta_value);
-            $meta_value = $stats->getStatsToUpdate();
+
+            //Retorna estatisticas formatada corretamente para inserir
+            $meta_value = $stats->getStatsToUpdate(); //Já retorna com key value
+
+            //Atribui novamente visibilidade ao array
+           $meta_value['visibility'] = $visibility;
 
         }
 
@@ -835,10 +841,11 @@ class User extends GenericUser{
             $fields = ['meta_value'];
 
             //Verifica se visibilidade foi definida e add novo valor
-            if(isset($meta_value['visibility'])){
+            if(isset($meta_value['visibility']) && $meta_value != 0){
                 //Verifica se visibilidade enviada é válida
-                $meta->visibility = $this->appVal->check_user_input_visibility($meta_value['visibility']);
-                $fields[] = 'visibility';
+                $visibility = $this->appVal->check_user_input_visibility($meta_value['visibility']);
+                $meta->visibility = (string) $visibility;
+                $fields[] = 'visibility'; 
             }
             
             //Faz update e retorna ID de resultado
@@ -1009,7 +1016,7 @@ class User extends GenericUser{
             $meta_value = $value['meta_value'];
 
             //Verifica permissão do atributo de perfil
-            if(!$this->hasPermission($value) || empty($value['meta_value'])) {
+            if(($ID != $this->ID && !$this->hasPermission($value)) || empty($value['meta_value'])) {
                 continue;
             }
 
@@ -1031,7 +1038,7 @@ class User extends GenericUser{
             }
 
             //Retorna visibilidade
-            $addVisibility = $value['visibility'];
+            $addVisibility = (int) $value['visibility'];
 
             $formated[$meta_key]['value'] = $addValue;
             $formated[$meta_key]['visibility'] = $addVisibility;

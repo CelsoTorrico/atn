@@ -11,7 +11,7 @@
   </ion-header>
   <ion-content>
     <ion-list>
-      <member-current-menu></member-current-menu><!-- Menu-do-Usuário -->
+      <member-current-menu [messageCount]="info.messages"></member-current-menu><!-- Menu-do-Usuário -->
     </ion-list>
   </ion-content>
 </ion-menu>
@@ -59,7 +59,7 @@
     <ion-row>
       <ion-col col-auto col-md>
 
-        <nav-menu></nav-menu><!-- Menu de navegação -->
+        <nav-menu [messageCount]="info.messages"></nav-menu><!-- Menu de navegação -->
 
       </ion-col>
       <ion-col col-auto col-lg-4 align-self-end>
@@ -76,11 +76,19 @@
 </ion-header>
 
 <ion-content class="page-dashboard">
-
+  
   <ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Puxe para carregar" refreshingSpinner="circles"
-      refreshingText="Carregando..."></ion-refresher-content>
-  </ion-refresher>
+    <ion-refresher-content pullingIcon="arrow-dropdown" [pullingText]="'REFRESH_BUTTON' | translate" refreshingSpinner="circles"
+      [refreshingText]="'LOADING' | translate"></ion-refresher-content>
+  </ion-refresher><!-- Puxando a tela -->
+
+  <p class="refresh" text-center *ngIf="btn_refresh">
+    {{ 'REFRESH_TEXT' | translate }}
+    <button ion-button small outline mr-15 (click)="doRefresh($event);">
+      {{ 'REFRESH_BUTTON' | translate }}
+    </button> 
+  </p><!-- Botão que aparece a cada 30 segundos -->
+  
 
   <ion-grid fixed>
 
@@ -96,7 +104,11 @@
         </ion-card-header>
         <ion-card-content>
           <div class="video-container">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/c0Qu8T0a3KI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <video controls>
+                <source src="https://s3-sa-east-1.amazonaws.com/app-atletasnow/videos/welcome_to_atletasnow.ogv" type="video/ogv">
+                <source src="https://s3-sa-east-1.amazonaws.com/app-atletasnow/videos/welcome_to_atletasnow.mp4" type="video/mp4">
+                  Seu browser não suporta embed de vídeos.
+              </video>
           </div>
         </ion-card-content>
       </ion-card>
@@ -240,6 +252,8 @@
 
                   </ion-item>
 
+                  <div id="preview" class="image-container"></div>
+
                 </ion-col>
                 <ion-col col-6>
                   <div class="input-image">
@@ -249,10 +263,8 @@
                       <span>{{ "ATTACH_IMAGE" | translate }}</span>
                     </label>
 
-                    <div id="preview" class="image-container"></div>
-
-                    <input ion-button outline id="post_image" (change)="fileChangeEvent($event)" type="file"
-                      name="post_image" [(ngModel)]="addTimeline.post_image" />
+                    <input id="post_image" [(ngModel)]="addTimeline.post_image" (change)="fileChangeEvent($event)" type="file"
+                      name="post_image" accept="image/*" capture/>
 
                   </div>
                 </ion-col>

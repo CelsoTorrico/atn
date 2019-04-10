@@ -491,14 +491,14 @@ class Timeline {
         
         //Aplicando a lista de visibilidade
         foreach ($usertypes as $item) {
-            $levels[] = ['option' => $item->type, 'value' => $item->ID];
+            $levels[] = ['option' => $item->type, 'value' => (int) $item->ID];
         }        
 
         //Se usuário for um clube, adicionar visibilidade para posts privados para somente os pertencentes ao grupo
         if ((int)$this->currentUser->type['ID'] > 2) {
             $levels[] = [
                 'option'    => $this->currentUser->display_name, 
-                'value'     => $this->currentUser->ID];
+                'value'     => (int) $this->currentUser->ID];
         }
 
         //Se usuário for pertecente a um clube, adicionar visibilidade para posts privados para somente os pertencentes ao clube
@@ -516,7 +516,7 @@ class Timeline {
                     $user = $user->getUser($value['ID']);
 
                     //Atribuindo um novo paarametro ao select
-                    $levels[] = ['option' => $user->display_name, 'value' => $value['ID']];
+                    $levels[] = ['option' => $user->display_name, 'value' => (int) $value['ID']];
                 }                
             } 
         }

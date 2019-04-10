@@ -1,6 +1,6 @@
 import { CookieService } from 'ng2-cookies';
 import { ToastController } from 'ionic-angular';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { User } from '../../../providers';
@@ -10,7 +10,12 @@ import { User } from '../../../providers';
     template: `
     
     <ion-list>
-        <button ion-item *ngFor="let nav of pages | mapToIterable " (click)="goToPage(nav.val)">{{ nav.key | translate }}</button>
+        <button ion-item *ngFor="let nav of pages | mapToIterable " (click)="goToPage(nav.val)">
+            {{ nav.key | translate }}
+            <ion-badge class="messageCount" *ngIf="nav.key == 'MESSAGES' && messageCount > 0">
+                {{ messageCount }}
+            </ion-badge>
+        </button>
         
         <button ion-item class="btn-cursor" (click)="doLogout()">{{ "LOGOUT" | translate }}</button>
         
@@ -21,6 +26,8 @@ import { User } from '../../../providers';
 export class MemberCurrentMenu { 
 
     pages: any;
+
+    @Input() messageCount:number = 0;
 
     constructor(
         public navCtrl: NavController,
@@ -34,12 +41,12 @@ export class MemberCurrentMenu {
         // used for an example of ngFor and navigation
         this.pages = {
             "MY_PROFILE": "ProfilePage",
-            "FAVORITE": "FavoritePage",
-            "LEARN": "LearnPage",
-            "MESSAGES": "ChatPage",
-            "SEARCH": "SearchPage",
-            "FAQ": "",
-            "SUPPORT": ""
+            "FAVORITE"  : "FavoritePage",
+            "LEARN"     : "LearnPage",
+            "MESSAGES"  : "ChatPage",
+            "SEARCH"    : "SearchPage",
+            "FAQ"       : "",
+            "SUPPORT"   : ""
         };
     }
 
@@ -72,7 +79,7 @@ export class MemberCurrentMenu {
                 this.cookieService.delete('app_atletas_now'); 
 
                 toast.present({
-                    ev: this.navCtrl.push('LoginPage')
+                    ev: this.navCtrl.setRoot('LoginPage')
                 });
 
             }

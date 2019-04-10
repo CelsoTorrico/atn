@@ -15,7 +15,7 @@ export class MyProfileVideosComponent {
 
     videos: any = {
         value: [],
-        visibility: <number>null
+        visibility: <number>0
     }
 
     public loginErrorString;
@@ -40,7 +40,8 @@ export class MyProfileVideosComponent {
             let atributes = $this.user._user;
 
             //Intera sobre objeto e atribui valor aos modelos de metadata
-            $this.videos.value = (atributes.metadata['my-videos'].value) ? atributes.metadata['my-videos'].value : [];
+            if(atributes.metadata['my-videos'])
+                $this.videos = atributes.metadata['my-videos']; 
 
             //Lista de Visibilidades
             $this.getVisibility();

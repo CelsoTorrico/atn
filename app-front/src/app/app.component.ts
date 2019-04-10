@@ -1,6 +1,6 @@
 import { Component, ViewChild, enableProdMode } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Config, Platform, Nav } from 'ionic-angular';
+import { Config, Nav } from 'ionic-angular';
 import { Settings } from '../providers';
 import { LoginPage } from '../pages/login/login';
 
@@ -15,17 +15,11 @@ export class MyApp {
 
   constructor(
     private translate: TranslateService, 
-    platform: Platform, 
     settings: Settings, 
     private config: Config) {
 
     //Definindo a linguagem default do app
     this.translate.setDefaultLang('pt-br');
-    
-    platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-    });
     
     this.initTranslate();
     

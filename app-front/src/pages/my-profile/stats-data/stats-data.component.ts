@@ -21,7 +21,7 @@ export class MyProfileStatsComponent {
 
     stats: any = {
         value: <any>[],
-        visibility: <number>null 
+        visibility: <number>0 
     }
 
     public statsLoaded:boolean = false;
@@ -84,6 +84,9 @@ export class MyProfileStatsComponent {
 
             //Preenche modelo com campos e valores já preenchidos
             $this.stats.value.push($this.compareAndFill());
+            
+            //Atribui visibilidade definida
+            $this.stats.visibility = atributes.metadata.stats.visibility;
 
             $this.statsLoaded = true;  
 
@@ -190,8 +193,6 @@ export class MyProfileStatsComponent {
     compareAndFill(){
 
         this.statsFields.forEach(function(element, index, array){
-
-             
 
             //Adiciona ao array de objetos
             this.stats.value.push({ [element]:  this.statsList.getSportProperty(element) });

@@ -14,7 +14,7 @@ export class MyProfileAchievementsComponent {
 
     titulos_conquistas: any = {
         value: [],
-        visibility: <number>null
+        visibility: <number>0
     }
 
     public loginErrorString;

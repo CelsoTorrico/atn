@@ -19,7 +19,7 @@ export class Chat {
 
     public $chatMessages: any[] = [];
 
-    public $chatNoMessages: string;
+    public $chatNoMessages: string = null;
 
     public $message: string = '';
 
@@ -57,8 +57,6 @@ export class Chat {
         //Recupera dados do socket.IO
         this.getMessages().subscribe((message:any) => {
 
-            console.log(message); 
-
             //Se string estiver vazia
             if(message == ''){
                 return;
@@ -74,7 +72,7 @@ export class Chat {
                 },
                 content: <string>'',
                 viewer: <boolean>true,
-                date: new Date()
+                date: new Date()  
             };
 
             //Atribui valores de modo a ser exibido corretamente
@@ -82,18 +80,19 @@ export class Chat {
             messageToInsert.content   = messageObj.content;
             messageToInsert.viewer    = (this.currentUser.ID == messageObj.author_id)? true : false;
 
-            //Adiciona ao último item da lista
-            if (this.$chatMessages.unshift(messageToInsert)) {
-                
-                //Pegar elemento de container de mensagens
-                let messageList = document.getElementsByClassName("messages-list");
+            //Adiciona mensagem ao fim do array
+            this.$chatMessages.push(messageToInsert);
 
-                //Move tela até o fim
-                setTimeout(function(){
-                    messageList[0].scrollTop = 9999999999; 
-                }, 300);
-                
-            }
+            //Mensagem se não houver mensagens
+            this.$chatNoMessages = null;
+            
+            //Pegar elemento de container de mensagens
+            let messageList = document.getElementsByClassName("messages-list");
+
+            //Move tela até o fim
+            setTimeout(function(){
+                messageList[0].scrollTop = 9999999999; 
+            }, 300);
 
         });
     }
@@ -101,11 +100,11 @@ export class Chat {
     //Quando iniciar classe
     ngOnInit() {
         
-        if(this.openChat != undefined){            
-            this.$roomID = this.openChat;       
-        }
-
-        if (this.$roomID != undefined) {
+        //No caso de abrir um chat diretamente da página de usuário
+        if(this.openChat != undefined) {      
+            console.log(this.openChat);      
+            this.$roomID = this.openChat;
+            this.socket.connect();
             this.getRoomMessages();
         }
     }
@@ -127,6 +126,11 @@ export class Chat {
     //Abre chat com mensagens
     private getRoomMessages() {
 
+        //Se id da room estiver vazia
+        if (this.$roomID == undefined) { 
+            return;
+        }
+
         //Reseta mensagens da room antes de trazer novas mensagens
         this.$chatMessages = [];
 
@@ -141,7 +145,6 @@ export class Chat {
             //Exibe erro
             if (resp.error != undefined) {
                 this.$chatNoMessages = resp.error.chat;
-                this.$chatMessages = [];
                 return;
             }
 
@@ -152,11 +155,11 @@ export class Chat {
             //Adicionando valores a variavel global
             resp.forEach(element => {
                 element.viewer = (this.currentUser.ID == element.author.ID)? true : false;
-                this.$chatMessages.push(element);
+                this.$chatMessages.unshift(element);
             });
 
             //Mensagem se não houver mensagens
-            this.$chatNoMessages = '';
+            this.$chatNoMessages = null;
 
             //Pegar elemento de container de mensagens
             let messageList = document.getElementsByClassName("messages-list");
@@ -190,6 +193,7 @@ export class Chat {
 
     //Retorna observable que retorna mensagens
     getMessages():Observable<{}> {
+        
         let observable = new Observable(observer => {
             this.socket.on('addMessage', (data) => {
                 observer.next(data);

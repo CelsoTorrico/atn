@@ -15,27 +15,27 @@ export class MyProfileGeneralStatsComponent {
 
     jogos: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     vitorias: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     derrotas: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     empates: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     titulos: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     public loginErrorString;

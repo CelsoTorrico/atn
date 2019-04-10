@@ -125,7 +125,7 @@ class Chat{
         }
 
         //Qtd de itens por página
-        $perPage = 12;
+        $perPage = 100;
 
         //A partir de qual item contar
         $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;

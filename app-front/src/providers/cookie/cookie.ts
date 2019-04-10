@@ -18,11 +18,12 @@ export class Cookie {
     if(existsCookie){
       //Não tem como verificar se cookie está expirado, portanto no momento somente direcionar 
       if(nav.getActive().name == 'LoginPage') 
-        nav.push(DashboardPage); 
+        nav.setRoot(DashboardPage); 
     } else {
       //Redirecionar para página de login
       if(nav.getActive().name != 'LoginPage')  
-        location.assign(Api.origin);  
+        //location.assign(Api.origin);  
+        nav.setRoot(LoginPage);
     }
 
     //Retorna boolean

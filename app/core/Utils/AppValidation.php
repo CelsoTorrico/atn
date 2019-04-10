@@ -262,7 +262,7 @@ class AppValidation
         }
 
         //Expressõe regulares
-        $validFormat = '([1-5]{1})'; //ID TYPE USER
+        $validFormat = '([0-9]{1,})'; //ID TYPE USER
 
         //Executa regular expression para validação
         $filtered = (preg_match('/'.$validFormat.'/', $visibility, $match )) ? (int) filter_var($match[0], FILTER_SANITIZE_STRING) : 0;

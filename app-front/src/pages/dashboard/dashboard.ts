@@ -35,6 +35,9 @@ export class DashboardPage {
         post_image: <any>null,
     }
 
+    //Botão de recarregar
+    public btn_refresh = false;
+
     //Visibilidade
     public visibility: string[];
 
@@ -86,6 +89,11 @@ export class DashboardPage {
         this.currentUser();
         this.getVisibility();
         this.getLastActivity();
+
+        setInterval(() => {
+            this.btn_refresh = true;
+        }, 1000*30);
+
     }
 
     //Recarrega dados
@@ -95,6 +103,7 @@ export class DashboardPage {
         this.getLastActivity();
 
         setTimeout(() => {
+            this.btn_refresh = false; //Define botao como false para esconde-lo
             $refreshEvent.complete();
           }, 2000);
         

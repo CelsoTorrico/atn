@@ -181,15 +181,8 @@ export class ProfilePage {
     let $id = this.ID;
 
     //Iniciar uma sala de chat
-    this.api.get('chat/room/' + $id).subscribe((resp: any) => {
-
-      if(resp.error != undefined){
-        return;
-      }
-
-      this.navCtrl.push('ChatPage', {
-        room_open: resp.chat_room
-      });
+    this.navCtrl.push('ChatPage', {
+      room_open: $id
     });
 
   }

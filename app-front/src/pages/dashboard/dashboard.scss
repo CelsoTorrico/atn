@@ -45,6 +45,13 @@ page-dashboard {
 
     background-color: #f1f1f1;
 
+    .refresh{
+        background-color: rgba(255,255,255,0.4);
+        padding: 10px 15px;
+        margin-top: 0px;
+        border-bottom: 1px dashed #ddd;
+    }
+
     .profile-info{
         margin-top: 10px;
         background-color: #f0f0f0; 

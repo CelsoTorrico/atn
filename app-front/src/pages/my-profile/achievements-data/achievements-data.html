@@ -23,7 +23,7 @@
           {{ "FORMATION" | translate}}
         </ion-list-header>
 
-        <ion-select name="visibility" [(ngModel)]="titulos_conquistas.visibility" interface="popover">
+        <ion-select visibility name="titulos_conquistas.visibility" [(ngModel)]="titulos_conquistas.visibility" interface="popover">
           <ion-option *ngFor="let item of visibility" [value]="item.value">
             {{item.option}}
           </ion-option>

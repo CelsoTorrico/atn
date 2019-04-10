@@ -1,39 +1,27 @@
 <div class="messages-list">
 
-    <!--<ion-infinite-scroll position="top" threshold="10%" (ionInfinite)="loadMore($event)">
-        <ion-infinite-scroll-content 
-        loadingSpinner="bubbles" 
-        loadingText="Loading more data..."></ion-infinite-scroll-content>
-      </ion-infinite-scroll>-->
-
-  <ng-template *ngIf="$chatMessages == undefined; else showChats"  #showMessage>
-      <ion-list>
+    <p *ngIf="$chatNoMessages">
         {{ $chatNoMessages }}
-      </ion-list>
-  </ng-template>
+    </p>
 
-  <ng-template #showChats>
-
-    <ion-list *ngFor="let room of $chatMessages.reverse(); let $i = index" [ngClass]="{'viewer-message' : room.viewer }"
+    <ion-list *ngFor="let room of $chatMessages; let $i = index" [ngClass]="{'viewer-message' : room.viewer }"
       class="message-row">
 
       <span class="ballon-message">
 
         {{ room.content }}
-        <small >{{ room.date | date }}</small>
+        <small>{{ room.date | date }}</small>
         
       </span>
 
     </ion-list>
-
-  </ng-template> 
 
 </div><!-- container de mensagens -->
 
 <div class="chatForm">
   <form #chatForm="ngForm" (submit)="addRoomMessage($event)" name='chatForm'>
 
-    <ion-input item-start name="chat_content" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}"
+    <ion-input item-start name="chat_content" class="margin-left" type="textarea" placeholder="{{ 'WRITE_MESSAGE' | translate }}"
         [(ngModel)]="$message" required></ion-input>
 
     <button item-end ion-button large clear icon-only type="submit">

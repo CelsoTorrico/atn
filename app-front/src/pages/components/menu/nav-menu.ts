@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Input } from '@angular/core';
 import { Nav, NavController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -15,7 +15,12 @@ type PageList = PageItem[]
         <nav>
             <ul class="list-inline">
                 <li *ngFor="let p of pages" (click)="goToPage(p)">
-                  <span class="button-atletas">{{ p.title | translate }}</span>
+                  <span class="button-atletas">
+                    {{ p.title | translate }}
+                    <ion-badge class="messageCount" *ngIf="p.title == 'MESSAGES' && messageCount > 0">
+                      {{ messageCount }}
+                    </ion-badge>
+                  </span>
                 </li>
             </ul>                        
         </nav>
@@ -31,6 +36,8 @@ export class NavMenu {
   
   // A reference to the ion-nav in our component
   @ViewChild(Nav) nav: Nav; 
+
+  @Input() messageCount:number = 0;
 
   pages: PageList;
 

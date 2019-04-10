@@ -22,7 +22,7 @@
           {{ "MY_VIDEOS" | translate}}
         </ion-list-header>
 
-        <ion-select name="visibility" [(ngModel)]="videos.visibility" interface="popover">
+        <ion-select visibility name="videos.visibility" [(ngModel)]="videos.visibility" interface="popover">
           <ion-option *ngFor="let item of visibility" [value]="item.value">
             {{item.option}}
           </ion-option>

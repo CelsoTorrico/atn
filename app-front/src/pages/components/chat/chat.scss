@@ -58,7 +58,8 @@ chat-room{
   border: 1px solid #ddd;
 
   ion-input{
-    max-width: calc(100% - 80px);
+    max-width: calc(100% - 95px);
+    margin-left: 15px;
     float: left;
   }
 }

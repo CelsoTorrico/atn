@@ -44,7 +44,7 @@ export class MyProfilePersonalDataComponent {
 
     cpf: any = {
         value: <string>'',
-        visibility: <number>0
+        visibility: <number>0 
     }
 
     cnpj: any = {

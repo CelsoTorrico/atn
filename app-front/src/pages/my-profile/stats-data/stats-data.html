@@ -17,10 +17,10 @@
     <ion-list ngModelGroup="groupStats" #nameCtrl="ngModelGroup">
 
       <ion-list-header>
-        <ion-title>{{ "SPORTS_STATS" | translate}}</ion-title>
+        <ion-title>{{ "SPORTS_STATS" | translate}}</ion-title> 
       </ion-list-header>
 
-      <ion-select name="visibility" [(ngModel)]="stats.visibility" interface="popover">
+      <ion-select visibility name="stats.visibility" [(ngModel)]="stats.visibility" interface="popover">
         <ion-option *ngFor="let item of visibility" [value]="item.value">
           {{item.option}}
         </ion-option>

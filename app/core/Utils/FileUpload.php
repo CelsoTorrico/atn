@@ -24,7 +24,7 @@ class FileUpload {
      * @param $fileClass Classe de UploadFile referenciada no controller
      * @param $type Tipo de modelo a ser aplicado para inserção no banco
      * */
-    public function __construct(int $userID, int $postID=null, UploadedFile $fileClass, string $type='timeline'){
+    public function __construct(int $userID, int $postID=null, UploadedFile $fileClass=null, string $type='timeline'){
 
         //Definindo storage do arquivo >> AMAZON S3
         $this->disk = Storage::disk('s3');
@@ -33,7 +33,7 @@ class FileUpload {
         $this->ID           = $userID;
         $this->postID       = $postID;
         $this->fileClass    = $fileClass;        
-        $validTypes         = ['timeline', 'learn', 'profile_img'];
+        $validTypes         = ['timeline', 'learn', 'profile_img', 'pdf'];
         
         //Verifica se tipo é válido
         if (in_array($type, $validTypes)) {
