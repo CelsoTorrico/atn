@@ -40,6 +40,9 @@ class AuthServiceProvider extends ServiceProvider
 
             //Carrega classe existente de logon anterior
             //$cookie = app('cookie')->queued(env('APPCOOKIE'));
+
+            var_dump($request);
+
             if ( !$request->hasCookie(env('APPCOOKIE')) ) {
                 $user = null;
             } else {

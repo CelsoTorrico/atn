@@ -36,7 +36,6 @@ export class Api {
 
   /** Todas as requisições após login deve usar parametro Options = {withCredentials: true} 
    * para enviar cookie setado na seção */
-
   get(endpoint: string, params?: any, reqOpts?: any) {
     
     if (!reqOpts) {
@@ -52,7 +51,7 @@ export class Api {
         reqOpts.params = reqOpts.params.set(k, params[k]);
       }
     }
-
+    reqOpts = this.$headerObject;
     return this.http.get(Api.url + '/' + endpoint, reqOpts);
   }
 

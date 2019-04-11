@@ -82,7 +82,7 @@ class Authenticate
                     false, 
                     false, 
                     false, 
-                    'lax');  
+                    'strict');  
 
                 //Atribui a variavel
                 $tokenDatabase = $this->sessionCookie;
@@ -154,7 +154,15 @@ class Authenticate
             $cookie = $control->getToken();
 
             //Seta cookie de sessão
-            $this->sessionCookie = app('cookie')->make(env('APPCOOKIE'), $cookie[0], $cookie[1],'/', env('APP_DOMAIN'), false, false, false, 'lax');  
+            $this->sessionCookie = app('cookie')->forever(
+                env('APPCOOKIE'), 
+                $control->getToken(), 
+                '/', 
+                env('APP_DOMAIN'), 
+                false, 
+                false, 
+                false, 
+                'strict');   
 
             //Atribui a variavel
             $tokenDatabase = $this->sessionCookie;
