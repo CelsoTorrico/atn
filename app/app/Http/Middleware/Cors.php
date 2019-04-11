@@ -17,7 +17,7 @@ class Cors
     {
         $headers = [
             'Access-Control-Allow-Origin'      => env('APP_FRONT'),
-            'Vary' => 'Origin',
+            'Vary'                             => 'Origin',
             'Access-Control-Allow-Methods'     => 'HEAD, POST, GET, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age'           => '86400',

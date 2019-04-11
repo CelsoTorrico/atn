@@ -1,5 +1,5 @@
 import { InAppBrowser } from '@ionic-native/in-app-browser';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 /**
@@ -29,6 +29,7 @@ export class Api {
     public http: HttpClient, 
     public appBrowser: InAppBrowser) {
       this.$headerObject = {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
         withCredentials : true
       }
     }

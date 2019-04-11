@@ -28,7 +28,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ### Semana 4
 ✔ @low Estatisticas - Atleta | Status 100% @done(18-12-29 17:33)
 ✔ @low Edição de perfil - Todos | Status => 100% @done(18-12-31 18:14)
-☐ @high Privacidade de perfil / conteudo (segurança da plataforma) | Status => 80%
+✔ @high Privacidade de perfil / conteudo (segurança da plataforma) | Status => 80% @done(19-04-11 02:21)
 
 ### Semana 5
 ✔ Certificação de usuario | Status 100% @done(18-12-19 19:39) 
@@ -38,7 +38,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ### Semana 6
 ✔ Clubes Favoritos | 100% @done(18-12-20 19:51)
 ✔ Atletas Favoritos | 100% @done(18-12-20 19:51)
-☐ Permissões de usuario - Instituição/usuario master | Status 90%
+✔ Permissões de usuario - Instituição/usuario master | Status 90% @done(19-04-11 02:21)
 
 ### Semana 7
 ✔ @low Aprenda - Area de videos - Padrão  | Status 100% @done(19-01-08 21:37)
@@ -70,7 +70,7 @@ Diferente do Slim, as classes Requests devem invocadas diretamente nas classes d
 ✔ Semana 3 - Fazer verificação de resiquição de privacidade(visibilidade) na visualização de perfil, no momento retorna somente parametro visibilidade. !!Não mostrar campos com outras visibilidades!! @done(19-03-14 05:43)
 ✔ Semana 3 - Perfil de está sempre retornando 'following = true' @done(19-02-28 22:26)
 ✔ Semana 3 - Download CV: Qualquer um pode baixar currículos de qualquer outro @done(19-01-28 02:15)
-☐ Semana 4 - Edição de Perfil, quando campo estiver vazio enviar notificação ao usuário
+✔ Semana 4 - Edição de Perfil, quando campo estiver vazio enviar notificação ao usuário @done(19-04-11 02:21)
 ✔ Semana 5 - Sugestões de Amigos | Arrumar ordenação de usuários 2 critérios @done(19-01-28 02:16)
 ✔ Semana 5 - Implementar notificação quando usuário cadastrar clube existente como usuário @done(18-12-16 23:10)
 ✔ Semana 5 - Corrigir inserção de dados [notVerified] Arquivo 'User.php:755' @done(18-12-19 19:39)
