@@ -5,7 +5,7 @@
   },
   "proxies" :[{
     "path": "/",
-    "proxyUrl": "http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/atletasNOW/app/public"
+    "proxyUrl": "http://api.atletasnow.com"
   }],
   "type": "ionic-angular"
 }

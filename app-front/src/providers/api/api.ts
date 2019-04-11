@@ -1,8 +1,6 @@
-import { Observable } from 'rxjs/Observable';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { NavController } from 'ionic-angular';
 
 /**
  * Api is a generic REST Api handler. Set your API url first.
@@ -26,15 +24,12 @@ export class Api {
 
   private $httpParams;
 
-  private $optionsParams = { withCredentials: true };
 
   constructor(
     public http: HttpClient, 
     public appBrowser: InAppBrowser) {
       this.$headerObject = {
-        'Content-Type'    : 'application/x-www-form-urlencoded',
-        'withCredentials' : true,
-        'Origin'          : Api.origin
+        withCredentials : true
       }
     }
 
@@ -66,14 +61,17 @@ export class Api {
   }
 
   put(endpoint: string, body: any, reqOpts?: any) {
+    reqOpts = this.$headerObject;
     return this.http.put(Api.url + '/' + endpoint, body, reqOpts);
   }
 
   delete(endpoint: string, reqOpts?: any) {
+    reqOpts = this.$headerObject;
     return this.http.delete(Api.url + '/' + endpoint, reqOpts);
   }
 
   patch(endpoint: string, body: any, reqOpts?: any) {
+    reqOpts = this.$headerObject;
     return this.http.patch(Api.url + '/' + endpoint, body, reqOpts);
   }
 
