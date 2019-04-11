@@ -38,6 +38,14 @@ class ChatController extends Controller
         return response()->json($response);
     }
 
+    function getChannel(int $suser_id){
+
+        $room_model = $this->chat->setRoom($suser_id);
+        $response = ['chat_room' => $room_model['room_id']];
+
+        return response()->json($response);
+    }
+
     function getAllRooms() {
         
         $response = $this->chat->getAllRooms();

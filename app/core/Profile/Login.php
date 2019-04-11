@@ -164,7 +164,7 @@ class Login implements LoginInterface{
         //Se tem token atribuido juntamente com dados
         if(empty($email)) {
             //Executa login social
-            return ['error' => ['forget-password' => 'E-mail de usuário não foi submetido']];            
+            return ['error' => ['forgetPassword' => 'E-mail de usuário não foi submetido']];            
         }
 
         //aplicando filtro de string
@@ -175,7 +175,7 @@ class Login implements LoginInterface{
 
         //Verifica se existe usuário, passando array de dados
         if (!$this->model->load(['user_email' => $email])) {
-            return ['error' => ['forget-password' => 'Usuário inexistente.']];
+            return ['error' => ['forgetPassword' => 'Usuário inexistente.']];
         }
 
         //Instanciando classe de verificação de passwords Wordpress = (8, true)
@@ -188,7 +188,7 @@ class Login implements LoginInterface{
 
         if(!$sessionAuth){
             //Retorna string erro
-            return ['error' => ["forget-password" => "Houve um erro em gerar uma nova senha para este usuário. Tente novamente mais tarde."]]; 
+            return ['error' => ["forgetPassword" => "Houve um erro em gerar uma nova senha para este usuário. Tente novamente mais tarde."]]; 
         }
 
         //Instancia usuário com dados do banco
@@ -202,7 +202,7 @@ class Login implements LoginInterface{
         //Verifica se hash ocorreu com sucesso
         if (!key_exists('success', $success)) {
             //Retorna string erro
-            return ['error' => ["forget-password" => "Houve um erro em gerar uma nova senha para este usuário. Tente novamente mais tarde."]]; 
+            return ['error' => ["forgetPassword" => "Houve um erro em gerar uma nova senha para este usuário. Tente novamente mais tarde."]]; 
         }
 
         //CONTEUDO
@@ -227,10 +227,10 @@ class Login implements LoginInterface{
         //Se houve sucesso
         if(key_exists('success', $result)){
             //Retorna string erro
-            return ['success' => ["forget-password" => "Uma nova senha foi gerada e enviada para o seu e-mail. Bem Vindo a AtletasNOW!"]];
+            return ['success' => ["forgetPassword" => "Uma nova senha foi gerada e enviada para o seu e-mail. Bem Vindo a AtletasNOW!"]];
         } else {
             //Retorna string erro
-            return ['error' => ["forget-password" => "Houve erro no envio da nova senha. Tente novamente mais tarde."]];
+            return ['error' => ["forgetPassword" => "Houve erro no envio da nova senha. Tente novamente mais tarde."]];
         }         
         
     }

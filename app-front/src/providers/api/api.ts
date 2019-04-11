@@ -11,15 +11,16 @@ import { NavController } from 'ionic-angular';
 export class Api { 
 
   //Development
-  static readonly origin = 'http://localhost/desenvolvimento/atletasNOW/app-front/www';
-  static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
+  //static readonly origin = 'http://localhost/desenvolvimento/atletasNOW/app-front/www';
+  //static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
   
   //Ambiente de testes | Godzilla
-  //static readonly url = 'https://testes.makingpie.com.br/atletasNOW/app/public';
+  //static readonly origin = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/teste/app-atletasnow-front';
+  //static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/teste/atletasNOW/app/public';
 
   //Ambiente Produção
-  //static readonly origin = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/app-atletasnow-front';
-  //static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/atletasNOW/app/public';
+  static readonly origin  = 'http://app.atletasnow.com';
+  static readonly url     = 'http://api.atletasnow.com/';
   
   protected $headerObject:any;
 

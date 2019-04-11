@@ -22,7 +22,7 @@ import { MyProfilePageModule } from '../pages/my-profile/my-profile.module';
 import { ChartModule } from 'angular2-chartjs';
 
 //Habilita Angular em produção
-//enableProdMode();
+enableProdMode();
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.

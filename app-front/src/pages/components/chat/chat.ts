@@ -23,7 +23,7 @@ export class Chat {
 
     public $message: string = '';
 
-    openChat:number;
+    private openChat:number;
 
     private messageModel:any = {
         author: {
@@ -100,13 +100,13 @@ export class Chat {
     //Quando iniciar classe
     ngOnInit() {
         
+        this.socket.connect();
+
         //No caso de abrir um chat diretamente da página de usuário
-        if(this.openChat != undefined) {      
-            console.log(this.openChat);      
-            this.$roomID = this.openChat;
-            this.socket.connect();
-            this.getRoomMessages();
+        if(this.openChat != undefined) {       
+            this.getChannel();
         }
+
     }
 
     //Quando a view estiver carregada
@@ -173,6 +173,26 @@ export class Chat {
             return;
         });
 
+    }
+
+    private getChannel(){
+
+        //Atribui id de room (id_usuario)
+        this.$roomID = this.openChat;
+        
+        //Retorna a lista de esportes do banco e atribui ao seletor
+        this.api.get(Chat.$getChatMessagesUrl + 'room/channel/' + this.$roomID)
+        .subscribe((resp: any) => {
+
+            //Emite um evento para adicionar o contexto da room para o Redis
+            let channel = resp.chat_room;
+            this.socket.emit('enterChannel', { channel: channel });
+
+            this.getRoomMessages();
+
+        }, err => {
+            return;
+        });
     }
 
     //Abre uma nova room de mensagens

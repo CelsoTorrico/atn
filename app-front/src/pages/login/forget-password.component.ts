@@ -94,7 +94,8 @@ export class ForgetPasswordComponent {
     $event.preventDefault();
 
     //Enviado um comentário a determinada timeline
-    let items = this.api.post('forget-pass', { user_email: this.user_email }).subscribe((resp: any) => {
+    let items = this.api.post('forget-pass', { user_email: this.user_email })
+    .subscribe((resp: any) => {
 
       //Se não existir items a exibir
       if (Object.keys(resp).length <= 0) {
@@ -103,14 +104,15 @@ export class ForgetPasswordComponent {
 
       //Retornou erro
       if (resp.error != undefined) {
-        return false;
+        this.$error = resp.error.forgetPassword;
+        return;
       }
 
       //Reseta formulário e esconde
       this.user_email = '';
 
       let toast = this.toastCtrl.create({
-        message: resp.success['forget-password'],
+        message: resp.success['forgetPassword'],
         duration: 8000,
         position: 'bottom'
       });

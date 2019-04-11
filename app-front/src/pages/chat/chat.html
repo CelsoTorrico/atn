@@ -18,15 +18,17 @@
 
         <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
 
-            <ion-list class="member-select">
-
-              <ng-container *ngIf="$chatRooms">
+            <ion-list class="member-select" *ngIf="$chatRooms.length > 0; else zeroMessage ">
 
                 <member-chat (clickEvent)="loadData($event)" *ngFor="let room of $chatRooms" [room]="room"></member-chat>
 
-              </ng-container>
-
             </ion-list>
+            <ng-template #zeroMessage>
+                <p padding>
+                  {{ "NO_MEMBER_CHAT" | translate }}
+                </p>
+            </ng-template>
+
 
         </ion-scroll>
 
