@@ -76,9 +76,6 @@ class Login implements LoginInterface{
             //Retorna string erro
             return ['error' => ["login" => "Email ou senha não conferem. Tente novamente."]]; 
         }
-
-        /*$this->cookieToken = $passwordClass->HashPassword($this->userData['user_login']);
-        $response = $passwordClass->CheckPassword($this->userData['user_login'], $this->cookieToken);*/
         
         if($response):
             //Retornando string sucesso

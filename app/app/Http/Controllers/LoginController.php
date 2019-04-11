@@ -152,12 +152,12 @@ class LoginController extends Controller
         
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has('user_email')){
-            return response(['error' =>["forget-password", "Email de usuário não fornecido! Tente novamente!"]]); 
+            return response(['error' =>["forgetPassword", "Email de usuário não fornecido! Tente novamente!"]]); 
         }
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->filled('user_email')){
-            return response(['error' =>["forget-password", "Email válido não enviado. Tente novamente"]]); 
+            return response(['error' =>["forgetPassword", "Email válido não enviado. Tente novamente"]]); 
         }
         
         //Realiza o login

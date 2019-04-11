@@ -20,7 +20,7 @@ export class Api {
 
   //Ambiente Produção
   static readonly origin  = 'http://app.atletasnow.com';
-  static readonly url     = 'http://api.atletasnow.com/';
+  static readonly url     = 'http://api.atletasnow.com';
   
   protected $headerObject:any;
 
