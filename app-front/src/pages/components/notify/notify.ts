@@ -51,7 +51,7 @@ export class Notify {
 
     //Adicionar popup ao elemento para sobrepor header
     this.pageElement = document.getElementsByTagName('page-dashboard'); 
-    let $index = this.pageElement.length - 1
+    let $index = this.pageElement.length - 1;
     this.pageElement[$index].appendChild(this.pageElement[$index].querySelector('.popover-notify')); 
     this.notifyElement = document.getElementsByClassName('popover-notify');
 

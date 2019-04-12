@@ -169,7 +169,7 @@ class LoginController extends Controller
         
         //Expira o cookie atual
         //25.03.2019 = Removido dados especificos do cookie, suporte Edge
-        $expiredCookie = app('cookie')->forget(env('APPCOOKIE'), '/', '');
+        $expiredCookie = app('cookie')->forget(env('APPCOOKIE'), '/', env('APP_DOMAIN'));
 
         //Retorna resposta com cookie expirado
         return response(['success' => ['logout' => 'Deslogado com sucesso!']])->withCookie($expiredCookie);

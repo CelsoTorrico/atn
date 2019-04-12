@@ -507,7 +507,16 @@ ion-select[visibility], ion-select[name="post_visibility"]{
 /** Mobile */
 
 @media screen and (max-width: map-get($grid-breakpoints, sm )) {
-  ion-app.md [padding], .row{
+  
+  ion-app.md [padding], .row, ion-card.card-md{
     padding: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100%;  
   }
+
+  profile-resume {    
+    width: 100%;  
+  }
+
 }

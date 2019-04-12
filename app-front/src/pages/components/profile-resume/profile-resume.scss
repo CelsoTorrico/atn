@@ -4,7 +4,7 @@
   color: #fff !important;
   text-align: center;
 
-  @media screen and (max-width: map-get($grid-breakpoints, sm )) {
+  @media screen and (max-width: map-get($grid-breakpoints, sm)) {
     position: relative;
     width: auto;
     border-radius: 10px !important;
@@ -19,20 +19,21 @@
     position: fixed;
     top: 55px;
     left: 0px;
-    z-index: -900;
+    z-index: 900;
   }
 
-  header, .block{
+  header,
+  .block {
     position: relative;
     padding: 10px;
     background: linear-gradient(to top, transparent, lighten($vermelho-contraste, 5%));
 
-    h1{
+    h1 {
       font-size: 2.2rem;
       color: $branco !important;
     }
 
-    #btn-favorite{
+    #btn-favorite {
       position: absolute;
       right: 10px;
       top: 10px;
@@ -41,9 +42,11 @@
 
   }
 
-  ion-avatar{
+  ion-avatar {
 
-    &, img, .change-photo{
+    &,
+    img,
+    .change-photo {
       border-radius: 50%;
       max-width: 100px;
       width: 100px;
@@ -56,14 +59,14 @@
     position: relative;
     overflow: hidden;
 
-    .change-photo{
-      background-color: transparentize($titulos, 0.5); 
+    .change-photo {
+      background-color: transparentize($titulos, 0.5);
       position: absolute;
       opacity: 0;
       visibility: hidden;
       top: 0;
 
-      ion-icon::before{
+      ion-icon::before {
         font-size: 3.0em;
         position: absolute;
         top: 50%;
@@ -72,20 +75,21 @@
       }
     }
 
-    &:hover .change-photo{
+    &:hover .change-photo {
       opacity: 1;
       visibility: visible;
     }
 
   }
 
-  ion-label{
+  ion-label {
     color: $branco;
     font-weight: 400;
     text-align: center;
   }
 
-  button[outline], button[clear]{
+  button[outline],
+  button[clear] {
     border-color: $branco;
     color: $branco;
   }
@@ -95,14 +99,16 @@
     margin: 0px;
     border: 1px solid $vermelho-contraste;
     border-left-width: 0px;
-    ion-list{
+
+    ion-list {
       font-size: 2.4rem;
-      ion-label{
+
+      ion-label {
         font-size: 12px;
       }
 
     }
-    
+
   }
 
 }

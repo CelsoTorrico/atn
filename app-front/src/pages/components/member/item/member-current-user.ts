@@ -83,8 +83,9 @@ export class MemberUser {
 
     ngOnInit() {
         //Adicionar popup ao elemento para sobrepor header
-        this.pageElement = document.getElementsByTagName('page-dashboard');
-        this.pageElement[0].appendChild(this.pageElement[0].querySelector('.popover-menu')); 
+        this.pageElement = document.getElementsByTagName('page-dashboard'); 
+        let $index = this.pageElement.length - 1;
+        this.pageElement[$index].appendChild(this.pageElement[$index].querySelector('.popover-menu')); 
         this.notifyElement = document.getElementsByClassName('popover-menu');
     }
 

@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
     template: `
         <ion-grid>
             <ion-row>
-                <ion-col col-md-3 col-auto *ngFor="let member of members" class="btn-cursor" (click)="goToProfile(member.ID)">
+                <ion-col col-4 col-md-3 col-auto *ngFor="let member of members" class="btn-cursor" (click)="goToProfile(member.ID)">
                     
                     <ion-avatar>
                         <img class="img-center" *ngIf="member.profile_img, else elseBlock" 

@@ -187,6 +187,8 @@ export class DashboardPage {
      */
     addItem(form: NgForm, $event) {
 
+        console.log($event);
+        
         //Convertendo data em objeto FormData
         let formData = new FormData();
 

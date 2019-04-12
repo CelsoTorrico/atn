@@ -120,6 +120,11 @@ export class ProfileResumeComponent implements OnInit{
                 return; 
             }
 
+            //Se houve erro
+            if (resp.error != undefined) {
+                return;
+            }
+
             //Retorna mensagem proveninete do servidor
             let responseText = resp.success[Object.keys(resp.success)[0]];
 
@@ -130,11 +135,8 @@ export class ProfileResumeComponent implements OnInit{
                 position: "bottom"
             });
   
-            //Sucesso 
-            if (resp.success != undefined) {
-                //Emite um evento para ser capturado pelo componente pai
-                this.fillUserData();
-            }
+            //Emite um evento para ser capturado pelo componente pai
+            this.fillUserData();
 
             toast.present();
 
@@ -180,8 +182,7 @@ export class ProfileResumeComponent implements OnInit{
 
             if(atributes.metadata.hasOwnProperty('posicao')){
                 this.posicao = atributes.metadata.posicao.value; 
-            }
-                
+            }                
 
             //Pega os dados de estatística 
             this.getStats();  
