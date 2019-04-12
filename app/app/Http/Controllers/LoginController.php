@@ -177,7 +177,7 @@ class LoginController extends Controller
 
     //Retorna token na classe 'Login'
     public function getToken(){
-        return $this->login->getToken();
+        return $this->login->getToken(); 
     }
 
     //Retorna token na classe 'Login'
