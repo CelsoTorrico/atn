@@ -39,7 +39,7 @@ class UserController extends Controller
         return response()->json($result);
     }
 
-    function getPdf(int $id) {
+    function getPdf(int $id=null) {
 
         $result = $this->user->getUserPdf($id);
 
