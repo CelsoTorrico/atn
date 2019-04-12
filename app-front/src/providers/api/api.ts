@@ -29,9 +29,9 @@ export class Api {
     public http: HttpClient, 
     public appBrowser: InAppBrowser) {
       this.$headerObject = {
-        headers: new HttpHeaders({ 
-          'Access-Control-Allow-Origin' : Api.origin
-        }),
+        /*headers: new HttpHeaders({ 
+          'Content-Type'  : 'application/json'
+        }),*/
         withCredentials : true
       }
     }
