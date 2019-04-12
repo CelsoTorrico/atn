@@ -2,7 +2,7 @@ import { loadNewPage } from './../../providers/load-new-page/load-new-page';
 import { NgForm } from '@angular/forms';
 import { Component, SimpleChanges } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IonicPage, NavController, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, ToastController, LoadingController } from 'ionic-angular';
 import { User, Api, Cookie } from '../../providers';
 import { CookieService } from 'ng2-cookies';
 
@@ -16,6 +16,7 @@ export class DashboardPage {
 
     public loginErrorString;
     public timeline_placeholder: string;
+    public loading_placeholder: string;
 
     //Informações básicas de usuário
     public currentUserData: any = {
@@ -66,12 +67,14 @@ export class DashboardPage {
         public toastCtrl: ToastController,
         public translateService: TranslateService,
         public loadNewPage: loadNewPage,
-        private cookieService: CookieService) {
+        private cookieService: CookieService,
+        private loading: LoadingController) {
 
         this.translateService.setDefaultLang('pt-br');
 
-        this.translateService.get("POST").subscribe((data) => {
-            this.timeline_placeholder = data;
+        this.translateService.get(["POST", "LOADING"]).subscribe((data) => {
+            this.timeline_placeholder   = data.POST;
+            this.loading_placeholder    = data.LOADING;
         });
 
         //Instanciando classe 'User' desse modo, devido imcompatibilidade dentro do construtor
@@ -98,6 +101,14 @@ export class DashboardPage {
 
     //Recarrega dados
     doRefresh($refreshEvent){
+
+        //Carregando
+        const loading = this.loading.create({ 
+            content: this.loading_placeholder,
+            duration: 2000 
+        });
+
+        loading.present();
         
         this.currentUser();
         this.getLastActivity();
@@ -187,7 +198,12 @@ export class DashboardPage {
      */
     addItem(form: NgForm, $event) {
 
-        console.log($event);
+        //Carregando
+        const loading = this.loading.create({ 
+            content: this.loading_placeholder
+        });
+
+        loading.present();
         
         //Convertendo data em objeto FormData
         let formData = new FormData();
@@ -203,6 +219,8 @@ export class DashboardPage {
 
         //Para envio de imagens {{ options }}
         this.api.post('/timeline', formData).subscribe((resp: any) => {
+
+            loading.dismiss();
 
             //Se sucesso
             if (resp.success != undefined) {

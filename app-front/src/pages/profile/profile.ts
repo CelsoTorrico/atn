@@ -169,10 +169,10 @@ export class ProfilePage {
     let $id = this.ID;
 
     //Adiciona url (dev|prod)
-    let $url = this.api.getUrl() + '/user/pdf/';
+    let $url = this.api.getUrl() + '/user/pdf/' + $id;
 
-    //Abre uma nova aba para download
-    this.browser.create($url + $id, '_blank');
+    return $url; 
+
   }
 
   sendChatMessage() {
@@ -188,7 +188,7 @@ export class ProfilePage {
   }
 
   /** Envia mensagem */
-  sendProfileMessage() {
+  sendProfileMessage() { 
     //Abre e fecha box de mensagem
     if (this.showMessageBox) {
       this.showMessageBox = false;

@@ -1,4 +1,4 @@
-import { ToastController, NavParams } from 'ionic-angular';
+import { ToastController, NavParams, LoadingController } from 'ionic-angular';
 import { Component, Input } from '@angular/core';
 import { NavController, ViewController } from 'ionic-angular';
 import { Api } from '../../providers';
@@ -48,14 +48,22 @@ export class ProfileMessage {
   @Input() public $display_name: string;
 
   public messageText: string;
+  public loading_placeholder: string;
 
   constructor(
     private toastCtrl: ToastController,
     private api: Api,
     private viewer: ViewController,
-    public translateService: TranslateService) { 
-      this.translateService.setDefaultLang('pt-br'); 
-    }
+    public translateService: TranslateService,
+    private loading: LoadingController) {
+
+    this.translateService.setDefaultLang('pt-br');
+
+    this.translateService.get("LOADING").subscribe((data) => {
+      this.loading_placeholder = data;
+    });
+
+  }
 
   //Retorna
   ngOnInit() {
@@ -67,8 +75,17 @@ export class ProfileMessage {
 
     $event.preventDefault();
 
+    //Carregando
+    const loading = this.loading.create({
+      content: this.loading_placeholder
+    });
+
+    loading.present();
+
     //Enviado um comentário a determinada timeline
     let items = this.api.post('user/message/' + this.$user_ID, { message_content: this.messageText }).subscribe((resp: any) => {
+
+      loading.dismiss();
 
       //Se não existir items a exibir
       if (Object.keys(resp).length <= 0) {
@@ -88,6 +105,7 @@ export class ProfileMessage {
         });
 
         toast.present();
+
       }
 
     }, err => {

@@ -503,6 +503,12 @@ ion-select[visibility], ion-select[name="post_visibility"]{
   height: 100%;
 }
 
+/* Habiliar componente fixo */
+.page-profile, .page-favorite{
+  & > .scroll-content{
+    contain:  initial;
+  }
+}
 
 /** Mobile */
 

@@ -89,6 +89,10 @@ export class Api {
     window.location.assign(Api.url + '/login/' + endpoint);
   }
 
+  getDomain(){
+    return Api.origin;
+  }
+
   getUrl(){
     return Api.url;
   }

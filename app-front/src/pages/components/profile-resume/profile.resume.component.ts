@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { Component, Input, Output, EventEmitter, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { NavController, ModalController, ToastController } from 'ionic-angular';
+import { NavController, ModalController, ToastController, LoadingController } from 'ionic-angular';
 import { Api, User } from '../../../providers';
 import { ChartComponent } from 'angular2-chartjs';
 import { TranslateService } from '@ngx-translate/core'; 
@@ -54,6 +54,7 @@ export class ProfileResumeComponent implements OnInit{
 
     /** Upload de Photo */
     uploadPhoto:any;
+    public loading_placeholder: string;
 
     //Chart - Estatistica
     // Pie
@@ -82,9 +83,14 @@ export class ProfileResumeComponent implements OnInit{
         public navCtrl: NavController, 
         private api: Api,
         private toastCtrl: ToastController,
-        public translateService: TranslateService) { 
+        public translateService: TranslateService,
+        private loading: LoadingController) { 
     
         this.translateService.setDefaultLang('pt-br');
+
+        this.translateService.get("LOADING").subscribe((data) => {
+            this.loading_placeholder = data;
+        });
 
         // used for an example of ngFor and navigation
         this.views = [
@@ -103,6 +109,13 @@ export class ProfileResumeComponent implements OnInit{
         if ($event.target.files[0] == undefined) {            
             return false;
         }
+
+        //Carregando
+        const loading = this.loading.create({ 
+            content: this.loading_placeholder
+        });
+
+        loading.present();
         
         //Convertendo data em objeto FormData
         let formData = new FormData();        
@@ -114,6 +127,8 @@ export class ProfileResumeComponent implements OnInit{
         //Para envio de imagens {{ options }}
         let changePhotoObservable = this.user.update(formData, true);        
         changePhotoObservable.subscribe((resp:any) => {
+
+            loading.dismiss();
             
             //Se não existir items a exibir
             if (Object.keys(resp).length <= 0) {

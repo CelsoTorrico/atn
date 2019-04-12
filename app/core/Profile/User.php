@@ -428,7 +428,7 @@ class User extends GenericUser{
         $filename = 'resume-'. strtolower($user->user_login) . date('d-m-Y-h-hh-mm') . '.pdf';
         
         //Gera arquivo e forma de submeter
-        $mpdf->Output($filename, \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output( $filename, \Mpdf\Output\Destination::DOWNLOAD);
 
         //Retorna string com caminho do arquivo
         return $filename;

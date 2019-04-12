@@ -26,9 +26,9 @@
             <ion-icon item-end [name]="(following == true)? 'checkmark-circle': ''"></ion-icon>
           </button>
 
-          <button ion-button small outline (click)="downloadProfilePDF()">
+          <a ion-button small outline [href]="downloadProfilePDF()" download>
             {{ "DOWNLOAD_PROFILE" | translate }}
-          </button>
+          </a>
 
           <button *ngIf="following" ion-button small outline (click)="sendChatMessage()">
             {{ "MESSAGE" | translate }}
