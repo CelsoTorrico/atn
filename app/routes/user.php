@@ -20,6 +20,9 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->get('/self', 'UserController@getSelf');
 
     //Retorna usuário logado
+    $router->put('/update-password', 'UserController@setPassword');
+
+    //Retorna dashboard(dados basicos) do usuário logado
     $router->get('/dashboard', 'UserController@getSelfDash');
 
     //Download de PDF

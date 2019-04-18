@@ -38,8 +38,6 @@ export class LearnPage {
         private params: NavParams,
         public translateService: TranslateService,
         private cookieService: CookieService) { 
-    
-            this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
@@ -60,6 +58,15 @@ export class LearnPage {
     ionViewDidLoad() {        
         //Verifica existência do cookie e redireciona para página
         Cookie.checkCookie(this.cookieService, this.navCtrl); 
+    }
+
+    //Abre uma nova página
+    backButton() {
+        if(this.navCtrl.canGoBack()){
+            this.navCtrl.pop();
+        } else {
+            this.navCtrl.setRoot(DashboardPage);
+        }        
     }
 
 }

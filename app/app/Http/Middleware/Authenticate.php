@@ -73,7 +73,7 @@ class Authenticate
                 }
 
                 //Seta cookie de sessão : cookie HTTP_ONLY=false
-                //25.03 = remover domínio e habilitar SameSite para funcionar no Edge
+                //25.03 = habilitar SameSite para funcionar no Edge
                 $this->sessionCookie = app('cookie')->forever(
                     env('APPCOOKIE'), 
                     $control->getToken(), 
@@ -150,10 +150,8 @@ class Authenticate
                 return $next($msg);
             }
 
-            //Retorna dados do cookie
-            $cookie = $control->getToken();
-
-            //Seta cookie de sessão
+            //Seta cookie de sessão : cookie HTTP_ONLY=false
+            //25.03 = habilitar SameSite para funcionar no Edge
             $this->sessionCookie = app('cookie')->forever(
                 env('APPCOOKIE'), 
                 $control->getToken(), 
@@ -162,18 +160,18 @@ class Authenticate
                 false, 
                 false, 
                 false, 
-                'strict');   
+                'strict');  
 
             //Atribui a variavel
             $tokenDatabase = $this->sessionCookie;
 
             //Insere o token em string e insere no banco;
-            $success = $control->insertToken($userData['ID'], $cookieString = $tokenDatabase->__toString());
+            $success = $control->insertToken($userData['ID'], $tokenDatabase->__toString());
 
             //Retorna resultados
             if($success){
                 //Redireciona para front-app juntamente com cookie via url parameter
-                return redirect(env('APP_FRONT').'login')->withCookie($this->sessionCookie);
+                return redirect(env('APP_FRONT').'#/dashboard')->withCookie($this->sessionCookie);
             } else {
                 //Retorna erro
                 return response(['error']);

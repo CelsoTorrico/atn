@@ -1,45 +1,62 @@
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>{{ pageTitle }}</ion-title>
-  </ion-navbar>
+  <ion-toolbar>
+    <ion-buttons left>
+      <button ion-button class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button" style="display: block;" (click)="backButton()">
+          <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>{{ "CONFIGURATION" | translate }}</ion-title>
+  </ion-toolbar>
 
 </ion-header>
 
 <ion-content>
 
-  <form [formGroup]="form" *ngIf="settingsReady">
-    <ion-list *ngIf="page == 'main'">
+  <form [formGroup]="form" (submit)="submitForm($event);" *ngIf="settingsReady">
+    
+    <!--<ion-list margin>
+      <ion-list-header>
+        <h1>{{ 'DEFAULT_LANGUAGE' | translate }}</h1>
+      </ion-list-header>
       <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION1' | translate }}</ion-label>
-        <ion-toggle formControlName="option1"></ion-toggle>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION2' | translate }}</ion-label>
-        <ion-input formControlName="option2"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION3' | translate }}</ion-label>
-        <ion-select formControlName="option3">
-          <ion-option value="1" checked="true">1</ion-option>
-          <ion-option value="2">2</ion-option>
-          <ion-option value="3">3</ion-option>
+        <ion-select formControlName="defaultLang">
+          <ion-option value="pt-br">{{ "PORTUGUESE" | translate }}</ion-option>
+          <ion-option value="en-US">{{ "ENGLISH" | translate }}</ion-option>
+          <ion-option value="es-ES">{{ "SPANISH" | translate }}</ion-option>
         </ion-select>
       </ion-item>
+    </ion-list>-->
+    <hr />
+    <ion-list margin>      
+      <ion-row padding>
+          <ion-col col-12="">
+            <h2>{{ 'CHANGE_PASSWORD' | translate }}</h2>
+          </ion-col>
+          <ion-col col-6>
+            <ion-label stacked>{{ 'NEW_PASSWORD' | translate}}</ion-label>
+            <ion-input id="user_pass" type="password" name="user_pass" formControlName="user_pass"
+              placeholder="Crie uma senha forte" required full></ion-input> 
+          </ion-col>
+          <ion-col col-6>
+              <ion-label stacked>{{ 'CONFIRM_PASSWORD' | translate}}</ion-label>
+              <ion-input id="confirm_pass" type="password" name="confirm_pass" formControlName="confirm_pass"
+                placeholder="Redigite a senha" required full></ion-input>
+          </ion-col>
+      </ion-row>
 
-      <button ion-item [navPush]="subSettings" [navParams]="profileSettings">
-        {{ 'SETTINGS_PROFILE_BUTTON' | translate }}
-      </button>
-    </ion-list>
-
-    <ion-list *ngIf="page == 'profile'">
       <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION4' | translate }}</ion-label>
-        <ion-input formControlName="option4"></ion-input>
+          
+          <button ion-button full default >
+              {{ 'SAVE' | translate }}
+          </button>
+    
+          <p>{{ $errors }}</p>
+
       </ion-item>
+
     </ion-list>
+
   </form>
 
 </ion-content>

@@ -45,6 +45,7 @@ export class MemberCurrentMenu {
             "LEARN"     : "LearnPage",
             "MESSAGES"  : "ChatPage",
             "SEARCH"    : "SearchPage",
+            "CONFIGURATION" : "SettingsPage", 
             "FAQ"       : "",
             "SUPPORT"   : ""
         };

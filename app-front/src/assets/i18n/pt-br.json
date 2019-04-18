@@ -18,6 +18,7 @@
   "YOUR_NAME": "Seu Nome",
   "YOUR_EMAIL": "Seu E-mail",
   "YOUR_PASSWORD": "Sua senha",
+  "NEW_PASSWORD": "Nova senha",
   "CONFIRM_PASSWORD": "Confirme a senha",
   "CONFIRM_REGISTER": "Confirmar cadastro",
   "TERMS_LINK": "Termos de Uso",
@@ -115,6 +116,7 @@
   "YOU_SURE" : "Tem certeza?",
   "SEARCH": "Pesquisar",
   "SEARCH_MEMBERS": "Pesquisa de Usuários",
+  "FILTER": "Filtrar",
   "FAQ": "FAQ",
   "SUPPORT": "Suporte",
   "LOGOUT": "Logout",
@@ -156,5 +158,11 @@
   "[Verified]"    : "Verificado",
   "[NotVerified]" : "Não Verificado",
   "NEW_USER_REGISTER_SUCCESS": "Cadastro realizado com sucesso!",
-  "WELCOME_IN_ATLETASNOW": "Bem Vindo. Clique aqui para entrar!"
+  "WELCOME_IN_ATLETASNOW": "Bem Vindo. Clique aqui para entrar!",
+  "CONFIGURATION": "Configuração",
+  "DEFAULT_LANGUAGE": "Selecione idioma desejado",
+  "CHANGE_PASSWORD": "Alterar senha",
+  "PORTUGUESE": "Português",
+  "ENGLISH": "Inglês",
+  "SPANISH": "Espanhol"
 }

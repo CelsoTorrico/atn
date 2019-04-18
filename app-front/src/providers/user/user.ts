@@ -136,6 +136,18 @@ export class User {
   }
 
   /**
+   * Atualizar password do usuário
+   */
+  setNewPassword(userPass: any){
+
+    //Retorna observable
+    let observable = this.api.put('user/update-password', userPass);
+
+    return observable;
+
+  }
+
+  /**
    * Retorna observable usuário logado
    */
   private getSelfUser(): Observable<ArrayBuffer> {

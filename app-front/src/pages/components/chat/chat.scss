@@ -9,8 +9,6 @@ chat-room{
   $height: $toolbar-wp-height + 82;
 
   padding: 25px 25px 0px;
-  //margin: $toolbar-wp-height 0px 0px;
-  height: calc(100% - 60px);
   background-color: #f9edeb;
   border: 1px solid #ddd;
   overflow-y: auto;

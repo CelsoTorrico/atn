@@ -17,4 +17,4 @@ import { MemberModule } from '../components/member/member.module';
     FavoritePage
   ]
 })
-export class ProfilePageModule { }
+export class FavoritePageModule { }

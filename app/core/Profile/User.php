@@ -1459,6 +1459,45 @@ class User extends GenericUser{
         return $response;
     }
 
+    /** Função para atualizar a senha de acesso a plataforma */
+    public function updatePassword(array $data){
+
+        //Verifica se houve envio de senha para gerar hash
+        if(array_key_exists('user_pass', $data)) {
+
+            //Verifica se password está correta
+            if( $data['user_pass'] != $data['confirm_pass'] ){
+                return ['error' => ['user_pass' => 'Confirme a senha corretamente.']];
+            }
+
+            //Converte password em hash
+            $pass = $this->hashPassword($data['user_pass']);
+
+        } else {
+            return ['error' => ['user_pass' => 'Envie uma senha válida.']];
+        }        
+
+        //Colunas principais válidas
+        $userColumns = ['user_pass'];
+
+        //Carrega modelo do respectivo usuário
+        $this->model->load(['ID' => $this->ID]);
+
+        //Preenche colunas com valores de array
+        $this->model->fill(['user_pass' => $pass]); 
+
+        //Atualiza os dados no banco informado as colunas
+        $result = $this->model->update($userColumns); 
+
+        //Retorna respostas
+        if($result){
+            return ['success' => ['user_pass' => 'Senha alterada com sucesso.']];
+        } else {    
+            return ['error' => ['user_pass' => 'Houve erro na atualização da senha. Tente novamente mais tarde.']];
+        }
+
+    }
+
     //Retorna status do usuário
     public function getStatus(){
         $status = $this->model->user_status;

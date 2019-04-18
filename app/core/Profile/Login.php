@@ -114,7 +114,7 @@ class Login implements LoginInterface{
         $this->userData = $this->model->getData();
 
         //Armazena dados de token social em array
-        $this->cookieToken = array($userData['token'], $userData['expires']);
+        $this->cookieToken = $userData['token'];
         
         //Retornando string sucesso
         return ['success' => ["login" => "Login realizado com sucesso! Bem Vindo."]];

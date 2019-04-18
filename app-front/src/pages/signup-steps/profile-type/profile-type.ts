@@ -59,7 +59,7 @@ export class ProfileType{
         public states:BrazilStates,
         public translateService: TranslateService) { 
     
-            this.translateService.setDefaultLang('pt-br');
+        this.translateService.setDefaultLang('pt-br');
         
         //Adicionando dados provenientes da view anterior
         this.$account = 

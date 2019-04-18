@@ -11,6 +11,7 @@ import { ProfileComponent } from './profile-components/profile.component';
 import { StatsComponent } from './profile-components/stats.component';
 import { ChatPage } from '../chat/chat';
 import { CookieService } from 'ng2-cookies';
+import { DashboardPage } from '../dashboard/dashboard';
 
 @IonicPage()
 @Component({
@@ -32,11 +33,11 @@ export class ProfilePage {
 
   //Current logged user
   currentUser: User;
-  ID: number = null; 
+  ID: number = null;
   display_name: string = null;
-  favorite:boolean = false;
-  following:boolean = false;
-  isLogged:boolean = false;
+  favorite: boolean = false;
+  following: boolean = false;
+  isLogged: boolean = false;
 
   //Profile visited
   public $user_ID: number = null;
@@ -46,17 +47,17 @@ export class ProfilePage {
   public loginErrorString;
 
   constructor(
-    public  navCtrl: NavController,
-    public  modalCtrl: ModalController,
+    public navCtrl: NavController,
+    public modalCtrl: ModalController,
     private api: Api,
-    public  user: User,
+    public user: User,
     private params: NavParams,
     private browser: InAppBrowser,
     private componentFactoryResolver: ComponentFactoryResolver,
     public translateService: TranslateService,
-    private cookieService: CookieService) { 
-    
-      this.translateService.setDefaultLang('pt-br');
+    private cookieService: CookieService) {
+
+    this.translateService.setDefaultLang('pt-br');
 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
       this.loginErrorString = value;
@@ -86,9 +87,9 @@ export class ProfilePage {
 
   }
 
-  ionViewDidLoad() {        
-      //Verifica existência do cookie e redireciona para página
-      Cookie.checkCookie(this.cookieService, this.navCtrl); 
+  ionViewDidLoad() {
+    //Verifica existência do cookie e redireciona para página
+    Cookie.checkCookie(this.cookieService, this.navCtrl);
   }
 
   //Função que inicializa
@@ -98,7 +99,7 @@ export class ProfilePage {
   }
 
   ngAfterViewInit() {
-    
+
   }
 
   //Função para carregar componentes 
@@ -113,16 +114,16 @@ export class ProfilePage {
       createComponent(componentFactory);
 
     //Injeta classe de usuário no componente filho
-    componentRef.instance.isLogged  = this.isLogged;
-    componentRef.instance.profile   = this.currentUser._userObservable;
-    componentRef.instance.stats     = this.currentUser._statsObservable; 
-    componentRef.instance.team_members   = this.currentUser._teamObservable; 
+    componentRef.instance.isLogged = this.isLogged;
+    componentRef.instance.profile = this.currentUser._userObservable;
+    componentRef.instance.stats = this.currentUser._statsObservable;
+    componentRef.instance.team_members = this.currentUser._teamObservable;
 
     //Se component for stats envia observable 
-    if(StatsComponent == componentRef.componentType){
-      
-    } 
-    
+    if (StatsComponent == componentRef.componentType) {
+
+    }
+
   }
 
   //Mudar a visualização de componentes
@@ -156,7 +157,7 @@ export class ProfilePage {
         } else {
           el.classList.add("active")
           el.classList.remove("inactive");
-          this.following = true; 
+          this.following = true;
         }
       }
     });
@@ -171,12 +172,12 @@ export class ProfilePage {
     //Adiciona url (dev|prod)
     let $url = this.api.getUrl() + '/user/pdf/' + $id;
 
-    return $url; 
+    return $url;
 
   }
 
   sendChatMessage() {
-    
+
     //Adiciona Id do usuário corrente
     let $id = this.ID;
 
@@ -188,12 +189,21 @@ export class ProfilePage {
   }
 
   /** Envia mensagem */
-  sendProfileMessage() { 
+  sendProfileMessage() {
     //Abre e fecha box de mensagem
     if (this.showMessageBox) {
       this.showMessageBox = false;
     } else {
       this.showMessageBox = true;
+    }
+  }
+
+  //Abre uma nova página
+  backButton() {
+    if (this.navCtrl.canGoBack()) {
+      this.navCtrl.pop();
+    } else {
+      this.navCtrl.setRoot(DashboardPage);
     }
   }
 

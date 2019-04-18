@@ -16,6 +16,13 @@
     @media screen and (min-width: map-get($grid-breakpoints, sm )) {}
   }
 
+  //Compatibilidade para iPhone
+  .list-chat-members,
+  .messages-list{
+    height: calc(100% - 116px);
+    margin-top: 56px;
+  }
+
   .list-chat-members {
     //margin: $toolbar-wp-height 0px;
     padding: 0px 0px;

@@ -1,5 +1,26 @@
 page-search {
 
+    @media screen and (max-width: map-get($grid-breakpoints, sm )) {
+        .margin-input[padding], .margin-input{
+            padding: 10px 20px !important;
+        }
+    } 
+
+    .show{
+        display: block;
+    }
+
+    .hide{
+        display: none;
+    }
+    
+    .searchbar-input-container{
+        .searchbar-search-icon{
+            display:none;
+            right: 10px;
+            left: auto;
+        }
+    }
 
     .search-container{
         

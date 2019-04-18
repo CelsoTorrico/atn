@@ -95,7 +95,7 @@ class UserController extends Controller
         //Somente permissão de atualização de proprio perfil
         if( !is_null($this->user) ){
             //Retorna erro
-            $result = ['error' => ['update', 'Você não pode modificar esse perfil.']];
+            return response()->json(['error' => ['update', 'Você não pode modificar esse perfil.']]);
         } 
 
         //Atribui dados enviados a var
@@ -107,6 +107,31 @@ class UserController extends Controller
         //retorna resultado
         return response()->json($result);
 
+    }
+
+    function setPassword(Request $request){
+        
+        //Somente permissão de atualização de proprio perfil
+        if( is_null($this->user) ){
+            //Retorna erro
+            return response()->json(['error' => ['update', 'Você não pode modificar esse perfil.']]);
+        } 
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->has(['user_pass', 'confirm_pass']) 
+        || !$request->filled(['user_pass', 'confirm_pass'])){
+            //Melhorar resposta json
+            return response()->json(['error' => ["Campos obrigatórios não submetido! Tente novamente!"]]); 
+        }
+
+        //Atribui dados enviados a var
+        $data = $request->all();        
+
+        //incrementado qtd view
+        $result = $this->user->updatePassword($data);
+        
+        //retorna resultado
+        return response()->json($result);
     }
 
     function delete(){
@@ -147,8 +172,8 @@ class UserController extends Controller
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has('message_content') || !$request->filled('message_content')){
-            //TODO: Melhorar resposta json
-            return response("Campo obrigatório não submetido! Tente novamente!"); 
+            //Melhorar resposta json
+            return response()->json(['error' =>["Campos obrigatórios não submetido! Tente novamente!"]]); 
         }
 
         //Atribui conteúdo a variável

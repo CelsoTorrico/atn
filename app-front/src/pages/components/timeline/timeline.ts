@@ -49,6 +49,14 @@ export class Timeline {
     this.query();
   }
 
+  //Chamado pelo component pai quando de refresh
+  reload(){
+    //Reseta e recarrega posts
+    this.currentItems = [];
+    this.$paged = 1;
+    this.query();
+  }
+
   query($fn:any = function(){}){
     //Retorna a lista de esportes do banco e atribui ao seletor
     let items = this.api.get(Timeline.$getTimelineUrl + this.$url + '/paged/' + this.$paged).subscribe((resp:any) => {

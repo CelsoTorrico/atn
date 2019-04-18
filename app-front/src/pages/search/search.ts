@@ -5,6 +5,7 @@ import { Api, Cookie } from '../../providers';
 import { BrazilStates } from '../../providers/useful/states';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ng2-cookies';
+import { DashboardPage } from '../dashboard/dashboard';
 
 
 @IonicPage()
@@ -25,6 +26,8 @@ export class SearchPage {
     gender:   <string>'',
     formacao: <string>''
   };
+
+  public filter:boolean = false;
 
   //Campos selecionados
   public $typeUserSelected:string;
@@ -71,8 +74,6 @@ export class SearchPage {
       public translateService: TranslateService,
       private cookieService: CookieService) { 
     
-        this.translateService.setDefaultLang('pt-br');
-    
       //Carrega lista de estados do provider
       this.$statesList = this.states.statesList;  
       this.$statesList.unshift('Qualquer Estado');
@@ -92,9 +93,16 @@ export class SearchPage {
   }
 
   ngOnInit() {
-
     this.getSportList();
     this.getClubsList();
+  }
+
+  showFilterOptions(){
+    if (this.filter) {  
+      this.filter = false;
+    } else {
+      this.filter = true;
+    }
   }
 
   getSportList(){
@@ -204,6 +212,15 @@ export class SearchPage {
 
     }, 1000);
 
+  }
+
+  //Abre uma nova página
+  backButton() {
+    if(this.navCtrl.canGoBack()){
+        this.navCtrl.pop();
+    } else {
+        this.navCtrl.setRoot(DashboardPage);
+    }        
   }
 
 

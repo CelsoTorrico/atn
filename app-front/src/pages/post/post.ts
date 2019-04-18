@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { User, Cookie } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
+import { DashboardPage } from '../dashboard/dashboard';
 
 @IonicPage()
 @Component({
@@ -49,8 +50,6 @@ export class PostPage {
         private params: NavParams,
         public translateService: TranslateService,
         private cookieService: CookieService) { 
-    
-            this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
@@ -142,6 +141,15 @@ export class PostPage {
             return;
         });
 
+    }
+
+    //Abre uma nova página
+    backButton() {
+        if(this.navCtrl.canGoBack()){
+            this.navCtrl.pop();
+        } else {
+            this.navCtrl.setRoot(DashboardPage);
+        }        
     }
 
 

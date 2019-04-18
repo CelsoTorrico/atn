@@ -4,6 +4,7 @@ import { IonicPage, ToastController, NavController } from 'ionic-angular';
 import { User, Cookie } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ng2-cookies';
+import { DashboardPage } from '../dashboard/dashboard';
 
 @IonicPage()
 @Component({
@@ -27,8 +28,6 @@ export class ChatPage {
         public navCtrl: NavController,
         public translateService: TranslateService,
         private cookieService: CookieService) {
-
-        this.translateService.setDefaultLang('pt-br');
         
     }
 
@@ -64,6 +63,15 @@ export class ChatPage {
 
     loadData($event) {
         this.$roomSelected = $event;
+    }
+
+    //Abre uma nova página
+    backButton() {
+        if(this.navCtrl.canGoBack()){
+            this.navCtrl.pop();
+        } else {
+            this.navCtrl.setRoot(DashboardPage);
+        }        
     }
 
 }

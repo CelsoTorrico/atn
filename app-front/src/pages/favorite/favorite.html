@@ -1,10 +1,14 @@
 <ion-header>
 
-  <ion-navbar>
-
+  <ion-toolbar>
+    <ion-buttons left>
+      <button ion-button class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button" style="display: block;" (click)="backButton()">
+          <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
     <ion-title>{{ "FAVORITES" | translate }}</ion-title>
 
-  </ion-navbar>
+  </ion-toolbar>
 
 </ion-header>
 
@@ -14,7 +18,7 @@
 
     <ion-row padding justify-content-end>
 
-      <ion-col col-md-3 class="profile-suggestions">
+      <ion-col col-12 col-md-3 class="profile-suggestions">
 
         <ion-list>
 

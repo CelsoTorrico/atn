@@ -1,10 +1,11 @@
 import { loadNewPage } from './../../providers/load-new-page/load-new-page';
 import { NgForm } from '@angular/forms';
-import { Component, SimpleChanges } from '@angular/core';
+import { Component, SimpleChanges, ComponentFactoryResolver, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController, LoadingController } from 'ionic-angular';
 import { User, Api, Cookie } from '../../providers';
 import { CookieService } from 'ng2-cookies';
+import { Timeline } from '../components/timeline/timeline';
 
 
 @IonicPage()
@@ -13,6 +14,8 @@ import { CookieService } from 'ng2-cookies';
     templateUrl: 'dashboard.html'
 })
 export class DashboardPage {
+
+    @ViewChild(Timeline) timeline:Timeline; 
 
     public loginErrorString;
     public timeline_placeholder: string;
@@ -81,7 +84,7 @@ export class DashboardPage {
         this.user = new User(this.api, this.loadNewPage, this.toastCtrl);
     }
 
-    ionViewDidLoad() {  
+    ionViewDidLoad() {
         //Verifica existência do cookie e redireciona para página
         Cookie.checkCookie(this.cookieService, this.navCtrl);
     }
@@ -112,6 +115,7 @@ export class DashboardPage {
         
         this.currentUser();
         this.getLastActivity();
+        this.timeline.reload();
 
         setTimeout(() => {
             this.btn_refresh = false; //Define botao como false para esconde-lo
