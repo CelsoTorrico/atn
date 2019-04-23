@@ -93,7 +93,7 @@ class UserController extends Controller
     function update(Request $request){
 
         //Somente permissão de atualização de proprio perfil
-        if( !is_null($this->user) ){
+        if( is_null($this->user) ){
             //Retorna erro
             return response()->json(['error' => ['update', 'Você não pode modificar esse perfil.']]);
         } 
