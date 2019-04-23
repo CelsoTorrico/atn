@@ -12,7 +12,7 @@
 ✔ Fazer validação de formulário, campos obrigatórios não impedindo envio. @done(19-01-21 15:57)
 ✔ Verificar inserção (INSERT | UPDATE) de dados no ambiente de teste @done(19-01-22 20:03)
 ✔ Envio de email em Perfil >> Fazer mostrar resposta de sucesso. @done(19-02-28 02:18)
-☐ Envio de email >> Verificar conversão UTF 8
+✔ Envio de email >> Verificar conversão UTF 8 @done(19-04-22 23:42)
 ☐ PDF >> Melhorar a exibição dos dados
 ✔ comment-form >> Exibir botão de envio de mensagem @done(19-02-27 14:57)
 ✔ Timeline >> Adicionar um botão para excluir post @done(19-02-24 18:56)
@@ -35,8 +35,8 @@
 ✔ Menu Desktop >> Melhorar visualização e esconder em versão mobile @done(19-03-09 15:06)
 ✔ Menu Mobile >> Exibir em versão mobile @done(19-03-09 21:10)
 ✔ Menu Mobile >> Reduzir logo e distribuir melhor icones @done(19-03-09 15:36)
-☐ Notificação >> Não fechar quando clicar num item interno
+✔ Notificação >> Não fechar quando clicar num item interno @done(19-04-22 23:42)
 ✔ Mensagens >> Ao navegar não exibe cor e alinhamento de balão de conversa corretamente @done(19-03-11 03:17)
 ☐ Mensagens >> Paginação de mensagens anteriores
-☐ Cookie[Login] >> Se cookie não estiver setado e válido, não permitir navegação redirecionando para login
+✔ Cookie[Login] >> Se cookie não estiver setado e válido, não permitir navegação redirecionando para login @done(19-04-22 23:43)
 ✔ Learn >> Exibir imagem do usuário nos comentários @done(19-03-11 03:17)

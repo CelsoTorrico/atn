@@ -17,8 +17,8 @@ export class Api {
   //static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/teste/atletasNOW/app/public';
 
   //Ambiente Produção
-  static readonly origin  = 'http://app.atletasnow.com';
-  static readonly url     = 'http://api.atletasnow.com';
+  static readonly origin  = 'https://app.atletasnow.com';
+  static readonly url     = 'https://api.atletasnow.com';
   
   protected $headerObject:any;
 

@@ -15,16 +15,10 @@ export class Cookie {
     let existsCookie = cookie.check('app_atletas_now');  
 
     //Se cookie da plataforma estiver presente direcionar para dashboard
-    if(existsCookie){
-      //Não tem como verificar se cookie está expirado, portanto no momento somente direcionar 
-      if(nav.getActive().name == 'LoginPage') 
-        nav.push(DashboardPage); 
-    } else {
+    /*if(!existsCookie){
       //Redirecionar para página de login
-      if(nav.getActive().name != 'LoginPage')  
-        //location.assign(Api.origin);  
-        nav.push(LoginPage);
-    }
+      nav.setRoot(LoginPage);        
+    }*/
 
     //Retorna boolean
     return existsCookie; 
