@@ -24,7 +24,6 @@ export class Api {
 
   private $httpParams;
 
-
   constructor(
     public http: HttpClient, 
     public appBrowser: InAppBrowser) {

@@ -156,7 +156,7 @@ export class TimelineSingle {
         this.commentText = '';
         this.commentShow = false;
 
-        let toast = this.toastCtrl.create({
+        let toast = this.toastCtrl.create({ 
           message: resp.success.comment,
           duration: 8000,
           position: 'bottom'

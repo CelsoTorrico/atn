@@ -19,9 +19,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 export class ProfileType{ 
 
-    public $account:any = {
-        gender: 'male'
-    };
+    public $account:any = {};
 
     public $typeUserSelected:number = 1;    
     

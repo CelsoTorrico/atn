@@ -1331,7 +1331,7 @@ class User extends GenericUser{
 
         //Se email pertencer a outro usuário diferente do logado (requisidor)
         if($this->model->ID != $this->ID){
-            return $checked['error'] = ['user_email' => "E-mail já atribuido a um usuário."]; 
+            return ['error'=> ['user_email' => "E-mail já atribuido a um usuário."]]; 
         } 
 
         //Habilitado para update de email

@@ -47,7 +47,7 @@
           <!-- Campos especifícos para Atletas e Profissionais -->
           <ion-item-group *ngIf="$typeUserSelected != undefined" no-padding>
 
-            <ion-row no-padding *ngIf="$typeUserSelected < 3">
+            <!--<ion-row no-padding *ngIf="$typeUserSelected < 3">
               <ion-col col-12>
                 <ion-label stacked>{{ 'GENDER' | translate}}</ion-label>
                 <ion-select id="gender" [(ngModel)]="$account.gender" name='gender' full required>
@@ -56,7 +56,7 @@
                   </ion-option>
                 </ion-select>
               </ion-col>
-            </ion-row>
+            </ion-row>-->
 
             <ion-row no-padding *ngIf="$typeUserSelected >= 3">
               <ion-col col-12>
@@ -64,6 +64,14 @@
                 <ion-input type="numero" [(ngModel)]="$account.cnpj" name="cnpj" placeholder="CNPJ"></ion-input>
               </ion-col>
             </ion-row>
+
+            <ion-col col-12>
+              <ion-item no-padding>
+                  <ion-label stacked>{{ 'TELEPHONE' | translate}}</ion-label>
+                <ion-input id="telefone" [(ngModel)]="$account.telefone" type="tel" name="telefone" placeholder="(XX) XXXXX-XXXX"
+                  required full></ion-input>
+              </ion-item>
+            </ion-col>
 
             <!--<ion-row>
               <ion-col col-12>

@@ -7,7 +7,12 @@ import { Chat } from './chat';
 import { SocketIoModule, SocketIoConfig} from 'ng-socket-io';
 
 //Produção
-const config: SocketIoConfig = {url: 'http://app.atletasnow.com:8890', options:{} }
+const config: SocketIoConfig = {
+  url: 'https://app.atletasnow.com:8890', 
+  options:{
+    secure: true
+  } 
+}
 
 //Development
 //const config: SocketIoConfig = {url: 'http://localhost:8890', options:{} } 
