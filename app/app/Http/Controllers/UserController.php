@@ -24,7 +24,7 @@ class UserController extends Controller
 
         //instanciando classe user apenas para requisição atletasnow.com
         $server = $request->server->getHeaders();
-        if($server["HOST"] == env('APP_DOMAIN')){
+        if(preg_match('/^https?:\/'. env('APP_DOMAIN') . '/', $server['ORIGIN'])){
             $this->user = new User();
         }
     }
