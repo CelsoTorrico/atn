@@ -444,7 +444,7 @@ class User extends GenericUser{
     } 
 
     /** Realiza busca de usuários baseado em parametros */
-    public function searchUsers(array $search, int $paged) {
+    public function searchUsers(array $search, int $paged = 0) {
 
         //Busca em user
         $personal   = ['display_name'];

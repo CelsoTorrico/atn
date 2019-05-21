@@ -3,9 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use Illuminate\Http\Response;
-use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Contracts\Auth\Factory as Auth; 
 use Symfony\Component\HttpFoundation\Cookie;
 use App\Http\Controllers\LoginController;
 
@@ -49,10 +49,10 @@ class Authenticate
 
         //Se usuário estiver com perfil desativado, permitir requisição
         if (in_array($request->method(), ['POST', 'OPTIONS']) 
-            && ($request->is('login')|| $request->is('register'))) {
+            && ($request->is('login') || $request->is('register'))) {
 
                 //Path
-                $uri = $request->path();  
+                $uri = $request->path();
 
                 //Login Controller
                 $control = $this->loginControl;
@@ -201,6 +201,16 @@ class Authenticate
         if ($request->method() == 'GET' && $request->is('logout')) {
             //Retorna requisição com dados
             return $next($request);
+        }
+
+        // Acesso nova_home
+        // Permitir busca via pré-cadastro
+        $server = $request->server->getHeaders();
+        if ( ($request->is('user/search') || $request->is('user/*')) 
+        && ($request->method() == "POST" || $request->method() == "GET") 
+        && $request->secure() == false 
+        && $server['HOST'] == env('APP_DOMAIN')) {
+            return $next($request); 
         }
 
         //Se usuário não está autenticado

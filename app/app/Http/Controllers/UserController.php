@@ -21,6 +21,12 @@ class UserController extends Controller
     {
         //Atribui usuário do contexto
         $this->user = $request->user();
+
+        //instanciando classe user apenas para requisição atletasnow.com
+        $server = $request->server->getHeaders();
+        if($server["HOST"] == env('APP_DOMAIN')){
+            $this->user = new User();
+        }
     }
 
     /** Retorna usuário único  */
