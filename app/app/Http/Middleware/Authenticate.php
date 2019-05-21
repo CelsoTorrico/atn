@@ -208,7 +208,7 @@ class Authenticate
         $server = $request->server->getHeaders();
         if ( ($request->is('user/search') || $request->is('user/*')) 
         && ($request->method() == "POST" || $request->method() == "GET") 
-        && $request->secure() == false 
+        && $request->secure() == true 
         && $server['HOST'] == env('APP_DOMAIN')) {
             return $next($request); 
         }
