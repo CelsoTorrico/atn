@@ -206,10 +206,9 @@ class Authenticate
         // Acesso nova_home
         // Permitir busca via pré-cadastro
         $server = $request->server->getHeaders();
-        if ( ($request->is('user/search') || $request->is('user/*')) 
-        && ($request->method() == "POST" || $request->method() == "GET") 
-        && $request->secure() == true 
-        && $server['HOST'] == env('APP_DOMAIN')) {
+        if ( (($request->is('user/search') && $request->method() == "POST") 
+        || ($request->is('user/*') && $request->method() == "GET")) 
+        && $request->secure() == true && preg_match('/^https?:\/\/'. env('APP_DOMAIN') . '/', $server['ORIGIN'])) {
             return $next($request); 
         }
 
