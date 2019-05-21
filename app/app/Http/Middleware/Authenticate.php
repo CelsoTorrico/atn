@@ -208,7 +208,7 @@ class Authenticate
         $server = $request->server->getHeaders();
         if ( (($request->is('user/search') && $request->method() == "POST") 
         || ($request->is('user/*') && $request->method() == "GET")) 
-        && $request->secure() == true && preg_match('/^https?:\/\/'. env('APP_DOMAIN') . '/', $server['ORIGIN'])) {
+        && $request->secure() == true && preg_match('/^https?:\/'. env('APP_DOMAIN') . '/', $server['ORIGIN'])) {
             return $next($request); 
         }
 
