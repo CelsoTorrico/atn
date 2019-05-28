@@ -15,8 +15,21 @@ class Cors
      */
     public function handle($request, Closure $next)
     {
+
+        $http_origin = ''; //Inicializando variavel vazia
+
+        if(isset($_SERVER['HTTP_ORIGIN'])) {
+            $http_origin = $_SERVER['HTTP_ORIGIN']; //Atribuindo servidor de requisição
+        }        
+
+        if (!empty($http_origin) && preg_match('/http(s)?:\/\/(app|api|admin)?'. env('APP_DOMAIN') .'/', $http_origin, $match)){
+                $origin = $match[0];
+        } else {
+                $origin = env('APP_FRONT');
+        }
+
         $headers = [
-            'Access-Control-Allow-Origin'      => '*',
+            'Access-Control-Allow-Origin'      => $origin,
             'Vary'                             => 'Origin',
             'Access-Control-Allow-Methods'     => 'HEAD, POST, GET, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Credentials' => 'true',

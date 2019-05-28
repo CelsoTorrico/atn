@@ -9,3 +9,4 @@
 #files
 /app/.env.backup
 /app/.env
+/app-front/src/assets/i18n/pt-br.zip
