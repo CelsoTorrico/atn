@@ -20,11 +20,11 @@ class PrivatemetaModel extends Medools\Model
         'meta_value'
     ];
 
-    /*const FOREIGN_KEY = [
+    const FOREIGN_KEYS = [
         'usertype' => [
-            'Core\Database\UserModel',
+            UserModel::class,
             'ID'
         ]
-    ];*/
+    ];
 
 }

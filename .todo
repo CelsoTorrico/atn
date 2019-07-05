@@ -6,78 +6,17 @@
 # PHP Image Cache: composer require nielse63/phpimagecache
 # Chat: Duas bibliotecas https://github.com/musonza e https://github.com/gerardojbaez/messenger
 
-##Observações
-Diferente do Slim, as classes Requests devem invocadas diretamente nas classes da API, ao invés de ser no construtor de roteamento.
+##Usuário Teste
+email: teste@instituicao001.com
+Cookie: app_atletas_now=%242y%2410%24do5czh6z.x8KJLJFMRi7vuOfb5icv6zDDovxmvXgdIbuOtSXpN.6y
 
-### Semana 1
-✔ @high Definição de Estrutura de Banco de Dados @done(18-11-16 16:57)
-✔ @low  Setup de ambiente de produção @done(18-11-16 16:57)
-✔ @low  Login / Cadastro @done(18-11-16 16:57)
-✔ Login/Cadastro - Implementar variação com CNPJ @done(18-11-29 12:58)
-
-### Semana 2
-✔ Inicio / timeline @done(18-11-22 12:10) | Status 95% (*Verificar Imagens) 
-✔ @high Integração de Redes Sociais no perfil (Login Social) @done(18-12-09 21:47) 
-✔ Perfil de usuario - Atleta @done(18-11-29 01:59) 
-
-### Semana 3
-✔ @high Perfil de Usuário - Instituição | Status 100% @done(18-12-18 14:56)
-✔ Perfil de usuário -  Profissional @done(18-11-29 02:00)
-✔ @low Download de CV - usuário | Status 100% @done(19-01-28 01:44)
-
-### Semana 4
-✔ @low Estatisticas - Atleta | Status 100% @done(18-12-29 17:33)
-✔ @low Edição de perfil - Todos | Status => 100% @done(18-12-31 18:14)
-✔ @high Privacidade de perfil / conteudo (segurança da plataforma) | Status => 80% @done(19-04-11 02:21)
-
-### Semana 5
-✔ Certificação de usuario | Status 100% @done(18-12-19 19:39) 
-✔ Networking entre atletas/instituições/profissionais | Status 90% @done(19-03-08 22:23)
-✔ Sugestões de amigos - Perfil | Status 100% @done(18-12-29 03:37)
-
-### Semana 6
-✔ Clubes Favoritos | 100% @done(18-12-20 19:51)
-✔ Atletas Favoritos | 100% @done(18-12-20 19:51)
-✔ Permissões de usuario - Instituição/usuario master | Status 90% @done(19-04-11 02:21)
-
-### Semana 7
-✔ @low Aprenda - Area de videos - Padrão  | Status 100% @done(19-01-08 21:37)
-☐ @low Aprenda - Area de videos - Premium | Status 85%
-
-### Semana 8
-✔ Chat | status 85% (Verificar sincronismo mensagens) @done(19-02-28 22:27)
-✔ Mensagens | Status 100% @done(19-01-18 15:21)
-✔ Busca Geral da Plataforma | Status 100% @done(19-01-18 15:21)
-
-### Pequenos Acertos
-✔ Semana 1 - Ao se cadastrar setar o cookie para login automático (Authenticate.php) @done(19-01-22 20:04)
-✔ Semana 1 - Retornar listagem de esportes/clubes @done(18-12-16 12:11)
-✔ Semana 2 - Login -> Fazer reenviar senha (Esqueci senha) @done(19-02-28 22:26)
-✔ Semana 2 - Timeline -> Ordem inversa, deve ser mais novo para mais antigo @done(19-01-28 02:14)
-✔ Semana 2 - Timeline -> Fazer paǵina semelhante a busca de membros @done(19-01-28 03:52)
-✔ Semana 2 - Login Social -> Validação de cookies @done(18-12-13 12:59)
-✔ Semana 2 - Comentários em timelines @done(18-12-06 15:56)
-✔ Semana 2 - Timeline -> Novo e Update de timeline com imagens @done(18-12-27 01:27)
-✔ Semana 2 - Timeline -> Definir público de publicação (Publico, atleta, profissional e clubes) @done(19-03-14 04:52)
-✔ Semana 2 - Upload de Fotos, verificar permissões de criação de pastas @done(19-03-14 01:36)
-✔ Semana 2 - Sistema de Like de posts @done(19-01-30 19:51)
-✔ Semana 2 - Timeline -> Comentários em timelines @done(18-12-04 17:11)
-✔ Semana 3 - Perfil Instituição -> deletar e atualizar @done(17-12-12 16:00)
-✔ Semana 3 - Fazer validação de usuário logado em requisições @done(18-11-27 19:12)
-✔ Semana 3 - Quando solicitado um usuário, fazer update de view @done(18-11-27 19:11)
-✔ Semana 3 - Download CV (PDF) -> Estruturar o conteúdo de forma visualmente organizado (Precisamos de um modelo de arquivo) @done(19-01-28 01:44)
-✔ Semana 3 - Quando requisição de perfil de usuário, incluir campo de Favorito: Sim | Não (boolean) @done(19-01-28 03:52)
-✔ Semana 3 - Fazer verificação de resiquição de privacidade(visibilidade) na visualização de perfil, no momento retorna somente parametro visibilidade. !!Não mostrar campos com outras visibilidades!! @done(19-03-14 05:43)
-✔ Semana 3 - Perfil de está sempre retornando 'following = true' @done(19-02-28 22:26)
-✔ Semana 3 - Download CV: Qualquer um pode baixar currículos de qualquer outro @done(19-01-28 02:15)
-✔ Semana 4 - Edição de Perfil, quando campo estiver vazio enviar notificação ao usuário @done(19-04-11 02:21)
-✔ Semana 5 - Sugestões de Amigos | Arrumar ordenação de usuários 2 critérios @done(19-01-28 02:16)
-✔ Semana 5 - Implementar notificação quando usuário cadastrar clube existente como usuário @done(18-12-16 23:10)
-✔ Semana 5 - Corrigir inserção de dados [notVerified] Arquivo 'User.php:755' @done(18-12-19 19:39)
-✔ Semana 5 - Sistema de Notificações Completo @done(18-12-19 19:38)
-✔ Semana 6 - Ao adicionar um usuário colocar clube já autenticado @done(19-03-14 06:20)
-✔ Semana 7 - Quando retornar lista de 'learn'(aprenda) retornar em modo lista somente resumo, nome do author(invés do ID) e implementar um campo de thumbnail @done(19-02-28 22:26)
-✔ Fazer validação do cookie (https://lumen.laravel.com/docs/5.7/authorization) a cada requisição via Middleware | Existe classe Symfony para Sessões >> /home/iran/www/desenvolvimento/app-atletasnow-2.0/app/vendor/symfony/http-foundation/Session/Session.php @done(18-11-22 11:35)
-
-
-
+✔ Perfil Meu Clube::Definir url's para definir usuário como adicionar/remover membro do clube. @done(19-06-21 15:38)
+✔ Perfil Meu Clube::"POST" -> Listar usuários pertencentes ao grupo utilizando os mesmos atributos da busca geral da plataforma @done(19-06-22 13:32)
+✔ Perfil Meu Clube::"POST, UPDATE, DELETE" -> "Criar", "Alterar", "Remover", "Gerar PDF" do membro @done(19-06-24 20:05)
+✔ Perfil Meu Clube:: "DELETE" -> Não deve excluir o usuário, manter registrado. Apenas remover da equipe @done(19-06-24 18:11)
+✔ Perfil Meu Clube::"POST" -> Exportar relatório dos membros(critérios da atributos da busca geral), os dados exportados serão as informações preenchidas pelos membros @done(19-06-26 15:00)
+✔ @high Perfil Meu Clube::Relatório  ->  Estruturar arquivo a ser exportado com dados da plataforma e usuários @done(19-07-03 11:13)
+✔ Perfil Meu Clube::"GET, POST, UPDATE, DELETE" -> Área de Calendários (em forma de listagem) com definição de visibilidade (CAMPOS EX: JOGOS, REUNIÕES, CONVOCAÇÕES, PALESTRAS, PENEIRAS) @done(19-06-24 16:48)
+☐ @low ??? Perfil Meu Clube::Calendar:: -> Retornar eventos futuros na data atual
+☐ @low Perfil Meu Clube::Relatório -> Remover planilha "Worksheet"
+☐ @low Perfil Meu Clube::Relatório -> Arquivo PDF em várias páginas

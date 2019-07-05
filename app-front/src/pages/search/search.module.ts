@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TagInputModule } from 'ngx-chips';
 import { MemberModule } from './../components/member/member.module';
 import { CommentModule } from './../components/comment/comment.module';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular'; 
 import { SearchPage } from './search';
-import { RlTagInputModule } from 'angular2-tag-input';
 
 @NgModule({
   declarations: [
@@ -13,7 +16,11 @@ import { RlTagInputModule } from 'angular2-tag-input';
   imports: [
     IonicPageModule.forChild(SearchPage),
     TranslateModule.forChild(),
-    RlTagInputModule,
+    TagInputModule,
+    CommonModule,
+    //BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     CommentModule,
     MemberModule
   ],

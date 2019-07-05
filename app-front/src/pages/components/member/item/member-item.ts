@@ -20,6 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
                     </ion-avatar>
                              
                     <h3>{{ member.display_name | stringTitlecaseSpecialChars }}</h3>
+                    <p><small>{{ member.type.type }}</small></p> 
 
                 </ion-col> 
             </ion-row>

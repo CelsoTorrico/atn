@@ -95,7 +95,7 @@ export class ProfileResumeComponent implements OnInit{
         // used for an example of ngFor and navigation
         this.views = [
             { title: 'PROFILE',    component: 'personalView' },
-            { title:  'STATS',      component: 'statsView' }
+            { title: 'STATS',      component: 'statsView' }
         ]; 
 
     }
@@ -197,7 +197,15 @@ export class ProfileResumeComponent implements OnInit{
 
             if(atributes.metadata.hasOwnProperty('posicao')){
                 this.posicao = atributes.metadata.posicao.value; 
-            }                
+            } 
+            
+            //Adicionar botão de "Meu Clube"
+            if(this.type.ID > 3){
+                //Adiciona elemento no final
+                this.views.push(
+                    { title: 'MY_CLUB',    component: 'clubView' }
+                ); 
+            }
 
             //Pega os dados de estatística 
             this.getStats();  

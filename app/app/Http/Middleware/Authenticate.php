@@ -78,7 +78,7 @@ class Authenticate
                     env('APPCOOKIE'), 
                     $control->getToken(), 
                     '/', 
-                    env('APP_DOMAIN'), 
+                    'localhost',//env('APP_DOMAIN'), 
                     false, 
                     false, 
                     false, 

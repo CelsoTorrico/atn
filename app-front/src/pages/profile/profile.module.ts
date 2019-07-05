@@ -1,3 +1,5 @@
+import { CalendarModule } from './../components/calendar/calendar.module';
+import { ClubComponent } from './profile-components/club.component';
 import { ProfileResumeModule } from './../components/profile-resume/profile-resume.module';
 import { MemberModule } from './../components/member/member.module';
 import { ProfileMessage } from './profile-message.component';
@@ -9,17 +11,20 @@ import { ProfilePage } from './profile';
 import { StatsList } from '../../providers/useful/stats';
 import { ProfileComponent } from './profile-components/profile.component';
 import { StatsComponent } from './profile-components/stats.component';
-import { ProfileViewDirective } from './profile-view.directive';
-import { NgChartjsModule } from 'ng-chartjs'; 
+import { ProfileViewDirective } from './profile-view.directive'; 
 import { PipesModule } from '../../pipes/pipes.module'; 
-import { MyProfilePersonalDataComponent } from '../my-profile/personal-data/personal-data.component';
+import { TagInputModule } from 'ngx-chips';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
-    ProfilePage, ProfileMessage, 
+    ProfilePage, 
+    ProfileMessage, 
     ProfileViewDirective,
     ProfileComponent, 
-    StatsComponent
+    StatsComponent,
+    ClubComponent
   ],
   imports: [
     IonicPageModule.forChild(ProfilePage),
@@ -27,7 +32,12 @@ import { MyProfilePersonalDataComponent } from '../my-profile/personal-data/pers
     TimelineModule,
     MemberModule,
     ProfileResumeModule,
-    PipesModule
+    PipesModule,
+    CalendarModule,
+    TagInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
   ],
   exports: [
     ProfilePage, ProfileMessage, ProfileViewDirective
@@ -35,7 +45,8 @@ import { MyProfilePersonalDataComponent } from '../my-profile/personal-data/pers
   entryComponents: [
     ProfileMessage, 
     ProfileComponent,
-    StatsComponent
+    StatsComponent,
+    ClubComponent
   ],
   providers: [
     StatsList

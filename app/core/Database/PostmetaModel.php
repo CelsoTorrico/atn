@@ -20,9 +20,9 @@ class PostmetaModel extends Medools\Model
         'meta_value'
     ];
 
-    const FOREIGN_KEY = [
+    const FOREIGN_KEYS = [
         'post_id' => [
-            'Core\Database\PostModel',
+            PostModel::class,
             'ID'
         ]
     ];

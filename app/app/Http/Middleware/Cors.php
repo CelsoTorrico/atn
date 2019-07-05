@@ -17,6 +17,7 @@ class Cors
     {
 
         $http_origin = ''; //Inicializando variavel vazia
+        $match = [];
 
         if(isset($_SERVER['HTTP_ORIGIN'])) {
             $http_origin = $_SERVER['HTTP_ORIGIN']; //Atribuindo servidor de requisição
@@ -42,11 +43,19 @@ class Cors
             return response()->json('{"method":"OPTIONS"}', 200, $headers);
         }
         
-        $response = $next($request);
+        $response = $next($request);        
         
         foreach($headers as $key => $value)
-        {
-            $response->header($key, $value);
+        {      
+             //Verifica se resposta não é da classe BinaryFileResponse
+            if(!is_a($response, 'Symfony\Component\HttpFoundation\BinaryFileResponse')) {
+                 //Aplicando headers para respostas json
+                $response->header($key, $value);
+            } else {
+                 //Aplicando headers para respostas files
+                $response->headers->set($key, $value);
+            }
+            
         }
 
         return $response;

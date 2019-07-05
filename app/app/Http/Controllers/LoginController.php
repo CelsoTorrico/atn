@@ -104,7 +104,12 @@ class LoginController extends Controller
 
     }
 
-    /** Cadastrar / Registrar */
+    /** 
+     * Cadastrar / Registrar 
+     * 
+     * @since 2.1   Adicionando email de boas-vindas no cadastro
+     * @since 2.0
+     * */
     function register(Request $request){
         
         //Campos obrigatórios
@@ -127,7 +132,11 @@ class LoginController extends Controller
             return response($response);
         }
 
-        //Realiza o login
+        //Enviar email de boas vindas ao novo usuário se cadastro realizado
+        if (key_exists('success', $response))
+            $this->doWelcomeEmail($request->input('user_email'), $request->input('display_name'));
+
+        //Executa primeiro login na plataforma
         return $this->login($request);
         
     }
@@ -188,6 +197,20 @@ class LoginController extends Controller
     //Retorna token na classe 'Login'
     public function getUserData(){
         return $this->login->getUserData();
+    }
+
+    /** 
+     * Email de boas vindas
+     * 
+     * @param string $email Email do usuário
+     * @param string $displayName   Nome do usuário
+     * @since 2.1
+     *  */
+    private function doWelcomeEmail(string $email, string $displayName) {
+
+        //Executa metodo de envio de mensagem
+        $response = $this->login->sendWelcomeEmail($email, $displayName);
+
     }
 
 }

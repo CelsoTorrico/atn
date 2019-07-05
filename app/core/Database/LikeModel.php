@@ -24,13 +24,13 @@ class LikeModel extends Medools\Model
         'date' => 'datetime'
     ];
 
-    const FOREIGN_KEY = [
+    const FOREIGN_KEYS = [
         'from_id' => [
-            'Core\Database\UserModel',
+            UserModel::class,
             'ID'
         ],
         'post_id' => [
-            'Core\Database\PostModel',
+            PostModel::class,
             'ID'
         ]
     ];

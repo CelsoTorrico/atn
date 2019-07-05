@@ -4,8 +4,7 @@
     "cordova": {}
   },
   "proxies" :[{
-    "path": "/",
-    "proxyUrl": "http://api.atletasnow.com"
+    "path": "/"
   }],
   "type": "ionic-angular"
 }

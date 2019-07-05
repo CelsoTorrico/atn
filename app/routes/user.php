@@ -46,21 +46,38 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
     //CLUBES e CONFEDERAÇÔES
     $router->group(['prefix' => 'self'], function() use ($router){
-
-        //Atualizar usuário de posse
+        
+        /**
+         *  Listar membros da instituição
+         *  @version v2.1 - Alterado o método para POST para suportar filtragem 
+         *  @todo: Implementar metodo POST
+         */        
         $router->get('/club_user[/{id:[0-9]+}]', 'ClubController@getAll');
+        $router->post('/club_user/search[/paged/{id:[0-9]+}]', 'ClubController@getAll');
 
-        //Atualizar usuário de posse
+        //Adicionar usuário de posse
         $router->post('/club_user', 'ClubController@addClubUser');
 
         //Atualizar usuário de posse
         $router->put('/club_user/{id:[0-9]+}', 'ClubController@updateUser');
 
         //Deletar usuário de posse
-        $router->delete('/club_user/{id:[0-9]+}', 'ClubController@deleteUser');
+        $router->delete('/club_user/{user_id:[0-9]+}', 'ClubController@deleteUser');
 
         //Reativar usuário de posse
         $router->put('/club_user/active/{id:[0-9]+}', 'ClubController@activeUser');
+
+    });
+
+    /**
+     *  Setar como membro da instituição
+     *  @since v2.1 - Criado
+     *  @todo: Implementar
+     */ 
+    $router->group(['prefix' => 'add_team'], function() use ($router){
+               
+        //Define usuário como integreante da instituição
+        $router->get('/{user_id:[0-9]+}', 'ClubController@setToTeam');
 
     });
 

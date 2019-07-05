@@ -21,6 +21,7 @@ use Core\Service\Notify;
 
 use Closure;
 use aryelgois\Medools\ModelIterator;
+use Medoo\Medoo;
 
 class User extends GenericUser{
 
@@ -93,6 +94,9 @@ class User extends GenericUser{
         return $this;        
     }
 
+    /**
+     * 
+     */
     public function getUser(int $id){
         
         //Classe Modelo de usuário
@@ -180,6 +184,19 @@ class User extends GenericUser{
     }
 
     /**
+     *  Atribui um valor usermeta definida via parametros 
+     * 
+     *  @param $key  usermeta key
+     *  @param $value usermeta value
+     *  @since 2.1
+     */
+    public function set(string $key, $value) {
+        
+        //Verifica se existe usermetas de usuário
+        return $this->_setUsermeta($key, $value);
+    }
+
+    /**
      * Retorna dados de usuário único por ID
      * @since 2.0
      * 
@@ -208,7 +225,8 @@ class User extends GenericUser{
         //Retorna dados do usuário
         $userData = [
             'ID' => $userData->ID,
-            'display_name' => $userData->display_name
+            'display_name' => $userData->display_name,
+            'type' => $this->_getType($userData->ID)
         ];
 
         //metadado default
@@ -235,6 +253,11 @@ class User extends GenericUser{
             $user = $this->getUser($this->ID);
         } else {
             $user = $this->getUser($id); 
+        }
+
+        //Verifica se todos os campos tem informações para poder exibir
+        if( is_null($user->metadata) || is_null($user->type) || is_null($user->sport) ){
+            return ['error', ['stats' => 'Nenhuma estatística a exibir.']];
         }
         
         //Campos gerais de estatisticas
@@ -449,8 +472,10 @@ class User extends GenericUser{
         //Busca em user
         $personal   = ['display_name'];
 
-        //Campos de busca em usermeta
-        $isMeta     = ['type','city','state','neighbornhood','gender','formacao'];
+        //Campos de busca do tipo String
+        $isMetaString   = ['city','state','neighbornhood','gender','formacao'];
+
+        $isMetaNumber   = ['type', 'parent_user'];
 
         //Campos usermeta em array
         $isMetaArray = ['clubs','sport'];
@@ -461,6 +486,7 @@ class User extends GenericUser{
         //Variavel para montar query
         $where = [];
         $whereJoin = [];
+        $content = [];
 
         //Intera sobre array executando função
         foreach($search as $k => $v) {
@@ -477,12 +503,22 @@ class User extends GenericUser{
             }
 
             //Busca em usermetas
-            if (in_array($k, $isMeta)) {
+            if (in_array($k, $isMetaString)) {
                 
                 //Adiciona a query
                 $content = [
                     'usermeta.meta_key'              => $k,
                     'usermeta.meta_value[~]'         => '%'.$v.'%'
+                ];
+            }
+
+            //Busca em usermetas
+            if (in_array($k, $isMetaNumber)) {
+                
+                //Adiciona a query
+                $content = [
+                    'usermeta.meta_key'           => $k,
+                    'usermeta.meta_value'         => $v
                 ];
             }
 
@@ -522,24 +558,19 @@ class User extends GenericUser{
             }
 
             //Define os conteúdos de forma estruturada em query
+            //Após aqui não é mais usado display_name para atribuição
             if ($k == 'display_name') {
                 $where = $content;
-            }
-
-            //Após aqui não é mais usado display_name para atribuição
-            if($k == 'display_name'){
                 continue;
             }
 
             //Atributos para join
-            if (count($where) <= 0){
+            if (count($whereJoin) <= 0 ) {
                 $whereJoin['AND'] = $content;
             }
             else {
-                $whereJoin['AND']['AND #'.$k] = $content;
+                $whereJoin['OR']['AND #'.$k] = $content;
             }
-            
-            continue;
 
         }
 
@@ -563,14 +594,18 @@ class User extends GenericUser{
         }
 
         //Define o limite de posts
-        $whereJoin = array_merge($whereJoin,  ['LIMIT' => $limit]);
+        $whereJoin = array_merge($whereJoin,
+            ['GROUP'    => ['user_id'], 
+            //'HAVING'    => ['user_id' => Medoo::raw('COUNT(<user_id>) > 1') ],
+            'LIMIT'     => $limit]);
 
         //Se existir outros filtros selecionados
         if(key_exists('AND', $whereJoin)){
             //Executa query (Medoo)
             $result = $db->select('usermeta', [
                 'usermeta.user_id(ID)'
-            ], $whereJoin);
+            ], $whereJoin            
+           );
         }
 
         //Em caso de não houver nenhum tipo de filtragem solicitada, retornar usuários
@@ -594,9 +629,12 @@ class User extends GenericUser{
                     continue;
                 }
 
+                //Instanciado classe ce usuário
                 $user = new self();
-                //TODO: Definir uma nova função que retorne apenas dados baseados para listagem
-                $users[] = $user->getMinProfile($value['ID']);
+                
+                //Definir uma nova função que retorne apenas dados baseados para listagem
+                $users[] = $user->getMinProfile((int) $value['ID']);
+                
                 $repeteadID[] = $value['ID'];
             }
 
@@ -755,7 +793,7 @@ class User extends GenericUser{
 
             }
 
-            $msg = (!$isUpdate)? 'Seu cadastro foi realizado com sucesso! Bem Vindo!' : 'Seu dados foram atualizados com sucesso!';
+            $msg = (!$isUpdate)? 'Seu cadastro foi realizado com sucesso! Bem Vindo!' : 'Seus dados foram atualizados com sucesso!';
 
             //Mensagem de sucesso no cadastro
             return ['success' => ['register' => $msg]];
@@ -969,7 +1007,7 @@ class User extends GenericUser{
         $email->setFromName($this->display_name);
         $email->setToEmail(['email' => $user->user_email, 'name' => $user->display_name]);
         $email->setSubject($this->display_name . ' enviou uma mensagem para você | AtletasNow');
-        $email->setContent('<p style="color:#444;font-size:14px;">' . $data['message_content'] . '</p>');
+        $email->loadTemplate('userMessageEmail', $data);
 
         //Executando disparo
         return $email->send();
@@ -1045,10 +1083,10 @@ class User extends GenericUser{
         }
 
         //Atribuir tipo se usuário contiver, senão atribui 1 = Atleta
-        $type = (key_exists('type', $formated))? $formated['type']['value']:1;
+        $type = (key_exists('type', $formated))? $formated['type']['value'] : 1;
 
         //Atribuir tipo
-        $only_usermeta_type_user = $this->onlyUsermetaValid($type);
+        $only_usermeta_type_user = $this->onlyUsermetaValid($type);   
         
         //Separa apenas campos válidos do array
         $formated = array_intersect_key($formated, array_flip($only_usermeta_type_user));       
@@ -1226,6 +1264,44 @@ class User extends GenericUser{
         
         //Retorna array  
         return $clubs['value'];
+    }
+
+    /** 
+     * Setar metadados dos usuário
+     * 
+     * @param $usermeta_key string Usermeta key no qual vai ser atualizado valor
+     * @param $usermeta_value mixed Se bolean (true) remover usermeta. Outros tipos de dados serão inserção ou atualizados
+     * @since 2.1
+     * 
+     * @return mixed
+     */
+    private function _setUsermeta(string $usermeta_key, $usermeta_value) {
+
+        //Verifica se classe de usuário foio instanciada
+        if (is_null($this) || is_null($this->ID) || empty($this->ID) ) {
+            return null;
+        }
+
+        //Verifica tipo de dado
+        //Se booleano: true = remover
+        if (is_bool($usermeta_value) && $usermeta_value === true) {
+
+            //Retorna instancia de usermeta via database model
+            $this->metaModel = new UsermetaModel();
+            $meta = $this->metaModel->getInstance(['user_id' => $this->ID,'meta_key' => $usermeta_key]);
+
+            //Deletar usermeta
+            $result = $meta->delete();
+
+        } else {
+            //Validação de dados
+            //@todo: Implementar
+            $val = $this->appVal;            
+        }        
+
+        //Retorna mensagem de resultado
+        return $result;        
+
     }
 
     /**
@@ -1517,8 +1593,24 @@ class User extends GenericUser{
         return env('CLUBE_NAO_VERIFICADO');
         
     } 
+
+    /**
+     * Retorna os todos os campos usermeta de usuário
+     * @param int $typeUser     Tipo de usuário    
+     * @since 2.1
+     */
+    public function getUsermetaFields($typeUser = true) {
+        return $this->onlyUsermetaValid($typeUser);
+    }
     
-    /** Define array de campos necessários para determinado tipo de perfil */
+    /** 
+     * Define array de campos necessários para determinado tipo de perfil 
+     * 
+     * @param mixed $typeUser Tipo de Usuário = int 1,2,3,4 ou 5. Se for do tipo bool TRUE retorna todos os campos
+     * @return array
+     * @since 2.0
+     * 
+     * */
     private function onlyUsermetaValid($typeUser = 1):array{
 
         //Colunas Gerais'
@@ -1527,22 +1619,22 @@ class User extends GenericUser{
         );
 
         //Compartilhado entre Atleta e Profissional do Esporte
-        if(in_array($typeUser, [1, 2])){
+        if($typeUser === true || in_array($typeUser, [1, 2])){
             $usermeta = array_merge($usermeta, ['birthdate', 'gender', 'rg', 'cpf', 'formacao', 'cursos', 'parent_user']);
         }
 
         //Compartilhado entre Faculdade e Clube
-        if(in_array($typeUser, [3, 4, 5])){
+        if ($typeUser === true || in_array($typeUser, [3, 4, 5])) {
             $usermeta = array_merge($usermeta, ['cnpj', 'eventos', 'meus-atletas', 'club_site', 'club_liga', 'club_sede']);
         }
 
         //Compartilhado entre Atleta e Clube
-        if(in_array($typeUser, [1, 3, 4, 5])){
+        if ($typeUser === true || in_array($typeUser, [1, 3, 4, 5])) {
             $usermeta = array_merge($usermeta, ['empates', 'vitorias', 'derrotas', 'titulos', 'jogos', 'titulos-conquistas']);
         }
 
         //Atleta
-        if($typeUser == 1){
+        if($typeUser === true || $typeUser == 1){
             $usermeta = array_merge($usermeta, ['weight', 'height','posicao', 'stats', 'stats-sports']);
         }
 

@@ -1,0 +1,206 @@
+<ion-row *ngIf="isLogged">
+
+  <ion-col col-12 col-lg-5>
+
+    <header>
+
+      <ion-title>
+        {{ "MANAGEMENT_MY_EVENTS" | translate }}
+      </ion-title>
+
+      <button float-right edit-profile ion-button small end clear
+        (click)="editData('calendarData');">
+        <ion-icon item-start name="create"></ion-icon>
+        {{ "ADD_EVENT" | translate }}
+      </button>
+
+    </header>
+
+    <p *ngIf="listCalendar.length <= 0">
+      {{ "MY_CALENDAR_INITIAL_MESSAGE" | translate }}
+    </p>
+
+    <ion-card class="calendar-feed">
+
+      <calendar-item [calendarAtributes]="calendar" *ngFor="let calendar of listCalendar; let $i = index"></calendar-item>
+
+    </ion-card>
+
+  </ion-col>
+
+  <ion-col col-12 col-lg-7>
+
+    <section class="my-team">
+
+      <header>
+
+        <ion-title>
+          {{ "MANAGEMENT_MY_TEAM" | translate }}
+        </ion-title>
+
+        <button *ngIf="isLogged" float-right edit-profile ion-button small end clear
+          (click)="editData('teamData');">
+          <ion-icon item-start name="create"></ion-icon>
+          {{ "ADD_NEW_MEMBER" | translate }}
+        </button>
+
+      </header>
+
+      <p *ngIf="team.length <= 0">
+        {{ "MY_TEAM_INITIAL_MESSAGE" | translate }}
+      </p>
+
+      <ion-card>
+
+        <form #searchForm="ngForm" (submit)="submitSearch(searchForm, $event)">
+
+          <ion-card padding>
+
+            <ion-grid>
+              <ion-row>
+                <ion-col padding class="margin-input">
+                  <ion-searchbar type="text" padding name="display_name" [(ngModel)]="query.display_name"
+                    placeholder="{{ 'DISPLAY_NAME' | translate }}"></ion-searchbar>
+                  <button ion-button full>{{ "SEARCH" | translate }}</button>
+                  <p ion-button clear text-center small full class="btn-cursor" (click)="showFilterOptions();">
+                    {{ "FILTER" | translate }}
+                    <ion-icon margin-left name="arrow-dropdown"></ion-icon>
+                  </p>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+
+            <ion-grid [ngClass]="{show: filter == true, hide: filter == false }">
+              <ion-row>
+                <ion-col padding class="margin-input">
+                  <ion-label stacked>{{ "SPORT" | translate }}</ion-label>
+                  <ion-list>
+
+                    <tag-input [(ngModel)]="$sportSelected" [onlyFromAutocomplete]="true"
+                      placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected" required>
+                      <tag-input-dropdown [autocompleteItems]="$sportList"></tag-input-dropdown>
+                    </tag-input>
+
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label stacked>{{ "TYPE_USER" | translate }}</ion-label>
+                    <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full>
+                      <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
+                        {{item.texto}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label stacked>{{ "NEIGHBORNHOOD" | translate }}</ion-label>
+                    <ion-input [(ngModel)]="query.neighbornhood" name="neighbornhood" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label stacked>{{ "CITY" | translate }}</ion-label>
+                    <ion-input [(ngModel)]="query.city" name="city" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col col-6>
+                  <ion-item>
+                    <ion-label stacked>{{ "STATE" | translate }}</ion-label>
+                    <ion-select id="state" [(ngModel)]="query.state" name='state' full>
+                      <ion-option *ngFor="let item of $statesList" [value]="item">
+                        {{item}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label stacked>{{ "GENDER" | translate }}</ion-label>
+                    <ion-select id="gender" [(ngModel)]="query.gender" name='gender' full>
+                      <ion-option *ngFor="let item of $genderList" [value]="item.valor">
+                        {{item.texto}}
+                      </ion-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+
+                <ion-col>
+                  <ion-item>
+                    <ion-label stacked>{{ "FORMATION" | translate }}</ion-label>
+                    <ion-input [(ngModel)]="query.formacao" name="formacao" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+
+              </ion-row>
+            </ion-grid>
+
+          </ion-card>
+
+        </form>
+
+        <ion-card-content>
+          
+          <ion-buttons>
+
+            <button edit-profile ion-button small start outline (click)="viewReport();">
+                {{ "EXPORT_EXCEL" | translate }}
+            </button>
+            
+            <button edit-profile ion-button small start clear (click)="exportReport();">
+              {{ "EXPORT_EXCEL" | translate }}
+            </button>
+
+            <button edit-profile ion-button small end clear (click)="exportReport(true);">
+              {{ "EXPORT_PDF" | translate }}
+            </button>
+
+          </ion-buttons>
+
+        </ion-card-content>
+
+        <member-container [listMembers]="team"></member-container>
+
+        <ion-card-content>
+
+          <ion-row>
+
+            <ion-col col-12 col-md-3 *ngFor="let member of team">
+
+              <div class="member">
+
+                <ion-buttons>
+                  <button edit-profile ion-button small start clear (click)="editMember(member.ID);">
+                    {{ "EDIT" | translate }}
+                  </button>
+
+                  <button edit-profile ion-button small end clear (click)="deleteMember(member.ID);">
+                    {{ "DELETE" | translate }}
+                  </button>
+
+                </ion-buttons>
+
+              </div><!-- member -->
+
+            </ion-col>
+
+          </ion-row>
+
+        </ion-card-content>
+
+      </ion-card>
+
+    </section>
+
+  </ion-col>
+
+</ion-row>

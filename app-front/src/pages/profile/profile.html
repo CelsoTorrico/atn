@@ -24,23 +24,27 @@
 
         <ion-buttons item-end>
 
-          <button *ngIf="isLogged == false"  ion-button small icon-end clear 
+          <button *ngIf="isLogged == false" ion-button small icon-end clear 
           (click)="followProfile($event)"> 
             {{ (following == true)? 'FOLLOWING': 'FOLLOW' | translate }}
             <ion-icon item-end [name]="(following == true)? 'checkmark-circle': ''"></ion-icon>
-          </button>
+          </button><!-- Seguir usuário-->
+
+          <button *ngIf="typeUser <= 3" ion-button small outline (click)="addToTeam($event)">
+            {{ (addedTeam == false)? 'ADD_MY_CLUB': 'REMOVE_MY_CLUBE' | translate }}
+          </button><!-- Exibido apenas para usuários 'não-institucionais' -->
 
           <a ion-button small outline [href]="downloadProfilePDF()" download>
             {{ "DOWNLOAD_PROFILE" | translate }}
-          </a>
+          </a><!-- Download de Profile -->
 
           <button *ngIf="following" ion-button small outline (click)="sendChatMessage()">
             {{ "MESSAGE" | translate }}
-          </button>
+          </button><!-- Abrir Chat com usuário  -->
 
           <button *ngIf="following" ion-button small outline (click)="sendProfileMessage()">
             {{ "SEND_EMAIL" | translate }}
-          </button>
+          </button><!-- Enviar Email -->
 
         </ion-buttons>
 

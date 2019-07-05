@@ -1,3 +1,4 @@
+import { MyProfileCalendarComponent } from './../../my-profile/calendar-data/calendar-data.component';
 import { MyProfileAddMemberDataComponent } from './../../my-profile/team-data/team-data.component';
 import { MyProfileVideosComponent } from './../../my-profile/videos-data/videos-data.component';
 import { Component, Input } from '@angular/core';
@@ -104,7 +105,7 @@ export class ProfileComponent {
   
   /* Instituição */
   
-  team:any[];
+  team:any[] = [];
 
   max_users:number;
 
@@ -140,11 +141,12 @@ export class ProfileComponent {
   public deleteMessage:any;
 
   private ListComponents: any = {
-    personalData: MyProfilePersonalDataComponent,
-    sportsData:   MyProfileSportsComponent,
-    videosData:   MyProfileVideosComponent,
-    statsData:    MyProfileStatsComponent,
-    teamData:     MyProfileAddMemberDataComponent
+    personalData:   MyProfilePersonalDataComponent,
+    sportsData:     MyProfileSportsComponent,
+    videosData:     MyProfileVideosComponent,
+    statsData:      MyProfileStatsComponent,
+    teamData:       MyProfileAddMemberDataComponent,
+    calendarData:   MyProfileCalendarComponent
   }
 
   constructor(
@@ -152,8 +154,8 @@ export class ProfileComponent {
     public api: Api,
     public toastCtrl: ToastController,
     public alert:AlertController,
-    private modalCtrl: ModalController,
-    private domSanitizer: DomSanitizer,
+    public modalCtrl: ModalController,
+    public domSanitizer: DomSanitizer,
     public translateService: TranslateService) { 
     
       this.translateService.setDefaultLang('pt-br');
@@ -167,11 +169,16 @@ export class ProfileComponent {
   //Função que inicializa
   ngOnInit() {
     //Carrega dados do usuário de contexto
-    this.currentUserLoadData();
+    this.loadUserLoadData();
   }
 
   ionViewWillEnter(): void {
 
+  }
+
+  /** Carrega dados de usuário de contexto */
+  public loadUserLoadData(){
+    this.currentUserLoadData();
   }
 
   private currentUserLoadData() {

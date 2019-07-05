@@ -30,7 +30,7 @@ class ChatRoomModel extends Medools\Model
         'last_update' => 'datetime'
     ];
 
-    const FOREIGN_KEY = [
+    const FOREIGN_KEYS = [
         'suser' => [
             UserModel::class,
             'ID'

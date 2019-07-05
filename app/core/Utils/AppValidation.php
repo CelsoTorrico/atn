@@ -45,7 +45,8 @@ class AppValidation
 
     }
 
-    /** Verifica tipo 'float'
+    /** 
+     * Verifica tipo 'float'
      * @since 0.1
      * @param mixed $data
      */
@@ -68,16 +69,15 @@ class AppValidation
 
         //Verifica se valor é nulo
         if (is_null($data)) {
-            //TODO: Retornar uma função de erro
+            //Retorna FALSE
             return false;
         }
 
         //Verifica se data contém padrão
-        //TODO: Verificar algum meio de verificar de forma exata
         $valid = preg_match('/' . $regex . '/', $data, $match);
 
         if (!$valid) {
-            //TODO: Retornar alguma especie de mensagem
+            //Retorna FALSE
             return false;
         }
 
@@ -97,7 +97,9 @@ class AppValidation
 
     }
 
-    //Função valida diferentes tipos de dados 
+    /** 
+     * Função valida diferentes tipos de dados 
+    */
     function check_user_inputs($data) {
 
         $important = array(
@@ -165,6 +167,7 @@ class AppValidation
             //No caso de um update de perfil em que cada dado vem em forma de array
             // keys => value | visibility
             $value = (is_array($originalValue) && key_exists('value', $originalValue))? $originalValue['value'] : $originalValue;
+            $match = null;
 
             //Se valor enviado for null pula próximo item
             if(is_null($value)){
@@ -253,13 +256,17 @@ class AppValidation
         return $data;
     }
 
-    //Função de verificar se visibilidade enviada está no formato permitido
+    /**
+     * Função de verificar se visibilidade enviada está no formato permitido
+     */
     function check_user_input_visibility($visibility):int {
 
         //Se visibilidade não foi enviada retorna visibilidade padrão
         if(is_null($visibility)){
             return 0;
         }
+
+        $match = null;
 
         //Expressõe regulares
         $validFormat = '([0-9]{1,})'; //ID TYPE USER
@@ -272,7 +279,9 @@ class AppValidation
 
     }
 
-    //Função formata diferentes tipos de dado e aplica erros
+    /** 
+     * Função formata diferentes tipos de dados e aplica erros
+    */
     function check_filtered_inputs($data, $isUpdate = false) {
 
         $errorMsg   = [];
@@ -336,8 +345,10 @@ class AppValidation
 
     }
 
-    //Carrega classe adequadra via string dinamicamente
-    function load(Array $array, $value = null) {
+    /** 
+     * Carrega classe adequada via string dinamicamente
+     * */
+    private function load(Array $array, $value = null) {
         
         $obj = ($array[0] == 'validation')? $this->valid : $this->format;
         
@@ -346,13 +357,17 @@ class AppValidation
         return $obj->$func($value);
     }
 
-    //Criar user_login baseado no email
+    /** 
+     * Criar user_login baseado no email
+    */
     protected function create_user_login($data) {
         preg_match('/(.+)@/', $data, $match);
         return '@'. $match[1];
     }
 
-    //Sanitar item
+    /**
+     *  Sanitar item
+     * */
     private function sanitizeItem (array $value, string $action) {
         
         $sanitized = [];
@@ -365,6 +380,8 @@ class AppValidation
                 continue;
             }
 
+            $match = null;
+
             //Executar regex e filtros
             $sanitized[$key] = (preg_match('/'.$action.'/', $item, $match))? filter_var($match[0], FILTER_SANITIZE_STRING) : false;
         } 
@@ -372,7 +389,9 @@ class AppValidation
         return $sanitized;
     }
 
-    //Adicionar valor a varíavel se for array ou não
+    /** 
+     * Adicionar valor a varíavel se for array ou não
+    */
     private function add_value_to_var($array, $value, string $keyVerify = 'value'){
         if (is_array($array) && array_key_exists($keyVerify, $array)){
             $array[$keyVerify] = $value;

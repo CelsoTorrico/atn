@@ -3,7 +3,7 @@ import { ProfileResumeComponent } from './../components/profile-resume/profile.r
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Api } from './../../providers/api/api';
 import { Component, ComponentFactoryResolver, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController, ModalController, Platform, AlertController } from 'ionic-angular';
 import { User, Cookie } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -12,8 +12,9 @@ import { StatsComponent } from './profile-components/stats.component';
 import { ChatPage } from '../chat/chat';
 import { CookieService } from 'ng2-cookies';
 import { DashboardPage } from '../dashboard/dashboard';
+import { ClubComponent } from './profile-components/club.component'; 
 
-@IonicPage()
+@IonicPage() 
 @Component({
   selector: 'profile',
   templateUrl: 'profile.html'
@@ -26,7 +27,8 @@ export class ProfilePage {
 
   private ListComponents: any = {
     personalView: ProfileComponent,
-    statsView: StatsComponent
+    statsView: StatsComponent,
+    clubView: ClubComponent
   }
 
   //Variveis de template de usuario
@@ -38,6 +40,8 @@ export class ProfilePage {
   favorite: boolean = false;
   following: boolean = false;
   isLogged: boolean = false;
+  typeUser: number = null;
+  addedTeam: boolean = false;
 
   //Profile visited
   public $user_ID: number = null;
@@ -49,6 +53,7 @@ export class ProfilePage {
   constructor(
     public navCtrl: NavController,
     public modalCtrl: ModalController,
+    public alertCtrl: AlertController,
     private api: Api,
     public user: User,
     private params: NavParams,
@@ -79,10 +84,19 @@ export class ProfilePage {
 
     //Retorna dados do usuário
     this.currentUser.subscribeUser(function ($this) {
+
       //Funções realizadas após requisição com dados sucesso
       $this.ID = $this.currentUser._user.ID;
       $this.profile_name = $this.currentUser._user.profile_name;
       $this.following = $this.currentUser._user.following;
+      $this.typeUser = $this.currentUser._user.type.ID;
+
+      //Se for uma instituição
+      if ($this.currentUser._user.type.ID > 3 && $this.$user_id != undefined) {
+        //Verifica se usuário pertence a instituição
+        $this.isAddedToTeam();
+      }
+
     }, this);
 
   }
@@ -102,7 +116,7 @@ export class ProfilePage {
 
   }
 
-  //Função para carregar componentes 
+  /** Função para carregar componentes  */
   loadComponent($component = ProfileComponent) {
 
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory($component);
@@ -126,7 +140,7 @@ export class ProfilePage {
 
   }
 
-  //Mudar a visualização de componentes
+  /** Mudar a visualização de componentes */
   changeComponentView($event) {
     //Atribui dado proveninete da classe filho
     this.loadComponent(this.ListComponents[$event]);
@@ -176,6 +190,7 @@ export class ProfilePage {
 
   }
 
+  /** Enviar Mensagem */
   sendChatMessage() {
 
     //Adiciona Id do usuário corrente
@@ -198,13 +213,69 @@ export class ProfilePage {
     }
   }
 
-  //Abre uma nova página
+  /** Função de adicionar  */
+  addToTeam($event) {
+
+    $event.preventDefault();
+
+    //Adiciona Id do usuário corrente
+    let $id = this.ID;
+
+    let $alert = this.alertCtrl.create({
+      title: 'Adicionar usuário a sua equipe?',
+      message: 'Tem certeza que deseja realizar essa ação?',
+      buttons: [{
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Sim',
+        handler: data => {
+          //Começar ou deixar de seguir profile
+          this.api.get('user/add_team/' + $id).subscribe((resp: any) => {
+            if (resp.success != undefined) {
+              //Mudar status do botão
+              this.addedTeam = (this.addedTeam) ? false : true;
+            }
+          });
+        }
+      }]
+    });
+
+    $alert.present();
+
+  }
+
+  /* Abre uma nova página */
   backButton() {
     if (this.navCtrl.canGoBack()) {
       this.navCtrl.pop();
     } else {
       this.navCtrl.setRoot(DashboardPage);
     }
+  }
+
+
+  /**
+   * Verifica se usuário já foi adicionado ao time/clube/instituição
+   * @since 2.1
+   */
+  private isAddedToTeam() {
+
+    //Adicionado dados do usuário que esta visualizando perfil
+    let $listUser = this.currentUser._user.current_users;
+    console.log($listUser);
+
+    //Verifica se id do usuário pertence em lista
+    $listUser.ids.find(function (element, index, array) {
+      console.log(element);
+      //Verifica se usuário existe no time
+      if (element == this.$user_ID) {
+        this.addedTeam = true;
+      }
+
+    });
+
   }
 
 

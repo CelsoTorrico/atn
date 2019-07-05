@@ -16,6 +16,7 @@ class FileUpload {
     protected $postID;
     public    $filename;
     public    $mimeType;
+    public    $lastInsertFileUrl;
 
     private $disk;
 
@@ -33,7 +34,7 @@ class FileUpload {
         $this->ID           = $userID;
         $this->postID       = $postID;
         $this->fileClass    = $fileClass;        
-        $validTypes         = ['timeline', 'learn', 'profile_img', 'pdf'];
+        $validTypes         = ['timeline', 'learn', 'profile_img', 'pdf', 'report'];
         
         //Verifica se tipo é válido
         if (in_array($type, $validTypes)) {
@@ -45,7 +46,8 @@ class FileUpload {
     public function insertFile(){
         
         //Atribuindo caminho a var
-        $urlFile = $this->moveDirectory();
+        $this->lastInsertFileUrl = $this->moveDirectory();
+        $urlFile = $this->lastInsertFileUrl;
 
         //Contruindo modelo e inserindo dados a cadastrar
         $this->defineModel($urlFile);
@@ -75,6 +77,12 @@ class FileUpload {
                 $this->model  = new UsermetaModel();
                 $this->model->user_id = $this->ID;
                 $this->model->meta_key = 'profile_img';
+                $this->model->meta_value = $urlFile;
+                break;
+            case 'report':
+                $this->model  = new UsermetaModel();
+                $this->model->user_id = $this->ID;
+                $this->model->meta_key = 'report';
                 $this->model->meta_value = $urlFile;
                 break;
             default:

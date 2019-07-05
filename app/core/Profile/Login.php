@@ -156,7 +156,7 @@ class Login implements LoginInterface{
         
     }
 
-    public function forgetPassword(string $email){
+    public function forgetPassword(string $email) {
        
         //Se tem token atribuido juntamente com dados
         if(empty($email)) {
@@ -216,7 +216,8 @@ class Login implements LoginInterface{
         $phpmailer->setToEmail(['email' => $email, 'name' => $user->display_name]);
         $phpmailer->setFromName('AtletasNOW - Sua hora é agora');
         $phpmailer->setSubject('Nova senha de acesso - AtletasNOW');
-        $phpmailer->setContent($html);
+        //Carrega template prédefinido
+        $phpmailer->loadTemplate('recoverPassword', ['newpass' => $new_pass]);
         
         //Envio do email
         $result = $phpmailer->send();
@@ -232,8 +233,14 @@ class Login implements LoginInterface{
         
     }
 
-    private function completeProfileNotify() {
-        
+    /**
+     * Envia ao usuário cadastrado email de bem vindo a plataforma
+     * 
+     * @param string $string Email do usuário a enviar email
+     * @since 2.1
+     */
+    public function sendWelcomeEmail(string $email, string $displayName = null) {
+        return $this->welcomeEmailAfterRegister($email, $displayName);
     }
 
     public static function getCookieName(){
@@ -250,6 +257,34 @@ class Login implements LoginInterface{
 
     public function getUserData(){
         return $this->userData;
+    }
+
+    private function completeProfileNotify() {
+        
+    }
+
+    /**
+     * Envia ao usuário cadastrado email de bem vindo a plataforma
+     * 
+     * @param string $string Email do usuário a enviar email
+     * @since 2.1
+     */
+    private function welcomeEmailAfterRegister(string $email, string $displayName) {
+
+        //Filtrando e sanitinizando email
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+        
+        //SETUP DE EMAIL
+        $phpmailer = new SendEmail();
+        $phpmailer->setToEmail(['email' => $email, 'name' => $displayName]);
+        $phpmailer->setFromName('AtletasNOW - Sua hora é agora');
+        $phpmailer->setSubject('Bemvindo para a AtletasNOW');
+        
+        //Carrega template prédefinido
+        $phpmailer->loadTemplate('welcome', ['email' => $email, 'name' => $displayName]);
+
+        return $phpmailer->send();
+        
     }
 
 }

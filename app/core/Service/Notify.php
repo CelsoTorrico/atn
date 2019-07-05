@@ -3,7 +3,6 @@
 namespace Core\Service;
 
 use Core\Profile\User;
-use Core\Profile\UserClub;
 use Core\Database\NotifyModel;
 
 class Notify {
@@ -19,16 +18,18 @@ class Notify {
         $this->currentUser = $user;
 
         //Tipos de notificações
-        $this->types = [0 => 'admin', 1 => 'friends', 3 => 'approve', 4 => 'follow', 5 => 'block', 6 => 'comment', 7 => 'message'];
+        $this->types = [0 => 'admin', 1 => 'friends', 3 => 'approve', 4 => 'follow', 5 => 'block', 6 => 'comment', 7 => 'message', 10 => 'add_team', 11 => 'remove_team'];
 
         //Retorna classe usuário ou retorna erro
-        if( is_null($this->currentUser) ){
+        if ( is_null($this->currentUser) ) {
             return ['error' => ['notify' => 'Você não tem permissão.']];
         }
     
     }
 
-    /* Retorna lista de notify */
+    /** 
+     * Retorna lista de notify 
+     * */ 
     function get(){
 
         //Retorna interador de todas as notificações 
@@ -68,7 +69,10 @@ class Notify {
         
     } 
     
-    /* Retorna lista de notify e marcar todas como lidas */
+    /** 
+     * Retorna lista de notify e marcar todas como lidas
+     * 
+     * */ 
     function update(){
 
         //Retorna interador de todas as notificações 
@@ -101,21 +105,27 @@ class Notify {
         
     } 
 
-    /* Adiciona um item de notify */
+    /**
+     *  Adiciona um item de notify 
+     * */
     public function add($type, $toID, $fromID ) {
 
         //Executa função registro
         return $this->register($type, $toID, $fromID);
     }
 
-    /* Deletar um notificação */
+    /**
+     *  Deletar um notificação 
+     * */
     function delete( $notifyID ){
 
         //Executa função de desregistrar
         return $this->deregister($notifyID);        
     }
 
-    /** Registra uma notificação para usuário */
+    /**
+     *  Registra uma notificação para usuário 
+     * */
     private function register(int $type = 0, int $toID, int $fromID) {
 
         //Filtrar inputs e validação de dados
@@ -138,7 +148,9 @@ class Notify {
         return $result;
     }
 
-    /** Desregistra(oculta) uma notificação  */
+    /** 
+     * Desregistra(oculta) uma notificação  
+     * */
     private function deregister($notifyID){
 
         //Preenche colunas com valores
@@ -160,7 +172,9 @@ class Notify {
         }
     }
 
-    /** Lista de quantidade de notificações não lidas */
+    /** 
+     * Lista de quantidade de notificações não lidas 
+     * */
     public function getTotal(){
 
         //Retorna interador de todas as notificações 
@@ -173,7 +187,9 @@ class Notify {
         return $allnotifys->count();
     }
 
-    /** Função de aprovar notificação */
+    /** 
+     * Função de aprovar notificação 
+     * */
     public function approveNotify(int $id, bool $confirm){
 
         //Verificar se existe notificação 
@@ -217,7 +233,9 @@ class Notify {
 
     }
 
-    //Faz checkagem para imprimir a formatação de conteúdo de acordo com tipo de notificação
+    /** 
+     * Faz checkagem para imprimir a formatação de conteúdo de acordo com tipo de notificação
+     * */
     private function defineTypeContent(array $notify) {
 
         //Se tipo não permitido retornar false
@@ -244,6 +262,12 @@ class Notify {
             case 9:
                 $response = $this->repprovedClub($notify);
                 break; 
+            case 10:
+                $response = $this->addedTeam($notify);
+                break; 
+            case 11:
+                $response = $this->removedTeam($notify);
+                break; 
             default:
                 $response = '';
                 break;
@@ -252,7 +276,9 @@ class Notify {
         return $response;
     }
 
-    //Formatação de notificação para aprovação de perfil
+    /**
+     *  Formatação de notificação para aprovação de perfil
+     */
     private function followContent(array $notify){
 
         //Retorna dados do usuário
@@ -272,7 +298,9 @@ class Notify {
 
     }
 
-    //Formatação de notificação para aprovação de perfil
+    /**
+     *  Formatação de notificação para aprovação de perfil
+     */
     private function approveContent(array $notify){
 
         //Retorna dados do usuário
@@ -292,7 +320,9 @@ class Notify {
 
     }
 
-    //Formatação de notificação para aprovação de perfil
+    /**
+     * Formatação de notificação para aprovação de perfil 
+     */
     private function commentContent(array $notify){
 
         //Retorna dados do usuário
@@ -312,7 +342,9 @@ class Notify {
 
     }
 
-    //Formatação de notificação para aprovação de perfil
+    /**
+     * Formatação de notificação para aprovação de perfil 
+     */
     private function messageContent(array $notify){
 
         //Retorna dados do usuário
@@ -332,7 +364,9 @@ class Notify {
 
     }
 
-    //Formatação de notificação para aprovação de perfil
+    /**
+     *  Formatação de notificação para aprovação de perfil
+     */
     private function approvedClub(array $notify){
 
         //Retorna dados do usuário
@@ -352,7 +386,9 @@ class Notify {
 
     }
 
-    //Formatação de notificação para aprovação de perfil
+    /**
+     * Formatação de notificação para aprovação de perfil 
+     */
     private function repprovedClub(array $notify){
 
         //Retorna dados do usuário
@@ -363,6 +399,51 @@ class Notify {
             "ID"            => $notify["ID"],
             "type"          => $notify["type"],
             "message"       => "A informação preenchida em seu perfil foi reprovada pelo clube.",
+            "date"          => $notify["date"],
+            "user_profile"  => $user
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    /**
+     *  Formatação de notificação para aprovação de perfil
+     */
+    private function addedTeam(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->getMinProfile($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify["ID"],
+            "type"          => $notify["type"],
+            "message"       => "Você foi adicionado como integrante da equipe '" . $user['display_name'] . "' e seu perfil foi atualizado com essa informação!",
+            "date"          => $notify["date"],
+            "user_profile"  => $user
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    /**
+     * Formatação de notificação para aprovação de perfil 
+     */
+    private function removedTeam(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->getMinProfile($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify["ID"],
+            "type"          => $notify["type"],
+            "message"       => "Infelizmente você foi removido como integrante da equipe '" . 
+            $user['display_name'] . "'!",
             "date"          => $notify["date"],
             "user_profile"  => $user
         ];

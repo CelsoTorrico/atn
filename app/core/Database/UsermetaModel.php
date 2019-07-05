@@ -25,9 +25,9 @@ class UsermetaModel extends Medools\Model
         'visibility'
     ];
 
-    const FOREIGN_KEY = [
+    const FOREIGN_KEYS = [
         'user_id' => [
-            'Core\Database\UserModel',
+            UserModel::class,
             'ID'
         ]
     ];

@@ -13,12 +13,12 @@ export class Api {
   //static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
   
   //Ambiente de testes | Godzilla
-  //static readonly origin = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/teste/app-atletasnow-front';
-  //static readonly url = 'http://ec2-54-207-47-200.sa-east-1.compute.amazonaws.com/teste/atletasNOW/app/public';
+  static readonly origin = 'https://developing.atletasnow.com/app-atletasnow-front/';
+  static readonly url = 'https://developing.atletasnow.com/atletasNOW/app/public/';
 
   //Ambiente Produção
-  static readonly origin  = 'https://app.atletasnow.com';
-  static readonly url     = 'https://api.atletasnow.com';
+  //static readonly origin  = 'https://app.atletasnow.com';
+  //static readonly url     = 'https://api.atletasnow.com';
   
   protected $headerObject:any;
 

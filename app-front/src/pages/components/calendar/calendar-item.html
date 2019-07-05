@@ -1,0 +1,87 @@
+<ion-list class="calendar-item">
+  <ion-item>
+    <ion-thumbnail item-start *ngIf="calendarAtributes.attachment">
+      <img [src]="calendarAtributes.attachment" class="image-content btn-cursor" />
+    </ion-thumbnail>
+
+    <div class="calendar-info">
+      <h2 class="title">{{ calendarAtributes.post_title }} | {{ calendarAtributes.post_meta.post_calendar_type }}</h2>
+      <p class="description">{{ calendarAtributes.post_content }}</p> 
+      <div class="hour">
+        <strong>{{ calendarAtributes.post_meta.post_calendar_date[0] | date }}</strong> -
+        {{ calendarAtributes.post_meta.post_calendar_date[1] }}
+      </div>
+    </div>
+
+  </ion-item>
+
+  <ion-item-group>
+
+    <ion-item-divider>
+
+      <ion-list>
+
+        <button ion-button icon-only small like value="{{ 'LIKE' | translate }}"
+          [ngClass]="{'active': calendarAtributes.has_like === true, 'inactive': calendarAtributes.has_like === false}"
+          (click)="setLike(calendarAtributes.ID, $event)">
+          <ion-icon md="ios-thumbs-up-outline"></ion-icon>
+        </button>
+
+        <button ion-button icon-only small like value="{{ 'COMMENT' | translate}}" (click)="openComment($event)">
+          <ion-icon md="ios-chatbubbles-outline"></ion-icon>
+        </button>
+
+        <ion-note float-right class="btn-cursor count-responses" end>
+          {{ "ANSWERS" | translate }}
+          <ion-badge item-end badge-sm>
+            {{ calendarAtributes.quantity_comments }}
+          </ion-badge>
+        </ion-note>
+
+      </ion-list>
+
+    </ion-item-divider>
+
+  </ion-item-group>
+
+  <ion-item-group class="comment-section" *ngIf='commentShow'>
+
+    <ion-row>
+      <ion-col col-auto>
+        <ion-item>
+          <ion-avatar class="btn-cursor" item-start>
+            <img *ngIf="currentUser.metadata.profile_img.value, else elseBlock"
+              [src]="currentUser.metadata.profile_img.value" />
+            <ng-template #elseBlock>
+              <img src="assets/img/user.png" alt="currentUser.display_name" />
+            </ng-template>
+          </ion-avatar>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text"
+          placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-textarea>
+        <button ion-button small float-right end
+          (click)="submitComment(calendarAtributes.ID, $event)">{{ "PUBLISH" | translate }}</button>
+      </ion-col>
+    </ion-row>
+
+  </ion-item-group>
+
+  <div *ngIf="currentUser.ID == calendarAtributes.post_author.ID">
+    <ul class="close-button list-inline">
+      <li>
+        <button edit-profile ion-button small start clear>
+          {{ "EDIT" | translate }}
+        </button>
+      </li>
+      <li (click)="deleteTimeline(calendarAtributes.ID)">
+        <ion-icon name="close-circle"></ion-icon>
+      </li>
+    </ul>
+
+  </div>
+
+</ion-list>
+
+<hr />

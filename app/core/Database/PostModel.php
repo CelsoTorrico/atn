@@ -41,10 +41,10 @@ class PostModel extends Medools\Model
         'post_modified' => 'datetime'
     ];
 
-    const FOREIGN_KEY = [
-        'ID' => [
+    const FOREIGN_KEYS = [
+        'post_id' => [
             PostmetaModel::class,
-            'post_id'
+            'meta_id'
         ]
     ];
 

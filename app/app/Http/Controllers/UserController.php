@@ -17,16 +17,18 @@ class UserController extends Controller
      *
      * @return void
      */
-    public function __construct(User $user, Request $request)
+    public function __construct(Request $request)
     {
         //Atribui usuário do contexto
         $this->user = $request->user();
 
-        //instanciando classe user apenas para requisição atletasnow.com
+        //Atribuindo dados de servidor
         $server = $request->server->getHeaders();
-        if(isset($server['ORIGIN']) &&  preg_match('/^https?:\/\/?'. env('APP_DOMAIN') . '/', $server['ORIGIN'])){
-            $this->user = new User();
-        }
+
+        //Verificamos se requisição partiu de nossos servidores, adicionando um usuário se SIM
+        /*if( !is_a($this->user, 'Core\Profiler\User') && isset($server['ORIGIN']) && preg_match('/^https?:\/\/?'. env('APP_DOMAIN') . '/', $server['ORIGIN']) ){
+            $this->user = new User(); 
+        }*/
     }
 
     /** Retorna usuário único  */

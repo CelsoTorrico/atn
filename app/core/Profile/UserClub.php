@@ -1,6 +1,7 @@
 <?php 
 
 namespace Core\Profile;
+
 use Core\Database\PrivatemetaModel;
 use Core\Database\UsermetaModel;
 use Core\Database\UserModel;
@@ -8,12 +9,10 @@ use Core\Database\ListClubModel;
 use Core\Service\Notify;
 use Core\Utils\AppValidation as AppValidation;
 
-class UserClub extends User{
+class UserClub extends User {
 
     public    $max_users;
     public    $current_users;
-    protected $userModel;
-    protected $metaModel;
     protected $privatemeta;
     protected $fixedParam;
     const     TYPE_CHILD = 2;
@@ -81,8 +80,13 @@ class UserClub extends User{
 
     }
 
-    /** Retorna todos os usuários pertencentes ao clube */
-    public function getTeamUsers() {
+    /** 
+     * Retorna todos os usuários pertencentes ao clube 
+     * 
+     * @version 2.1 - Permitido filtragem através de argumento $filter(array)
+     * @since 2.0
+     * */
+    public function getTeamUsers(Array $filter = [], bool $minProfile = true) {
         
         //Retorna se houve erro ou nenhum usuário
         if(count($this->current_users['ids']) <= 0){
@@ -92,13 +96,22 @@ class UserClub extends User{
         //array de users
         $users = [];
 
+        //Se há ids de usuário a filtrar
+        if (count($filter) > 0) {
+            //Faz comparação de ids de usuários
+            $this->current_users['ids'] = array_flip(
+                array_only(array_flip($this->current_users['ids']), $filter));
+        }
+
         //Percorre array atribuindo usuário
         foreach ($this->current_users['ids'] as $id) {
-            //Inicializa a classe de usuário filho
+            
+            //Inicializa a classe de usuário (User)
             $user = new parent;
             
             //Se houve erro, por causa de usuário inativado
-            if (array_key_exists('error', $item = $user->getMinProfile($id))) {
+            if (array_key_exists('error', 
+                $item = ($minProfile)? $user->getMinProfile($id) : $user->get($id))) {
                 continue;
             }
 
@@ -116,42 +129,105 @@ class UserClub extends User{
 
     }
 
-    /** Adicionar usuário pertecente a usuário pai = instituto */
-    public function addUser(Array $data) {
+    /** 
+     *  Adicionar ou remover usuário como integrante de equipe/instituição
+     *  @since 2.1
+     */
+    public function setUserToTeam(int $user_id){
+        
+        //Retorna instancia do usuário
+        $user = $this->getUser($user_id);
 
-        //Define parametros de dados para inserção
-        $userData = array_merge($data, [
-            'parent_user' => $this->ID, 
-            'type' => self::TYPE_CHILD,
-            'clubes' => [$this->ID]
-        ]);
+        //Verifica se usuário já pertecente a alguma equipe = metadado 'parent_user'
+        if(is_array($user->metadata) && key_exists('parent_user', $user->metadata)) { 
+            
+            //Retornar dados da equipe pertencente
+            $equipe = $this->getUser($user->metadata['parent_user']['value']);
+
+            //Se equipe for diferente do requisitante
+            if ($equipe->ID != $this->ID) {
+                //Mostrar mensagem de erro
+                return ['error' => ['user' => 'Não foi possível concluir a ação. Este usuário já pertence à equipe ' . $equipe->display_name ]];
+            }
+
+            //Remover usuário de integrar da equipe da instituição
+            $result = $this->removeUser($user);
+            
+        } else {
+            //Adicionar usuário como integrante
+            $result = $this->addUser([], $user);
+        }
+
+        //Retorna mensagem
+        return $result;
+    }
+
+    /** Adicionar usuário pertecente a usuário pai = instituto */
+    public function addUser(Array $data = [], User $user = null) {
 
         //Verifica se ainda é possível adicionar usuários
         if(!$this->current_users['qtd'] > $this->max_users){
             return ['error' => ['register', 'Você já atingiu número máximo de usuários permitidos']];
         }
 
-        //Adiciona usuário e pega resposta
-        $response = $this->add($userData);
+        //Define parametros de dados para atribuição de usuário a equipe
+        $userData = array_merge($data, [
+            'parent_user' => $this->ID, 
+            'clubes' => [$this->ID]
+        ]);
 
-        //Se houve algum erro na inserção de usuário
-        if(key_exists('error', $response)){
-            return $response;
+        //Se usuário estiver sendo criado
+        if (is_null($user)) {
+            
+            // definir o tipo de usuário padrão
+            $userData = array_merge($userData, [
+                'type' => self::TYPE_CHILD
+            ]);
+
+            //Adiciona usuário ou atualizar e atribuir resposta
+            $response = $this->add($userData);
+
+            //Se houve algum erro na inserção de usuário
+            if(key_exists('error', $response)){
+                return $response;
+            }
+
+            //Carrega dados do usuário inserido
+            $this->model->load(['user_email' => $userData['user_email']]);
+
+            //Atribui ID do usuario
+            $user_id = $this->model->ID;
+
+        } else {
+            //Atualiza usuário atribuindo a equipe
+            $response = $user->update($userData); 
+
+            //Atribui ID do usuario
+            $user_id = $user->ID;            
+        }   
+        
+        //Verificar qual mensagem exibir de acordo com a solicitação
+        if (key_exists('success', $response)) {
+            
+            //Adicionar selo de aprovado
+            $this::updateClubCertify($user_id, $this->ID, true);
+
+            //Adicionar notificação ao usuário sendo removido da equipe
+            $notify = new Notify($this);
+            $notify->add(10, $user_id, $this->ID);
+
+            //Retorna mensagem
+            return ['success' => ['user' => 'Usuário agora está fazendo parte de sua equipe.']];
+
+        } else {
+            //Retorna mensagem
+            return ['error' => ['user' => 'Houve algum erro em sua solicitação. Tente novamente.']]; 
         }
-
-        //Carrega dados do usuário inserido
-        $this->model->load(['user_email' => $userData['user_email']]);
-
-        //Atribui selo de verificado para clube
-        $this::updateClubCertify($this->model->ID, $this->ID, true);
-
-        //Retorna resposta
-        return $response;
 
     }
 
     /** Atualizar usuário com pertence a propriedade */
-    public function updateUser(Array $data, $id) {
+    public function updateUser(Array $data, int $id) {
 
         //Somente perfis com propriedade
         if(!in_array($id, $this->current_users['ids']) ){
@@ -164,23 +240,6 @@ class UserClub extends User{
 
         //Retorna resposta
         return $response;
-    }
-
-    /** Desativar um usuário */
-    public function deleteUser($id) {
-
-        //Somente perfis com propriedade
-        if (!in_array($id, $this->current_users['ids'])) {
-            //Retorna erro de permissão
-            $result = ['error' => ['update', 'Você não pode permissão para modificar esse perfil.']];
-        }  
-    
-        //Adiciona usuário e pega resposta
-        $response = $this->desregister($id);
-
-        //Retorna resposta
-        return $response;
-
     }
 
     /** Reativar um usuário */
@@ -199,7 +258,12 @@ class UserClub extends User{
         return $response;
     }
 
-    /** Função a ser invocada estaticamente para verificar se clube existe como usuário na plataforma */
+    /** 
+     * Função a ser invocada estaticamente para verificar se clube existe como usuário na plataforma 
+     * 
+     * @return array
+     * @since 2.0
+     * */
     public static function getAllClubs():array {
 
         //Instanciando modelo e data a retornar
@@ -207,12 +271,14 @@ class UserClub extends User{
         $clubs = $clubMeta->getIterator(['meta_key' => 'type', 'meta_value' => ['4','5']]);
 
         //Se não existir usuário, retorna array vazio
-        if( $clubs->count() <= 0){
+        if ( $clubs->count() <= 0) {
             return [];
         }
 
+        //Inicializado array para atribuir info de clubes
         $clubList = [];
 
+        //Percorrendo array e atruindo info
         foreach ($clubs as $club) {
             
             //Verifica se é valido
@@ -220,18 +286,53 @@ class UserClub extends User{
                 continue;
             }
             
-            //Atribui dados do comentário
-            $currentData = $club->toArray();
+            //Retornando informações do usuário em loop
+            $currentData = $club->getData();
+
+            //Inicializando classe de usuário
+            $user = (new self)->get( (int) $currentData['user_id']);
+            
+            //Se usuário não existir
+            if (key_exists('error', $user)) {
+                continue;
+            }
+
+            //Atribuindo dados de clube ao array
             $clubList[] = [
-                'ID' => $club->user_id->ID,
-                'display_name' => $club->user_id->display_name
+                'ID' => $user->ID,
+                'display_name' => $user->display_name
             ];
 
         }
 
-        return $clubList;        
+        return $clubList;     
 
     }   
+
+    /** 
+     * Função para remover usuário da equipe sem excluir da plataforma
+     * @param $user User = classe de usuário
+    */
+    private function removeUser(User $user){
+        
+        //Setar usermeta para remoção
+        $result = $user->set('parent_user', true );
+
+        //Verificar qual mensagem exibir de acordo com a solicitação
+        if ($result) {
+            
+            //Instanciar a classe de notificação
+            $notify = new Notify($this);
+
+            //Adicionar notificação ao usuário sendo integrado a equipe
+            $notify->add(11, $user->ID, $this->ID);
+
+            return ['success' => ['user' => 'Usuário não faz mais parte de sua equipe.']];
+        } else {
+            return ['error' => ['user' => 'Houve algum erro em sua solicitação. Tente novamente.']]; 
+        }
+
+    }
 
     /** 
      * Verifica a existência de clube e envia notificação
@@ -283,8 +384,11 @@ class UserClub extends User{
                 continue;
             }
             
+            //Instancia modelo UserModel
+            $userModel = $user->user_id;
+
             //Atribui IDS de usuários
-            $userIDS[] = $user->user_id;
+            $userIDS[] = $userModel->ID;
         }
 
         $currentUsers = array_merge([

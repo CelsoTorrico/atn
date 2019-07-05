@@ -90,10 +90,10 @@ class Chat{
 
     /**
      * Abre uma room nova ou existente
-    *  @param int $user_id
+    *  @param int $suser_id
     *  @return array
     */
-    function getRoom($suser_id):array{
+    function getRoom(int $suser_id):array{
 
         //Se usuários não estão conectados
         if(!$this->isConnected($suser_id)){
@@ -257,7 +257,7 @@ class Chat{
                 $room_user = ($item->suser != $this->currentUser->ID) ? $item->suser : $item->fuser;
 
                 //Se ao retornar usuário vir erro de usuário inexistente
-                if (array_key_exists('error', $room_user = $user->getMinProfile($room_user))) {
+                if (array_key_exists('error', $room_user = $user->getMinProfile($room_user->ID))) {
                     continue;
                 }
 

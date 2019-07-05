@@ -24,9 +24,9 @@ class FavoriteModel extends Medools\Model
         'date' => 'datetime'
     ];
 
-    const FOREIGN_KEY = [
+    const FOREIGN_KEYS = [
         'to_id' => [
-            'Core\Database\UserModel',
+            UserModel::class,
             'ID'
         ]
     ];

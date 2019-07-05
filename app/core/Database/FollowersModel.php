@@ -29,9 +29,9 @@ class FollowersModel extends Medools\Model
         'has_block'
     ];
 
-    const FOREIGN_KEY = [
+    const FOREIGN_KEYS = [
         'to_id' => [
-            'Core\Database\UserModel',
+            UserModel::class,
             'ID'
         ]
     ];

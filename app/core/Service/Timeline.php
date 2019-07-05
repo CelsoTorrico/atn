@@ -207,12 +207,12 @@ class Timeline {
                 }
 
                //Inicializa classe de comentários passando ID do POST
-                $comment = new Comment($item->ID);
+                $comment = new Comment((int) $item->ID);
 
                 //Combina array timeline e comentários
                 $timeline = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity(),
-                    'has_like' => $this->like->isPostLiked($item->ID, $currentViewUser)         
+                    'has_like' => $this->like->isPostLiked((int) $item->ID, $currentViewUser)         
                 ]); 
 
                 //Adiciona dados básico do autor do post timeline

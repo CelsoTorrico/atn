@@ -22,9 +22,10 @@
           {{ "SPORTS" | translate }}
         </ion-list-header>
 
-        <rl-tag-input margin [(ngModel)]="$sportsSelected" [addOnBlur]="false" [autocomplete]="true"
-          [autocompleteItems]="$sportList" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected">
-        </rl-tag-input>
+        <tag-input margin [(ngModel)]="$sportsSelected" [addOnBlur]="false" [onlyFromAutocomplete]="true"
+           placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected">
+          <tag-input-dropdown [autocompleteItems]="$sportList"></tag-input-dropdown>
+        </tag-input>
 
       </ion-list>
 
@@ -38,9 +39,10 @@
           {{ "CLUBS" | translate }}
         </ion-list-header>
 
-        <rl-tag-input margin [(ngModel)]="$clubsSelected" [addOnBlur]="false" [autocomplete]="true"
-          [autocompleteItems]="$clubsList" placeholder="{{ 'WRITE_CLUB' | translate}}" name="clubsSelected">
-        </rl-tag-input>
+        <tag-input margin [(ngModel)]="$clubsSelected" [addOnBlur]="false" [onlyFromAutocomplete]="true"
+          placeholder="{{ 'WRITE_CLUB' | translate}}" name="clubsSelected">
+          <tag-input-dropdown [autocompleteItems]="$clubsList"></tag-input-dropdown>
+        </tag-input>
       </ion-list>
 
     </ion-item-group>

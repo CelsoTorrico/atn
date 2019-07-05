@@ -45,7 +45,7 @@
     <ion-card class="my-sports">
 
       <ion-card-header>
-        
+
         {{ "MY_SPORTS" | translate }}
 
         <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('sportsData');">
@@ -70,8 +70,9 @@
             <div class="about-item" *ngFor="let club of clubes">
               <h4>
                 {{ club.club_name }}
-                <ion-badge class="club-badge" *ngIf='club.certify != undefined' [ngClass]="{'verified': club.certify == '[Verified]'}">
-                  <ion-icon name="bookmarks"></ion-icon> 
+                <ion-badge class="club-badge" *ngIf='club.certify != undefined'
+                  [ngClass]="{'verified': club.certify == '[Verified]'}">
+                  <ion-icon name="bookmarks"></ion-icon>
                   {{ club.certify | translate }}
                 </ion-badge>
               </h4>
@@ -101,40 +102,41 @@
           </ion-list>
         </ion-item-group>
 
-      <ng-container *ngIf="type >= 3" ><!-- Instituições -->
+        <ng-container *ngIf="type >= 3">
+          <!-- Instituições -->
 
-        <div class="institute-about">
-          <ul> 
-            <li *ngIf="club_site.value"><strong>{{ "WEBSITE" | translate }}</strong>
-              {{ club_site.value }}</li>
-            <li *ngIf="club_sede.value"><strong>{{ "HEADQUARTERS" | translate }}</strong>
-              {{ club_sede.value }}</li>
-          </ul>
-        </div>        
-        
-        <ion-item-group *ngIf="eventos != undefined && eventos.value.length > 0">
-          {{ "EVENTS" | translate }}
-          <ion-list>
-            <div class="about-item" *ngFor="let form of eventos.value">
-              <h4><strong>{{ 'NAME' | translate }}</strong>: {{ form[0] }}</h4>
-              <p><strong>{{ 'ABOUT' | translate }}</strong>: {{ form[1] }}</p>
-              <p><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</p>
-            </div> 
-          </ion-list>
-        </ion-item-group>
+          <div class="institute-about">
+            <ul>
+              <li *ngIf="club_site.value"><strong>{{ "WEBSITE" | translate }}</strong>
+                {{ club_site.value }}</li>
+              <li *ngIf="club_sede.value"><strong>{{ "HEADQUARTERS" | translate }}</strong>
+                {{ club_sede.value }}</li>
+            </ul>
+          </div>
 
-        <ion-item-group *ngIf="club_liga != undefined && club_liga.value.length > 0"> 
-          {{ "TOURNAMENT" | translate }}
-          <ion-list>
-            <div class="about-item" *ngFor="let liga of club_liga.value">
-              <h4><strong>{{ 'POSITION' | translate }}</strong>: {{ liga[0] }}</h4>
-              <p><strong>{{ 'CHAMPIONSHIP' | translate }}</strong>: {{ liga[1] }}</p>
-              <p><strong>{{ 'YEAR' | translate }}</strong>: {{ liga[2] }}</p>
-            </div>
-          </ion-list>
-        </ion-item-group>
-      
-      </ng-container>
+          <ion-item-group *ngIf="eventos != undefined && eventos.value.length > 0">
+            {{ "EVENTS" | translate }}
+            <ion-list>
+              <div class="about-item" *ngFor="let form of eventos.value">
+                <h4><strong>{{ 'NAME' | translate }}</strong>: {{ form[0] }}</h4>
+                <p><strong>{{ 'ABOUT' | translate }}</strong>: {{ form[1] }}</p>
+                <p><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</p>
+              </div>
+            </ion-list>
+          </ion-item-group>
+
+          <ion-item-group *ngIf="club_liga != undefined && club_liga.value.length > 0">
+            {{ "TOURNAMENT" | translate }}
+            <ion-list>
+              <div class="about-item" *ngFor="let liga of club_liga.value">
+                <h4><strong>{{ 'POSITION' | translate }}</strong>: {{ liga[0] }}</h4>
+                <p><strong>{{ 'CHAMPIONSHIP' | translate }}</strong>: {{ liga[1] }}</p>
+                <p><strong>{{ 'YEAR' | translate }}</strong>: {{ liga[2] }}</p>
+              </div>
+            </ion-list>
+          </ion-item-group>
+
+        </ng-container>
 
       </ion-card-content>
 
@@ -166,52 +168,15 @@
 
     </ion-card><!-- My Videos -->
 
-    <ion-card class="my-team" *ngIf="type > 3">
+    <ion-card class="my-team" *ngIf="team.length > 0" >
 
       <ion-card-header>
-        {{ "MY_TEAM" | translate }}
-
-        <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('teamData');">
-          <ion-icon item-start name="create"></ion-icon>
-          {{ "ADD_NEW_MEMBER" | translate }}
-        </button>
-
+          {{ "MY_TEAM" | translate }}
       </ion-card-header>
 
-      <ion-card-content>
+      <member-container [listMembers]="team"></member-container>
 
-          <p>{{ "MY_TEAM_INITIAL_MESSAGE" | translate }}</p>
-
-          <ion-row no-padding>
-
-              <ion-col col-6 *ngFor="let member of team">
-
-                  <div class="member">
-
-                      <member-list [member]="member"></member-list>
-  
-                      <ion-buttons *ngIf="isLogged">
-                          <button edit-profile ion-button small start clear icon-only 
-                          (click)="editMember(member.ID);">
-                              {{ "EDIT" | translate }}  
-                          </button>
-        
-                          <button edit-profile ion-button small end clear icon-only 
-                          (click)="deleteMember(member.ID);">
-                              {{ "DELETE" | translate }}
-                          </button>
-        
-                      </ion-buttons>
-
-                  </div><!-- member -->
-  
-              </ion-col>
-  
-            </ion-row>
-
-      </ion-card-content>
-
-    </ion-card><!-- My Videos -->
+    </ion-card><!-- MY-TEAM -->
 
   </ion-col>
 

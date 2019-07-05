@@ -1893,7 +1893,7 @@ return [
 			"Pontuação" => "",
 			"Colocação" => ""
 		]
-	],"kitesurf" => [
+	],"kitsurf" => [
 		"Estatísticas Carreira"=> [
 			"1st Lugar" => "",
 			"2st Lugar" => "",
@@ -2157,6 +2157,57 @@ return [
 			"Triple Play" => "",
 			"Outfield Assists" => "",
 			"Total Chances" => ""
+		]
+	],
+	"vela"  => [
+		"Estatísticas Carreira"  => [
+			"1st Lugar" => null,
+			"2st Lugar" => null,
+			"3st Lugar" => null,
+		],
+		"Melhores Marcas" => [
+			"Evento" => null,
+			"Especialidade/Categoria" => null,
+			"Resultado" => null
+		],
+		"Estatísticas Evento" => [
+			"Tempo de prova" => null,
+			"Quantidade de voltas" => null,
+			"Distância percorrida" => null,
+			"Pontos" => null,
+			"Barco" => null,
+			"Comprimento" => null,
+			"Peso" => null,
+			"Área Vélica" => null,
+			"Data" => null,
+			"Ano" => null,
+			"Ano Escolar" => null,
+			"Oponente" => null,
+			"Evento/Nome" => null
+		]
+	],
+	"rafting" => [
+		"Estatísticas Carreira" => [
+			"1st Lugar" => null,
+			"2st Lugar" => null,
+			"3st Lugar" => null
+		],
+		"Melhores Marcas" => [
+			"Evento" => null,
+			"Especialidade/Categoria" =>null,
+			"Resultado" =>null
+		],
+		"Estatísticas Evento" => [
+			"Tamanho do bote" => null,
+			"Quantidade de Pessoas" => null,
+			"Quantidade de corredeiras" => null,
+			"Agem" => null,
+			"Slalom" => null,
+			"Data" => null,
+			"Ano" => null,
+			"Ano Escolar" => null,
+			"Oponente" => null,
+			"Evento/Nome" => null
 		]
 	]
 ];

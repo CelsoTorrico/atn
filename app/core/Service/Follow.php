@@ -71,7 +71,7 @@ class Follow {
             $user = new User();
             
             //Atribui dados de usuário ao array
-            $listUsers[] = ($only_ids)? $item->to_id : $user->getMinProfile($item->to_id);
+            $listUsers[] = ($only_ids)? $item->to_id->ID : $user->getMinProfile($item->to_id->ID);
         }       
 
         return $listUsers;

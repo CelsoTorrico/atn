@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ "ADD_EVENT" | translate }}
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        {{ "CLOSE" | translate }}
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <form #personalData="ngForm" (submit)="save(calendarData, $event)">
+
+    <ion-item-group>
+      <ion-row>
+        <ion-col col-12>
+          <ion-item>
+            <ion-label stacked>{{ "TITLE" | translate}}</ion-label>
+            <ion-input [(ngModel)]="calendar.post_title" name="post_title" type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col col-12>
+          <ion-item>
+            <ion-label stacked>{{ "CONTENT" | translate }}</ion-label>
+            <ion-textarea [(ngModel)]="calendar.post_content" name="post_content" type="text" maxlength="1000">
+            </ion-textarea>
+          </ion-item>
+        </ion-col>
+        <ion-col col-12 col-md-6>
+          <ion-item>
+            <ion-label stacked>{{ "DATE" | translate }}</ion-label>
+            <ion-input name="post_calendar_date" type="date" displayFormat="DD/MM/YYYY" pickerFormat="DD MMMM YYYY"
+              [(ngModel)]="calendar.post_calendar_date[0]"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col col-12 col-md-6>
+            <ion-item>
+              <ion-label stacked>{{ "HOUR" | translate }}</ion-label>
+              <ion-datetime name="post_calendar_date" [(ngModel)]="calendar.post_calendar_date[1]" displayFormat="HH:mm"></ion-datetime>
+            </ion-item>
+          </ion-col>
+        <ion-col col-12 col-md-6>
+          <ion-item>
+            <ion-label stacked>{{ "TYPE" | translate }}</ion-label>
+            <ion-select visibility name="post_calendar_type" [(ngModel)]="calendar.post_calendar_type">
+                <ion-option *ngFor="let item of eventTypes" [value]="item.ID">
+                  {{item.type}}
+                </ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col col-12 col-md-6>
+          <ion-item>
+            <ion-label stacked>{{ "ADDRESS" | translate }}</ion-label>
+            <ion-input [(ngModel)]="calendar.post_calendar_address" name="post_calendar_address" type="text">
+            </ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <div class="input-image">
+
+              <label class="item btn-cursor" for="post_image">
+                <ion-icon item-start name="images"></ion-icon>
+                <span>{{ "ATTACH_IMAGE" | translate }}</span>
+              </label>
+
+              <input id="post_image" [(ngModel)]="calendar.post_image" (change)="fileChangeEvent($event)" type="file" name="post_image" accept="image/*" /> 
+
+              <div id="preview" class="image-container"></div>
+
+            </div>
+          </ion-item>
+
+        </ion-col>
+
+      </ion-row>
+
+    </ion-item-group>
+
+    <ion-item>
+
+      <ion-badge *ngIf="errorSubmit != undefined" >
+        {{ errorSubmit | translate }}
+      </ion-badge>
+
+      <button type="submit" ion-button full>{{'SAVE' | translate}}</button>
+
+    </ion-item>
+
+  </form>
+
+</ion-content>

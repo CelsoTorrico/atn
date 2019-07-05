@@ -95,8 +95,11 @@ class AuthServiceProvider extends ServiceProvider
             return null;
         }
 
+        //Instanciando UserModel baseado nos perfil encontrado
+        $userModel = $usermeta->user_id;
+
         //Retorna classe determinada por tipo de usuário
-        $userClass = User::typeUserClass(new UserModel(['ID' => $usermeta->user_id]));
+        $userClass = User::typeUserClass($userModel);
         
         //Retorna classe
         return $userClass;

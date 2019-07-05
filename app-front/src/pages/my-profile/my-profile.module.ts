@@ -1,3 +1,6 @@
+import { MyProfileCalendarComponent } from './calendar-data/calendar-data.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TagInputModule } from 'ngx-chips';
 import { MyProfileAddMemberDataComponent } from './team-data/team-data.component';
 import { MyProfileAchievementsComponent } from './achievements-data/achievements-data.component';
 import { MyProfileSportsComponent } from './sports-data/sports-data.component';
@@ -8,8 +11,7 @@ import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
 import { MyProfilePage } from './my-profile';
-import { RlTagInputModule } from 'angular2-tag-input';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StatsList } from '../../providers/useful/stats';
 import { PipesModule } from '../../pipes/pipes.module';
@@ -27,14 +29,17 @@ import { MyProfileVideosComponent } from './videos-data/videos-data.component';
     MyProfileGeneralStatsComponent,
     MyProfileAchievementsComponent,
     MyProfileStatsComponent,
-    MyProfileAddMemberDataComponent 
+    MyProfileAddMemberDataComponent,
+    MyProfileCalendarComponent
   ],
   imports: [
     IonicPageModule.forChild(MyProfilePage), 
     TranslateModule.forChild(),
-    FormsModule,
     CommonModule,
-    RlTagInputModule,
+    TagInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
     MenuPageModule, 
     PipesModule
   ],
@@ -48,7 +53,8 @@ import { MyProfileVideosComponent } from './videos-data/videos-data.component';
     MyProfileGeneralStatsComponent,
     MyProfileAchievementsComponent,
     MyProfileStatsComponent,
-    MyProfileAddMemberDataComponent
+    MyProfileAddMemberDataComponent,
+    MyProfileCalendarComponent
   ],
   bootstrap: [MyProfilePage],
   providers: [

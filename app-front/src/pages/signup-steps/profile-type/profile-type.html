@@ -37,10 +37,11 @@
           <ion-row no-padding>
             <ion-col col-12>
               <ion-label stacked>{{ 'SPORT' | translate}}</ion-label>
-              <rl-tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false" [autocomplete]="true"
-                [autocompleteItems]="$sportList" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected"
+              <tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false"
+                 [onlyFromAutocomplete]="true" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected"
                 required>
-              </rl-tag-input>
+                <tag-input-dropdown [autocompleteItems]="$sportList"></tag-input-dropdown>
+              </tag-input>
             </ion-col>
           </ion-row>
 

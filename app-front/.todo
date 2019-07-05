@@ -3,40 +3,10 @@
     mysqljs >> https://github.com/mysqljs/mysql
     nodemysql2 >> https://github.com/sidorares/node-mysql2
     JSCookie >> https://github.com/js-cookie/js-cookie
-    ChartsJS >> https://www.npmjs.com/package/ng-chartjs
 */
 
-
-✔ Fazer as solicitações de dados via Cookie funcionar @done(19-01-21 15:57)
-✔ Criar uma método para que não envie diversas solicitações ao clicar em algum botão. Ex: login, registro e etc. @done(19-01-22 20:03)
-✔ Fazer validação de formulário, campos obrigatórios não impedindo envio. @done(19-01-21 15:57)
-✔ Verificar inserção (INSERT | UPDATE) de dados no ambiente de teste @done(19-01-22 20:03)
-✔ Envio de email em Perfil >> Fazer mostrar resposta de sucesso. @done(19-02-28 02:18)
-✔ Envio de email >> Verificar conversão UTF 8 @done(19-04-22 23:42)
+☐ Tag Input >> Não está enviado dados, verificar e corrigir
+☐ Página de Busca >> Não está abrindo BrowserModule?
 ☐ PDF >> Melhorar a exibição dos dados
-✔ comment-form >> Exibir botão de envio de mensagem @done(19-02-27 14:57)
-✔ Timeline >> Adicionar um botão para excluir post @done(19-02-24 18:56)
-✔ Datas >> Corrigir a exibição de datas convertendo para formato suportado @done(19-02-25 03:25)
-✔ Notificação e Menu >> Melhorar a exibição do popup @done(19-02-28 22:17)
-✔ Font Web >> Donwload e adicionar ao projeto @done(19-02-28 22:24)
-✔ Chat >> Envio de mensagem quando iniciar via perfil de usuário @done(19-02-22 02:12)
-✔ Profile >> Fazer requisição única utilizando classe Subject >> subscribeUser @done(19-03-08 22:22)
-✔ Profile >> Meus Esportes >> Corrigir a inclusão de clubes @done(19-03-01 01:24)
-✔ Profile >> Exibição de following e favorite não esta sendo exibido corretamente @done(19-03-01 01:49)
-✔ Chat >> layout:Melhorar exibição da página @done(19-02-28 22:16)
-✔ Chat >> code: mostrar para cada usuário lista de rooms disponíveis @done(19-03-01 00:28)
-✔ Profile >> Instituições >> Mostrar membros pertencentes @done(19-03-01 01:59)
-✔ Timeline >> Adicionar comentários e remover posts @done(19-02-28 05:16)
-✔ Pesquisa >> Fazer query única limitando para x usuários @done(19-02-28 01:51)
-✔ Chat >> Verificar a duplicação de mensagens em realtime >> Talvez variavel esteja mantendo dados em submissões @done(19-03-09 13:44)
 ☐ Profile >> Botão de Bloquear Usuário
-✔ Profile >> Mobile >> Exibir corretamente resumo do usuário @done(19-03-09 21:14)
-✔ Profile >> Exibir no resumo "Tipo", "Posição" e "Esporte" @done(19-03-11 03:45)
-✔ Menu Desktop >> Melhorar visualização e esconder em versão mobile @done(19-03-09 15:06)
-✔ Menu Mobile >> Exibir em versão mobile @done(19-03-09 21:10)
-✔ Menu Mobile >> Reduzir logo e distribuir melhor icones @done(19-03-09 15:36)
-✔ Notificação >> Não fechar quando clicar num item interno @done(19-04-22 23:42)
-✔ Mensagens >> Ao navegar não exibe cor e alinhamento de balão de conversa corretamente @done(19-03-11 03:17)
 ☐ Mensagens >> Paginação de mensagens anteriores
-✔ Cookie[Login] >> Se cookie não estiver setado e válido, não permitir navegação redirecionando para login @done(19-04-22 23:43)
-✔ Learn >> Exibir imagem do usuário nos comentários @done(19-03-11 03:17)

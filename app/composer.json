@@ -18,7 +18,8 @@
         "phpmailer/phpmailer": "^6.0.5",
         "repat/laravel-medoo": "^1.0",
         "vlucas/phpdotenv": "~3.3",
-        "wisembly/elephant.io": "3.3.1"
+        "wisembly/elephant.io": "3.3.1",
+        "phpoffice/phpspreadsheet": "1.7.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

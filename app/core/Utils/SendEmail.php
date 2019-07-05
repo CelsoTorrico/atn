@@ -11,6 +11,7 @@ class SendEmail {
     private  $toEmail;
     private  $content;
     private  $plainContent;
+    private  $templates;
 
     /** 
      * Instancia classe PHPmailer
@@ -32,6 +33,9 @@ class SendEmail {
         $this->mail->Password = env('USER_PASS');         // SMTP password
         $this->mail->SMTPSecure = env('SMTP_SECURE');     // Enable TLS encryption, `ssl` also accepted
         $this->mail->Port = env('SMTP_PORT');             // TCP port to connect to
+
+        //Templates Existentes
+        $this->templates = ['welcome', 'recoverPassword', 'userMessageEmail'];
 
     }
 
@@ -92,15 +96,7 @@ class SendEmail {
         //Sanitize var
         $content = html_entity_decode(htmlspecialchars($content));
         $this->plainContent = $content;
-        $this->content = "
-        <html>
-            <head>
-                <title>Plataforma AtletasNOW</title>
-                <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-            </head>
-            <body>" . $content ."</body>
-        </html>
-        ";
+        $this->content = $content;
     }
 
     /**
@@ -139,6 +135,28 @@ class SendEmail {
             
             return ['error' => ['email' => 'Mensagem não pode ser enviada. Erro: '. $mail->ErrorInfo]];
         }        
+
+    }
+
+    /**
+     * Carrega templates pré-determinados
+     * 
+     * @param string $name  Nome de template escolhido
+     * @param array $data   Dados para inserir no template escolhido
+     * @since 2.1 
+     */
+    function loadTemplate(string $name, array $data) {
+
+        //Verififca se template solicitado existe
+        if( !in_array($name, $this->templates)) {
+            return false;
+        }
+
+        //Carrega o template solicitado
+        $template = (string) include_once('email_templates/' . $name . '.php');
+
+        //Define o conteúdo do template no email
+        $this->setContent($template);
 
     }
 

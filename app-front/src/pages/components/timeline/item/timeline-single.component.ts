@@ -1,5 +1,4 @@
 import { ToastController, NavParams, AlertController } from 'ionic-angular';
-import { NgForm } from '@angular/forms';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api, User } from '../../../../providers';
@@ -10,6 +9,14 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: 'timeline-single.html'
 })
 export class TimelineSingle {
+
+  @Output() CommentUpdate = new EventEmitter()
+
+  @Output() timelineDeleted = new EventEmitter();
+
+  $requestUri:string;
+
+  public uri = 'timeline';
 
   public $postID: number;
 
@@ -34,10 +41,6 @@ export class TimelineSingle {
     quantity_comments: ''
   };
 
-  @Output() CommentUpdate = new EventEmitter()
-
-  @Output() timelineDeleted = new EventEmitter();
-
   public commentText: string;
 
   public commentShow: any;
@@ -46,12 +49,14 @@ export class TimelineSingle {
 
   constructor(
     public user: User,
-    private toastCtrl: ToastController,
-    private alert: AlertController,
-    private api: Api,
-    private navCtrl: NavController,
-    public translateService: TranslateService) { 
+    public alert: AlertController,
+    public translateService: TranslateService,
+    public toastCtrl: ToastController,    
+    public api: Api,
+    public navCtrl: NavController) {
       
+      this.$requestUri = this.uri;
+
       this.translateService.setDefaultLang('pt-br');
       this.translateService.get(["YOU_WILL_EXCLUDE_POST", "YOU_SURE","DELETE", "CANCEL"]).subscribe((data) => {
         this.deleteMessage = data;
@@ -65,9 +70,13 @@ export class TimelineSingle {
   }
 
   getCurrentUser(){
-    this.user.subscribeUser(function($this){
+    this.user.subscribeUser(function($this) {
       $this.currentUser = $this.user._user;
     }, this);
+  }
+
+  setRequestUri($uri:string){
+    this.uri = $uri;
   }
 
   //Carregar comentários
@@ -99,7 +108,7 @@ export class TimelineSingle {
   }
 
   //Deletar um comentário
-  deleteTimeline() {
+  deleteTimeline($post_id:number) {
 
     let confirmDelete = this.alert.create({
       title: this.deleteMessage.YOU_WILL_EXCLUDE_POST,
@@ -107,7 +116,7 @@ export class TimelineSingle {
       buttons: [{
         text: this.deleteMessage.DELETE,
         handler: data => {
-          this.api.delete('timeline/' + this.currentTimeline.ID).subscribe((resp: any) => {
+          this.api.delete(this.$requestUri + '/' + $post_id).subscribe((resp: any) => {
 
             //Se não existir items a exibir
             if (Object.keys(resp).length <= 0) {
@@ -117,7 +126,7 @@ export class TimelineSingle {
             //Sucesso 
             if (resp.success != undefined) {
               //Emite um evento para ser capturado pelo componente pai
-              this.timelineDeleted.emit(this.currentTimeline.ID);
+              this.timelineDeleted.emit($post_id);
             }
 
           }, err => {
@@ -139,7 +148,7 @@ export class TimelineSingle {
     $event.preventDefault();
 
     //Enviado um comentário a determinada timeline
-    this.api.post('timeline/' + $postID, { comment_content: this.commentText }).subscribe((resp: any) => {
+    this.api.post(this.$requestUri + '/' + $postID, { comment_content: this.commentText }).subscribe((resp: any) => {
 
       //Se não existir items a exibir
       if (resp.length <= 0) {
