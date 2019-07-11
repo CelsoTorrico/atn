@@ -35,7 +35,7 @@ class SendEmail {
         $this->mail->Port = env('SMTP_PORT');             // TCP port to connect to
 
         //Templates Existentes
-        $this->templates = ['welcome', 'recoverPassword', 'userMessageEmail'];
+        $this->templates = ['welcome', 'recoverPassword', 'userMessageEmail', 'activationKey'];
 
     }
 

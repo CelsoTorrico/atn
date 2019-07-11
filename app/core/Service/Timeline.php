@@ -38,7 +38,7 @@ class Timeline {
     }
 
     /* Retorna timeline por ID */
-    function get($id) {
+    function get(int $id) {
         
         //Query enviando Id de Timeline
         $result = $this->model->load(['ID' => $id, 'post_status'   => ['open', 'publish', '0']]);
@@ -82,7 +82,7 @@ class Timeline {
     }
 
     /* Retorna lista de timeline */
-    function getAll(int $paged = 0){     
+    function getAll(int $paged = 0, array $filter = []) {     
 
         //Retorna lista de usuário que está conectado
         $following = $this->following;

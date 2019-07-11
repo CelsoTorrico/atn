@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api } from '../../../../providers';
 import { TranslateService } from '@ngx-translate/core';
+import { getUrlScheme } from '@angular/compiler';
 
 @Component({
   selector: 'timelineItem',
@@ -11,8 +12,6 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class TimelineItem {
 
-  public $postID:number;
-  
   public TimelineItem:any = {
     ID: '',
     post_author: {
@@ -31,13 +30,15 @@ export class TimelineItem {
 
   public currentCommentItems:any[];
 
-  private static getTimelineUrl = 'timeline/';
+  public $postID:number;
+
+  private getUrl = 'timeline/'; //url para query
 
   constructor(
     public api: Api,
     public navCtrl: NavController,
-    private params: NavParams,
-    private viewer: ViewController, 
+    public params: NavParams,
+    public viewer: ViewController, 
     public translateService: TranslateService) { 
     
       this.translateService.setDefaultLang('pt-br');
@@ -46,14 +47,15 @@ export class TimelineItem {
         this.$postID = this.params.get('post_id');        
     } 
 
-  //Retorna
+  //Inicialização
   ngOnInit() {
     this.query();     
   }
 
-  query(){
+  /** Realiza requisição de dados com parametros da classe */
+  query($fn:any = function(){}) {
     //Retorna a lista de esportes do banco e atribui ao seletor
-    let items = this.api.get(TimelineItem.getTimelineUrl + this.$postID).subscribe((resp:any) => {
+    let items = this.api.get(this.getUrl + this.$postID).subscribe((resp:any) => {
 
         //Verifica se existe dados
         if(Object.keys(resp).length <= 0){
@@ -66,12 +68,25 @@ export class TimelineItem {
         //Adiciona lista de comentários
         this.currentCommentItems = this.TimelineItem.list_comments; 
 
+        $fn(this);
+
     }, err => { 
         return;  
     });
 
   }
 
+  //Altera a url para requisição GET
+  _setUrl($newUrl:string = this.getUrl){
+    this.getUrl = $newUrl;
+  }
+
+  //Altera Id do elemento a retornar na requisição
+  _setPostID($newId:number = this.$postID) {
+    this.$postID = $newId;
+  }
+
+  //Recarrega os comentário após atuallização
   reloadCommentsAfterUpdate($event){
     this.query();
   }

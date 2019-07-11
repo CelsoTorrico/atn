@@ -257,7 +257,7 @@ class User extends GenericUser{
 
         //Verifica se todos os campos tem informações para poder exibir
         if( is_null($user->metadata) || is_null($user->type) || is_null($user->sport) ){
-            return ['error', ['stats' => 'Nenhuma estatística a exibir.']];
+            return ['error' => ['stats' => 'Nenhuma estatística a exibir.']];
         }
         
         //Campos gerais de estatisticas
@@ -685,7 +685,7 @@ class User extends GenericUser{
         }
 
         //Se for null, necessário senha serem confirmadas
-        if(is_null($id)){
+        if( is_null($id) ){
             //Verifica se password está correta
             if( $data['user_pass'] != $data['confirm_pass'] ){
                 return ['error' => ['confirm_pass' => 'Confirme a senha corretamente.']];
@@ -747,11 +747,23 @@ class User extends GenericUser{
             /** New Register  */
             $this->model = new UserModel();
 
+            /** Adicionando suporte a ativação por email
+             * @since 2.1 */
+            $activation_key = ['user_activation_key' => $this->hashPassword($filtered['user_login'])];
+            
+            //Combina arrays
+            $userColumns[] = 'user_activation_key';
+            $filtered = array_merge($filtered, $activation_key);
+
             //Preenche colunas com valores
-            $this->model->fill(array_only($filtered, $userColumns)); 
+            $this->model->fill(array_only($filtered, $userColumns));             
 
             //Salva os dados no banco
-            $result = $this->model->save();
+            if( $result = $this->model->save() ) {
+                //Envia email de confirmação para email cadastrado
+                $this->sendActivationKey($activation_key['user_activation_key'], $filtered['user_email'], $filtered['display_name'] );
+            }     
+
         }
 
         //SE resultado for true, continua execução
@@ -1683,6 +1695,25 @@ class User extends GenericUser{
             return false;
         }
         return $model->getData();
+    }
+
+    /**
+     * Envia email com link de confirmação de cadastro
+     */
+    private function sendActivationKey(string $activationKey, string $email, string $userName) {
+
+        //SETUP DE EMAIL
+        $phpmailer = new SendEmail();
+        $phpmailer->setToEmail(['email' => $email, 'name' => $userName]);
+        $phpmailer->setFromName('AtletasNOW - Sua hora é agora');
+        $phpmailer->setSubject('Confirme seu email - AtletasNOW');
+        
+        //Carrega template prédefinido
+        $phpmailer->loadTemplate('activationKey', ['email' => $email, 'activationKey' => $activationKey]);
+
+        //Envio do email
+        $result = $phpmailer->send();
+
     }
 
 }

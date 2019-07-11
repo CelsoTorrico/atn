@@ -1,15 +1,17 @@
-<ion-list class="calendar-item">
+<ion-list class="calendar-item" no-padding>
   <ion-item>
-    <ion-thumbnail item-start *ngIf="calendarAtributes.attachment">
-      <img [src]="calendarAtributes.attachment" class="image-content btn-cursor" />
+
+    <ion-thumbnail item-start *ngIf="img_thumbnail">
+      <img [src]="img_thumbnail" class="image-content btn-cursor" />
     </ion-thumbnail>
 
     <div class="calendar-info">
-      <h2 class="title">{{ calendarAtributes.post_title }} | {{ calendarAtributes.post_meta.post_calendar_type }}</h2>
-      <p class="description">{{ calendarAtributes.post_content }}</p> 
-      <div class="hour">
-        <strong>{{ calendarAtributes.post_meta.post_calendar_date[0] | date }}</strong> -
-        {{ calendarAtributes.post_meta.post_calendar_date[1] }}
+      <h2 class="title">{{ calendarAtributes.post_title }} <span
+          class="type-tag">{{ calendarAtributes.post_meta.post_calendar_type }}</span></h2>
+      <p class="description">{{ calendarAtributes.post_excerpt }}</p>
+      <div class="calendar-date">
+        <span class="date"><strong>{{ calendarAtributes.post_meta.post_calendar_date[0] | date }}</strong></span>
+        <span class="hour">{{ calendarAtributes.post_meta.post_calendar_date[1] }}</span>
       </div>
     </div>
 
@@ -19,7 +21,7 @@
 
     <ion-item-divider>
 
-      <ion-list>
+      <ion-list class="action-buttons">
 
         <button ion-button icon-only small like value="{{ 'LIKE' | translate }}"
           [ngClass]="{'active': calendarAtributes.has_like === true, 'inactive': calendarAtributes.has_like === false}"
@@ -31,12 +33,27 @@
           <ion-icon md="ios-chatbubbles-outline"></ion-icon>
         </button>
 
-        <ion-note float-right class="btn-cursor count-responses" end>
-          {{ "ANSWERS" | translate }}
-          <ion-badge item-end badge-sm>
-            {{ calendarAtributes.quantity_comments }}
-          </ion-badge>
-        </ion-note>
+        <div class="item-edit-buttons" float-right>
+          <ul class="list-inline">
+            <li *ngIf="currentUser.ID == calendarAtributes.post_author.ID">
+              <button no-margin edit-calendar ion-button small start clear (click)="updateItem(calendarAtributes.ID)">
+                {{ "EDIT" | translate }}
+              </button>
+            </li>
+            <li *ngIf="currentUser.ID == calendarAtributes.post_author.ID" >
+                <button delete-calendar ion-button small clear icon-end (click)="deleteTimeline(calendarAtributes.ID)">
+                    {{ "DELETE" | translate }}
+                    <ion-icon end name="close-circle"></ion-icon>
+                </button>
+            </li>
+            <li>
+                <button ion-button small end outline class="open-view" (click)="openView(calendarAtributes.ID, $event)">
+                    {{ 'VIEW_MORE' | translate}}
+                </button>
+            </li>
+          </ul>
+
+        </div>
 
       </ion-list>
 
@@ -67,20 +84,6 @@
     </ion-row>
 
   </ion-item-group>
-
-  <div *ngIf="currentUser.ID == calendarAtributes.post_author.ID">
-    <ul class="close-button list-inline">
-      <li>
-        <button edit-profile ion-button small start clear>
-          {{ "EDIT" | translate }}
-        </button>
-      </li>
-      <li (click)="deleteTimeline(calendarAtributes.ID)">
-        <ion-icon name="close-circle"></ion-icon>
-      </li>
-    </ul>
-
-  </div>
 
 </ion-list>
 

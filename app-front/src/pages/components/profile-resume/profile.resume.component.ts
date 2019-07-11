@@ -227,6 +227,10 @@ export class ProfileResumeComponent implements OnInit{
                 return;
             }
 
+            if(resp.error != undefined) {
+                return;
+            }
+
             //Adicionando valores as variavel global
             let atributes = resp;
 

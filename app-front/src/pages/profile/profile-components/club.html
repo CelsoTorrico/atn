@@ -16,13 +16,13 @@
 
     </header>
 
-    <p *ngIf="listCalendar.length <= 0">
+    <!--<p *ngIf="listCalendar.length <= 0">
       {{ "MY_CALENDAR_INITIAL_MESSAGE" | translate }}
-    </p>
+    </p>-->
 
     <ion-card class="calendar-feed">
 
-      <calendar-item [calendarAtributes]="calendar" *ngFor="let calendar of listCalendar; let $i = index"></calendar-item>
+      <calendar-single [calendarAtributes]="calendar" (timelineDeleted)="hideCalendar($event, $i)" (calendarUpdate)="calendarUpdate($event, $i)"  *ngFor="let calendar of listCalendar; let $i = index"></calendar-single> 
 
     </ion-card>
 

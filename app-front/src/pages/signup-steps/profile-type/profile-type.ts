@@ -75,30 +75,35 @@ export class ProfileType{
 
     //Função que inicializa
     ngOnInit() {
+        this.getSportList();
+    }
+
+    /** Função para o botão de Login, vai a view de login*/
+    goToLogin(){
+        this.navCtrl.push(LoginPage);
+    }
+
+    /** 
+     *  Retorna a lista de esportes do banco e atribui ao seletor
+     *   Lista de apenas nomes de esportes 
+     * */
+    private getSportList() {
+
         //Retorna a lista de esportes do banco e atribui ao seletor
         this.api.get('/user/sports').subscribe((resp:any) => { 
 
             //Tabela de Esportes com ID e nome
             this.$sportTable = resp;
 
-            //Lista de apenas nomes de esportes
             resp.forEach(element => {
                 //[0] = id, [1] = sport_name
-                this.$sportList.push(element[1]);
+                this.$sportList.push({display: element[1], value: element[0] });
             });
 
         }, err => { 
             return; 
-        });
-    }
-
-    onBlur(){
+        });       
         
-    }
-
-    /** Função para o botão de Login, vai a view de login*/
-    goToLogin(){
-        this.navCtrl.push(LoginPage);
     }
     
     /** Redireciona para próxima etapa junto com as variaveis */
@@ -138,13 +143,14 @@ export class ProfileType{
 
     private setChooseSports($sportChoose:string) {
         //Intera sobre items
-        this.$sportTable.forEach(element => {
+        for (const element of this.$sportTable) {
             //Compara valores selecionados com tabela de esportes
-            if (element[1] == $sportChoose) {
+            if (element[0] == $sportChoose) {
                 //Atribui valor a array
                 this.$account.sport.push(element[0]);
+                break;
             }
-        });
+        }
     }
 
 }

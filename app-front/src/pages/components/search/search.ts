@@ -32,7 +32,6 @@ export class searchField{
 
     ngOnInit() {
         this.translateService.get("INPUT_NAME").subscribe((data) => {
-            console.log(data);
             this.input_name = data; 
         }); 
     }   

@@ -409,7 +409,7 @@ class Notify {
     }
 
     /**
-     *  Formatação de notificação para aprovação de perfil
+     *  Formatação de notificação para integrantes adicionados a instituição
      */
     private function addedTeam(array $notify){
 

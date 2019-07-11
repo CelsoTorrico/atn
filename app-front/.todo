@@ -5,6 +5,15 @@
     JSCookie >> https://github.com/js-cookie/js-cookie
 */
 
+//Meu Clube
+✔ Evento:Adicionar Eventos -> Anexar imagem @done(19-07-08 20:25)
+✔ Evento:Editar Evento @done(19-07-08 20:25)
+✔ Evento:Ver Evento -> Abril Modal @done(19-07-10 13:10)
+✔ Evento:Design -> Melhorar exibição dos eventos @done(19-07-10 20:41)
+☐ Requisições:Loading nas requisições
+☐ Profile: Editar membros da equipe
+
+#Melhorias secundárias
 ☐ Tag Input >> Não está enviado dados, verificar e corrigir
 ☐ Página de Busca >> Não está abrindo BrowserModule?
 ☐ PDF >> Melhorar a exibição dos dados

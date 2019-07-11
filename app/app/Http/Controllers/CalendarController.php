@@ -71,8 +71,17 @@ class CalendarController extends Controller
 
     function update(Request $request, int $id) {
 
+        //Atribui dados enviados a variavel
+        $data = $request->all();
+
+        //Atribui imagem se tiver upload
+        if ($request->hasFile('post_image') && $request->file('post_image')->isValid()) {
+            //Atribui fn a var
+            $data['post_image'] = $request->file('post_image');
+        }
+
         //Envia dados para atualização em classe Calendar
-        $response = $this->calendar->update($request->all(), $id);
+        $response = $this->calendar->update($data, $id);
         
         return response()->json($response);
     }

@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class StatsComponent {
 
   profile: Observable<ArrayBuffer> 
+  
   stats: Observable<ArrayBuffer> 
 
   isLogged:boolean = false;

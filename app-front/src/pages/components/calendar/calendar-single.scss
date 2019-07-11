@@ -1,0 +1,57 @@
+.calendar-item{
+
+    .title{
+        font-size: 16px;
+        color: $titulos;
+    }
+
+    .calendar-info{
+
+        position: relative;
+        font-size: 13px;
+    
+        .type-tag{
+            display: inline-block;
+            padding: 1px 5px;
+            margin-left: 10px;
+            background-color: $titulos;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+    
+        .description{
+            font-size: 13px;
+            font-weight: lighter;
+            font-style: italic;
+        }
+    
+        .calendar-date{
+            .hour{
+                color: $vermelho-contraste;
+                font-weight: 900;
+            }
+        }
+    }
+
+    .action-buttons{
+        border-top: 1px dotted #eee;
+        margin-top: 10px;
+        padding: 5px 0px;
+    }
+
+    .item-edit-buttons {
+        display: inline-block;
+
+        .list-inline li {
+            float: left;
+        }
+
+        button{
+            font-size: 11px;
+        }
+
+    }
+
+}
+

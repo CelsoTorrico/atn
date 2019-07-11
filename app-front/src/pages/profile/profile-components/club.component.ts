@@ -109,7 +109,7 @@ export class ClubComponent extends ProfileComponent {
     this.$statesList.unshift('Qualquer Estado');
 
     //Carrega eventos do clube
-    this.getCalendar();
+    this.getListCalendar();
   }
 
   private getUserLoadData() { 
@@ -152,7 +152,7 @@ export class ClubComponent extends ProfileComponent {
   }
 
   //Faz requisição a APi para atribuir lista de calendários
-  getCalendar() {
+  getListCalendar() {
     
     this.calendarObservable.subscribe((resp: any) => {
 
@@ -164,6 +164,11 @@ export class ClubComponent extends ProfileComponent {
       this.listCalendar = resp;
 
     });
+  }
+
+  //Abrindo modal com dados de item a editar
+  calendarUpdate($event, $index){
+    super.editData('calendarData', $event);
   }
 
   //Após excluido item de timeline, eliminar do loop de items

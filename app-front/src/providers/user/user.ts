@@ -1,19 +1,18 @@
-import { isObservable } from '@angular/core/src/util/lang';
 import { ToastController } from 'ionic-angular';
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Api } from '../api/api';
 import { loadNewPage } from '../load-new-page/load-new-page';
 import { DashboardPage } from '../../pages/dashboard/dashboard';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { timer } from 'rxjs/observable/timer';
-import { switchMap } from 'rxjs/operator/switchMap';
 
 /**
  * User Context
  */
 @Injectable()
 export class User {
+
+  @Output() dataReady = new EventEmitter();
 
   _user: any;
   _userObservable: Observable<ArrayBuffer>;
@@ -34,7 +33,10 @@ export class User {
     protected toast: ToastController) {
 
     //Carrega Observables
-    this.getSelfUser();
+    this.getUserData().then((res) => {
+
+    });
+    
     this.getSelfStats();
     this.getTeamMembers();
     this.getSelfVisibility();
@@ -102,7 +104,7 @@ export class User {
         message.present();
 
         //Após confirmação de cadastro redireciona para página de sucesso
-        this.loadPageService.getPage(res, this.navCtrl, DashboardPage); 
+        this.loadPageService.getPage(res, this.navCtrl, DashboardPage);
       }
       else {
         let $errors: string = '';
@@ -138,7 +140,7 @@ export class User {
   /**
    * Atualizar password do usuário
    */
-  setNewPassword(userPass: any){
+  setNewPassword(userPass: any) {
 
     //Retorna observable
     let observable = this.api.put('user/update-password', userPass);
@@ -147,12 +149,37 @@ export class User {
 
   }
 
+  /**Retornar dados de usuario */
+  getUserData(): Promise<void> {
+
+    let observable = this.getSelfUserObservable();
+
+    return observable.toPromise().then(
+      (resp: any) => {
+
+        //Se não existir items a exibir
+        if (Object.keys(resp).length <= 0) {
+          return;
+        }
+
+        //Adicionando valores a classe user
+        this._user = resp;
+
+        //Preenche campos de usuário
+        this.fillMyProfileData();
+
+      }).catch((reason) => {
+        this.dataReady.emit('Dados carregados');
+      });
+
+  }
+
   /**
    * Retorna observable usuário logado
    */
-  private getSelfUser(): Observable<ArrayBuffer> {
+  private getSelfUserObservable(): Observable<ArrayBuffer> {
 
-    //Retorna observable
+    //Setando Observable
     return this._userObservable = this.api.get('user/self');
 
   }
@@ -236,7 +263,7 @@ export class User {
         observers.push(observer);
 
         if (observers.length === 1) {
-          
+
           user._userObservable.subscribe((resp) => {
 
             //Se não existir items a exibir
@@ -309,8 +336,8 @@ export class User {
     ]
 
     //Se usuário não tiver tipo definido, definir como usuário padrão
-    if (this._user.type == null){
-      this._user.type = { ID: 1, type: 'Atleta'}
+    if (this._user.type == null) {
+      this._user.type = { ID: 1, type: 'Atleta' }
     }
 
     //Se usuario for atleta e profissional

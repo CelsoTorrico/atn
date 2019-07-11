@@ -202,15 +202,6 @@ class Login implements LoginInterface{
             return ['error' => ["forgetPassword" => "Houve um erro em gerar uma nova senha para este usuário. Tente novamente mais tarde."]]; 
         }
 
-        //CONTEUDO
-        $html = '<div style="font-family: Open Sans, Calibri, Arial, cursive;">
-                    <h1 style="font-family:Axiforma;color:#d03014;">Nova senha de acesso gerada!</h1>
-                    <p style="color:#444;font-size:14px;">Sua nova senha de acesso à plataforma <b>AtletasNOW</b> esta logo abaixo, Recomendamos após fazer login em sua conta, trocar a senha.</p>
-                    <p style=""><font size="5">' . $new_pass . '</font></p>
-                    <p style="color:#444;font-size:14px;">Suporte AtletasNOW</p>
-                    <img width="137" height="17" src="https://www.atletasnow.com/wp-content/uploads/2018/10/rsz_atletasnow_logoprincipal-01.png" title="AtletasNOW">
-                </div>';
-
         //SETUP DE EMAIL
         $phpmailer = new SendEmail();
         $phpmailer->setToEmail(['email' => $email, 'name' => $user->display_name]);

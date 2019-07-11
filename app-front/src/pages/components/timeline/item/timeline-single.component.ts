@@ -1,4 +1,6 @@
-import { ToastController, NavParams, AlertController } from 'ionic-angular';
+import { DomSanitizer } from '@angular/platform-browser';
+import { TimelineItem } from './timelineItem';
+import { ToastController, AlertController, ModalController } from 'ionic-angular';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api, User } from '../../../../providers';
@@ -13,18 +15,6 @@ export class TimelineSingle {
   @Output() CommentUpdate = new EventEmitter()
 
   @Output() timelineDeleted = new EventEmitter();
-
-  $requestUri:string;
-
-  public uri = 'timeline';
-
-  public $postID: number;
-
-  public currentUser:any = {
-      ID: "",
-      display_name: "", 
-      metadata: {}    
-  };
 
   @Input() public currentTimeline: any = {
     ID: '',
@@ -41,11 +31,23 @@ export class TimelineSingle {
     quantity_comments: ''
   };
 
+  public $requestUri:string;
+
+  private uri = 'timeline';
+
+  public $postID: number;
+
+  public currentUser:any = {
+      ID: "",
+      display_name: "", 
+      metadata: {}    
+  };
+
   public commentText: string;
 
   public commentShow: any;
 
-  deleteMessage:any;
+  public deleteMessage:any;
 
   constructor(
     public user: User,
@@ -53,8 +55,11 @@ export class TimelineSingle {
     public translateService: TranslateService,
     public toastCtrl: ToastController,    
     public api: Api,
-    public navCtrl: NavController) {
+    public navCtrl: NavController,
+    public modalCtrl:ModalController,
+    public domSanitizer: DomSanitizer) {
       
+      //Definindo url de requisição
       this.$requestUri = this.uri;
 
       this.translateService.setDefaultLang('pt-br');
@@ -64,19 +69,21 @@ export class TimelineSingle {
 
     }
 
-  //Retorna
+  //Inicialização
   ngOnInit() {
     this.getCurrentUser();
   }
 
+  //Carrega dados de usuário
   getCurrentUser(){
     this.user.subscribeUser(function($this) {
       $this.currentUser = $this.user._user;
     }, this);
   }
 
-  setRequestUri($uri:string){
-    this.uri = $uri;
+  //Setar url de requisição
+  _setRequestUrl($url:string) {
+    this.uri = $url;
   }
 
   //Carregar comentários
@@ -98,6 +105,22 @@ export class TimelineSingle {
       }
 
     });
+
+  }
+
+  //Abrir modal carregando o componente
+  openView($postID:number, event) {
+    
+    event.preventDefault();
+
+    //Impede de executar ações em cascata em botões com evento
+    if(event.target.tagName == 'IMG' || event.target.classList.contains('count-responses') 
+    || event.target.classList.contains('open-view')) {
+      //Invoca um modal passando ID da Timeline
+      
+      let modal = this.modalCtrl.create(TimelineItem, { post_id: $postID });
+      modal.present();  
+    }
 
   }
 
@@ -185,6 +208,32 @@ export class TimelineSingle {
     this.navCtrl.push('ProfilePage', {
       user_id: $user_id
     });
+  }
+
+  //Incorporar videos do Youtube 
+  static showVideoAttachment($content:string):string {
+    
+    let $expression:string = '/https\:\/\/www\.youtube\.com\/watch\?v\=([^\s\n]*)/gm';
+
+    //Verifica se variavel é um array válido
+    if($content != undefined && $content.length > 0) {
+      
+      //Substitui links do youtube para exibição
+      $content = $content.replace(/https\:\/\/www\.youtube\.com\/watch\?v\=([^\s\n]*)/gm, 
+      function(youtube, p1) {
+          
+          let url = 'https://www.youtube.com/embed/' + p1; //Url do vídeo
+          //TimelineSingle.bypassSecurityTrustResourceUrl(url);
+
+          youtube = url;           
+          
+          return youtube;
+      });    
+      
+    }
+
+    return $content;
+
   }
 
 

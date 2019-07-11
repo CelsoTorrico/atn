@@ -172,10 +172,6 @@ export class ProfileComponent {
     this.loadUserLoadData();
   }
 
-  ionViewWillEnter(): void {
-
-  }
-
   /** Carrega dados de usuário de contexto */
   public loadUserLoadData(){
     this.currentUserLoadData();

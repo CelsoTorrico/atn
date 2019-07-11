@@ -115,7 +115,7 @@ export class MyProfilePersonalDataComponent {
         public states: BrazilStates,
         public translateService: TranslateService) { 
     
-            this.translateService.setDefaultLang('pt-br');
+        this.translateService.setDefaultLang('pt-br');
 
         //Carrega lista de estados do provider
         this.$statesList = this.states.statesList;

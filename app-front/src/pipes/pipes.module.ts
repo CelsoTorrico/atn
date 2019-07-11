@@ -4,6 +4,7 @@ import { MapInIterable } from "./map-in-interable";
 import { removeTrace } from "./remove-trace";
 import { dateReplaceToTrace } from "./date-replace-to-trace";
 import { stringTitlecaseSpecialChars } from "./string-replace-special-chars";
+import { EscapeHtmlPipe } from './keep-html.pipe';
 
 @NgModule({
     declarations: [
@@ -11,12 +12,13 @@ import { stringTitlecaseSpecialChars } from "./string-replace-special-chars";
         MapInIterable,
         removeTrace,
         dateReplaceToTrace,
-        stringTitlecaseSpecialChars
+        stringTitlecaseSpecialChars,
+        EscapeHtmlPipe
       ],
       imports: [
         
       ],
-      exports: [MapToIterable, MapInIterable, removeTrace, dateReplaceToTrace, stringTitlecaseSpecialChars],
+      exports: [MapToIterable, MapInIterable, removeTrace, dateReplaceToTrace, stringTitlecaseSpecialChars, EscapeHtmlPipe],
       bootstrap: [],
       entryComponents:[], 
       schemas: [],

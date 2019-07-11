@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-title>{{ "CALENDAR_ITEM" | translate }}</ion-title>
+
+    <ion-buttons start (click)="dismiss()">
+      <button ion-button>{{ "BACK" | translate }}</button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="calendarView calendar-item">
+
+  <header class="image-container" no-margin *ngIf="eventImgAttachment" [ngStyle]="{'background-image': 'url('+ eventImgAttachment + ')'}" ></header>
+
+  <ion-row padding class="calendar-info">
+    <ion-col col-3>
+      <ul no-padding no-margin mb-5 no-list class="calendar-date">
+        <li class="date">
+          <ul no-padding no-margin no-list>
+            <li class="day">{{ TimelineItem.post_meta.post_calendar_date[0] | date : 'dd' }}</li>
+            <li>{{ TimelineItem.post_meta.post_calendar_date[0] | date : 'MMM - y' }}</li>
+          </ul>          
+        </li>
+        <li class="hour">{{ TimelineItem.post_meta.post_calendar_date[1] }}</li>
+      </ul>
+    </ion-col>
+    <ion-col col-9>
+
+      <h1 class="title">{{ TimelineItem.post_title }} <span class="type-tag">{{ TimelineItem.post_meta.post_calendar_type }}</span></h1>
+      <p class="description">{{ TimelineItem.post_excerpt }}</p>
+
+      <ul no-padding no-margin no-list mb-5>
+        <li><strong>{{ "ORGANIZER_BY" | translate }}:</strong> {{ TimelineItem.post_author.display_name }}</li>
+        <li><strong>{{ "ADDRESS" | translate }}:</strong> {{ TimelineItem.post_meta.post_calendar_address }}</li>
+      </ul>
+
+      <ion-buttons no-padding class="action-buttons">
+        <a ion-button outline small [href]="eventICSAttachment" target="_self" download>{{ "ADD_EVENT" | translate }}</a>
+      </ion-buttons>
+
+    </ion-col>
+    <ion-col col-12>
+      <h3 class="title">{{ "MORE_INFO" | translate }}</h3>
+      {{ contentFilter(TimelineItem.post_content) }}
+    </ion-col>
+  </ion-row>
+
+  <ion-item-group class="timelineCommentsContainer">
+
+    <comments [currentCommentItems]="currentCommentItems" [$postID]="$postID" 
+        (CommentUpdate)="reloadCommentsAfterUpdate($event)"></comments> 
+
+  </ion-item-group>
+
+
+</ion-content>

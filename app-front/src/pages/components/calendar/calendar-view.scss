@@ -1,0 +1,24 @@
+.calendarView{
+
+    .image-container{
+        width: 100%;
+        height: 100%;
+        display: block;
+        max-height: 250px;
+        background-size: cover;
+    }
+
+    .calendar-info{
+        
+        .calendar-date{
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+
+            .day, .hour{
+                font-size: 2em; 
+            }
+        }
+
+    }
+}

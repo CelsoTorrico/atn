@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   imports: [
     TranslateModule.forChild(),
     FormsModule,
-    IonicModule,
+    IonicModule, 
     CommonModule,
     CommentModule
   ],

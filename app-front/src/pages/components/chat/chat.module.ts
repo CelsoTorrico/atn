@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Chat } from './chat';
-import { SocketIoModule, SocketIoConfig} from 'ng-socket-io';
+import { SocketIoModule, SocketIoConfig} from 'ng-socket-io'; 
 
 //Produção
 /*const config: SocketIoConfig = {
@@ -14,8 +14,11 @@ import { SocketIoModule, SocketIoConfig} from 'ng-socket-io';
   } 
 }*/
 
-//Development
+//Area de Testes
 const config: SocketIoConfig = {url: 'https://developing.atletasnow.com:8890', options:{} } 
+
+//Development
+//const config: SocketIoConfig = {url: 'https://localhost:8890', options:{} } 
 
 @NgModule({
   declarations: [

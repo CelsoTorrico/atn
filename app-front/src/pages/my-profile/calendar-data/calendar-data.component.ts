@@ -1,5 +1,6 @@
+import { CalendarSingle } from '../../components/calendar/calendar-single.component';
 import { Component } from '@angular/core';
-import { NavController, ToastController, ViewController } from 'ionic-angular';
+import { NavController, ToastController, ViewController, NavParams } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
@@ -20,48 +21,120 @@ export class MyProfileCalendarComponent {
         post_title: <string>'',
         post_excerpt: <string>'',
         post_content: <string>'',
+        post_image: <any>null,
+        post_visibility: <number>null,
+        post_video_url: <string>'',
         post_calendar_date: <any>[],
         post_calendar_type: <string>'',
         post_calendar_address: <string>'',
         post_calendar_people: <any>[]
     }
 
-    eventTypes: any = []
+    public post_id:number;
+
+    public visibility: any = [];
+
+    public eventTypes: any = []
 
     public errorSubmit:string
-
-    public addFormData: any;
-
-    public visibility: any;
 
     constructor(
         public user: User,
         public api: Api,
+        public params: NavParams,
         public viewCtrl: ViewController,
         public statsList: StatsList,
         public translateService: TranslateService) {
 
         this.translateService.setDefaultLang('pt-br');
 
-        //Função a ser executada após requisição de dados de usuário
-        this.addFormData = function ($this: any) {
-
-            //Adicionando valores a classe user
-            let atributes = $this.user._user;
+        //Carrega pre-dados no caso de atualização
+        let post_id = this.params.get('data');
+        if (post_id != undefined) {
+            this.loadCalendarData(post_id); //Carregando dados do post
+            this.post_id = post_id; //Atribuindo propriedade da classe
         }
 
     }
 
     //Função que inicializa
     ngOnInit() {
-        //Retorna dados de usuário
-        this.user._userObservable.subscribe((resp: any) => {
-            this.addFormData(this);
-        });
 
+        //Carregando campos de visibilidade
+        this.getVisibility();
+
+        //Carregando campos de tipos de eventos
         this.getTypesEvent();
     }
 
+    //Carrega dados do calendário
+    loadCalendarData($post_id:number) {
+    
+        //Inicializando observer
+        let $observer = this.api.get('calendar/' + $post_id);
+        
+        //Fazendo requisição
+        $observer.subscribe((resp:any) => {
+    
+          if (resp.error != undefined || resp.length <= 0) {
+            return;
+          }
+    
+          for (const key in resp) {
+            
+            //Verifica se existe propriedade nos atributos de calendário
+            if (!this.calendar.hasOwnProperty(key)) {
+                continue;
+            }
+
+            //Adiciona ao postmeta
+            if(key == 'post_meta') {
+                //Intera e atribui a array
+                for (const k in resp[key]) {
+                    if (this.calendar.hasOwnProperty(key)) {
+                        this.calendar[k] = resp[key][k];                        
+                    }
+                }
+                continue;
+            }
+
+            //Adicionando a imagem
+            if(key == 'attachment') {
+
+                //Encontrar a ultima imagem anexada e usar como thumbnail
+                let thumbnailAttachment = CalendarSingle.defineAttachment(resp[key], 'image');
+                let preview = document.getElementById('preview');
+                preview.style.backgroundImage = 'url(' + thumbnailAttachment + ')';
+                preview.style.display = 'block';
+
+                continue;
+            }
+
+            this.calendar = resp;    
+
+          }
+    
+        });
+        
+      }
+
+    //Retorna dados de visibilidade
+    getVisibility() {
+        //Retorna a lista de esportes do banco e atribui ao seletor
+        let items = this.api.get('timeline/visibility').subscribe((resp: any) => {
+
+            //Se não existir items a exibir
+            if (resp.length > 0) {
+                this.visibility = resp;
+            }
+
+        }, err => {
+            return;
+        });
+
+    }
+
+    //Retorna lista com tipos de eventos
     getTypesEvent() {
         //Retorna opções de visibilidade
         let getEventObservable = this.api.get('calendar/types');
@@ -77,7 +150,46 @@ export class MyProfileCalendarComponent {
 
         $event.preventDefault();
 
-        this.calendarObservable = this.api.post('/calendar', this.calendar);
+        //Loading
+
+        //Convertendo data em objeto FormData
+        let formData = new FormData();
+
+        //Anexando imagem a objeto
+        if ($event.target[8].files[0] != undefined) {
+            //O campo de imagem deve permanecer na ordem
+            let file = $event.target[8].files[0];
+            formData.append('post_image', file, file.name);
+        }
+
+        //Se não houver dados no atributo post_title
+        if(this.calendar.post_title == ('null'|| '')) {
+            this.dismiss();
+            return;
+        }
+
+        //Intera sobre objeto com valores enviados e atribui a objeto FormData
+        for (const key in this.calendar) {
+            
+            //Se for imagem, ir para proximo item
+            if(key == 'post_image') {
+                continue;
+            }
+
+            //Verificando se propriedade existe
+            if (this.calendar.hasOwnProperty(key)) {
+                formData.append(key, this.calendar[key]);                 
+            }
+        }
+
+        //Verifica se é atualização ou criar novo
+        if( this.post_id != undefined ) {
+            //Atualizar item informado ID
+            this.calendarObservable = this.api.post('calendar/'+ this.post_id, formData);
+        } else {
+            //Criar um novo item
+            this.calendarObservable = this.api.post('calendar', formData);
+        }
 
         //Enviar dados a serem salvos
         this.calendarObservable.subscribe((resp: any) => {

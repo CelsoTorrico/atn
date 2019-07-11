@@ -11,6 +11,7 @@ use Core\Utils\VideoUrl;
 use Core\Database\PostModel;
 use Core\Database\PostmetaModel;
 use Core\Database\CalendarTypeModel;
+use Illuminate\Http\UploadedFile;
 
 /**
  *  Função de CRUD de Calendários para Clubes
@@ -21,8 +22,27 @@ class Calendar extends Timeline {
 
     const TYPE = 'calendar';
 
+    /**
+     * Retorna apenas um item
+     * @param int $ID   Item de evento a ser retornado
+     * @since 2.1
+     */
+    function get(int $ID) {
+        
+        //REtorna array com item selecionado
+        $eventArray = $this->getAll(1, ['ID' => $ID]);
+
+        //Se há erro, retornar var
+        if(key_exists('error', $eventArray)) {
+            return $eventArray;
+        }
+
+        //Retorna primeiro item
+        return $eventArray[0];
+    }
+
     /* Retorna lista de timeline */
-    function getAll(int $paged = 0) {     
+    function getAll(int $paged = 0, array $filter = []) {     
 
          //Qtd de itens por página
          $perPage = 4;
@@ -30,16 +50,16 @@ class Calendar extends Timeline {
          //A partir de qual item contar
          $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
  
-         //Paginação de timeline
+         //Paginação de eventos
          $limit = [$initPageCount, $perPage];
 
         //Retorna todos posts de feed baseado nas conexões
-        $allCalendars = $this->model->getIterator([
+        $allCalendars = $this->model->getIterator(array_merge([
             'post_type'     =>  static::TYPE,
             'post_status'   => ['open', 'publish', '0'],
             'ORDER'         => ['post_date' => 'DESC'],
             'LIMIT'         => $limit
-        ]);
+        ], $filter));
         
         //Retorna resposta
         if( $allCalendars->count() > 0){
@@ -87,18 +107,39 @@ class Calendar extends Timeline {
 
                     //Verifica se valor está em formato de array
                     if ($v->meta_key == 'post_calendar_date') {
+                        
                         //Decodifica array de banco
                         $calendars[$key]['post_meta'][$v->meta_key] = @unserialize($v->meta_value);
+
+                    } elseif($v->meta_key == 'post_calendar_type') {
+                        
+                        //Retorna o tipo de calendário em formato legivel
+                        $calendars[$key]['post_meta'][$v->meta_key] = $this->_getCalendarTypeName((int) $v->meta_value);
+
                     } else {
+                        
                         //Adiciona ao metadados ao array do item
                         $calendars[$key]['post_meta'][$v->meta_key] = $v->meta_value;
                     }
                     
                 }
 
-                //Se item tiver foto anexada
-                if ($attach = $this->model->getInstance(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
-                    $calendars[$key]['attachment'] = $attach->guid;
+                //Se item tiver mídias anexadas
+                $attachModel = new PostModel();
+                if ($attachAll = $attachModel->getIterator(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
+                    
+                    foreach ($attachAll as $attachItem) {
+                        
+                        //Verifica se é valido
+                        if ( !$attachAll->valid() ) {
+                            continue;
+                        }
+
+                        //Atribuindo arquivo inserido
+                        $calendars[$key]['attachment'][] = $attachItem->guid;
+
+                    }
+
                 }
                 
             }
@@ -113,7 +154,11 @@ class Calendar extends Timeline {
         
     }
 
-    /** Retorna as opções de eventos a cadastrar */
+    /** 
+     * Retorna as lista de tipos de eventos a cadastrar 
+     * 
+     * @since 2.1
+     * */
     function getTypes() {
         
         //Inicializando classe de tipos
@@ -127,16 +172,35 @@ class Calendar extends Timeline {
 
     }
 
-    /* Adiciona um item de timeline */
+    /** 
+     * Retorna tipo de calendário em forma legível 
+     * 
+     * @param int $typeID   Id de tipo 
+     * @since 2.1
+     * */
+    private function _getCalendarTypeName(int $typeID) {
+        
+        $model = new CalendarTypeModel(['ID' => $typeID]);
+
+        return $model->type;
+
+    }
+
+    /**
+     * Adiciona um item de Evento
+     * 
+     * @param array $data   Array de valores a ser inserido na criação do evento
+     * */
     function add( $data ) {
         return $this->register($data);
     }
 
-    /* Atualiza um plano */
+    /**  
+    *   Atualizar um Evento
+    */
     function update( $data, $id) {
         return $this->register($data, $id);
     } 
-
 
     private function register(Array $data, int $postID = null) {
 
@@ -145,6 +209,10 @@ class Calendar extends Timeline {
             //Mensagem de erro no cadastro
             return ['error' => ['calendar' => 'Nenhuma nova informação foi enviada.']];
         }
+
+        //Formata data e horário enviado em array
+        if (!empty($data['post_calendar_date']))
+            $data['post_calendar_date'] = explode(',', $data['post_calendar_date']); 
 
         //Filtrar inputs e validação de dados para PostModel
         $filtered = [
@@ -251,7 +319,7 @@ class Calendar extends Timeline {
                 $video = new VideoUrl($this->currentUser->ID, $lastInsert['ID'], $videoUrl);
 
                 //Enviar arquivo e insere no banco
-                $insertResult = $video->insertUrl();   
+                $insertResult = $video->insertUrl();
 
             }
 
@@ -266,6 +334,9 @@ class Calendar extends Timeline {
                 //Enviar arquivo e insere no banco
                 $upload->insertFile();           
             }
+
+            //Cria arquivo 'ics' e adicionando ao post como attachment
+            $this->setIcs($lastInsert['ID'], $filtered['post_title'], $sameday = $metaFiltered['post_calendar_date'][0].$metaFiltered['post_calendar_date'][1], $sameday, $filtered['post_content'], $metaFiltered['post_calendar_address']);
 
             //Verifica se ID foi enviado = se é atualização
             if( !is_null($postID) )
@@ -284,5 +355,37 @@ class Calendar extends Timeline {
         }
     }
 
+    /** 
+     * Setando dados para criação de arquivo ics 
+     * @since 2.1
+     * */
+    private function setIcs(int $post_id, string $title, string $start = '', string $end = '', string $description = '', string $location = '') {
+
+        $name = 'calendar_event_'.$post_id;
+        $dataMerged = "BEGIN:VCALENDAR\nVERSION:2.0\nMETHOD:PUBLISH\nBEGIN:VEVENT\nDTSTART:".date("Ymd\THis\Z", strtotime($start))."\nDTEND:".date("Ymd\THis\Z", strtotime($end))."\nLOCATION:".$location."\nTRANSP: OPAQUE\nSEQUENCE:0\nUID:\nDTSTAMP:".date("Ymd\THis\Z")."\nSUMMARY:".$title."\nDESCRIPTION:".$description."\nPRIORITY:1\nCLASS:PUBLIC\nBEGIN:VALARM\nTRIGGER:-PT10080M\nACTION:DISPLAY\nDESCRIPTION:Reminder\nEND:VALARM\nEND:VEVENT\nEND:VCALENDAR\n";
+
+        return $this->saveIcsFile($post_id, $name, $dataMerged);
+    }
+    
+    /** 
+     * Retornando link do arquivo ics 
+     * @since 2.1
+     * */
+    private function saveIcsFile(int $post_id, string $name, string $data) {
+        $filepath = env('APP_IMAGES').$name.".ics";
+        if( file_put_contents($filepath, $data)){
+            
+            //Inicializa classe UploadedFile
+            $file = new UploadedFile($filepath, $name, 'text/calendar');
+            
+            //Inicializa classe de upload
+            $upload = new FileUpload($this->currentUser->ID, $post_id, $file, 'ics');
+            
+            //Insere arquivo em servidor
+            $upload->insertFile();
+        }
+        
+        
+    }
 
 }

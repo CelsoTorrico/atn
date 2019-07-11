@@ -34,7 +34,7 @@ class FileUpload {
         $this->ID           = $userID;
         $this->postID       = $postID;
         $this->fileClass    = $fileClass;        
-        $validTypes         = ['timeline', 'learn', 'profile_img', 'pdf', 'report'];
+        $validTypes         = ['timeline', 'learn', 'profile_img', 'pdf', 'ics', 'report'];
         
         //Verifica se tipo é válido
         if (in_array($type, $validTypes)) {

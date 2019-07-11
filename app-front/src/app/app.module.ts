@@ -39,7 +39,7 @@ import { SignupStepsPage } from '../pages/signup-steps/signup-steps';
 
 
 //Habilita Angular em produção
-//enableProdMode();
+enableProdMode();
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
