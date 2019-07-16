@@ -169,7 +169,7 @@ export class User {
         this.fillMyProfileData();
 
       }).catch((reason) => {
-        this.dataReady.emit('Dados carregados');
+        this.dataReady.emit('Dados de usuário carregado.');
       });
 
   }

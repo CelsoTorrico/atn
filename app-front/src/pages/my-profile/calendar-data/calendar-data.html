@@ -62,9 +62,9 @@
         <ion-col col-12 col-md-6>
           <ion-item>
             <ion-label stacked>{{ "TYPE" | translate }}</ion-label>
-            <ion-select visibility name="post_calendar_type" [(ngModel)]="calendar.post_calendar_type">
-              <ion-option *ngFor="let item of eventTypes" [value]="item.ID" [selected]="item.type == calendar.post_calendar_type">
-                {{item.type}}
+            <ion-select eventTypes name="post_calendar_type" [(ngModel)]="calendar.post_calendar_type">
+              <ion-option *ngFor="let type of eventTypes" [value]="type.ID">
+                {{ type.type }}
               </ion-option>
             </ion-select>
           </ion-item>

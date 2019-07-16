@@ -94,7 +94,7 @@ class Calendar extends Timeline {
                 //Retornando valores de postmeta
                 $postmeta = $metaModel->getIterator([
                     'post_id'   => $item->ID, 
-                    'meta_key'  => ['post_image', 'post_video_url', 'post_calendar_date', 'post_calendar_type', 'post_calendar_address', 'post_calendar_people']
+                    'meta_key'  => ['post_image', 'post_video_url', 'post_visibility', 'post_calendar_date', 'post_calendar_type', 'post_calendar_address', 'post_calendar_people']
                 ]);
 
                 //Atribuindo ao objeto Calendar
@@ -111,10 +111,10 @@ class Calendar extends Timeline {
                         //Decodifica array de banco
                         $calendars[$key]['post_meta'][$v->meta_key] = @unserialize($v->meta_value);
 
-                    } elseif($v->meta_key == 'post_calendar_type') {
+                    } elseif ($v->meta_key == 'post_calendar_type') {
                         
                         //Retorna o tipo de calendário em formato legivel
-                        $calendars[$key]['post_meta'][$v->meta_key] = $this->_getCalendarTypeName((int) $v->meta_value);
+                        $calendars[$key]['post_meta'][$v->meta_key] = [ $v->meta_value,  $this->_getCalendarTypeName((int) $v->meta_value)];
 
                     } else {
                         
@@ -287,11 +287,21 @@ class Calendar extends Timeline {
 
                     //Tipos de visibilidades do usuário
                     $levels = parent::getVisibilityFields();
-
-                    //Se não exitir o tipo de visibilidade
-                    if (!array_search($meta_value, $levels)) {
-                        return;
+                    
+                    //Verifica se visibilidade definida é válido para usuário
+                    foreach ($levels as $key => $value) {
+                        //Adiciona valor de visibilidade encontrado
+                        if( (int) $meta_value == $value['value']) {
+                            //Se encontrado, adiciona e para lopping
+                            $meta_value = (int) $value['value']; 
+                            break; 
+                        }
+                        
                     }
+
+                    //Se não exitir o tipo de visibilidade, insert valor padrão
+                    if(is_null($meta_value) || $meta_value < 0) 
+                        $meta_value = 0;              
                 }
                 
                 //Preencher modelo com os dados
@@ -301,8 +311,14 @@ class Calendar extends Timeline {
                     'meta_value'    => $meta_value
                 ]);
 
-                //Atribui valor de visibilidade ao post
-                $metaModel->save();
+                //Verifica se item é existente no banco
+                if($metaModel->isFresh()) {
+                    //Atribui novo valor no banco
+                    $metaModel->save();
+                } else {
+                    //Faz update de valores no banco
+                    $metaModel->update(['post_id', 'meta_key', 'meta_value']);
+                }              
                 
                 //Reseta variavel
                 unset($metaModel);

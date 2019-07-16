@@ -7,10 +7,11 @@ import { CommonModule } from '@angular/common';
 import { PipesModule } from '../../../pipes/pipes.module';
 import { CalendarView } from './calendar-view.component';
 import { CalendarSingle } from "./calendar-single.component";
+import { Calendar } from './calendar';
 
 @NgModule({
   declarations: [
-    CalendarSingle, CalendarView
+    Calendar, CalendarSingle, CalendarView
   ],
   imports: [
     TranslateModule.forChild(),
@@ -20,9 +21,9 @@ import { CalendarSingle } from "./calendar-single.component";
     PipesModule,
     CommentModule 
   ],
-  exports: [CalendarSingle, CalendarView],
-  bootstrap: [CalendarSingle],
-  entryComponents: [CalendarSingle, CalendarView],
+  exports: [Calendar, CalendarSingle, CalendarView],
+  bootstrap: [Calendar],
+  entryComponents: [Calendar, CalendarSingle, CalendarView],
   schemas: [],
   providers: []
 })

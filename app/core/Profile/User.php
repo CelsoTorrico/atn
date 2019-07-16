@@ -646,8 +646,19 @@ class User extends GenericUser{
 
     }
 
-    /** Retorna Tipo de usuário */
-    public function getUserType($ID = null) {
+    /** 
+     * Retorna Tipo de usuário 
+     * 
+     * @since 2.1   Suporte para retornar tipo de usuário por ID do tipo
+     * @since 2.0
+     * */
+    public function getUserType($ID = null, bool $byUserId = true) {
+        
+        //Se for enviado array com chave 'usertype'
+        if (!$byUserId) {
+            return $this->_getByTypeId((int) $ID);
+        }
+
         return $this->_getType($ID);
     }
 
@@ -1154,6 +1165,27 @@ class User extends GenericUser{
         }
 
         return $result;
+    }
+
+    /** 
+     *  Retorna nome do tipo de usuário
+     *  
+     * @since 2.1
+     * 
+     * @return string
+     */
+    private function _getByTypeId(int $id):string {
+         
+        //Instancia Modelo de Classe 
+         $usertypeModel = new UsertypeModel(['ID' => $id]);
+
+         //Se não retornar nenhum resultado retornar nulo
+         if (! $result = $usertypeModel->getData() ) {
+             return null;
+         }
+ 
+         //Retorna apenas a nomeclatura
+         return $result['type'];
     }
 
     /** 

@@ -36,10 +36,11 @@ import { ChatPageModule } from '../pages/chat/chat.module';
 import { SettingsPage } from '../pages/settings/settings';
 import { SettingsPageModule } from '../pages/settings/settings.module';
 import { SignupStepsPage } from '../pages/signup-steps/signup-steps';
+import { ReportPageModule } from '../pages/report/report.module';
 
 
 //Habilita Angular em produção
-enableProdMode();
+//enableProdMode();
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -108,6 +109,7 @@ const appRoutes: Routes = [
     FavoritePageModule,
     LearnModule,
     ChatPageModule,
+    ReportPageModule,
     SettingsPageModule,
     PipesModule,
     ChartModule

@@ -164,5 +164,21 @@
   "CHANGE_PASSWORD": "Alterar senha",
   "PORTUGUESE": "Português",
   "ENGLISH": "Inglês",
-  "SPANISH": "Espanhol"
+  "SPANISH": "Espanhol",
+  "MY_CLUB": "Meu Clube",
+  "MY_CONFEDERATION": "Minha Confederação",
+  "MY_UNIVERSITY": "Minha Universidade",
+  "MANAGEMENT_MY_EVENTS": "Gerenciar Meus Eventos",
+  "MANAGEMENT_MY_TEAM": "Gerenciar Minha Equipe",
+  "ADD_EVENT": "Adicionar novo evento",
+  "ADD_MY_CLUB": "Adicionar a equipe",
+  "REMOVE_MY_CLUB": "Remover da equipe",
+  "VIEW_MORE": "Ver mais",
+  "CALENDAR_ITEM": "Evento",
+  "ADD_CALENDAR": "Adicionar ao calendário",
+  "MORE_INFO": "Mais Informações",
+  "VIEW_REPORT": "Ver relatório",
+  "EXPORT_EXCEL": "Exportar Excel",
+  "EXPORT_PDF": "Exportar PDF"
+
 }

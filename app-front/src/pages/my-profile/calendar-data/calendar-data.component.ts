@@ -1,11 +1,11 @@
 import { CalendarSingle } from '../../components/calendar/calendar-single.component';
 import { Component } from '@angular/core';
-import { NavController, ToastController, ViewController, NavParams } from 'ionic-angular';
+import { ViewController, NavParams, LoadingController, ToastController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 
 @Component({
@@ -14,39 +14,50 @@ import { Observable } from 'rxjs';
 })
 export class MyProfileCalendarComponent {
 
-    calendarObservable: Observable<ArrayBuffer>;
+    calendarObservable: Observable<ArrayBuffer>
 
     //Campos para preenchimento
     calendar: any = {
         post_title: <string>'',
         post_excerpt: <string>'',
         post_content: <string>'',
-        post_image: <any>null,
+        post_image: <any>null, 
         post_visibility: <number>null,
         post_video_url: <string>'',
         post_calendar_date: <any>[],
-        post_calendar_type: <string>'',
+        post_calendar_type: <string>'1',
         post_calendar_address: <string>'',
-        post_calendar_people: <any>[]
+        post_calendar_people: <any>[],
+        attachment: <any>[],
+        post_meta: <any>{},
+        quantity_comments: '' 
     }
 
-    public post_id:number;
+    public post_id:number
 
-    public visibility: any = [];
+    public visibility: any = []
 
     public eventTypes: any = []
 
     public errorSubmit:string
 
+    public loading_placeholder:string
+
     constructor(
-        public user: User,
-        public api: Api,
-        public params: NavParams,
-        public viewCtrl: ViewController,
-        public statsList: StatsList,
-        public translateService: TranslateService) {
+        public  user: User,
+        public  api: Api,
+        public  params: NavParams,
+        public  viewCtrl: ViewController,
+        public  statsList: StatsList,
+        private loading: LoadingController,
+        private toastCtrl: ToastController,
+        public  translateService: TranslateService) {
 
         this.translateService.setDefaultLang('pt-br');
+
+        this.translateService.get(["POST", "LOADING"]).subscribe((data) => {
+            this.loading_placeholder    = data.LOADING;
+        });
 
         //Carrega pre-dados no caso de atualização
         let post_id = this.params.get('data');
@@ -91,8 +102,8 @@ export class MyProfileCalendarComponent {
             if(key == 'post_meta') {
                 //Intera e atribui a array
                 for (const k in resp[key]) {
-                    if (this.calendar.hasOwnProperty(key)) {
-                        this.calendar[k] = resp[key][k];                        
+                    if (this.calendar.hasOwnProperty(k)) {
+                        this.calendar[k] = resp[key][k];                   
                     }
                 }
                 continue;
@@ -110,7 +121,7 @@ export class MyProfileCalendarComponent {
                 continue;
             }
 
-            this.calendar = resp;    
+            this.calendar[key] = resp[key]; 
 
           }
     
@@ -145,12 +156,21 @@ export class MyProfileCalendarComponent {
         });
     }
 
+
     //Salvar dados do formulário
-    save(form: NgForm, $event) {
+    save(form: NgForm, $event):Subscription {
 
         $event.preventDefault();
 
+        //Se não houver dados no atributo post_title
+        
+
         //Loading
+        const loading = this.loading.create({ 
+            content: this.loading_placeholder 
+        });
+
+        loading.present();
 
         //Convertendo data em objeto FormData
         let formData = new FormData();
@@ -160,12 +180,6 @@ export class MyProfileCalendarComponent {
             //O campo de imagem deve permanecer na ordem
             let file = $event.target[8].files[0];
             formData.append('post_image', file, file.name);
-        }
-
-        //Se não houver dados no atributo post_title
-        if(this.calendar.post_title == ('null'|| '')) {
-            this.dismiss();
-            return;
         }
 
         //Intera sobre objeto com valores enviados e atribui a objeto FormData
@@ -192,18 +206,10 @@ export class MyProfileCalendarComponent {
         }
 
         //Enviar dados a serem salvos
-        this.calendarObservable.subscribe((resp: any) => {
+        return this.calendarObservable.subscribe((resp: any) => {
 
-            // Se mensagem contiver parametro 'success'
-            if (Object.keys(resp).length <= 0) {
-                return;
-            }
-
-            //Erro ao submeter novo evento
-            if(resp.error != undefined) {
-                this.errorSubmit = resp.error.calendar;
-                return;
-            }
+            //Remove tela de loading
+            loading.dismiss();
 
             //Fechar modal e retornar data
             this.dismiss(resp);
@@ -213,6 +219,7 @@ export class MyProfileCalendarComponent {
 
     //Fechar modal
     dismiss(data: any = null) {
+
         this.viewCtrl.dismiss(data);
     }
 

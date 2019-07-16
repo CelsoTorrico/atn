@@ -18,7 +18,7 @@ import { SocketIoModule, SocketIoConfig} from 'ng-socket-io';
 const config: SocketIoConfig = {url: 'https://developing.atletasnow.com:8890', options:{} } 
 
 //Development
-//const config: SocketIoConfig = {url: 'https://localhost:8890', options:{} } 
+//const config: SocketIoConfig = {url: 'https://localhost:8890', options:{} }
 
 @NgModule({
   declarations: [

@@ -72,17 +72,19 @@ export class CalendarSingle extends TimelineSingle {
     };
 
     //Verifica se variavel é um array válido
-    if($attachment != undefined && $attachment.length > 0){
-      $attachment.reverse().forEach(element => {
+    if($attachment != undefined && $attachment.length > 0) {
+
+      for (const element of $attachment.reverse()) {
         //Retorna posicao encontrada
         $found = element.search($typeFile[$ext]);
         
         //Se maior que 0 e -1
         if ($found > 0) {
           $media = element;
+          break;
         }
-  
-      });
+      }
+
     }
 
     return $media;

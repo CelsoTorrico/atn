@@ -62,16 +62,27 @@ class Follow {
                 continue;
             }
 
-            //Se seguidor for mesmo do usuário logado
-            if($item->to_id == $this->currentUser->ID){
+            try {                
+                //Atribui ID de usuário, pode retornar erro se usuário excluido
+                $id = $item->to_id->ID;
+
+                //Se seguidor for mesmo do usuário logado
+                if( $id == $this->currentUser->ID){
+                    continue;
+                }
+                
+                //Instanciando classe de usuário
+                $user = new User();
+                
+                //Atribui dados de usuário ao array
+                $listUsers[] = ($only_ids)? $id : $user->getMinProfile($id);
+
+            } catch (\Throwable $th) {
+                //Se erro de usuario inexistente, vai para proxima iteração
                 continue;
             }
+
             
-            //Instanciando classe de usuário
-            $user = new User();
-            
-            //Atribui dados de usuário ao array
-            $listUsers[] = ($only_ids)? $item->to_id->ID : $user->getMinProfile($item->to_id->ID);
         }       
 
         return $listUsers;

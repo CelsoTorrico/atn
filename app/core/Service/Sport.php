@@ -4,7 +4,6 @@ namespace Core\Service;
 
 use Core\Database\SportModel;
 use Core\Database\ListSportModel;
-use Core\Utils\DataConverter;
 use Illuminate\Http\Request;
 
 class Sport {
@@ -12,10 +11,14 @@ class Sport {
     protected $model;
     protected $currentUser;
 
-    public function __construct(Request $request){
+    public function __construct(Request $request = null) {        
         
         $this->model = new SportModel();
-        $this->currentUser = $request->user();
+        
+        if(!is_null($request)) {
+            $this->currentUser = $request->user();
+        }
+        
     }
 
     /* Retorna sport por ID */
@@ -72,6 +75,27 @@ class Sport {
         
     }  
 
+    /** 
+     *  Retorna nomeclatura do esporte pelo ID
+     * 
+     * @param int $id   Id do esporte a ser retornado
+     * @since 2.1
+     */
+    function _getSport($sport) {
+        
+        //Se parametro for numero inteiro
+        if(is_int($sport)) {
+            return $this->getSportById((int) $sport);
+        }
+        
+        //Se parametro for em formato de string
+        if(is_string($sport)) {
+            return $this->getSportByName((string) $sport);
+        }
+
+        return ['error' => ['sport' => 'Não foi possível localizar esporte pelos parametros informados.']];
+    }
+
     /* Adiciona um item de sport */
     function add( $data ){
         return $this->register($data);
@@ -85,6 +109,45 @@ class Sport {
     /* Deletar um plano */
     function delete( $ID ){
         return $this->deregister($ID);        
+    }
+
+    /**
+     * Retorna nome do esporte 
+     * @param int $id   ID do esporte a ser retornado
+     * @since 2.1
+     */
+    private function getSportById(int $id):string{
+
+        //Query enviando Id de sport
+        $result = $this->model->load(['ID' => $id]);
+
+        //Verifica se houve resultado
+        if (!$result) {
+            return ['error' => ['sport' => 'Item não existe.']];
+        }
+
+        //Retorna nomeclatura
+        return $this->model->sport_name;
+    }
+
+    /**
+     * Retorna nome do esporte 
+     * 
+     * @param string $sportName   Nome do esporte a ser usando para retornar item
+     * @since 2.1
+     */
+    private function getSportByName(string $sportName):array{
+
+        //Query enviando Id de sport
+        $result = $this->model->load(['sport_name' => $sportName]);
+
+        //Verifica se houve resultado
+        if (!$result) {
+            return ['error' => ['sport' => 'Item não existe.']];
+        }
+
+        //Retorna nomeclatura
+        return [];
     }
 
     private function register($data, $postID = null){

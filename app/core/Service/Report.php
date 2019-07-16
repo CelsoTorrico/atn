@@ -3,7 +3,7 @@
 namespace Core\Service;
 
 use Core\Profile\UserClub;
-use Closure;
+use Core\Service\Sport;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Chart\Chart;
@@ -16,9 +16,6 @@ use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
-use function GuzzleHttp\json_encode;
-use Core\Utils\FileUpload;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Classe para exportar relatórios de uso e outras info 
@@ -59,6 +56,20 @@ class Report {
         //Retornar array de usuários com dados dos mesmos
         $list_users = $this->user->getTeamUsers($user_ids, FALSE);
         $totalFilter = count($list_users);
+
+        //Atribuindo o nome do tipo de usuário
+        if(key_exists('type', $filter) && !empty($filter['type'])) {
+            //Função para retornar apenas nomeclatura do tipo
+            $filter['type'] = $this->user->getUserType($filter['type'], false);
+        }
+
+        //Atribuindo o nome do esporte pelo id
+        if(key_exists('sport', $filter) && !empty($filter['sport'])) {
+            $sport = new Sport();
+            foreach ($filter['sport'] as $key => $value ) {
+                $filter['sport'][$key] = $sport->_getSport((int) $value); 
+            }            
+        }
 
         //Estruturando array de dados
         $export = [
@@ -118,6 +129,7 @@ class Report {
         //Inicializa documento xlsx
         if ($isPDF) {
             $writer = IOFactory::createWriter($this->spreadsheet, 'Mpdf');
+            $writer->writeAllSheets();
             $ext = 'pdf';
         } else {
             $writer = IOFactory::createWriter($this->spreadsheet, 'Xlsx');

@@ -43,6 +43,20 @@
             </ion-item>
           </ion-col>
         </ion-row>
+
+        <ion-row>
+          <ion-col col-12 col-md-6>
+            <ion-item>
+                <ion-label stacked>{{ 'TYPE_USER' | translate}}</ion-label>
+                <ion-select id="tipo" [(ngModel)]="type" name='type' full required>
+                  <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
+                    {{item.texto}}
+                  </ion-option>
+                </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
     </ion-item-group>
 
     <ion-item>

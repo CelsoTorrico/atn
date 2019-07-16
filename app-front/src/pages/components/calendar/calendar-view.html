@@ -28,7 +28,7 @@
     </ion-col>
     <ion-col col-9>
 
-      <h1 class="title">{{ TimelineItem.post_title }} <span class="type-tag">{{ TimelineItem.post_meta.post_calendar_type }}</span></h1>
+      <h1 class="title">{{ TimelineItem.post_title }} <span class="type-tag">{{ TimelineItem.post_meta.post_calendar_type[1] }}</span></h1> 
       <p class="description">{{ TimelineItem.post_excerpt }}</p>
 
       <ul no-padding no-margin no-list mb-5>
@@ -37,7 +37,7 @@
       </ul>
 
       <ion-buttons no-padding class="action-buttons">
-        <a ion-button outline small [href]="eventICSAttachment" target="_self" download>{{ "ADD_EVENT" | translate }}</a>
+        <a ion-button outline small [href]="eventICSAttachment" target="_self" download>{{ "ADD_CALENDAR" | translate }}</a>
       </ion-buttons>
 
     </ion-col>

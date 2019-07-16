@@ -8,8 +8,7 @@
         {{ "MANAGEMENT_MY_EVENTS" | translate }}
       </ion-title>
 
-      <button float-right edit-profile ion-button small end clear
-        (click)="editData('calendarData');">
+      <button float-right edit-profile ion-button icon-start small end clear (click)="editData('calendarData');">
         <ion-icon item-start name="create"></ion-icon>
         {{ "ADD_EVENT" | translate }}
       </button>
@@ -20,11 +19,8 @@
       {{ "MY_CALENDAR_INITIAL_MESSAGE" | translate }}
     </p>-->
 
-    <ion-card class="calendar-feed">
-
-      <calendar-single [calendarAtributes]="calendar" (timelineDeleted)="hideCalendar($event, $i)" (calendarUpdate)="calendarUpdate($event, $i)"  *ngFor="let calendar of listCalendar; let $i = index"></calendar-single> 
-
-    </ion-card>
+    <calendar [currentItems]="" [timelineID]="ID" [isLogged]="isLogged" (updateEvent)="calendarUpdate($event)">
+    </calendar>
 
   </ion-col>
 
@@ -38,7 +34,7 @@
           {{ "MANAGEMENT_MY_TEAM" | translate }}
         </ion-title>
 
-        <button *ngIf="isLogged" float-right edit-profile ion-button small end clear
+        <button *ngIf="isLogged" float-right edit-profile ion-button icon-start small end clear
           (click)="editData('teamData');">
           <ion-icon item-start name="create"></ion-icon>
           {{ "ADD_NEW_MEMBER" | translate }}
@@ -58,14 +54,16 @@
 
             <ion-grid>
               <ion-row>
-                <ion-col padding class="margin-input">
-                  <ion-searchbar type="text" padding name="display_name" [(ngModel)]="query.display_name"
+                <ion-col no-padding class="margin-input">
+                  
+                  <ion-searchbar no-padding type="text" name="display_name" [(ngModel)]="query.display_name"
                     placeholder="{{ 'DISPLAY_NAME' | translate }}"></ion-searchbar>
-                  <button ion-button full>{{ "SEARCH" | translate }}</button>
-                  <p ion-button clear text-center small full class="btn-cursor" (click)="showFilterOptions();">
+
+                  <button ion-button clear text-center small full class="btn-cursor" (click)="showFilterOptions();">
                     {{ "FILTER" | translate }}
                     <ion-icon margin-left name="arrow-dropdown"></ion-icon>
-                  </p>
+                  </button>
+
                 </ion-col>
               </ion-row>
             </ion-grid>
@@ -144,18 +142,20 @@
               </ion-row>
             </ion-grid>
 
+            <button ion-button full>{{ "SEARCH" | translate }}</button>
+
           </ion-card>
 
         </form>
 
         <ion-card-content>
-          
+
           <ion-buttons>
 
             <button edit-profile ion-button small start outline (click)="viewReport();">
-                {{ "EXPORT_EXCEL" | translate }}
+              {{ "VIEW_REPORT" | translate }}
             </button>
-            
+
             <button edit-profile ion-button small start clear (click)="exportReport();">
               {{ "EXPORT_EXCEL" | translate }}
             </button>

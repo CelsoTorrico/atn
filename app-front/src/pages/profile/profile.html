@@ -31,7 +31,7 @@
           </button><!-- Seguir usuário-->
 
           <button *ngIf="typeUser <= 3" ion-button small outline (click)="addToTeam($event)">
-            {{ (addedTeam == false)? 'ADD_MY_CLUB': 'REMOVE_MY_CLUBE' | translate }}
+            {{ (addedTeam == false)? 'ADD_MY_CLUB': 'REMOVE_MY_CLUB' | translate }}
           </button><!-- Exibido apenas para usuários 'não-institucionais' -->
 
           <a ion-button small outline [href]="downloadProfilePDF()" download>

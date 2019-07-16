@@ -65,7 +65,7 @@ class ClubController extends Controller
         }
         
         //Campos obrigatórios
-        $require = ['display_name', 'user_email', 'user_pass', 'confirm_pass'];
+        $require = ['display_name', 'user_email', 'user_pass', 'confirm_pass', 'type'];
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has($require)) {

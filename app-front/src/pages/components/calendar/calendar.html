@@ -1,0 +1,13 @@
+<ion-card class="calendar-feed" *ngIf="currentItems.length > 0">
+
+    <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 300px;"> 
+        
+      <calendar-single [calendarAtributes]="calendar" (timelineDeleted)="hideTimeline($event, $i)" (calendarUpdate)="calendarUpdate($event, $i)" *ngFor="let calendar of currentItems; let $i = index"></calendar-single> 
+
+      <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll> 
+
+    </ion-scroll>
+
+</ion-card>

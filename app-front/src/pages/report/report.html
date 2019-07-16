@@ -1,0 +1,103 @@
+<ion-header>
+
+  <ion-toolbar>
+    <ion-buttons left>
+      <button ion-button
+        class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button"
+        style="display: block;" (click)="backButton()">
+        <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>{{ "REPORT" | translate }}</ion-title>
+
+    <ion-buttons right>
+
+      <button edit-profile ion-button small start clear (click)="exportReport();">
+        {{ "EXPORT_EXCEL" | translate }}
+      </button>
+
+      <button edit-profile ion-button small end clear (click)="exportReport(true);">
+        {{ "EXPORT_PDF" | translate }}
+      </button>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="page-report" *ngIf="reportData">
+
+  <ion-grid fixed>
+
+    <ion-row class="report-windows">
+
+      <ion-col col-12>
+
+        <ion-row>
+
+          <ion-col col-12 col-lg-6>
+
+            <h2>{{ "QUERY_PARAMETERS"}}</h2>
+
+            <p>
+              {{ "QUERY_PARAMETERS_MORE_DETAIL" | translate}}
+            </p>
+
+            <ul no-padding no-margin no-list class="list-inline query-parameters">
+              <li [style.display]="(item.term)? 'inline-block' : 'none' " *ngFor="let item of fields">
+                <ion-badge badge>
+                    {{ item.term | translate }}
+                </ion-badge>                
+              </li>
+            </ul>
+          </ion-col>
+
+          <ion-col col-12 col-lg-5>
+
+            <h2>{{ "CHART" | translate }}</h2>
+
+            <p>
+              {{ "CHART_MORE_DETAIL" | translate}}
+            </p>
+
+            <chart [type]="typeChart" [data]="data" [options]="options"></chart>
+
+          </ion-col>
+
+        </ion-row>
+
+      </ion-col>
+
+      <ion-col col-12>
+
+        <h2>
+          {{ "LIST_USERS" | translate }}
+        </h2>
+
+        <p>
+          {{ "LISTS_USERS_MORE_DETAIL" | translate}}
+        </p>
+
+        <table table class="table">
+          <thead>
+            <th>{{ "ID" | translate }}</th>
+            <th>{{ "NAME" | translate }}</th>
+            <th>{{ "TYPE_USER" | translate }}</th>
+            <th>{{ "EMAIL" | translate }}</th>
+          </thead>
+          <tr *ngFor="let item of listUsers">
+            <td>{{ item.ID }}</td>
+            <td>{{ item.display_name }}</td>
+            <td>{{ item.type.type }}</td>
+            <td>{{ item.user_email }}</td>
+          </tr>
+        </table>
+
+      </ion-col>
+
+    </ion-row>
+
+  </ion-grid>
+
+</ion-content>

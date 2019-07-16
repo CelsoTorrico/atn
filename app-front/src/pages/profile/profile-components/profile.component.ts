@@ -10,6 +10,7 @@ import { MyProfilePersonalDataComponent } from '../../my-profile/personal-data/p
 import { MyProfileSportsComponent } from '../../my-profile/sports-data/sports-data.component';
 import { MyProfileStatsComponent } from '../../my-profile/stats-data/stats-data.component';
 import { Observable } from 'rxjs/Observable';
+import { Subscriber, Subscription } from 'rxjs';
 
 @Component({
   selector: 'profile',
@@ -173,13 +174,13 @@ export class ProfileComponent {
   }
 
   /** Carrega dados de usuário de contexto */
-  public loadUserLoadData(){
-    this.currentUserLoadData();
+  public loadUserLoadData($fn = () => {}): Promise<void> {
+    return this.currentUserLoadData($fn);
   }
 
-  private currentUserLoadData() {
+  private currentUserLoadData($fn = () => {}): Promise<void> {
 
-    this.profile.subscribe((resp: any) => {
+    return this.profile.toPromise().then((resp: any) => {
 
       //Adicionando valores as variavel global
       let atributes = resp;
@@ -210,7 +211,8 @@ export class ProfileComponent {
         this.max_users = atributes.max_users;
 
         //executa busca de membros da instituição
-        this.getMyMembersTeam();   
+        this.getMyMembersTeam();  
+
       }
 
       if (atributes.metadata['my-videos'] != undefined) {
@@ -231,6 +233,11 @@ export class ProfileComponent {
         //Adiciona videos a variavel de escopo global
         this.videos = videos;
       }
+
+      //Carrega função
+      $fn();
+
+    }).catch((reason) => {
 
     });
 
@@ -290,7 +297,7 @@ export class ProfileComponent {
   }
 
   //Abrir modal com dados para atualizar perfil
-  editData($component: string, $data:any = undefined) {
+  editData($component: string, $data:any = undefined, $fn = () => { this.currentUserLoadData() }) {
 
     //Criar modal do respectivo component
     let modal = this.modalCtrl.create(this.ListComponents[$component], {data: $data});
@@ -301,15 +308,15 @@ export class ProfileComponent {
           return;
         }
 
-        //Se houve erro
-        if(data.error != undefined){
-          return;
-        }
-
         //Verificar há mais de um dado no array 
         if (Object.keys(data).length <= 0) {
           return;
         }
+
+        //Se houve erro
+        if(data.error != undefined){
+          return;
+        }        
 
         //Retorna mensagem proveninete do servidor
         let responseText = data.success[Object.keys(data.success)[0]];
@@ -323,8 +330,8 @@ export class ProfileComponent {
 
         toast.present();
 
-        //Recarregar dados do profile
-        this.currentUserLoadData();
+        //Executar função
+        $fn();
         
     });
 

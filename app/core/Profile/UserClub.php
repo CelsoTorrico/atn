@@ -181,7 +181,7 @@ class UserClub extends User {
             
             // definir o tipo de usuário padrão
             $userData = array_merge($userData, [
-                'type' => self::TYPE_CHILD
+                'type' => (!empty($data['type']))? (int) $data['type'] : self::TYPE_CHILD 
             ]);
 
             //Adiciona usuário ou atualizar e atribuir resposta

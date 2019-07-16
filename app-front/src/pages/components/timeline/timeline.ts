@@ -1,7 +1,6 @@
 import { TimelineItem } from './item/timelineItem';
-import { ToastController } from 'ionic-angular';
 import { Component, Input } from '@angular/core';
-import { ModalController, NavController } from 'ionic-angular';
+import { ModalController } from 'ionic-angular';
 import { Api } from '../../../providers';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -14,7 +13,7 @@ export class Timeline {
   //Parametros de URL
   @Input() public timelineID:number;
  
-  public static $getTimelineUrl:string = 'timeline';
+  private $getTimelineUrl:string = 'timeline';
   public $url:string = '';
   public $paged:number = 1;
   
@@ -27,9 +26,7 @@ export class Timeline {
 
   constructor(
     public api: Api,
-    public navCtrl: NavController,  
     public modalCtrl: ModalController,
-    private toastCtrl: ToastController, 
     public translateService: TranslateService) {     
       this.translateService.setDefaultLang('pt-br');
     } 
@@ -49,17 +46,10 @@ export class Timeline {
     this.query();
   }
 
-  //Chamado pelo component pai quando de refresh
-  reload(){
-    //Reseta e recarrega posts
-    this.currentItems = [];
-    this.$paged = 1;
-    this.query();
-  }
-
-  query($fn:any = function(){}){
+  query($fn:any = function(){}) {
+    
     //Retorna a lista de esportes do banco e atribui ao seletor
-    let items = this.api.get(Timeline.$getTimelineUrl + this.$url + '/paged/' + this.$paged).subscribe((resp:any) => {
+    let items = this.api.get(this.$getTimelineUrl + this.$url + '/paged/' + this.$paged).subscribe((resp:any) => {
        
       //Se não existir items a exibir
       if(Object.keys(resp).length <= 0){
@@ -86,16 +76,16 @@ export class Timeline {
   }
 
   //Após excluido item de timeline, eliminar do loop de items
-  hideTimeline($event, $index){
+  hideTimeline($event, $index) {
     //Atualiza post com dados atualizados
     this.currentItems.splice($index, 1);
   }
 
   //Após a inserção de um comentário
-  updateTimelineComment($event, $index){
+  updateTimelineComment($event, $index) {
     
     //Retorna a lista de esportes do banco e atribui ao seletor
-    this.api.get(Timeline.$getTimelineUrl + '/' + $event).subscribe((resp:any) => {
+    this.api.get(this.$getTimelineUrl + '/' + $event).subscribe((resp:any) => {
 
         //Verifica se existe dados
         if(resp.lenght <= 0){
@@ -109,6 +99,13 @@ export class Timeline {
         return;  
     });
 
+  }
+
+  //Recarrega items e zera
+  reload() {
+    this.$paged = 1;
+    this.currentItems = [];
+    this.query();
   }
 
   //Carrega mais items de timeline via infinescroll
@@ -143,6 +140,10 @@ export class Timeline {
       modal.present(); 
     }
 
+  }
+
+  public _setUrl($baseUrl:string = 'timeline'){
+    this.$getTimelineUrl = $baseUrl;
   }
 
 }

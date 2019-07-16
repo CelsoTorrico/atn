@@ -1,12 +1,8 @@
-import { Observable } from 'rxjs/Observable';
-import { Component, Input, SimpleChanges, Output } from '@angular/core';
-import { NavController, ToastController, ViewController, NavParams } from 'ionic-angular';
+import { Component } from '@angular/core';
+import { ViewController, NavParams, LoadingController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { User, Api } from '../../../providers';
-import { BrazilStates } from '../../../providers/useful/states';
-import { FormControl, NgForm } from '@angular/forms';
-import { DatePipe } from '@angular/common';
-import { EventEmitter } from 'events';
+import { NgForm } from '@angular/forms';
 
 @Component({
     selector: 'team-data-edit',
@@ -26,6 +22,8 @@ export class MyProfileAddMemberDataComponent {
 
     confirm_pass:string
 
+    type:number = 1;
+
     //Url de requisição de usuário
     private static readonly $getProfile: string = 'user/self/club_user'
     
@@ -33,14 +31,27 @@ export class MyProfileAddMemberDataComponent {
 
     public loginErrorString
 
+    public loading_placeholder
+
+    //Lista de tipos de usuário
+    protected $typeUserList = [
+        {valor: 1,  texto: 'Atleta'}, 
+        {valor: 2,  texto: 'Profissional do Esporte'}
+    ];
+
     constructor(
         public user: User,
         public api: Api,
         public viewCtrl: ViewController,
         public translateService: TranslateService,
+        private loading: LoadingController,
         public params: NavParams) { 
     
         this.translateService.setDefaultLang('pt-br');
+
+        this.translateService.get(["POST", "LOADING"]).subscribe((data) => {
+            this.loading_placeholder    = data.LOADING;
+        });
 
         this.$user_id = this.params.get('data');
 
@@ -67,6 +78,7 @@ export class MyProfileAddMemberDataComponent {
                 this.method = "put";
                 this.display_name = resp.display_name;
                 this.user_email = resp.user_email;
+                this.type = resp.type.ID;
 
             });
         }
@@ -78,12 +90,20 @@ export class MyProfileAddMemberDataComponent {
 
         $event.preventDefault();
 
+        //Loading
+        const loading = this.loading.create({ 
+            content: this.loading_placeholder 
+        });
+
+        loading.present();
+
         //Campos válidos
         let saveFields = {
-            display_name: {},
-            user_email: {},
-            user_pass: {},
-            confirm_pass: {}           
+            display_name: null,
+            user_email: null,
+            user_pass: null,
+            confirm_pass: null,
+            type: null,           
         }
 
         //Intera sobre objeto e atribui valor aos modelos de metadata
@@ -103,6 +123,9 @@ export class MyProfileAddMemberDataComponent {
             if(Object.keys(resp).length <= 0 ){
                 return;
             }
+
+            //Fechar tela de loading
+            loading.dismiss();
 
             //Fechar modal e passar data para pai
             this.dismiss(resp); 

@@ -7,10 +7,11 @@
 
     <div class="calendar-info">
       <h2 class="title">{{ calendarAtributes.post_title }} <span
-          class="type-tag">{{ calendarAtributes.post_meta.post_calendar_type }}</span></h2>
+          class="type-tag">{{ calendarAtributes.post_meta.post_calendar_type[1] }}</span></h2>
       <p class="description">{{ calendarAtributes.post_excerpt }}</p>
       <div class="calendar-date">
-        <span class="date"><strong>{{ calendarAtributes.post_meta.post_calendar_date[0] | date }}</strong></span>
+        <span class="date">
+          <strong>{{ calendarAtributes.post_meta.post_calendar_date[0] | date }}</strong></span>
         <span class="hour">{{ calendarAtributes.post_meta.post_calendar_date[1] }}</span>
       </div>
     </div>
@@ -40,16 +41,16 @@
                 {{ "EDIT" | translate }}
               </button>
             </li>
-            <li *ngIf="currentUser.ID == calendarAtributes.post_author.ID" >
-                <button delete-calendar ion-button small clear icon-end (click)="deleteTimeline(calendarAtributes.ID)">
-                    {{ "DELETE" | translate }}
-                    <ion-icon end name="close-circle"></ion-icon>
-                </button>
+            <li *ngIf="currentUser.ID == calendarAtributes.post_author.ID">
+              <button delete-calendar ion-button small clear icon-end (click)="deleteTimeline(calendarAtributes.ID)">
+                {{ "DELETE" | translate }}
+                <ion-icon end name="close-circle"></ion-icon>
+              </button>
             </li>
             <li>
-                <button ion-button small end outline class="open-view" (click)="openView(calendarAtributes.ID, $event)">
-                    {{ 'VIEW_MORE' | translate}}
-                </button>
+              <button ion-button small end outline class="open-view" (click)="openView(calendarAtributes.ID, $event)">
+                {{ 'VIEW_MORE' | translate}}
+              </button>
             </li>
           </ul>
 

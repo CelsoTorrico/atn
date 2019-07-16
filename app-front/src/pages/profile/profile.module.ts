@@ -24,7 +24,7 @@ import { CommonModule } from '@angular/common';
     ProfileViewDirective,
     ProfileComponent, 
     StatsComponent,
-    ClubComponent
+    ClubComponent,
   ],
   imports: [
     IonicPageModule.forChild(ProfilePage),
@@ -46,7 +46,7 @@ import { CommonModule } from '@angular/common';
     ProfileMessage, 
     ProfileComponent,
     StatsComponent,
-    ClubComponent
+    ClubComponent,
   ],
   providers: [
     StatsList
