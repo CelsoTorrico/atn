@@ -1,3 +1,27 @@
+<ion-item-group class="comment-section" *ngIf='commentShow'> 
+
+  <ion-row>
+    <ion-col col-auto>
+      <ion-item>
+        <ion-avatar class="btn-cursor" item-start>
+          <img *ngIf="currentUser.profile_img, else elseBlock"
+            [src]="currentUser.profile_img" />
+          <ng-template #elseBlock>
+            <img src="assets/img/user.png" [alt]="currentUser.display_name" />
+          </ng-template>
+        </ion-avatar>
+      </ion-item> 
+    </ion-col>
+    <ion-col>
+      <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text"
+        placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-textarea>
+      <button ion-button small float-right end
+        (click)="submitComment($postID, $event)">{{ "PUBLISH" | translate }}</button>
+    </ion-col>
+  </ion-row>
+
+</ion-item-group>
+
 <ion-item class="comment-item" *ngFor="let currentItem of currentCommentItems; let i = index">
 
   <ion-list> 
@@ -21,27 +45,8 @@
 
     </article>
 
-    <ion-item-group no-padding [id]="'form-' + currentItem.comment_ID" style="display:none !important;">
-
-      <ion-item>
-
-        <ion-avatar class="btn-cursor" item-start>
-          <img *ngIf="currentUser.metadata.profile_img.value, else elseBlock"
-            [src]="currentUser.metadata.profile_img.value" />
-          <ng-template #elseBlock>
-            <img src="assets/img/user.png" alt="currentUser.display_name" />
-          </ng-template>
-        </ion-avatar>
-
-        <ion-input name="comment_content" [(ngModel)]="commentText" type="text"
-          placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-input>
-
-      </ion-item>
-
-      <button ion-button small float-right (click)="submitResponseComment(currentItem.comment_ID, $event)">{{ "PUBLISH"
-        | translate }}</button><!-- Resposta a comentário -->
-
-    </ion-item-group>
+    <!-- Local para adicionar form de comentário  -->
+    <comment-form [$postID]='currentItem.comment_ID' [$type]="'comment/response/'" (CommentUpdate)="emitEvent($event)"></comment-form>
 
   </ion-list>
 
@@ -49,7 +54,7 @@
 
     <ion-item *ngFor="let resp of currentItem.responses">
 
-      <article>
+      <article> 
 
         <header (click)="goToProfile(resp.user_id)">
           {{ resp.comment_author }} <span class="date">{{ resp.comment_date | date }}</span>
@@ -63,27 +68,8 @@
 
       </article>
 
-      <ion-item-group no-padding [id]="'form-' + resp.comment_ID" style="display:none !important;">
-
-        <ion-item>
-
-          <ion-avatar class="btn-cursor" item-start>
-            <img *ngIf="currentUser.metadata.profile_img, else elseBlock"
-              [src]="currentUser.metadata.profile_img.value" />
-            <ng-template #elseBlock>
-              <img src="assets/img/user.png" alt="currentUser.display_name" />
-            </ng-template>
-          </ion-avatar>
-
-          <ion-input name="comment_content" [(ngModel)]="commentText" type="text"
-            placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-input>
-
-        </ion-item>
-
-        <button ion-button small float-right (click)="submitResponseComment(currentItem.comment_ID, $event)">{{
-          "PUBLISH" | translate }}</button><!-- Resposta a resposta de comentário -->
-
-      </ion-item-group>
+      <!-- Local para adicionar form de comentário  -->
+      <comment-form [$postID]='resp.comment_ID' [$parentID]='currentItem.comment_ID' [$type]="'comment/response/'" (CommentUpdate)="emitEvent($event)"></comment-form> 
 
     </ion-item>
 

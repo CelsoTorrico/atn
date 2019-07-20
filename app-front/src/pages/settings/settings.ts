@@ -1,10 +1,9 @@
-import { Observable } from 'rxjs/Observable';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { Settings, User } from '../../providers';
-import { DashboardPage } from '../dashboard/dashboard';
+import { DashboardPage } from '../dashboard/dashboard'; 
 
 /**
  * The Settings page is a simple form that syncs with a Settings provider
@@ -35,12 +34,36 @@ export class SettingsPage {
     public formBuilder: FormBuilder,
     public navParams: NavParams,
     public translate: TranslateService) {
+      
+  }
+
+  ngOnInit() {
+    // Build an empty form for the template to render
+    this.form = this.formBuilder.group({});
+    this._buildForm();
+  }
+
+  
+  ionViewDidLoad() {
+    
+  }
+
+  ionViewWillEnter() {
+    // Build an empty form for the template to render
+    //this.form = this.formBuilder.group({});
+    
+
+    /*this.settings.load().then(() => {
+      this.settingsReady = true;
+      this.options = this.settings.allSettings;
+      this._buildForm();
+    });*/
   }
 
   _buildForm() {
     
     let group: any = {
-      defaultLang   : [this.options.defaultLang],
+      //defaultLang   : [this.options.defaultLang],
       user_pass     : '',
       confirm_pass  : ''
     };
@@ -48,27 +71,12 @@ export class SettingsPage {
     this.form = this.formBuilder.group(group);
 
     // Watch the form for changes, and
-    this.form.valueChanges.subscribe((v) => {
+    /*this.form.valueChanges.subscribe((v) => {
       this.settings.merge(this.form.value);
-    });
+    });*/
 
-  }
+    this.settingsReady = true;
 
-  ionViewDidLoad() {
-    // Build an empty form for the template to render
-    this.form = this.formBuilder.group({});
-  }
-
-  ionViewWillEnter() {
-    // Build an empty form for the template to render
-    this.form = this.formBuilder.group({});
-
-    this.settings.load().then(() => {
-      this.settingsReady = true;
-      this.options = this.settings.allSettings;
-
-      this._buildForm();
-    });
   }
 
   //Ao Enviar formulário
@@ -90,6 +98,8 @@ export class SettingsPage {
         });
         message.present();
 
+        this.form.reset();
+
       } else {
         this.$errors = res.error.user_pass;
       }
@@ -97,6 +107,33 @@ export class SettingsPage {
     }, err => {
       console.error('ERROR', err);
     });
+
+  }
+
+  // Adicionar/Permissão permissão para notificações via browser
+  enableDesktopNotification() { 
+    
+        
+    /*if(Notification && Notification.permission !== 'granted') {
+      Notification.requestPermission().then(function(permission) {
+        
+        if(permission === 'granted') {
+          
+          let notification = new Notification('Notificações Habilitadas', {
+            icon:'',
+            body: 'Você receberá notificações em seu dispositivo.',
+            tag: 'notification-tag'
+          });
+  
+          notification.onclick = function() {
+            parent.focus();
+            window.focus();
+            this.close();
+          }
+
+        }
+      });
+    }    */
 
   }
 

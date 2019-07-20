@@ -22,13 +22,16 @@ export class CommentItem {
 
   @Input() public $postID: number;
 
-  @Output() CommentUpdate = new EventEmitter()
+  @Input() commentShow:boolean = true; 
 
-  public commentText: string;
+  @Output() CommentUpdate = new EventEmitter();
+
+  commentText: string
 
   public currentUser: any = {
     ID: "",
     display_name: "",
+    profile_img: "",
     metadata: {}
   };
 
@@ -48,9 +51,12 @@ export class CommentItem {
 
   //Retorna
   ngOnInit() {
-    this.user.subscribeUser(function ($this) {
+    
+    /*this.user.subscribeUser(function ($this) {
       $this.currentUser = $this.user._user;
-    }, this);
+    }, this);*/
+
+    this.currentUser = this.user._user;
   }
 
   //Mostrar campo de comentário
@@ -83,11 +89,11 @@ export class CommentItem {
       //Sucesso 
       if (resp.success != undefined) {
 
-        //Emite um evento a ser capturado
-        this.CommentUpdate.emit('commentIn' + $comment_ID);
-
         //Reseta campo
         this.commentText = '';
+
+        //Emite evento
+        this.emitEvent('commentIn' + $comment_ID);
 
         let toast = this.toastCtrl.create({
           message: resp.success.comment,
@@ -102,11 +108,6 @@ export class CommentItem {
       return;
     });
 
-  }
-
-  //Adicionar resposta a um comentário
-  submitResponseComment($comment_ID:number, $event){
-    this.submitComment($comment_ID, $event, 'comment/');
   }
 
   //Remover um comentário
@@ -147,6 +148,11 @@ export class CommentItem {
 
     confirmDelete.present();
 
+  }
+
+  emitEvent($event){
+    //Emite um evento a ser capturado
+    this.CommentUpdate.emit($event);
   }
 
 

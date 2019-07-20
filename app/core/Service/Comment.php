@@ -179,7 +179,7 @@ class Comment {
         if($result){
             
             //Modelo de timeline
-            $post = new PostModel(['ID' => $data['comment_post_ID']]);
+            $post = new PostModel(['ID' => (int) $model->comment_post_ID->ID]);
             
             //Intanciando notificação
             $notify = new Notify($model->user_id);

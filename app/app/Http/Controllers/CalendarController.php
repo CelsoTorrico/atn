@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\TimelineController;
 use Illuminate\Http\Request;
 use Core\Service\Learn;
 use Core\Profile\User;
@@ -9,7 +10,7 @@ use Core\Profile\User;
 use Closure;
 use Core\Service\Calendar;
 
-class CalendarController extends Controller
+class CalendarController extends TimelineController
 {
 
     protected $learn;
@@ -21,21 +22,8 @@ class CalendarController extends Controller
      */
     public function __construct(Request $request)
     {
-        $this->calendar = new Calendar($request->user());
-    }
-
-    function get($id) {
-
-        $response = $this->calendar->get($id);
-        
-        return response()->json($response);
-    }
-
-    function getAll(int $paged = 0) {
-        
-        $response = $this->calendar->getAll($paged);
-
-        return response()->json( $response );
+        $this->timeline = new Calendar($request->user());
+        $this->currentUser = $request->user();
     }
 
     function getTypes() {
@@ -44,6 +32,8 @@ class CalendarController extends Controller
 
         return response()->json($response);
     }
+
+    /** @since 2.1 Função get e getAll herdados de TimelineController */
 
     function add(Request $request) {
 

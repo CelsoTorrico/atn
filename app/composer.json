@@ -14,12 +14,13 @@
         "laravel/socialite": "^3.2",
         "league/flysystem-aws-s3-v3": "1.0.22",
         "league/flysystem-rackspace": "^1.0",
+        "minishlink/web-push": "^5.2",
         "mpdf/mpdf": "^7.1",
         "phpmailer/phpmailer": "^6.0.5",
+        "phpoffice/phpspreadsheet": "1.7.0",
         "repat/laravel-medoo": "^1.0",
         "vlucas/phpdotenv": "~3.3",
-        "wisembly/elephant.io": "3.3.1",
-        "phpoffice/phpspreadsheet": "1.7.0"
+        "wisembly/elephant.io": "3.3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

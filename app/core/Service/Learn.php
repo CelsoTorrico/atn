@@ -15,7 +15,7 @@ class Learn extends Timeline {
     const TYPE = 'aprenda';
 
     /* Retorna lista de timeline */
-    function getAll(int $paged = 0){     
+    function getAll(int $paged = 0, array $filter = []){     
 
         //Retorna lista de usuário que está conectado
         $following = $this->following;

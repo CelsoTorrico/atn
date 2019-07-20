@@ -1,0 +1,20 @@
+<ion-item-group no-padding [id]="'form-' + $postID" style="display:none !important;">
+
+  <ion-item>
+
+    <ion-avatar class="btn-cursor" item-start>
+      <img *ngIf="currentUser.profile_img, else elseBlock" [src]="currentUser.profile_img" />
+      <ng-template #elseBlock>
+        <img src="assets/img/user.png" [alt]="currentUser.display_name" />
+      </ng-template>
+    </ion-avatar>
+
+    <ion-input name="comment_content" [(ngModel)]="commentText" type="text"
+      placeholder="{{ 'YOUR_COMMENT' | translate }}" required></ion-input>
+
+  </ion-item>
+
+  <button ion-button small float-right
+    (click)="submitResponseComment($postID, $event)">{{ "PUBLISH" | translate }}</button>
+
+</ion-item-group>

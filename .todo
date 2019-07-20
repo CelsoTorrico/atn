@@ -17,6 +17,7 @@ Cookie: app_atletas_now=%242y%2410%24do5czh6z.x8KJLJFMRi7vuOfb5icv6zDDovxmvXgdIb
 ✔ Perfil Meu Clube::"POST" -> Exportar relatório dos membros(critérios da atributos da busca geral), os dados exportados serão as informações preenchidas pelos membros @done(19-06-26 15:00)
 ✔ @high Perfil Meu Clube::Relatório  ->  Estruturar arquivo a ser exportado com dados da plataforma e usuários @done(19-07-03 11:13)
 ✔ Perfil Meu Clube::"GET, POST, UPDATE, DELETE" -> Área de Calendários (em forma de listagem) com definição de visibilidade (CAMPOS EX: JOGOS, REUNIÕES, CONVOCAÇÕES, PALESTRAS, PENEIRAS) @done(19-06-24 16:48)
-☐ @low ??? Perfil Meu Clube::Calendar:: -> Retornar eventos futuros na data atual
+✔ @low ??? Perfil Meu Clube::Calendar:: -> Retornar eventos futuros na data atual @done(19-07-17 14:29)
 ☐ @low Perfil Meu Clube::Relatório -> Remover planilha "Worksheet"
-☐ @low Perfil Meu Clube::Relatório -> Arquivo PDF em várias páginas
+✔ @low Perfil Meu Clube::Relatório -> Arquivo PDF em várias páginas @done(19-07-17 14:29)
+☐ @low Comentário -> Verificar a quantidade de comentários (deveria ignorar excluidos)

@@ -37,6 +37,9 @@ import { SettingsPage } from '../pages/settings/settings';
 import { SettingsPageModule } from '../pages/settings/settings.module';
 import { SignupStepsPage } from '../pages/signup-steps/signup-steps';
 import { ReportPageModule } from '../pages/report/report.module';
+import { environment } from '../environments/environment';
+import { NgWebPushModule } from 'ng-webpush';
+
 
 
 //Habilita Angular em produção
@@ -61,17 +64,18 @@ export function provideSettings(storage: Storage) {
 }
 
 const appRoutes: Routes = [
-  { path: 'login',      component: LoginPage },
-  { path: 'dashboard',  component: DashboardPage },
-  { path: 'search',     component: SearchPage },
-  { path: 'favorite',   component: FavoritePage },
-  { path: 'learn',      component: LearnPage },
-  { path: 'chat',       component: ChatPage },
-  { path: 'favorite',   component: FavoritePage },
-  { path: 'profile',    component: ProfilePage },  
-  { path: 'settings',   component: SettingsPage },
-  { path: 'signup-steps', component: SignupStepsPage },  
-  { path: '**',
+  { path: 'login', component: LoginPage },
+  { path: 'dashboard', component: DashboardPage },
+  { path: 'search', component: SearchPage },
+  { path: 'favorite', component: FavoritePage },
+  { path: 'learn', component: LearnPage },
+  { path: 'chat', component: ChatPage },
+  { path: 'favorite', component: FavoritePage },
+  { path: 'profile', component: ProfilePage },
+  { path: 'settings', component: SettingsPage },
+  { path: 'signup-steps', component: SignupStepsPage },
+  {
+    path: '**',
     redirectTo: '/dashboard',
     pathMatch: 'full'
   }
@@ -86,7 +90,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     RouterModule.forRoot(
       appRoutes,
-      { enableTracing: false } // <-- true == debugging purposes only
+      { enableTracing: true } // <-- true == debugging purposes only
     ),
     TranslateModule.forRoot({
       loader: {
@@ -96,12 +100,12 @@ const appRoutes: Routes = [
       }
     }),
     IonicModule.forRoot(MyApp, {
-      mode: 'md' 
+      mode: 'md'
     }),
-    IonicStorageModule.forRoot(),  
-    MenuPageModule, 
+    IonicStorageModule.forRoot(),
+    MenuPageModule,
     LoginPageModule,
-    SignupStepsModule, 
+    SignupStepsModule,
     DashboardPageModule,
     MyProfilePageModule,
     SearchPageModule,
@@ -128,9 +132,9 @@ const appRoutes: Routes = [
     BrazilStates,
     Cookie,
     CookieService,
-    { provide: Settings, useFactory: provideSettings, deps: [Storage] },
+    { provide: Settings, useClass: IonicErrorHandler, useFactory: provideSettings, deps: [Storage] },
     // Keep this to enable Ionic's runtime error handling during development
-    //{ provide: ErrorHandler, useClass: IonicErrorHandler }
+    { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
 export class AppModule { }

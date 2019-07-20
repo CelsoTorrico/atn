@@ -98,7 +98,7 @@ class TimelineController extends Controller
         return response()->json($response);
     }
 
-    function update(Request $request, $id){
+    function update(Request $request, int $id){
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has('post_content')){
@@ -118,13 +118,13 @@ class TimelineController extends Controller
         return response()->json($response);
     }
 
-    function delete(Request $request, $id){
+    function delete(int $id){
         return response($this->timeline->delete($id));
     }
 
     /** Comentários */
 
-    function addComment(Request $request, $id){
+    function addComment(Request $request, int $id){
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has('comment_content')){

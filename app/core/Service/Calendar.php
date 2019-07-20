@@ -37,8 +37,16 @@ class Calendar extends Timeline {
             return $eventArray;
         }
 
+        //Instanciando classe de comentário
+        $comment = new Comment($ID);
+
+        //Combina array com comentários e likes
+        $eventArray = array_merge($eventArray[0], [
+            'list_comments' => $comment->getAll()
+        ]);
+
         //Retorna primeiro item
-        return $eventArray[0];
+        return $eventArray;
     }
 
     /* Retorna lista de timeline */
@@ -85,7 +93,8 @@ class Calendar extends Timeline {
 
                 //Combina array timeline e comentários
                 $calendars[$key] = array_merge($timelineData, [
-                    'quantity_comments' => $comment->getQuantity()            
+                    'quantity_comments' => $comment->getQuantity(),
+                    'has_like' => $this->like->isPostLiked($item->ID)             
                 ]); 
 
                 //Instanciando modelo para gravação dos dados

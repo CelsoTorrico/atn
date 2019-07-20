@@ -2,8 +2,10 @@
 
   <ion-toolbar>
     <ion-buttons left>
-      <button ion-button class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button" style="display: block;" (click)="backButton()">
-          <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+      <button ion-button
+        class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button"
+        style="display: block;" (click)="backButton()">
+        <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
       </button>
     </ion-buttons>
     <ion-title>{{ "CONFIGURATION" | translate }}</ion-title>
@@ -13,50 +15,63 @@
 
 <ion-content>
 
-  <form [formGroup]="form" (submit)="submitForm($event);" *ngIf="settingsReady">
-    
-    <!--<ion-list margin>
-      <ion-list-header>
-        <h1>{{ 'DEFAULT_LANGUAGE' | translate }}</h1>
-      </ion-list-header>
-      <ion-item>
-        <ion-select formControlName="defaultLang">
-          <ion-option value="pt-br">{{ "PORTUGUESE" | translate }}</ion-option>
-          <ion-option value="en-US">{{ "ENGLISH" | translate }}</ion-option>
-          <ion-option value="es-ES">{{ "SPANISH" | translate }}</ion-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>-->
-    <hr />
-    <ion-list margin>      
-      <ion-row padding>
+  <ion-grid fixed>
+
+    <form [formGroup]="form" (submit)="submitForm($event);" *ngIf="settingsReady">
+
+      <!--<ion-list margin>
+            <ion-list-header>
+              <h1>{{ 'DEFAULT_LANGUAGE' | translate }}</h1>
+            </ion-list-header>
+            <ion-item>
+              <ion-select formControlName="defaultLang">
+                <ion-option value="pt-br">{{ "PORTUGUESE" | translate }}</ion-option>
+                <ion-option value="en-US">{{ "ENGLISH" | translate }}</ion-option>
+                <ion-option value="es-ES">{{ "SPANISH" | translate }}</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>-->
+      <hr />
+      <ion-list margin>
+        <ion-row padding>
           <ion-col col-12="">
             <h2>{{ 'CHANGE_PASSWORD' | translate }}</h2>
           </ion-col>
           <ion-col col-6>
             <ion-label stacked>{{ 'NEW_PASSWORD' | translate}}</ion-label>
             <ion-input id="user_pass" type="password" name="user_pass" formControlName="user_pass"
-              placeholder="Crie uma senha forte" required full></ion-input> 
+              placeholder="Crie uma senha forte" required full></ion-input>
           </ion-col>
           <ion-col col-6>
-              <ion-label stacked>{{ 'CONFIRM_PASSWORD' | translate}}</ion-label>
-              <ion-input id="confirm_pass" type="password" name="confirm_pass" formControlName="confirm_pass"
-                placeholder="Redigite a senha" required full></ion-input>
+            <ion-label stacked>{{ 'CONFIRM_PASSWORD' | translate}}</ion-label>
+            <ion-input id="confirm_pass" type="password" name="confirm_pass" formControlName="confirm_pass"
+              placeholder="Redigite a senha" required full></ion-input>
           </ion-col>
-      </ion-row>
+        </ion-row>
 
-      <ion-item>
-          
-          <button ion-button full default >
-              {{ 'SAVE' | translate }}
+        <ion-item>
+
+          <button ion-button full default>
+            {{ 'SAVE' | translate }}
           </button>
-    
+
           <p>{{ $errors }}</p>
 
-      </ion-item>
+        </ion-item>
 
+      </ion-list>
+
+    </form>
+
+
+    <ion-list>
+      <button ion-button (click)="enableDesktopNotification()">
+        {{ "BROWSER_PERMISSION" | translate }}
+      </button>
     </ion-list>
 
-  </form>
+  </ion-grid>
+
+
 
 </ion-content>

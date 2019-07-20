@@ -19,7 +19,7 @@
       {{ "MY_CALENDAR_INITIAL_MESSAGE" | translate }}
     </p>-->
 
-    <calendar [currentItems]="" [timelineID]="ID" [isLogged]="isLogged" (updateEvent)="calendarUpdate($event)">
+    <calendar [timelineID]="ID" [isLogged]="isLogged" (updateEvent)="calendarUpdate($event)">
     </calendar>
 
   </ion-col>

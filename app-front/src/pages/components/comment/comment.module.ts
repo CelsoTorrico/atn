@@ -1,3 +1,4 @@
+import { CommentForm } from './comment-form';
 import { IonicModule } from 'ionic-angular';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,7 +8,7 @@ import { CommentItem } from './comment-item';
 
 @NgModule({
   declarations: [
-   CommentItem
+   CommentItem, CommentForm
   ],
   imports: [
     TranslateModule.forChild(),
@@ -15,9 +16,9 @@ import { CommentItem } from './comment-item';
     IonicModule,
     CommonModule
   ],
-  exports: [CommentItem],
+  exports: [CommentItem, CommentForm],
   bootstrap: [],
-  entryComponents:[CommentItem], 
+  entryComponents:[CommentItem, CommentForm], 
   schemas: [],
   providers: []
 })

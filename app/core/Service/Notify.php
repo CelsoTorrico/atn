@@ -4,6 +4,8 @@ namespace Core\Service;
 
 use Core\Profile\User;
 use Core\Database\NotifyModel;
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
 
 class Notify {
 
@@ -143,6 +145,23 @@ class Notify {
 
         //Salva novo registro no banco
         $result = $model->save();
+
+        //Sistema de notificação push
+        $webPush = new WebPush();
+
+        //Registrando e enviado notificação
+        $sent = $webPush->sendNotification(
+            Subscription::create([
+                "endpoint"      => env('APP_FRONT'),
+                //@todo Criar chave publica
+                "publicKey"     => "BPcMbnWQL5GOYX/5LKZXT6sLmHiMsJSiEvIFvfcDvX7IZ9qqtq68onpTPEYmyxSQNiH7UD/98AUcQ12kBoxz/0s=",
+                //@todo criar token 
+                "authToken"     => "CxVX6QsVToEGEcjfYPqXQw=="
+            ]), 
+            '{msg: "Hello World!"}', 
+            true);
+
+        //@todo: Enviar notificação para algum escutador Javascript
 
         //SE resultado for true, continua execução
         return $result;

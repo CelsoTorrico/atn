@@ -9,12 +9,12 @@ import { Injectable } from '@angular/core';
 export class Api { 
 
   //Development
-  //static readonly origin = 'http://localhost/desenvolvimento/atletasNOW/app-front/www';
-  //static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
+  static readonly origin = 'http://localhost/desenvolvimento/atletasNOW/app-front/www';
+  static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
   
   //Ambiente de testes | Godzilla
-  static readonly origin = 'https://developing.atletasnow.com/app-atletasnow-front/';
-  static readonly url = 'https://developing.atletasnow.com/atletasNOW/app/public/';
+  //static readonly origin = 'https://developing.atletasnow.com/app-atletasnow-front/';
+  //static readonly url = 'https://developing.atletasnow.com/atletasNOW/app/public/';
 
   //Ambiente Produção
   //static readonly origin  = 'https://app.atletasnow.com';

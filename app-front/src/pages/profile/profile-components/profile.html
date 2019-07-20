@@ -168,10 +168,10 @@
 
     </ion-card><!-- My Videos -->
 
-    <ion-card class="my-team" *ngIf="team.length > 0" >
+    <ion-card class="my-team" *ngIf="team.length > 0">
 
       <ion-card-header>
-          {{ "MY_TEAM" | translate }}
+        {{ "MY_TEAM" | translate }}
       </ion-card-header>
 
       <member-container [listMembers]="team"></member-container>
@@ -181,10 +181,21 @@
   </ion-col>
 
   <ion-col col-12 col-lg-6>
-    <ion-title>
-      {{ "LAST_ACTIVITY" | translate }}
-    </ion-title>
-    <timeline *ngIf="ID" [timelineID]="ID"></timeline>
+
+    <ion-list *ngIf="type >= 3">
+      <ion-title>
+        {{ "LAST_EVENTS" | translate }}
+      </ion-title>
+      <calendar *ngIf="ID" [timelineID]="ID"></calendar>
+    </ion-list>
+
+    <ion-list> 
+      <ion-title>
+        {{ "LAST_ACTIVITY" | translate }}
+      </ion-title>
+      <timeline *ngIf="ID" [timelineID]="ID"></timeline>
+    </ion-list>
+
   </ion-col>
 
 </ion-row>

@@ -1,4 +1,3 @@
-import { DashboardPage } from './../pages/dashboard/dashboard';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Config } from 'ionic-angular';
@@ -11,16 +10,30 @@ import { LoginPage } from '../pages/login/login';
     `
 })
 export class MyApp {
-  
+
   rootPage = LoginPage;
 
   constructor(
-    private translate: TranslateService, 
-    settings: Settings, 
+    private translate: TranslateService,
+    settings: Settings,
     private config: Config) {
 
+    //Iniciar tradução
     this.initTranslate();
-    
+
+    //Requisita permissão de notificação inicial
+    this.requestDesktopNotificationPermission();
+
+  }
+
+  // Adicionar/Permissão permissão para notificações via browser
+  requestDesktopNotificationPermission() {
+
+    /*this.swPush.requestSubscription({
+      serverPublicKey: "BPcMbnWQL5GOYX/5LKZXT6sLmHiMsJSiEvIFvfcDvX7IZ9qqtq68onpTPEYmyxSQNiH7UD/98AUcQ12kBoxz/0s="
+    }).then(sub => {
+      console.log(sub);
+    }).catch(err => console.error("Could not subscribe to notifications", err));*/
   }
 
   initTranslate() {
