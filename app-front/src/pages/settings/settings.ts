@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { Settings, User } from '../../providers';
 import { DashboardPage } from '../dashboard/dashboard'; 
+import { PushNotifyService } from '../../providers/notification/notification';
 
 /**
  * The Settings page is a simple form that syncs with a Settings provider
@@ -33,7 +34,8 @@ export class SettingsPage {
     public settings: Settings,
     public formBuilder: FormBuilder,
     public navParams: NavParams,
-    public translate: TranslateService) {
+    public translate: TranslateService,
+    public push: PushNotifyService) {
       
   }
 
@@ -105,36 +107,14 @@ export class SettingsPage {
       }
 
     }, err => {
-      console.error('ERROR', err);
+      console.error('ERROR', err); 
     });
 
   }
 
   // Adicionar/Permissão permissão para notificações via browser
-  enableDesktopNotification() { 
-    
-        
-    /*if(Notification && Notification.permission !== 'granted') {
-      Notification.requestPermission().then(function(permission) {
-        
-        if(permission === 'granted') {
-          
-          let notification = new Notification('Notificações Habilitadas', {
-            icon:'',
-            body: 'Você receberá notificações em seu dispositivo.',
-            tag: 'notification-tag'
-          });
-  
-          notification.onclick = function() {
-            parent.focus();
-            window.focus();
-            this.close();
-          }
-
-        }
-      });
-    }    */
-
+  enableDesktopNotification() {  
+    this.push.requestDesktopNotificationPermission();
   }
 
   //Abre uma nova página

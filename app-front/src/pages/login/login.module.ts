@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
@@ -19,6 +20,7 @@ import { ForgetPasswordComponent } from './forget-password.component';
   imports: [
     IonicPageModule.forChild(LoginPage),
     TranslateModule.forChild(), 
+    CommonModule,
     FormsModule,
     SignupStepsModule
   ],

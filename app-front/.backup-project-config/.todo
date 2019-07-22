@@ -1,0 +1,34 @@
+/*
+    Módulos NPM para conexões sincronizas com BD MySQL
+    mysqljs >> https://github.com/mysqljs/mysql
+    nodemysql2 >> https://github.com/sidorares/node-mysql2
+    JSCookie >> https://github.com/js-cookie/js-cookie
+*/
+
+#Meu Clube
+✔ Evento:Adicionar Eventos -> Anexar imagem @done(19-07-08 20:25)
+✔ Evento:Editar Evento @done(19-07-08 20:25)
+✔ Evento:Ver Evento -> Abril Modal @done(19-07-10 13:10)
+✔ Evento:Design -> Melhorar exibição dos eventos @done(19-07-10 20:41)
+✔ Evento:Editar -> Não está atribuindo calendar_type no select @done(19-07-14 23:10)
+✔ Requisições:Loading nas requisições @done(19-07-14 16:43)
+✔ Relatório >> Mostrar conteúdo na versão web @done(19-07-16 00:21)
+✔ Evento >> Adicionar e Remover comentários @done(19-07-18 21:56)
+☐ Evento >> Listar apenas eventos do usuário
+☐ Evento >> Loading para upload de foto
+☐ Equipe >> Resolver busca ao enviar dados de filtragem
+
+#Outras
+☐ Rotas das páginas >> Implementar
+
+#Melhorias secundárias
+☐ Tag Input >> Não está enviado dados, verificar e corrigir
+☐ Tag Input >> Case insesitive, ignorar caracteres com acentuação
+☐ Página de Busca >> Não está abrindo BrowserModule?
+☐ PDF >> Melhorar a exibição dos dados
+☐ Excel >> Melhorar exibição de dados
+
+#Optional
+☐ Profile >> Botão de Bloquear Usuário
+☐ Profile >> Editar membros da equipe
+☐ Mensagens >> Paginação de mensagens anteriores

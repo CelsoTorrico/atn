@@ -41,10 +41,6 @@
                   <ion-label stacked>{{ "SPORT" | translate }}</ion-label>
                   <ion-list>
                     
-                    <!--<rl-tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false" [autocomplete]="true"
-                      [autocompleteItems]="$sportList" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected">
-                    </rl-tag-input>-->
-                    
                     <tag-input [(ngModel)]="$sportSelected" [addOnBlur]="false"
                       [onlyFromAutocomplete]="true" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected"
                       required>

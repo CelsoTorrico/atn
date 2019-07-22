@@ -1,8 +1,6 @@
 import { NavController } from 'ionic-angular';
 import { CookieService } from 'ng2-cookies';
 import { Injectable } from '@angular/core';
-import { DashboardPage } from '../../pages/dashboard/dashboard';
-import { LoginPage } from '../../pages/login/login';
 
 @Injectable()
 export class Cookie {

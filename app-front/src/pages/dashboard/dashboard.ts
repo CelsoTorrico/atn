@@ -1,11 +1,12 @@
 import { loadNewPage } from './../../providers/load-new-page/load-new-page';
 import { NgForm } from '@angular/forms';
-import { Component, SimpleChanges, ComponentFactoryResolver, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController, LoadingController } from 'ionic-angular';
 import { User, Api, Cookie } from '../../providers';
 import { CookieService } from 'ng2-cookies';
 import { Timeline } from '../components/timeline/timeline';
+import { PushNotifyService } from '../../providers/notification/notification';
 
 
 @IonicPage()
@@ -71,14 +72,18 @@ export class DashboardPage {
         public translateService: TranslateService,
         public loadNewPage: loadNewPage,
         private cookieService: CookieService,
-        private loading: LoadingController) {
+        private loading: LoadingController,
+        public push: PushNotifyService) {
 
         this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get(["POST", "LOADING"]).subscribe((data) => {
             this.timeline_placeholder   = data.POST;
-            this.loading_placeholder    = data.LOADING;
+            this.loading_placeholder    = data.LOADING; 
         });
+
+        //Habilitar popup para permissão de notificação
+        this.push.requestDesktopNotificationPermission();   
 
         //Instanciando classe 'User' desse modo, devido imcompatibilidade dentro do construtor
         this.user = new User(this.api, this.loadNewPage, this.toastCtrl);
@@ -161,7 +166,7 @@ export class DashboardPage {
     checkNull($data, $valueToExibit) {
         //Se data for nulo ou indefinido
         if ($data == null || $data == undefined) {
-            return $valueToExibit;
+            return $valueToExibit;  
         }
 
         //Retorna data normal

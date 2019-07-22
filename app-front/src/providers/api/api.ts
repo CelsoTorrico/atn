@@ -1,6 +1,6 @@
-import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 /**
  * Api is a generic REST Api handler. Set your API url first.
@@ -8,25 +8,16 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class Api { 
 
-  //Development
-  static readonly origin = 'http://localhost/desenvolvimento/atletasNOW/app-front/www';
-  static readonly url = 'http://localhost/desenvolvimento/atletasNOW/app/public';
-  
-  //Ambiente de testes | Godzilla
-  //static readonly origin = 'https://developing.atletasnow.com/app-atletasnow-front/';
-  //static readonly url = 'https://developing.atletasnow.com/atletasNOW/app/public/';
-
-  //Ambiente Produção
-  //static readonly origin  = 'https://app.atletasnow.com';
-  //static readonly url     = 'https://api.atletasnow.com';
+  //Definição de origen de api e frontend
+  static readonly origin = environment.apiOrigin;
+  static readonly url = environment.apiUrl;  
   
   protected $headerObject:any;
 
   private $httpParams;
 
   constructor(
-    public http: HttpClient, 
-    public appBrowser: InAppBrowser) {
+    public http: HttpClient) {
       this.$headerObject = {
         /*headers: new HttpHeaders({ 
           'Content-Type'  : 'application/json'

@@ -59,10 +59,10 @@
                   <ion-searchbar no-padding type="text" name="display_name" [(ngModel)]="query.display_name"
                     placeholder="{{ 'DISPLAY_NAME' | translate }}"></ion-searchbar>
 
-                  <button ion-button clear text-center small full class="btn-cursor" (click)="showFilterOptions();">
-                    {{ "FILTER" | translate }}
+                  <p ion-button clear text-center small full class="btn-cursor" (click)="showFilterOptions();"> 
+                    {{ "FILTER" | translate }} 
                     <ion-icon margin-left name="arrow-dropdown"></ion-icon>
-                  </button>
+                  </p> 
 
                 </ion-col>
               </ion-row>

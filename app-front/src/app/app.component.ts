@@ -21,20 +21,9 @@ export class MyApp {
     //Iniciar tradução
     this.initTranslate();
 
-    //Requisita permissão de notificação inicial
-    this.requestDesktopNotificationPermission();
-
   }
 
-  // Adicionar/Permissão permissão para notificações via browser
-  requestDesktopNotificationPermission() {
-
-    /*this.swPush.requestSubscription({
-      serverPublicKey: "BPcMbnWQL5GOYX/5LKZXT6sLmHiMsJSiEvIFvfcDvX7IZ9qqtq68onpTPEYmyxSQNiH7UD/98AUcQ12kBoxz/0s="
-    }).then(sub => {
-      console.log(sub);
-    }).catch(err => console.error("Could not subscribe to notifications", err));*/
-  }
+  
 
   initTranslate() {
     // Set the default language for translation strings, and the current language.
@@ -62,5 +51,7 @@ export class MyApp {
     }
 
   }
+
+  
 
 }

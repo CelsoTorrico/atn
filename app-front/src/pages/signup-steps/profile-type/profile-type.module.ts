@@ -5,7 +5,6 @@ import { NgModule } from '@angular/core';
 import { IonicPageModule, IonicApp } from 'ionic-angular';
 // Módulo para autocomplete tag input  
 import { TagInputModule } from 'ngx-chips';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -13,7 +12,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         IonicPageModule.forChild([ProfileType]),
         TranslateModule.forChild(),
         TagInputModule,
-        BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule
     ],

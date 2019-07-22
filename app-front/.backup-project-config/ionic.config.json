@@ -1,0 +1,10 @@
+{
+  "name": "app-atletasnow",
+  "integrations": {
+    "cordova": {}
+  },
+  "proxies" :[{
+    "path": "/"
+  }],
+  "type": "ionic-angular"
+}

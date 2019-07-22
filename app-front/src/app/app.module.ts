@@ -1,3 +1,4 @@
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FavoritePageModule } from './../pages/favorite/favorite.module';
 import { ProfilePageModule } from './../pages/profile/profile.module';
 import { CookieService } from 'ng2-cookies';
@@ -8,13 +9,10 @@ import { LoginPageModule } from './../pages/login/login.module';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { enableProdMode } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { Camera } from '@ionic-native/camera';
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Settings, User, Api, Cookie } from '../providers';
 import { MyApp } from './app.component';
 import { MenuPageModule } from '../pages/components/menu/menu.module';
@@ -37,10 +35,8 @@ import { SettingsPage } from '../pages/settings/settings';
 import { SettingsPageModule } from '../pages/settings/settings.module';
 import { SignupStepsPage } from '../pages/signup-steps/signup-steps';
 import { ReportPageModule } from '../pages/report/report.module';
-import { environment } from '../environments/environment';
-import { NgWebPushModule } from 'ng-webpush';
-
-
+import { PushNotifyService } from '../providers/notification/notification'; 
+import { BrowserModule } from '@angular/platform-browser';
 
 //Habilita Angular em produção
 //enableProdMode();
@@ -86,8 +82,9 @@ const appRoutes: Routes = [
     MyApp
   ],
   imports: [
-    BrowserModule,
     HttpClientModule,
+    BrowserModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- true == debugging purposes only
@@ -116,7 +113,7 @@ const appRoutes: Routes = [
     ReportPageModule,
     SettingsPageModule,
     PipesModule,
-    ChartModule
+    ChartModule        
   ],
   exports: [],
   bootstrap: [IonicApp],
@@ -126,15 +123,14 @@ const appRoutes: Routes = [
   providers: [
     Api,
     User,
-    Camera,
-    InAppBrowser,
     loadNewPage,
     BrazilStates,
     Cookie,
     CookieService,
+    PushNotifyService,
     { provide: Settings, useClass: IonicErrorHandler, useFactory: provideSettings, deps: [Storage] },
     // Keep this to enable Ionic's runtime error handling during development
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
+    //{ provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
 export class AppModule { }

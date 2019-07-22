@@ -143,7 +143,7 @@ export class User {
   setNewPassword(userPass: any) {
 
     //Retorna observable
-    let observable = this.api.put('user/update-password', userPass);
+    let observable = this.api.put('user/settings/update-password', userPass);
 
     return observable;
 

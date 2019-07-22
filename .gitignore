@@ -1,6 +1,11 @@
 #node_modules
 /app/node_modules/
 /app-front/node_modules/
+/app-front/platforms/
+/app-front/plugins/
+/app-front/resources/
+/app-front/.sourcemaps/
+/app-front/www/
 
 #diretórios a ignorar
 /app/storage/

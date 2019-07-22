@@ -153,10 +153,9 @@ class Notify {
         $sent = $webPush->sendNotification(
             Subscription::create([
                 "endpoint"      => env('APP_FRONT'),
-                //@todo Criar chave publica
-                "publicKey"     => "BPcMbnWQL5GOYX/5LKZXT6sLmHiMsJSiEvIFvfcDvX7IZ9qqtq68onpTPEYmyxSQNiH7UD/98AUcQ12kBoxz/0s=",
+                "publicKey"     => env('VAPID_PUBLIC_KEY'),
                 //@todo criar token 
-                "authToken"     => "CxVX6QsVToEGEcjfYPqXQw=="
+                "authToken"     => env('VAPID_PRIVATE_KEY')
             ]), 
             '{msg: "Hello World!"}', 
             true);

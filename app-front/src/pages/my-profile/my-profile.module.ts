@@ -1,5 +1,4 @@
 import { MyProfileCalendarComponent } from './calendar-data/calendar-data.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TagInputModule } from 'ngx-chips';
 import { MyProfileAddMemberDataComponent } from './team-data/team-data.component';
 import { MyProfileAchievementsComponent } from './achievements-data/achievements-data.component';
@@ -39,7 +38,6 @@ import { MyProfileVideosComponent } from './videos-data/videos-data.component';
     TagInputModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule,
     MenuPageModule, 
     PipesModule
   ],

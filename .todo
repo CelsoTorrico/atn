@@ -21,3 +21,4 @@ Cookie: app_atletas_now=%242y%2410%24do5czh6z.x8KJLJFMRi7vuOfb5icv6zDDovxmvXgdIb
 ☐ @low Perfil Meu Clube::Relatório -> Remover planilha "Worksheet"
 ✔ @low Perfil Meu Clube::Relatório -> Arquivo PDF em várias páginas @done(19-07-17 14:29)
 ☐ @low Comentário -> Verificar a quantidade de comentários (deveria ignorar excluidos)
+☐ @critical Sugestão de Usuários -> Falha na lógica e consumindo muita memória

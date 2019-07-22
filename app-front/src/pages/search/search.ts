@@ -144,12 +144,16 @@ export class SearchPage {
 
         //Se reposta não existir
         if(resp.error != undefined || resp == null){
-          $fn();
-          return;
+          $fn(); return;
         }
 
         //Lista de Usuários
-        this.$memberList = resp;       
+        for (const element of resp) {
+          if(element.error != undefined || element == null){
+            continue;
+          }
+          this.$memberList.push(element);  
+        }        
 
         //Reseta dados do campo "sport"
         this.query.sport = [];

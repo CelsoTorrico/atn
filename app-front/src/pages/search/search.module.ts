@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TagInputModule } from 'ngx-chips';
 import { MemberModule } from './../components/member/member.module';
 import { CommentModule } from './../components/comment/comment.module';
@@ -18,7 +17,6 @@ import { SearchPage } from './search';
     TranslateModule.forChild(),
     TagInputModule,
     CommonModule,
-    //BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     CommentModule,

@@ -1,6 +1,5 @@
 import { ProfileViewDirective } from './profile-view.directive';
 import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Api } from './../../providers/api/api';
 import { Component, ComponentFactoryResolver, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController, AlertController } from 'ionic-angular';
@@ -58,7 +57,6 @@ export class ProfilePage {
     private api: Api,
     private user: User,
     private params: NavParams,
-    private browser: InAppBrowser,
     private componentFactoryResolver: ComponentFactoryResolver,
     public translateService: TranslateService,
     private cookieService: CookieService) {

@@ -19,9 +19,6 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //Retorna usuário logado
     $router->get('/self', 'UserController@getSelf');
 
-    //Retorna usuário logado
-    $router->put('/update-password', 'UserController@setPassword');
-
     //Retorna dashboard(dados basicos) do usuário logado
     $router->get('/dashboard', 'UserController@getSelfDash');
 
@@ -66,10 +63,29 @@ $router->group(['prefix' => 'user'], function () use ($router) {
 
         //Reativar usuário de posse
         $router->put('/club_user/active/{id:[0-9]+}', 'ClubController@activeUser');
+         
 
     });
 
-    /**
+    /** CONFIGURAÇÕES
+     *  Registrar configurações do usuário
+     *  @since v2.1 - Criado
+     *  @todo: Implementar
+     */ 
+    $router->group(['prefix' => 'settings'], function() use ($router){
+               
+        //Autorizar notificação push
+        $router->post('/push-authorize', 'UserController@setPushSettings');
+
+        //Desautorizar notificação push
+        $router->post('/push-disauthorize', 'UserController@unsetPushSettings');
+
+        //Retorna usuário logado
+        $router->put('/update-password', 'UserController@setPassword');
+
+    });
+
+    /** MEMBROS
      *  Setar como membro da instituição
      *  @since v2.1 - Criado
      *  @todo: Implementar

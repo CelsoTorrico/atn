@@ -5,20 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Chat } from './chat';
 import { SocketIoModule, SocketIoConfig} from 'ng-socket-io'; 
-
-//Produção
-/*const config: SocketIoConfig = {
-  url: 'https://app.atletasnow.com:8890', 
-  options:{
-    secure: true
-  } 
-}*/
-
-//Area de Testes
-//const config: SocketIoConfig = {url: 'https://developing.atletasnow.com:8890', options:{} } 
+import { environment } from '../../../environments/environment';
 
 //Development
-const config: SocketIoConfig = {url: 'https://localhost:8890', options:{} }
+const config: SocketIoConfig = {url: environment.socketIO, options:{
+  secure: environment.socketSecure
+} }
 
 @NgModule({
   declarations: [

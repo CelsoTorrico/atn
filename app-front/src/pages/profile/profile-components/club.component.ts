@@ -110,7 +110,7 @@ export class ClubComponent extends ProfileComponent {
     });
 
     //Adicionando campo para qualquer estado  
-    this.$statesList.unshift('Qualquer Estado');
+    this.$statesList.unshift('');
 
   }
 
@@ -164,14 +164,18 @@ export class ClubComponent extends ProfileComponent {
 
       //Se reposta não existir
       if (resp.error != undefined || resp == null) {
-
-        $fn();
-
-        return;
+        $fn(); return;
       }
 
       //Adiciona usuários ao array
-      this.team = resp;
+      //Lista de Usuários
+      for (const element of resp) {
+        if(element.error != undefined || element == null){
+          continue;
+        }
+        this.team.push(element);  
+      }
+
 
       //Reseta dados do campo "sport"
       this.query.sport = [];
@@ -244,7 +248,7 @@ export class ClubComponent extends ProfileComponent {
 
       //Se reposta não existir
       if (resp.error != undefined || resp == null) {
-        console.log(resp);
+        return;
       }
 
       let nav = this.navCtrl.push(ReportPage, { data: resp, component: this });
@@ -298,9 +302,7 @@ export class ClubComponent extends ProfileComponent {
   download(fileName, filePath) {
 
     // Método de Download Temporário
-    let $browser = this.api.appBrowser.create(filePath, '_blank');
-    $browser.show();
-
+    window.open(filePath, '_blank');
     return;
   }
 
