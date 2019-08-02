@@ -11,12 +11,14 @@ import { PushNotifyService } from '../../providers/notification/notification';
  * to enable the user to customize settings for the app.
  *
  */
-@IonicPage()
+@IonicPage({
+  segment: 'settings',
+})
 @Component({
   selector: 'page-settings',
   templateUrl: 'settings.html'
 })
-export class SettingsPage {
+export class SettingsPage { 
   
   // Our local settings object
   options: any;
@@ -122,7 +124,7 @@ export class SettingsPage {
     if(this.navCtrl.canGoBack()){
         this.navCtrl.pop();
     } else {
-        this.navCtrl.setRoot(DashboardPage);
+        this.navCtrl.setRoot('Dashboard');
     }        
   }
   

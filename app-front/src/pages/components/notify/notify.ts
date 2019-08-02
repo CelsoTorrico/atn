@@ -37,7 +37,7 @@ export class Notify {
   //Retorna
   ngOnInit() {
     
-    //Define timeline de usuario a mostrar
+    //Define user de notificão
     if (this.notifyID != undefined) {
       this.$url = '/user/' + this.notifyID;
     }
@@ -65,9 +65,18 @@ export class Notify {
       if(Object.keys(resp).length < 0){
         return;
       }
+
+      let count = 0;
         
       //Retorna array de timelines
-      this.currentNotifyItems = resp;
+      for (const element of resp) {
+        if(element == '' || element == undefined) continue;
+        if(element.read == 1) count++;
+        this.currentNotifyItems.push(element);
+      }      
+
+      //Atribui numero de notificações não lidas
+      this.notifyCount = count;
 
     }, err => { 
         return; 
@@ -81,19 +90,19 @@ export class Notify {
       this.currentNotifyItems.splice($i, 1);
       
       //Diminui um item na contagem
-      //this.notifyCount = this.notifyCount - 1;
+      this.notifyCount = (this.notifyCount > 0)? this.notifyCount - 1 : null;
   }
 
   //Marca todas notificações como lida
-  allNotifyAsRead(){
+  allNotifyAsRead() {
 
-    if(this.notifyCount > 0){
+    if(this.notifyCount > 0) {
       
       //Diminui um item na contagem
       this.notifyCount = undefined; 
 
-      //Retorna a lista de esportes do banco e atribui ao seletor
-      this.api.put(Notify.$getNotify + this.$url, []).subscribe();  
+      //Retorna contagem de notificação
+      this.api.put(Notify.$getNotify + this.$url, []).subscribe((resp) => {});  
     }
 
   }
@@ -116,6 +125,7 @@ export class Notify {
     //Adicionar classe para visualizar
     popup.classList.toggle('open');
 
+    //Marca todas as notificações como lidas
     this.allNotifyAsRead();
     
     //Ao clicar fora da área de notificação >> fechar    

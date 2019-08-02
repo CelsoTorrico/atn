@@ -2,25 +2,44 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
-  /*production: false,
-  apiOrigin: 'http://localhost/desenvolvimento/atletasNOW/app-front/www',
-  apiUrl: 'http://localhost/desenvolvimento/atletasNOW/app/public',
-  socketIO: 'http://localhost:8890',
+export const environment = { 
+ /* production: false,
+  apiOrigin: 'http://localhost/desenvolvimento/atletasNOW/app-front/www/', 
+  apiUrl: 'https://localhost/desenvolvimento/atletasNOW/app/public',
+  socketIO: 'https://localhost:8890',
   socketSecure: false,
+  cookieName: 'app_atletas_now', 
   vapidPublicKey: 'BDkRxalAC1kPJFPYiRG-MFebPyUNHDWfDHm4T0OWOWWzWNKL9n6IIqfRHszU-1nIbE0_ZdUxXUpm2nus0OHeDe0',
-  vapidPrivateKey: 'mixFQhh6Q8VH-BrhQdkPSBMGhmYh1-Q9SyoXRP7LTxM'*/
+  vapidPrivateKey: 'mixFQhh6Q8VH-BrhQdkPSBMGhmYh1-Q9SyoXRP7LTxM',
+  gcMapIKey: 'AAAA3Z-nKJQ:APA91bHe2mKAXSYPDPu4Wbvw7smJIqiI3yw570juurwTJWrvulgW93c1MpPBEo4pTbEWB_m_L6cU2yRKt1b-2GYyJ-oEyFj3dOKtGhuBPF2SRyFyoitaPGp80HHGwOc8GiWEd0iP86u8',
+  firebaseConfig: {
+    apiKey: "AIzaSyAUjeeT9wqwA0r2CHOzVICtD-5pO90jBsg",
+    authDomain: "atletasnow-225017.firebaseapp.com",
+    databaseURL: "https://atletasnow-225017.firebaseio.com",
+    projectId: "atletasnow-225017",
+    storageBucket: "",
+    messagingSenderId: "951866304660",
+    appId: "1:951866304660:web:30fe8b75dbf4c83a"
+  }*/
 
-  /* Development */
-  
+  /* Development */ 
   production: true,
   apiOrigin: 'https://developing.atletasnow.com/app-atletasnow-front/',
   apiUrl: 'https://developing.atletasnow.com/atletasNOW/app/public/',
   socketIO: 'https://developing.atletasnow.com:8890',
   socketSecure: true,
   vapidPublicKey: 'BDkRxalAC1kPJFPYiRG-MFebPyUNHDWfDHm4T0OWOWWzWNKL9n6IIqfRHszU-1nIbE0_ZdUxXUpm2nus0OHeDe0',
-  vapidPrivateKey: 'mixFQhh6Q8VH-BrhQdkPSBMGhmYh1-Q9SyoXRP7LTxM'
-
+  vapidPrivateKey: 'mixFQhh6Q8VH-BrhQdkPSBMGhmYh1-Q9SyoXRP7LTxM',
+  gcMapIKey: 'AAAA3Z-nKJQ:APA91bHe2mKAXSYPDPu4Wbvw7smJIqiI3yw570juurwTJWrvulgW93c1MpPBEo4pTbEWB_m_L6cU2yRKt1b-2GYyJ-oEyFj3dOKtGhuBPF2SRyFyoitaPGp80HHGwOc8GiWEd0iP86u8',
+  firebaseConfig: {
+    apiKey: "AIzaSyAUjeeT9wqwA0r2CHOzVICtD-5pO90jBsg",
+    authDomain: "atletasnow-225017.firebaseapp.com",
+    databaseURL: "https://atletasnow-225017.firebaseio.com",
+    projectId: "atletasnow-225017",
+    storageBucket: "",
+    messagingSenderId: "951866304660",
+    appId: "1:951866304660:web:30fe8b75dbf4c83a"
+  }
   /**/
 };
 

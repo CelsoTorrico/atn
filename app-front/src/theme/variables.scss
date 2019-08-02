@@ -1,14 +1,14 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/v2/theming/
-$font-path: "../assets/fonts";
+$font-path: "../assets/fonts";   
 
-@import "../../www/assets/fonts/montserrat.scss"; 
-@import "../../www/assets/fonts/opensans.scss";  
+//@import "../../www/assets/fonts/montserrat.scss"; 
+//@import "../../www/assets/fonts/opensans.scss";  
 
 $font-family-base:      "Open Sans";
 $font-family-md-base:   "Open Sans";
-$font-family-ios-base:  "Open Sans";
-$font-family-wp-base: " Open Sans";
+$font-family-ios-base:  "Open Sans"; 
+$font-family-wp-base:   "Open Sans";  
 
 @import "ionic.globals";
 

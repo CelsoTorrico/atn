@@ -96,7 +96,7 @@ export class LearnItem {
 
   //Abre uma nova página de profile
   goToPost($post_id: number) {
-    this.navCtrl.push('PostPage', {
+    this.navCtrl.push('Post', { 
       post_id: $post_id
     });
   }

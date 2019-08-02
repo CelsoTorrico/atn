@@ -10,7 +10,7 @@
 
         <ion-card class="timelineItem" *ngFor="let data of currentItems; let $i = index" [id]="'timeline-post-' + data.ID"> 
             
-            <timeline-single (timelineDeleted)="hideTimeline($event, $i)" (CommentUpdate)="updateTimelineComment($event, $i)" [currentTimeline]="data" (click)="getItem(data.ID, $event)"></timeline-single> 
+            <timeline-single (timelineDeleted)="hideTimeline($event, $i)" (CommentUpdate)="updateTimelineComment($event, $i)" [currentUser]="currentUser" [currentTimeline]="data" (click)="getItem(data.ID, $event)"></timeline-single> 
 
         </ion-card>
     

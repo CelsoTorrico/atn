@@ -2,25 +2,37 @@
 
 namespace Core\Service;
 
+use Core\Service\PushNotify;
 use Core\Profile\User;
 use Core\Database\NotifyModel;
-use Minishlink\WebPush\WebPush;
-use Minishlink\WebPush\Subscription;
+use Core\Profile\UserSettings;
 
 class Notify {
 
-    protected $model;
-    protected $currentUser;
-    protected $types;
+    protected   $model;
+    protected   $currentUser;
+    protected   $types;
+    private     $push;
 
-    public function __construct($user){
+    public function __construct(User $user){
         
         //Instanciando classe de modelo
-        $this->model = new NotifyModel();
+        $this->model    = new NotifyModel();
+        $this->push     = new PushNotify();
         $this->currentUser = $user;
 
         //Tipos de notificações
-        $this->types = [0 => 'admin', 1 => 'friends', 3 => 'approve', 4 => 'follow', 5 => 'block', 6 => 'comment', 7 => 'message', 10 => 'add_team', 11 => 'remove_team'];
+        $this->types = [
+            0 => 'admin', 
+            1 => 'friends', 
+            3 => 'approve', 
+            4 => 'follow', 
+            5 => 'block', 
+            6 => 'comment', 
+            7 => 'message', 
+            10 => 'add_team', 
+            11 => 'remove_team', 
+            12 => 'see_profile'];
 
         //Retorna classe usuário ou retorna erro
         if ( is_null($this->currentUser) ) {
@@ -37,7 +49,8 @@ class Notify {
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
             'user_id'   => $this->currentUser->ID,
-            'ORDER'     => ['date' => 'DESC']
+            'deleted'   => 0,
+            'ORDER'     => ['date' => 'DESC'],
         ]);
         
         //Retorna resposta
@@ -72,7 +85,7 @@ class Notify {
     } 
     
     /** 
-     * Retorna lista de notify e marcar todas como lidas
+     * Marcar todas como lidas
      * 
      * */ 
     function update(){
@@ -80,11 +93,14 @@ class Notify {
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
             'user_id'   => $this->currentUser->ID,
-            'read'      => 0,
+            'read'      => 1,
+            'deleted'   => 0
         ]);
+
+        $saved = false; //Não salvo
         
         //Retorna resposta
-        if( $allnotifys->count() > 0){
+        if( $allnotifys->count() > 0) {
 
             foreach ($allnotifys as $item) {
 
@@ -94,16 +110,17 @@ class Notify {
                 }
 
                 //Marcar como lida
-                $item->read = 1;
+                $item->read = 0;
 
                 //Salvar informação no banco
-                $item->update(['read']);
+                $saved = $item->update(['read']);
                 
             }
 
-            //Resposta de mensagens lidas
-            return ['success' => ['notify' => 'Notificações Lidas!']];;
-        }    
+        }
+        
+        //Resposta de mensagens lidas
+        return ($saved)? ['success' => ['notify' => 'Notificações Lidas!']] : null;
         
     } 
 
@@ -146,21 +163,11 @@ class Notify {
         //Salva novo registro no banco
         $result = $model->save();
 
-        //Sistema de notificação push
-        $webPush = new WebPush();
-
-        //Registrando e enviado notificação
-        $sent = $webPush->sendNotification(
-            Subscription::create([
-                "endpoint"      => env('APP_FRONT'),
-                "publicKey"     => env('VAPID_PUBLIC_KEY'),
-                //@todo criar token 
-                "authToken"     => env('VAPID_PRIVATE_KEY')
-            ]), 
-            '{msg: "Hello World!"}', 
-            true);
-
-        //@todo: Enviar notificação para algum escutador Javascript
+        //Registra notificação push
+        if ($result) {
+            $notifyContent = $model->getData();
+            $this->registerExtraNotification($notifyContent);
+        }        
 
         //SE resultado for true, continua execução
         return $result;
@@ -198,7 +205,7 @@ class Notify {
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
             'user_id'   => $this->currentUser->ID,
-            'read'      => 0
+            'read'      => 1
         ]);
         
         //Retorna totol de notificações
@@ -251,6 +258,71 @@ class Notify {
 
     }
 
+    /**
+     * Sistema de notificação push
+     * 
+     * @param   array $notify   Dados de notificação provenientes do banco
+     * @since 2.1
+    */
+    private function registerExtraNotification(array $notify) {
+
+        //Retorna conteúdo de notificação
+        $content = $this->defineTypeContent($notify);
+
+        //Se não tiver conteúdo, para execucão
+        if(empty($content)) return;
+        
+        //Retorna dados de config 
+        $config = new UserSettings($this->currentUser); 
+        
+        //Formatando credenciais do banco
+        if($credentials = unserialize($config->__get('webpush-credentials'))) {
+            
+            //Envia notidicação por push
+            $this->push->sendNotification($credentials, ['title' => 'AtletasNOW',  'body' => $content['message']]);
+
+        } else {
+            
+            /** 
+             * Notificações por email para os tipos [Mensagens, Follow] e verifica se notificação por email está habilitado
+             * */
+            if (!in_array($notify['type'], [4, 7]) || $notifyByEmailEnabled = $config->__get('notification-email-enabled') === false) 
+                return;          
+
+                //Efetua disparo de email de notificação
+                $this->sendNotificationEmail($content, $notify);
+
+        }
+
+    }
+
+    /**
+     * Envia email com link de confirmação de cadastro
+     */
+    private function sendNotificationEmail(array $content, array $email = []):void {
+
+        $emailConfig = array_merge($email, [
+            'email'         => $this->currentUser->user_email, 
+            'userName'      => $this->currentUser->display_name, 
+            'subject'       => 'Notificação - AtletasNow',
+            'click_action'  => '#'
+        ]);
+
+        //SETUP DE EMAIL
+        $phpmailer = new SendEmail();
+        $phpmailer->setToEmail([
+            'email' => $emailConfig['email'], 'name' => $emailConfig['userName']]);
+        $phpmailer->setFromName('AtletasNOW - Sua hora é agora');
+        $phpmailer->setSubject($emailConfig['subject']);
+        
+        //Carrega template prédefinido
+        $phpmailer->loadTemplate('notificationEmail', ['email' => $emailConfig['email'], 'message' => $content, '' => $emailConfig['click_action']]);
+
+        //Envio do email
+        $result = $phpmailer->send();
+
+    }
+
     /** 
      * Faz checkagem para imprimir a formatação de conteúdo de acordo com tipo de notificação
      * */
@@ -286,10 +358,16 @@ class Notify {
             case 11:
                 $response = $this->removedTeam($notify);
                 break; 
+            case 12:
+                $response = $this->seeProfile($notify);
+                break; 
             default:
                 $response = '';
                 break;
         }
+
+        //Atribui status de leitura
+        $response = array_merge($response, ['read' => (int) $notify['read']]);
 
         return $response;
     }
@@ -306,9 +384,10 @@ class Notify {
         $content = [
             "ID"            => $notify['ID'],
             "type"          => $notify["type"],
-            "message"       => "Começou a te seguir.",
+            "message"       => $user['display_name']." começou a te seguir.",
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT') . '/#/profile/'. $user['ID']
         ];
         
         //Retorna notificação
@@ -328,9 +407,10 @@ class Notify {
         $content = [
             "ID"            => $notify["ID"],
             "type"          => $notify["type"],
-            "message"       => "Adicionou como um clube no qual afirmando que já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize o perfil do usuário e defina abaixo se a informação é verdadeira.",
+            "message"       => $user['display_name'] ." adicionou seu clube no qual afirma que já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize o perfil do usuário e defina abaixo se a informação é verdadeira.",
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT').'/#/profile/'.$user['ID']
         ];
         
         //Retorna notificação
@@ -350,9 +430,10 @@ class Notify {
         $content = [
             "ID"            => $notify['ID'],
             "type"          => $notify["type"],
-            "message"       => "Comentou em sua publicação.",
+            "message"       => $user['display_name']." comentou em sua publicação.",
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT').'/#/dashboard/'.$user['ID']
         ];
         
         //Retorna notificação
@@ -372,9 +453,10 @@ class Notify {
         $content = [
             "ID"            => $notify['ID'],
             "type"          => $notify["type"],
-            "message"       => "Enviou uma mensagem para você.",
+            "message"       => $user['display_name']." enviou uma mensagem para você.",
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT') . '/#/chat/'. $user['ID']
         ];
         
         //Retorna notificação
@@ -394,9 +476,10 @@ class Notify {
         $content = [
             "ID"            => $notify["ID"],
             "type"          => $notify["type"],
-            "message"       => "A informação preenchida em seu perfil foi verificada pelo clube!",
+            "message"       => "A informação preenchida em seu perfil foi verificada pelo clube ". $user['display_name'],
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT') . '/#/profile'
         ];
         
         //Retorna notificação
@@ -416,9 +499,10 @@ class Notify {
         $content = [
             "ID"            => $notify["ID"],
             "type"          => $notify["type"],
-            "message"       => "A informação preenchida em seu perfil foi reprovada pelo clube.",
+            "message"       => "A informação preenchida em seu perfil foi reprovada pelo clube ". $user['display_name'],
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT') . '/#/profile'
         ];
         
         //Retorna notificação
@@ -440,7 +524,8 @@ class Notify {
             "type"          => $notify["type"],
             "message"       => "Você foi adicionado como integrante da equipe '" . $user['display_name'] . "' e seu perfil foi atualizado com essa informação!",
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT') . '/#/profile'
         ];
         
         //Retorna notificação
@@ -463,7 +548,31 @@ class Notify {
             "message"       => "Infelizmente você foi removido como integrante da equipe '" . 
             $user['display_name'] . "'!",
             "date"          => $notify["date"],
-            "user_profile"  => $user
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT') . '/#/profile'
+        ];
+        
+        //Retorna notificação
+        return $content;
+
+    }
+
+    /**
+     * Formatação de notificação de visualização de perfil usuario/usuario 
+     */
+    private function seeProfile(array $notify){
+
+        //Retorna dados do usuário
+        $user = (new User)->getMinProfile($notify['from_id']);
+
+        //Pegar estilo da notificação
+        $content = [
+            "ID"            => $notify["ID"],
+            "type"          => $notify["type"],
+            "message"       => $user['display_name'] . " viu seu perfil!",
+            "date"          => $notify["date"],
+            "user_profile"  => $user,
+            "url"           => env('APP_FRONT') . '/#/profile/'. $user['ID']
         ];
         
         //Retorna notificação

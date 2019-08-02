@@ -6,9 +6,15 @@ import { BrazilStates } from '../../providers/useful/states';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ng2-cookies';
 import { DashboardPage } from '../dashboard/dashboard';
+import { GenderList } from '../../providers/gender/gender';
+import { profileTypeList } from '../../providers/profiletypes/profiletypes';
+import { SportList } from '../../providers/sport/sport';
+import { ClubList } from '../../providers/clubs/clubs';
 
 
-@IonicPage()
+@IonicPage({
+  segment: 'search',
+})
 @Component({
   selector: 'page-search',
   templateUrl: 'search.html'
@@ -34,20 +40,9 @@ export class SearchPage {
   public $sportSelected:any = [];
 
   //Lista de tipos de usuário
-  protected $typeUserList = [
-      {valor: '', texto: 'Qualquer'},
-      {valor: 1,  texto: 'Atleta'}, 
-      {valor: 2,  texto: 'Profissional do Esporte'},
-      {valor: 3,  texto: 'Faculdade'},
-      {valor: 4,  texto: 'Clube Esportivo'},
-      {valor: 5,  texto: 'Confederação'} 
-  ];
-
-  protected $genderList = [
-      {valor: '',       texto: 'Qualquer'},
-      {valor: 'male',   texto: 'Masculino'}, 
-      {valor: 'female', texto: 'Feminino'}
-  ];
+  protected $typeUserList:any[];
+  //Lista de Genêros  
+  protected $genderList:any;
 
   //Lista de Esportes
   protected $sportTable:any;
@@ -70,13 +65,35 @@ export class SearchPage {
       public api:Api, 
       public navCtrl: NavController, 
       public navParams: NavParams, 
-      public states:BrazilStates,
-      public translateService: TranslateService,
-      private cookieService: CookieService) { 
+      states:BrazilStates,
+      gender: GenderList,
+      profileType: profileTypeList,
+      sportList: SportList,
+      clubList: ClubList,
+      public translateService: TranslateService) { 
     
       //Carrega lista de estados do provider
-      this.$statesList = this.states.statesList;  
+      this.$statesList = states.statesList;  
       this.$statesList.unshift('Qualquer Estado');
+
+      //Lista de tipos de usuário
+      this.$typeUserList = profileType.list;
+      this.$typeUserList.unshift('Qualquer Usuário');
+      
+      //Lista de genêros
+      this.$genderList =  gender.list;
+      this.$genderList.unshift('Qualquer Genêro');
+
+      //Lista de Esportes
+      sportList.load().then((resp) => {
+        this.$sportTable  = sportList.table;
+        this.$sportList   = sportList.list;
+      });      
+
+      //Lista de Clubes
+      clubList.load().then((resp) => {
+        this.$clubsList  = clubList.table;
+      });
 
       //Retorna dados vindos do widget de busca
       this.query.display_name = this.navParams.get('display_name');
@@ -87,14 +104,8 @@ export class SearchPage {
       }  
   }
 
-  ionViewDidLoad() {        
-      //Verifica existência do cookie e redireciona para página
-      Cookie.checkCookie(this.cookieService, this.navCtrl); 
-  }
-
-  ngOnInit() {
-    this.getSportList();
-    this.getClubsList();
+  ngOnInit() { 
+  
   }
 
   showFilterOptions(){
@@ -105,45 +116,13 @@ export class SearchPage {
     }
   }
 
-  getSportList(){
-    //Retorna a lista de esportes do banco e atribui ao seletor
-    this.api.get('/user/sports').subscribe((resp:any) => {
-
-        //Tabela de Esportes com ID e nome
-        this.$sportTable = resp;
-
-        //Lista de apenas nomes de esportes
-        resp.forEach(element => {
-            //[0] = id, [1] = sport_name
-            this.$sportList.push(element[1]);
-        });
-
-    }, err => { 
-        return; 
-    });
-    
-  }
-
-  getClubsList(){
-    //Retorna a lista de clubes para seletor
-    this.api.get('/user/clubs').subscribe((resp:any) => {
-
-        //Tabela de Esportes com ID e nome
-        this.$clubsList = resp;
-
-    }, err => { 
-        return; 
-    });
-    
-  }
-
-  private widgetSearch($fn:any = function(){}){
+  private widgetSearch($fn:any = function(){}) {
       
       //Retorna a lista de clubes para seletor
       this.api.post('/user/search' + this.$url + '/paged/' + this.$paged, this.query).subscribe((resp:any) => {
 
         //Se reposta não existir
-        if(resp.error != undefined || resp == null){
+        if(resp.error != undefined || resp == null) {
           $fn(); return;
         }
 
@@ -188,15 +167,15 @@ export class SearchPage {
 
   }
 
-  private setChooseSports($sportChoose:string) {
+  private setChooseSports($sportChoose) {
     //Intera sobre items
-    this.$sportTable.forEach(element => {
+    for (const element of this.$sportTable) {
         //Compara valores selecionados com tabela de esportes
-        if (element[1] == $sportChoose) {
-            //Atribui valor a array
-            this.query.sport.push(element[0]);
-        }
-    });
+        if (element[1] == $sportChoose.display) {
+          //Atribui valor a array
+          this.query.sport.push(element[0]);
+      }
+    }
 
   }
 
@@ -212,7 +191,7 @@ export class SearchPage {
         $event.complete();
       };
 
-      this.widgetSearch(endFn);
+      this.widgetSearch(endFn); 
 
     }, 1000);
 
@@ -223,7 +202,7 @@ export class SearchPage {
     if(this.navCtrl.canGoBack()){
         this.navCtrl.pop();
     } else {
-        this.navCtrl.setRoot(DashboardPage);
+        this.navCtrl.setRoot('Dashboard'); 
     }        
   }
 

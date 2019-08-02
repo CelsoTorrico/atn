@@ -1,11 +1,10 @@
-import { Observable } from 'rxjs/Observable';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController, ToastController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { User, Api } from '../../../providers';
 import { BrazilStates } from '../../../providers/useful/states';
-import { FormControl, NgForm } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import {  NgForm } from '@angular/forms';
+import { VisibilityList } from '../../../providers/visibility/visibility';
 
 @Component({
     selector: 'personal-data-edit',
@@ -32,6 +31,11 @@ export class MyProfilePersonalDataComponent {
         visibility: <number>0
     }
 
+    career: any = {
+        value: <string>'',
+        visibility: <number>null
+    }
+
     birthdate: any = {
         value: <string>'',
         visibility: <number>0
@@ -44,7 +48,7 @@ export class MyProfilePersonalDataComponent {
 
     cpf: any = {
         value: <string>'',
-        visibility: <number>0 
+        visibility: <number>0
     }
 
     cnpj: any = {
@@ -99,7 +103,7 @@ export class MyProfilePersonalDataComponent {
     public visibility: any[];
 
     //Lista de Estados
-    protected $statesList = [];
+    protected $statesList:any[];
 
     //Url de requisição de usuário
     private static readonly $getProfile: string = 'user/self';
@@ -112,48 +116,54 @@ export class MyProfilePersonalDataComponent {
         public api: Api,
         public toastCtrl: ToastController,
         public viewCtrl: ViewController,
-        public states: BrazilStates,
-        public translateService: TranslateService) { 
-    
+        public translateService: TranslateService,
+        statesList: BrazilStates,
+        visibilityList: VisibilityList) {
+
         this.translateService.setDefaultLang('pt-br');
 
         //Carrega lista de estados do provider
-        this.$statesList = this.states.statesList;
+        this.$statesList = statesList.statesList;
 
-        //Função a ser executada após requisição de dados de usuário
-        this.addFormData = function ($this:any) {
+        //Carregar campos de visibilidade
+        visibilityList.load().then(() => {
+            this.visibility = visibilityList.table
+        });
 
-            //Adicionando valores a classe user
-            let atributes = $this.user._user;
-
-            //Intera sobre objeto e atribui valor aos modelos de metadata
-            for (var key in atributes.metadata) {
-                if (atributes.metadata.hasOwnProperty(key) && $this[key] != undefined) {
-                    $this[key] = atributes.metadata[key]; 
-                }
-            }
-
-            //Atribuindo dados aos modelos
-            $this.display_name = atributes.display_name;
-            $this.user_email = atributes.user_email;
-            $this.type = atributes.type.ID;
-        }
     }
 
     //Função que inicializa
     ngOnInit() {
-        
-        //Atribui dados do usuário
-        this.user._userObservable.subscribe((resp:any) => {
-            this.addFormData(this);
-        });
 
-        //Retorna seleção de visibilidade
-        this.user._visibilityObservable.subscribe((resp:any) => {
-            if(Object.keys(resp).length > 0){
-                this.visibility = resp;
+        //Atribui dados do usuário
+        this.user.getUserData().then((resp:boolean) => {
+
+            if(!resp) return;
+            
+            //Adicionando valores a classe user
+            let atributes = this.user._user;
+
+            //Intera sobre objeto e atribui valor aos modelos de metadata
+            for (var key in atributes.metadata) {
+                if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
+                    this[key] = atributes.metadata[key];
+                }
             }
+
+            //Atribuindo dados aos modelos
+            this.display_name = atributes.display_name;
+            this.user_email = atributes.user_email;
+            this.type = atributes.type.ID;
+
+            //Retorna seleção de visibilidade
+            this.user._visibilityObservable.subscribe((resp: any) => {
+                if (Object.keys(resp).length > 0) {
+                    this.visibility = resp;
+                }
+            });
+
         });
+        
     }
 
     //Salvar dados do formulário
@@ -162,7 +172,7 @@ export class MyProfilePersonalDataComponent {
         $event.preventDefault();
 
         //Campos válidos
-        let saveFields:any = {
+        let saveFields: any = {
             display_name: '',
             user_email: '',
             telefone: {
@@ -171,6 +181,10 @@ export class MyProfilePersonalDataComponent {
             },
             biography: {
                 value: <string>'',
+                visibility: <number>0
+            },
+            career: {
+                value:<string>'',
                 visibility: <number>0
             },
             birthdate: {
@@ -222,7 +236,7 @@ export class MyProfilePersonalDataComponent {
         //Intera sobre objeto e atribui valor aos modelos de metadata
         for (var key in saveFields) {
             if (this.hasOwnProperty(key)) {
-                saveFields[key] = this[key]; 
+                saveFields[key] = this[key];
             }
         }
 
@@ -230,23 +244,23 @@ export class MyProfilePersonalDataComponent {
         let updateObservable = this.user.update(saveFields);
 
         updateObservable.subscribe((resp: any) => {
-            
+
             // Se mensagem contiver parametro 'success'
             if (Object.keys(resp).length <= 0) {
-                return; 
+                return;
             }
 
             //Fechar modal e retornar data
             this.dismiss(resp);
-           
-          }, err => {
+
+        }, err => {
             console.error('ERROR', err);
-          });
+        });
 
     }
 
     //Fechar modal
-    dismiss($data:any = null){
+    dismiss($data: any = null) {
         this.viewCtrl.dismiss($data);
     }
 

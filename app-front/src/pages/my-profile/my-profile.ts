@@ -11,7 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 @IonicPage()
 @Component({
-    selector: 'my-profile',
     templateUrl: 'my-profile.html'
 })
 export class MyProfilePage {

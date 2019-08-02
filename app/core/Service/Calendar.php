@@ -85,6 +85,13 @@ class Calendar extends Timeline {
                 //Atribui dados do comentário
                 $timelineData = $item->getData();
 
+                $this->model = $item;
+
+                //Verifica se usuário tem permissão de enxergar post
+                if (key_exists('post_author', $filter) && !$this->isVisibility($filter['post_author'])) {
+                    continue;
+                }
+
                 $user = new User();
                 $timelineData['post_author'] = $user->getMinProfile($item->post_author);
 

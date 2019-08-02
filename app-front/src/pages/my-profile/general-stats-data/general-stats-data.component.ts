@@ -1,3 +1,4 @@
+import { VisibilityList } from './../../../providers/visibility/visibility';
 import { Component } from '@angular/core';
 import { ToastController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -50,49 +51,42 @@ export class MyProfileGeneralStatsComponent {
         public user: User,
         public api: Api,
         public viewCtrl: ViewController,
-        public translateService: TranslateService) { 
+        public translateService: TranslateService,
+        visibilityList: VisibilityList) { 
     
-            this.translateService.setDefaultLang('pt-br');
+        this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
         })
 
-        //Função a ser executada após requisição de dados de usuário
-        this.addFormData = function ($this:any) {
+        //Carrega campos de visibilidade
+        visibilityList.load().then(() => {
+            this.visibility = visibilityList.table
+        });
 
-            //Adicionando valores a classe user
-            let atributes = $this.user._user;
-
-            //Intera sobre objeto e atribui valor aos modelos de metadata
-            for (var key in atributes.metadata) {
-                if (atributes.metadata.hasOwnProperty(key) && $this[key] != undefined) {
-                    $this[key] = atributes.metadata[key];
-                }
-            }
-
-            //Atribuindo dados aos modelos
-            $this.type = atributes.type.ID;
-
-            //Lista de Visibilidades
-            $this.getVisibility();
-        }
     }
 
     //Função que inicializa
     ngOnInit() {
         //Retorna dados de usuário
-        this.user._userObservable.subscribe((resp:any) => {
-            this.addFormData(this);
-        });
-    }
+        this.user.getUserData().then((resp:boolean) => {
+            
+            if(!resp) return;
+            
+            //Adicionando valores a classe user
+            let atributes = this.user._user;
 
-    getVisibility(){
-        //Retorna opções de visibilidade
-        this.user._visibilityObservable.subscribe((resp:any) => {
-            if(Object.keys(resp).length > 0){
-                this.visibility = resp;
+            //Intera sobre objeto e atribui valor aos modelos de metadata
+            for (var key in atributes.metadata) {
+                if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
+                    this[key] = atributes.metadata[key];
+                }
             }
+
+            //Atribuindo dados aos modelos
+            this.type = atributes.type.ID;
+
         });
     }
 

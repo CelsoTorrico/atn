@@ -1,17 +1,21 @@
+import { CommentItem } from './../components/comment/comment-item';
 import { CookieService } from 'ng2-cookies';
 import { Api } from '../../providers/api/api';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
-import { User, Cookie } from '../../providers';
+import { User } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
-import { DashboardPage } from '../dashboard/dashboard';
 
-@IonicPage()
+@IonicPage({
+    segment: 'post/:post_id',
+})
 @Component({
     selector: 'post',
     templateUrl: 'post.html'
 })
 export class PostPage {
+
+    @ViewChild(CommentItem) commentUser:CommentItem;
 
     public $ID: number;
 
@@ -43,37 +47,39 @@ export class PostPage {
     private $getPostUrl: string = 'learn/';
 
     constructor(
-        public navCtrl: NavController,
-        public user: User,
-        public api: Api,
-        public toastCtrl: ToastController,
+        public  navCtrl: NavController,
+        public  user: User,
+        public  api: Api,
+        public  toastCtrl: ToastController,
         private params: NavParams,
-        public translateService: TranslateService,
+        public  translateService: TranslateService,
         private cookieService: CookieService) { 
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-            this.loginErrorString = value;
+            this.loginErrorString = value; 
         })
 
         //Adicionando enviadors da view anterior
-        this.$ID = this.params.get('post_id');
+        this.$ID = this.params.get('post_id'); 
 
-    }
-
-    ionViewDidLoad() {        
-        //Verifica existência do cookie e redireciona para página
-        Cookie.checkCookie(this.cookieService, this.navCtrl); 
     }
 
     //Função que inicializa
     ngOnInit() {
 
-        //Carrega dados do usuário de contexto
-        this.getPost(); 
+        //Verifica se usuário está logado
+        this.user.dataReady.subscribe((res) => {
 
-        this.user.subscribeUser(function ($this) {
-            $this.currentUser = $this.user._user;
-        }, this);
+            if(res.status == false) this.user.getUserData().then();                      
+
+            //Adicionado dados do usuário a componente filho
+            this.currentUser = this.user._user;
+            this.commentUser.currentUser = this.currentUser;
+            
+        });
+
+        //Carrega dados do usuário de contexto
+        this.getPost();
 
     }
 
@@ -148,7 +154,7 @@ export class PostPage {
         if(this.navCtrl.canGoBack()){
             this.navCtrl.pop();
         } else {
-            this.navCtrl.setRoot(DashboardPage);
+            this.navCtrl.setRoot('Dashboard');
         }        
     }
 

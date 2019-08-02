@@ -6,24 +6,19 @@ use Core\Interfaces\LoginInterface;
 use Core\Database\LoginModel;
 use Core\Database\UsermetaModel; 
 use Core\Utils\PasswordHash;
-use Core\Utils\AppValidation;
 use Core\Utils\SendEmail;
 use Core\Profile\User;
-use Illuminate\Http\Request;
-use Illuminate\Auth\GenericUser as AppUser;
 use Illuminate\Contracts\Auth\Factory as Auth;
-use Socialite;
+use Core\Database\UserModel;
 
 class Login implements LoginInterface{
 
     private $model;
     private $userData;
     private $cookieToken;
-    private $session;
-    private $cookie;
 
     //Construtor da classe
-    function __construct(Auth $auth){
+    function __construct(Auth $auth=null){
         $this->auth = $auth;
     }
 
@@ -44,8 +39,8 @@ class Login implements LoginInterface{
         //Instancia LoginModel para verificar existencia de usuário via user_login
         $this->model = new LoginModel();
 
-        //Verifica se existe usuário, passando array de dados
-        if (!$this->model->load(['user_email' => $data['user_email']])) {
+        //Verifica se existe usuário e se está ativo (user_status = 0), passando array de dados
+        if (!$this->model->load(['user_email' => $data['user_email'], 'user_status' => 0])) {
             return ['error' => ['login' => 'Usuário inexistente.']];
         }
 
@@ -121,6 +116,7 @@ class Login implements LoginInterface{
         
     }
 
+    /** Registrar token no banco de dados */
     public function insertToken(int $id, string $token){
         
         //Inicializa modelo
@@ -156,12 +152,68 @@ class Login implements LoginInterface{
         
     }
 
+    /**
+     *  Confirmar se cookie é válido: Como a validação para habilitar requisições
+     *  sempre depende de cookie válido, então retorna true
+     *  
+     *  @since 2.1
+     */
+    public function isValidCookie(string $cookie) {
+        //Usando a lógica de autenticação AuthServiceProvider.php do FW Lumen, só acessa esse método se cookie válido.
+        return ['success' => ['login' => 'Cookie registrado e válido.']];
+    }
+
+    /** Confirmar email de usuário */
+    public function confirmUserEmail(string $token) {
+       
+        //Se tem token atribuido juntamente com dados
+        if(empty($token)) {
+            //Executa login social
+            return ['error' => ['confirm_user' => 'Token de validação não informado!']];
+        }
+
+        //aplicando filtro de string
+        $token = filter_var($token, FILTER_SANITIZE_STRING); 
+
+        //Instancia LoginModel para verificar existencia de usuário via user_login
+        $this->model = new LoginModel();
+
+        //Verifica se existe usuário inativo passando array de dados
+        if (!$this->model->load(['user_activation_key' => $token, 'user_status' => 1])) {
+            return ['error' => ['confirm_user' => 'Email de verificação não associado a um usuário.']]; 
+        }
+
+        //Verifica se valores de token corresponde ao do banco
+        if ($token != $this->model->user_activation_key) {
+            
+            //Falha na verificação, envio de email de verificação
+            $this->sendWelcomeEmail($this->model->user_email, $this->model->display_name);
+
+            //Retona mensagem
+            return ['error' => ['confirm_user' => 'Falha na validação de email, foi enviado um novo email com link de verificação.']];
+        }
+
+        //Instanciando classe de usuário
+        $user = new UserModel(['user_email' => $this->model->user_email, 'user_pass' => $this->model->user_pass ]);
+
+        //Define usuatio como ativo
+        $user->user_status = 0;
+        
+        //Salva dado no banco
+        $saved = $user->update('user_status');
+
+        //Se houve sucesso, retorna mensagem
+        return ($saved)? ['user_email' => $user->user_email, 'user_pass' => $user->user_pass] : ['error' => ['confirm_user' => 'Houve falha na solicitação. Tente mais tarde']];     
+        
+    }
+
+    /** Envio de email com nova senha gerada */
     public function forgetPassword(string $email) {
        
         //Se tem token atribuido juntamente com dados
         if(empty($email)) {
             //Executa login social
-            return ['error' => ['forgetPassword' => 'E-mail de usuário não foi submetido']];            
+            return ['error' => ['forgetPassword' => 'E-mail de usuário não foi submetido']];
         }
 
         //aplicando filtro de string
@@ -232,6 +284,10 @@ class Login implements LoginInterface{
      */
     public function sendWelcomeEmail(string $email, string $displayName = null) {
         return $this->welcomeEmailAfterRegister($email, $displayName);
+    }
+
+    public static function welcomeEmail(string $email, string $displayName) {
+        return (new Login())->sendWelcomeEmail($email, $displayName);
     }
 
     public static function getCookieName(){

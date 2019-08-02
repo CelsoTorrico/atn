@@ -17,19 +17,18 @@ export class CalendarSingle extends TimelineSingle {
 
   @Output() public calendarUpdate = new EventEmitter();
 
-  public img_thumbnail:string;
+  public img_thumbnail:string; 
     
-  constructor(public user: User,
-              public alert: AlertController,
+  constructor(public alert: AlertController,
               public translateService: TranslateService,
               public toastCtrl: ToastController,    
               public api: Api,
-              public navCtrl: NavController, 
+              public navCtrl: NavController,  
               public modalCtrl: ModalController,
-              sanitizer: DomSanitizer) {
+              sanitizer: DomSanitizer) { 
 
               //Carregando dependencias classe pai
-              super(user, alert, translateService, toastCtrl, api, navCtrl, modalCtrl, sanitizer);
+              super(alert, translateService, toastCtrl, api, navCtrl, modalCtrl, sanitizer);
               
               //Setando url
               super._setRequestUrl('calendar');

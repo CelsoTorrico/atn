@@ -1,12 +1,14 @@
-import { loadNewPage } from './../../providers/load-new-page/load-new-page';
+import { MemberCurrentMenu } from './../components/menu/member-current-menu';
+import { DashboardLastActivityService } from './dashboardactivity.service';
+import { VisibilityList } from '../../providers/visibility/visibility';
 import { NgForm } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController, LoadingController } from 'ionic-angular';
-import { User, Api, Cookie } from '../../providers';
-import { CookieService } from 'ng2-cookies';
+import { User, Api } from '../../providers';
 import { Timeline } from '../components/timeline/timeline';
 import { PushNotifyService } from '../../providers/notification/notification';
+import { MemberUser } from '../components/member/item/member-current-user';
 
 
 @IonicPage()
@@ -16,7 +18,9 @@ import { PushNotifyService } from '../../providers/notification/notification';
 })
 export class DashboardPage {
 
-    @ViewChild(Timeline) timeline:Timeline; 
+    @ViewChild(Timeline) timeline: Timeline;
+    @ViewChild(MemberCurrentMenu) currentMenu: MemberCurrentMenu;
+    @ViewChild(MemberUser) currentUser: MemberUser;
 
     public loginErrorString;
     public timeline_placeholder: string;
@@ -44,7 +48,7 @@ export class DashboardPage {
     public btn_refresh = false;
 
     //Visibilidade
-    public visibility: string[];
+    public visibility: any[];
 
     //Preview Foto
     public preview: any;
@@ -63,76 +67,113 @@ export class DashboardPage {
         notifications: <number>0
     }
 
-    private user: User;
-
     constructor(
-        public navCtrl: NavController,
-        public api: Api,
-        public toastCtrl: ToastController,
-        public translateService: TranslateService,
-        public loadNewPage: loadNewPage,
-        private cookieService: CookieService,
+        public  navCtrl: NavController,
+        public  api: Api,
+        public  toastCtrl: ToastController,
+        public  translateService: TranslateService,
         private loading: LoadingController,
-        public push: PushNotifyService) {
+        public  push: PushNotifyService,
+        private user: User,
+        private lastActivity: DashboardLastActivityService,
+        visibilityList: VisibilityList) {
 
         this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get(["POST", "LOADING"]).subscribe((data) => {
-            this.timeline_placeholder   = data.POST;
-            this.loading_placeholder    = data.LOADING; 
+            this.timeline_placeholder = data.POST;
+            this.loading_placeholder = data.LOADING;
+        });
+
+        //Carrega campos de visibilidade
+        visibilityList.load().then((success) => {
+            //Atribui dados ao modelo
+            this.visibility = visibilityList.table;
         });
 
         //Habilitar popup para permissão de notificação
-        this.push.requestDesktopNotificationPermission();   
+        this.push.requestDesktopNotificationPermission();
 
-        //Instanciando classe 'User' desse modo, devido imcompatibilidade dentro do construtor
-        this.user = new User(this.api, this.loadNewPage, this.toastCtrl);
-    }
-
-    ionViewDidLoad() {
-        //Verifica existência do cookie e redireciona para página
-        Cookie.checkCookie(this.cookieService, this.navCtrl);
     }
 
     //Função que inicializa
     ngOnInit() {
 
-        this.currentUser();
-        this.getVisibility();
-        this.getLastActivity();
+        //Quando primeira página de acesso for 'Profile'
+        if(this.user._user != undefined ) {
+            //Popula parametros da classe
+            this.populateProperties();     
+        }
+
+        this.user.dataReady.subscribe((resp) => {
+
+            if(resp.status != 'ready') return;
+
+            //Popula a propriedade da classe
+            this.populateProperties();
+            
+        });
 
         setInterval(() => {
             this.btn_refresh = true;
-        }, 1000*30);
+        }, 1000 * 30);
 
+    }
+
+    /* Popula a propriedade da classe*/
+    private populateProperties() {
+        //Adicionando dados de usuário logado
+        this.currentUserData = this.user._user;
+
+        //Atribui dados a componentes filhos
+        this.currentUser.member = this.currentUserData;
+        this.currentMenu.user   = this.user;
+
+        //Carrega dados das infos do painel
+        this.setViews();
+
+        //Retorna ultimas atividades
+        this.getLastActivity();
     }
 
     //Recarrega dados
-    doRefresh($refreshEvent){
+    doRefresh($refreshEvent) {
 
         //Carregando
-        const loading = this.loading.create({ 
+        const loading = this.loading.create({
             content: this.loading_placeholder,
-            duration: 2000 
+            duration: 2000
         });
 
+        //Carrega loading
         loading.present();
-        
-        this.currentUser();
-        this.getLastActivity();
-        this.timeline.reload();
 
-        setTimeout(() => {
-            this.btn_refresh = false; //Define botao como false para esconde-lo
-            $refreshEvent.complete();
-          }, 2000);
-        
+        this.user.getUserData().then(() => {
+            
+            loading.dismiss();
+
+            this.user.dataReady.subscribe((resp) => {
+
+                if(resp.status != 'ready') return;
+
+                //Recarregando dados da dashboard
+                this.setViews();
+                this.getLastActivity();
+                this.timeline.reload();
+
+                this.btn_refresh = false; 
+                
+            });            
+
+        });
+
     }
+
 
     //Quando um input tem valor alterado
     fileChangeEvent(fileInput: any) {
         if (fileInput.target.files && fileInput.target.files[0]) {
-            
+
             var reader = new FileReader();
 
             reader.onload = function (e: any) {
@@ -145,62 +186,31 @@ export class DashboardPage {
         }
     }
 
-    //Retorna dados do usuário
-    public currentUser() {
-
-        this.user.subscribeUser(function ($this) {
-
-            //Adicionando valores a variavel global
-            $this.currentUserData = $this.user._user;
-
-            //Campos específicos para dados básicos
-            $this.info.views = $this.checkNull($this.user._user.metadata.views.value, $this.info.views );
-            $this.info.messages = $this.checkNull($this.user._user.totalMessages, $this.info.messages);
-            $this.info.favorite = $this.checkNull($this.user._user.totalFavorite, $this.info.favorite);
-            $this.info.notifications = $this.checkNull($this.user._user.totalNotifications, $this.info.notifications);
-
-        }, this);
-
+    private getLastActivity() {
+        //Carrega as últimas atividades
+        this.lastActivity.load().then((res) => {
+            this.activity = this.lastActivity.list;
+        })
     }
 
-    checkNull($data, $valueToExibit) {
+    //Retorna dados do usuário
+    private setViews() {
+
+        this.info.views = this.checkNull(this.user._user.metadata.views.value, this.info.views);
+        this.info.messages = this.checkNull(this.user._user.totalMessages, this.info.messages);
+        this.info.favorite = this.checkNull(this.user._user.totalFavorite, this.info.favorite);
+        this.info.notifications = this.checkNull(this.user._user.totalNotifications, this.info.notifications);
+    }
+
+    private checkNull($data, $valueToExibit) {
         //Se data for nulo ou indefinido
         if ($data == null || $data == undefined) {
-            return $valueToExibit;  
+            return $valueToExibit;
         }
-
         //Retorna data normal
         return $data;
     }
 
-    //Retorna dados de visibilidade
-    getVisibility() {
-        //Retorna a lista de esportes do banco e atribui ao seletor
-        let items = this.api.get('timeline/visibility').subscribe((resp: any) => {
-
-            //Se não existir items a exibir
-            if (resp.length > 0) {
-                this.visibility = resp;
-            }
-
-        }, err => {
-            return;
-        });
-
-    }
-
-    //Retorna as últimas atividades
-    getLastActivity() {
-        //Retorna a lista de esportes do banco e atribui ao seletor
-        let items = this.api.get('timeline/activity').subscribe((resp: any) => {
-            //Se não existir items a exibir
-            if (resp.length > 0) {
-                this.activity = resp;
-            }
-        }, err => {
-            return;
-        });
-    }
 
     /**
      * Adicionar um novo item de timeline
@@ -208,12 +218,12 @@ export class DashboardPage {
     addItem(form: NgForm, $event) {
 
         //Carregando
-        const loading = this.loading.create({ 
+        const loading = this.loading.create({
             content: this.loading_placeholder
         });
 
         loading.present();
-        
+
         //Convertendo data em objeto FormData
         let formData = new FormData();
 
@@ -275,7 +285,7 @@ export class DashboardPage {
 
     //Abre uma nova página de profile
     goToProfile($user_id: number) {
-        this.navCtrl.push('ProfilePage', {
+        this.navCtrl.push('Profile', {
             user_id: $user_id
         });
     }

@@ -3,12 +3,10 @@ import { ProfileResumeComponent } from './../components/profile-resume/profile.r
 import { Api } from './../../providers/api/api';
 import { Component, ComponentFactoryResolver, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController, AlertController } from 'ionic-angular';
-import { User, Cookie } from '../../providers';
+import { User } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileComponent } from './profile-components/profile.component';
 import { StatsComponent } from './profile-components/stats.component';
-import { CookieService } from 'ng2-cookies';
-import { DashboardPage } from '../dashboard/dashboard';
 import { ClubComponent } from './profile-components/club.component';
 
 @IonicPage()
@@ -27,12 +25,6 @@ export class ProfilePage {
     statsView: StatsComponent,
     clubView: ClubComponent
   }
-
-  //Usuário de contexto
-  currentUser: User;
-
-  //Usuário logado
-  loggedUser: any;
 
   //Variveis de template de usuario
   ID: number = null;
@@ -58,76 +50,71 @@ export class ProfilePage {
     private user: User,
     private params: NavParams,
     private componentFactoryResolver: ComponentFactoryResolver,
-    public translateService: TranslateService,
-    private cookieService: CookieService) {
+    public translateService: TranslateService) {
 
     this.translateService.setDefaultLang('pt-br');
 
+    //Tradução
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
       this.loginErrorString = value;
-    })
+    });
 
     //Retorna id de usuário de contexto
     this.$user_ID = this.params.get('user_id');
 
     //Verifica se usuário de contexto existe, ou seja, visita a um perfil
-    if (this.$user_ID) {
-      
+    if (this.$user_ID != null && this.$user_ID > 0) {
       //Atribui classe de usuário definido pelo $user_id
-      this.currentUser  = this.user.getUser(this.$user_ID);
-      this.loggedUser   = this.user._user;
-
-      //Retorna dados do usuário
-      this.currentUser.subscribeUser(function ($this) {
-
-        //Funções realizadas após requisição com dados sucesso
-        $this.ID = $this.currentUser._user.ID;
-        $this.following = $this.currentUser._user.following;
-        $this.typeUser = $this.currentUser._user.type.ID;
-
-        //Verifica se usuário é editavel pelo usuário logado
-        $this.isLogged = $this.canEdit();
-
-        //Verifica se usuário pertence a equipe
-        $this.addedTeam =  $this.isAddedToTeam();
-
-      }, this);
-
-    } else {
-      //Atribui dados (User) do usuário logado em formato array
-      this.currentUser = this.user;
-      
-      this.user.getUserData().then(() => {
-        
-        //Atribuindo dados de usuário logado
-        this.loggedUser = this.user._user;
-
-        //Atribuindo em cada parametro
-        this.ID = this.loggedUser.ID;
-        this.following = this.loggedUser.following;
-        this.typeUser = this.loggedUser.type.ID;
-
-        //Verifica se usuário é editavel pelo usuário logado
-        this.isLogged = this.canEdit();
-
-        //Verifica se usuário pertence a equipe
-        this.addedTeam =  this.isAddedToTeam();
-
-      });     
-
+      this.user = this.user.getUser(this.$user_ID);
     }
 
   }
 
-  ionViewDidLoad() {
-    //Verifica existência do cookie e redireciona para página
-    Cookie.checkCookie(this.cookieService, this.navCtrl);
-  }
 
   //Função que inicializa
   ngOnInit() {
-    //Carrega componente
-    this.loadComponent();
+
+    //Quando primeira página de acesso for 'Profile'
+    if(this.user._user != undefined ) {
+      
+      //Verifica se usuário é editavel pelo usuário logado   
+      this.isLogged = this.canEdit(true); 
+      
+      //Popula parametros da classe
+      this.populateParameters(); 
+
+    }
+
+    //Quando classe User emitir evento após requisição de dados
+    this.user.dataReady.subscribe((resp) => {
+
+      if (resp.status != 'ready') return;
+      
+      //Popula parametros da classe
+      this.populateParameters(); 
+
+    });
+
+  }
+
+  /** Faz a atribuição de dados do perfil de usuário nos parametros da classe */
+  private populateParameters() {
+    
+    //Atribuindo em cada parametro
+    this.ID = this.user._user.ID;
+    this.following = this.user._user.following;
+    this.typeUser = this.user._user.type.ID;
+
+    //Verifica se usuário pertence a equipe 
+    this.addedTeam = this.isAddedToTeam();
+
+    this.profileResume.isLogged = this.isLogged; //Injeta visibilidade
+    this.profileResume.user = this.user; //Injecta classe
+    this.profileResume.loadUserData(this.user._user); //Carrega dados de usuário
+
+    //Carrega componente inicial
+    this.loadComponent(this.ListComponents.personalView);
+
   }
 
   /** Função para carregar componentes  */
@@ -142,10 +129,10 @@ export class ProfilePage {
       createComponent(componentFactory);
 
     //Injeta classe de usuário no componente filho
-    componentRef.instance.isLogged      = this.isLogged;
-    componentRef.instance.profile       = this.currentUser._userObservable;
-    componentRef.instance.stats         = this.currentUser._statsObservable;
-    componentRef.instance.team_members  = this.currentUser._teamObservable;
+    componentRef.instance.isLogged = this.isLogged;
+    componentRef.instance.user = this.user;
+    componentRef.instance.type = this.user._user.type.ID;
+    componentRef.instance.loadUserLoadData(this.user._user);
 
   }
 
@@ -159,13 +146,12 @@ export class ProfilePage {
    * Função de permitir a exibição dos botões de edição 
    * @since 2.1
    * */
-  canEdit(): boolean {
+  canEdit($valid:boolean = false): boolean {
 
-    //Se usuário estiver logado em propria conta
-    if (this.isLogged) {
-      return true;
-    }
+    //Se usuário estiver logado na propria pagina de perfil
+    if ($valid) return true;
 
+    //Verifica se usuário é pertecente ao usuario logado
     return this.myUsers(this.$user_ID);
 
   }
@@ -174,7 +160,7 @@ export class ProfilePage {
    * Verifica se usuário já foi adicionado ao time/clube/instituição
    * @since 2.1
    */
-  isAddedToTeam():boolean {
+  isAddedToTeam(): boolean {
     //Adicionado dados do usuário que esta visualizando perfil
     return this.myUsers(this.$user_ID);
   }
@@ -183,15 +169,15 @@ export class ProfilePage {
    * Retorna array de ids FALSE 
    * @return mixed  Array de ids ou Bolean para encontrar um id
    * */
-  private myUsers($exist:number = null) {
+  private myUsers($exist: number = null) {
 
     //Se não existir parametro
-    if (this.loggedUser.current_users == (undefined || null) ) {
+    if (this.user._user.current_users == (undefined || null)) {
       return false;
     }
 
     //Array de ids de membros pertencetes a instituição
-    let $list = this.loggedUser.current_users;
+    let $list = this.user._user.current_users;
 
     //verifica se existe quantidade
     if ($list.qtd <= 0) {
@@ -201,7 +187,7 @@ export class ProfilePage {
     //Se solicitado encontrar um id dentro do array de ids
     if ($exist != null) {
       for (const element of $list.ids) {
-        if ( $exist == element ) {
+        if ($exist == element) {
           $list = true;
           break;
         }
@@ -265,7 +251,7 @@ export class ProfilePage {
     let $id = this.ID;
 
     //Iniciar uma sala de chat
-    this.navCtrl.push('ChatPage', {
+    this.navCtrl.push('Chat', {
       room_open: $id
     });
 
@@ -319,7 +305,7 @@ export class ProfilePage {
     if (this.navCtrl.canGoBack()) {
       this.navCtrl.pop();
     } else {
-      this.navCtrl.setRoot(DashboardPage);
+      this.navCtrl.setRoot('Dashboard');
     }
   }
 

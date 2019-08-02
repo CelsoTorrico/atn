@@ -1,5 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
-import { NavController, ToastController, ModalController, ViewController } from 'ionic-angular';
+import { VisibilityList } from './../../../providers/visibility/visibility';
+import { Component } from '@angular/core';
+import { ToastController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
 import { NgForm } from '@angular/forms';
@@ -29,41 +30,33 @@ export class MyProfileVideosComponent {
         public api: Api,
         public toastCtrl: ToastController,
         public viewCtrl: ViewController,
-        public translateService: TranslateService) {
+        public translateService: TranslateService,
+        visibilityList: VisibilityList) {
 
         this.translateService.setDefaultLang('pt-br');
 
-        //Função a ser executada após requisição de dados de usuário
-        this.addFormData = function ($this: any) {
-
-            //Adicionando valores a classe user
-            let atributes = $this.user._user;
-
-            //Intera sobre objeto e atribui valor aos modelos de metadata
-            if(atributes.metadata['my-videos'])
-                $this.videos = atributes.metadata['my-videos']; 
-
-            //Lista de Visibilidades
-            $this.getVisibility();
-        }
+        //Carrega opções de visibilidade
+        visibilityList.load().then((resp) => {
+            this.visibility = visibilityList.table;
+        })
 
     }
 
     //Função que inicializa
     ngOnInit() {
         //Retorna dados de usuário
-        this.user._userObservable.subscribe((resp:any) => {
-            this.addFormData(this);
-        }); 
-    }
+        this.user.getUserData().then((resp:boolean) => {
 
-    getVisibility() {
-        //Retorna opções de visibilidade
-        this.user._visibilityObservable.subscribe((resp: any) => {
-            if (Object.keys(resp).length > 0) {
-                this.visibility = resp;
-            }
-        });
+            if(!resp) return;
+
+            //Adicionando valores a classe user
+            let atributes = this.user._user;
+
+            //Intera sobre objeto e atribui valor aos modelos de metadata
+            if(atributes.metadata['my-videos'])
+                this.videos = atributes.metadata['my-videos']; 
+
+        }); 
     }
 
     /** Função para definir visibilidade selecionada automaticamente */

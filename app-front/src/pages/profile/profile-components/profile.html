@@ -14,27 +14,31 @@
 
       <ion-card-content class="about">
 
-        <p *ngIf="biography.value">
+        <p *ngIf="biography">
           <strong>{{ "BIOGRAPHY" | translate }}</strong>
-          {{ biography.value }}
+          {{ biography }}
+        </p>
+
+        <p *ngIf="type == 2 && career">
+            <strong>{{ 'CAREER' | translate }}</strong> {{ career }}
         </p>
 
         <ul>
-          <li *ngIf="birthdate.value"><strong>{{ "BIRTHDATE" | translate }}</strong>
-            {{ birthdate.value | date }}</li>
-          <li *ngIf="rg.value"><strong>{{ "RG" | translate }}</strong>
-            {{ rg.value }}</li>
-          <li *ngIf="cpf.value"><strong>{{ "CPF" | translate }}</strong>
-            {{ cpf.value }}</li>
-          <li *ngIf="gender.value"><strong>{{ "GENDER" | translate }}</strong>
-            {{ gender.value | translate }}</li>
-          <li *ngIf="telefone.value"><strong>{{ "TELEPHONE" | translate }}</strong>
-            {{ telefone.value }}</li>
-          <li class="address">
+          <li *ngIf="birthdate"><strong>{{ "BIRTHDATE" | translate }}</strong>
+            {{ birthdate | date }}</li>
+          <li *ngIf="rg"><strong>{{ "RG" | translate }}</strong>
+            {{ rg }}</li>
+          <li *ngIf="cpf"><strong>{{ "CPF" | translate }}</strong>
+            {{ cpf }}</li>
+          <li *ngIf="gender"><strong>{{ "GENDER" | translate }}</strong>
+            {{ gender | translate }}</li>
+          <li *ngIf="telefone"><strong>{{ "TELEPHONE" | translate }}</strong>
+            {{ telefone }}</li>
+          <li class="address" *ngIf="address">
             <strong>{{ "ADDRESS" | translate}}</strong>
-            <span>{{ address.value }}</span><span>{{ neighbornhood.value }}</span>
-            <span>{{ city.value }}</span><span>{{ state.value }}</span>
-            <span>{{ country.value }}</span>
+            <span>{{ address }}</span><span>{{ neighbornhood }}</span>
+            <span>{{ city }}</span><span>{{ state }}</span>
+            <span>{{ country }}</span>
           </li>
         </ul>
 
@@ -56,7 +60,7 @@
 
       <ion-card-content>
 
-        <ion-item-group class="sports" *ngIf="sport != undefined && sport.length > 0">
+        <ion-item-group class="sports" *ngIf="sport != undefined">
           <ion-list>
             <ion-badge class="sport-badge" *ngFor="let item of sport">
               {{ item.sport_name }}
@@ -64,7 +68,7 @@
           </ion-list>
         </ion-item-group>
 
-        <ion-item-group class="clubs" *ngIf="clubes != undefined && clubes.length > 0">
+        <ion-item-group class="clubs" *ngIf="type < 3 && clubes != undefined">
           {{ "CLUBS" | translate }}
           <ion-list>
             <div class="about-item" *ngFor="let club of clubes">
@@ -80,10 +84,10 @@
           </ion-list>
         </ion-item-group>
 
-        <ion-item-group *ngIf="formacao != undefined && formacao.value.length > 0">
+        <ion-item-group *ngIf="formacao != undefined && formacao != undefined">
           {{ "FORMATION" | translate }}
           <ion-list>
-            <div class="about-item" *ngFor="let form of formacao.value">
+            <div class="about-item" *ngFor="let form of formacao">
               <h4><strong>{{ 'INSTITUTE' | translate }}</strong>: {{ form[0] }}</h4>
               <p><strong>{{ 'COURSE' | translate }}</strong>: {{ form[1] }}</p>
               <p><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</p>
@@ -91,10 +95,10 @@
           </ion-list>
         </ion-item-group>
 
-        <ion-item-group *ngIf="cursos != undefined && cursos.value.length > 0">
+        <ion-item-group *ngIf="cursos != undefined">
           {{ "COURSES" | translate }}
           <ion-list>
-            <div class="about-item" *ngFor="let form of cursos.value">
+            <div class="about-item" *ngFor="let form of cursos">
               <h4><strong>{{ 'INSTITUTE' | translate }}</strong>: {{ form[0] }}</h4>
               <p><strong>{{ 'COURSE' | translate }}</strong>: {{ form[1] }}</p>
               <p><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</p>
@@ -107,17 +111,17 @@
 
           <div class="institute-about">
             <ul>
-              <li *ngIf="club_site.value"><strong>{{ "WEBSITE" | translate }}</strong>
-                {{ club_site.value }}</li>
-              <li *ngIf="club_sede.value"><strong>{{ "HEADQUARTERS" | translate }}</strong>
-                {{ club_sede.value }}</li>
+              <li *ngIf="club_site"><strong>{{ "WEBSITE" | translate }}</strong>
+                {{ club_site }}</li>
+              <li *ngIf="club_sede"><strong>{{ "HEADQUARTERS" | translate }}</strong>
+                {{ club_sede }}</li>
             </ul>
           </div>
 
-          <ion-item-group *ngIf="eventos != undefined && eventos.value.length > 0">
+          <ion-item-group *ngIf="eventos != undefined">
             {{ "EVENTS" | translate }}
             <ion-list>
-              <div class="about-item" *ngFor="let form of eventos.value">
+              <div class="about-item" *ngFor="let form of eventos">
                 <h4><strong>{{ 'NAME' | translate }}</strong>: {{ form[0] }}</h4>
                 <p><strong>{{ 'ABOUT' | translate }}</strong>: {{ form[1] }}</p>
                 <p><strong>{{ 'YEAR' | translate }}</strong>: {{ form[2] }}</p>
@@ -125,10 +129,10 @@
             </ion-list>
           </ion-item-group>
 
-          <ion-item-group *ngIf="club_liga != undefined && club_liga.value.length > 0">
+          <ion-item-group *ngIf="club_liga != undefined">
             {{ "TOURNAMENT" | translate }}
             <ion-list>
-              <div class="about-item" *ngFor="let liga of club_liga.value">
+              <div class="about-item" *ngFor="let liga of club_liga">
                 <h4><strong>{{ 'POSITION' | translate }}</strong>: {{ liga[0] }}</h4>
                 <p><strong>{{ 'CHAMPIONSHIP' | translate }}</strong>: {{ liga[1] }}</p>
                 <p><strong>{{ 'YEAR' | translate }}</strong>: {{ liga[2] }}</p>
@@ -142,7 +146,7 @@
 
     </ion-card><!-- Sports Data -->
 
-    <ion-card class="myVideos" *ngIf="videos">
+    <ion-card class="myVideos">
 
       <ion-card-header>
         {{ "VIDEOS" | translate }}
@@ -154,7 +158,7 @@
 
       </ion-card-header>
 
-      <ion-item-group>
+      <ion-item-group *ngIf="videos != undefined">
         <ion-item>
           <ion-row no-padding>
 
@@ -168,7 +172,7 @@
 
     </ion-card><!-- My Videos -->
 
-    <ion-card class="my-team" *ngIf="team.length > 0">
+    <ion-card class="my-team" *ngIf="team != undefined">
 
       <ion-card-header>
         {{ "MY_TEAM" | translate }}
@@ -180,20 +184,20 @@
 
   </ion-col>
 
-  <ion-col col-12 col-lg-6>
+  <ion-col col-12 col-lg-6 *ngIf="ID != null">
 
-    <ion-list *ngIf="type >= 3">
+    <ion-list *ngIf="type > 2">  
       <ion-title>
         {{ "LAST_EVENTS" | translate }}
       </ion-title>
-      <calendar *ngIf="ID" [timelineID]="ID"></calendar>
+      <calendar [timelineID]="ID"></calendar> 
     </ion-list>
 
-    <ion-list> 
+    <ion-list>
       <ion-title>
         {{ "LAST_ACTIVITY" | translate }}
       </ion-title>
-      <timeline *ngIf="ID" [timelineID]="ID"></timeline>
+      <timeline [timelineID]="ID"></timeline>
     </ion-list>
 
   </ion-col>

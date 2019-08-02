@@ -7,6 +7,7 @@ use Core\Service\Notify;
 use Core\Database\FollowersModel;
 use Core\Utils\DataConverter;
 use Illuminate\Http\Request;
+use Core\Database\UserModel;
 
 class Follow {
 
@@ -47,9 +48,12 @@ class Follow {
 
         //Filtrar inputs e validação de dados
         $followData = [
-            'from_id'     => $this->currentUser->ID,
+            'from_id'       => $this->currentUser->ID,
             'has_block' => 0
         ];
+
+        //Instancia modelo de tabela de usuário
+        $usermodel = new UserModel();
 
         //Insere dados no modelo
         $followers = $this->model->getIterator($followData);
@@ -62,26 +66,33 @@ class Follow {
                 continue;
             }
 
-            try {                
-                //Atribui ID de usuário, pode retornar erro se usuário excluido
-                $id = $item->to_id->ID;
-
-                //Se seguidor for mesmo do usuário logado
-                if( $id == $this->currentUser->ID){
-                    continue;
+            try {
+                //Atribui ID de usuário, pode retornar exception se usuário excluido
+                $f = $item->getData();
+                
+                //Verifica se usuário existe
+                if (!$usermodel->load(['ID' => $f['to_id']])) {
+                    continue; 
                 }
                 
-                //Instanciando classe de usuário
-                $user = new User();
-                
-                //Atribui dados de usuário ao array
-                $listUsers[] = ($only_ids)? $id : $user->getMinProfile($id);
+                //Adiciona id de usuário
+                $id = (int) $f['to_id'];
 
-            } catch (\Throwable $th) {
+            } catch (\Exception $th) {
                 //Se erro de usuario inexistente, vai para proxima iteração
                 continue;
             }
 
+            //Se seguidor for mesmo do usuário logado
+            if( $id == $this->currentUser->ID){
+                continue;
+            }
+
+            //Instanciando classe de usuário
+            $user = new User();
+            
+            //Atribui dados de usuário ao array
+            $listUsers[] = ($only_ids)? $id : $user->getMinProfile($id);
             
         }       
 

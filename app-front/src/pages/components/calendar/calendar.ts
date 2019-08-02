@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ModalController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Timeline } from '../timeline/timeline';
-import { Api } from '../../../providers';
+import { Api, User } from '../../../providers';
 
 @Component({
   selector: 'calendar',
@@ -15,26 +15,22 @@ export class Calendar extends Timeline {
   @Input()  public isLogged: boolean = false
   @Output() public updateEvent = new EventEmitter()
  
-  //Lista de Items
+  //Lista de Items 
   @Input()  public currentItems:any[] = [];
   public commentText:any = { comment_content : <string> ''}; 
   public commentShow:any;
 
 
   constructor(
-    public  api: Api,
-    public  modalCtrl: ModalController,
-    public  translateService: TranslateService) {
+    public  api:Api,
+    public  user:User,
+    public  modalCtrl:ModalController,
+    public  translateService:TranslateService) {
       //Dependencias da classe pai  
-      super(api, modalCtrl, translateService);
+      super(api, user, modalCtrl, translateService);
     
       //Setando url de requisições
-      this._setUrl('calendar');
-  }
-
-  ngOnInit(){
-    //Executando query
-    this.query();
+      this._setUrl('calendar'); 
   }
 
   /** Solicitação de update */

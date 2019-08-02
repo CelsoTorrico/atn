@@ -4,15 +4,10 @@ import { IonicPage, NavController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 
 /* Success Class*/
-@IonicPage({
-    name: 'SuccessStep',
-    segment: 'success-step'
-})
 @Component({
     templateUrl: "success.html"
 })
-
-export class SuccessStep{
+export class SuccessStepPage{
 
     constructor(
         private navCtrl:NavController, 
@@ -23,7 +18,7 @@ export class SuccessStep{
     }
 
     goToDashboard() {
-        this.navCtrl.push(DashboardPage);
+        this.navCtrl.push('Dashboard');
     }
 
 }

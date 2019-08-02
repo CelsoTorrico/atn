@@ -24,16 +24,17 @@ use RecursiveArrayIterator;
  */
 class Report {
 
-    public $user; //user
-    public $spreadsheet;
-    private $recursive;
+    public      $user; //user
+    protected   $id;
+    public      $spreadsheet;
+    private     $recursive;
     
     //Contrução da classe
     public function __construct(UserClub $user) {
 
         //Inicializa modelos e classes
         $this->user = $user;
-        $this->spreadsheet = new Spreadsheet;
+        $this->spreadsheet = new Spreadsheet();
     }
 
     /**
@@ -111,14 +112,19 @@ class Report {
         //Inicializando string
         $filename = '';
 
-        //$sheet = $spreadsheet->getActiveSheet();
         //Criando worksheets
         $chartSheet = new Worksheet($this->spreadsheet, 'Geral');
+        $chartSheet->getPageSetup()->setFitToWidth(1);
+
         $sheet = new Worksheet($this->spreadsheet, 'Lista de Usuários');
+        $sheet->getPageSetup()->setFitToWidth(1); 
         
         //Adicionando os worksheets ao arquivo
-        $this->spreadsheet->addSheet($chartSheet, 0);
-        $this->spreadsheet->addSheet($sheet, 1);
+        $this->spreadsheet->addSheet($chartSheet, 1);
+        $this->spreadsheet->addSheet($sheet, 2);
+        
+        //Remove default worksheet
+        $this->spreadsheet->removeSheetByIndex(0);
         
         //Organiza conteúdo para worksheet
         $this->dataUsersComposer($sheet, $export);
@@ -138,6 +144,12 @@ class Report {
         
         //Setar arquivo para suportar gráfico
         $writer->setIncludeCharts(true);
+
+        //Verifica se diretório de cache existe
+        if(!is_dir(env('APP_IMAGES'))) {
+            //Cria se não existir
+            mkdir(env('APP_IMAGES'), 644);
+        }
         
         //Salvar arquivo
         $writer->save($path = env('APP_IMAGES').'report.'.$ext);
@@ -156,14 +168,14 @@ class Report {
      * */
     private function dataUsersComposer(Worksheet $sheet, Array $data = []) {
 
-        $user_id = null;
+        $this->id = null; //A ser utilizado na criação das estatisticas de esporte
 
         //Função para interar sobre dados de usuário e atribuindo a arquivo Excel
         $recursive = function(Array $array, Worksheet $sheet, int $r = 0, int $c = 0, bool $showName = false) {
 
             //Atribuir ID do usuario no loop
             if (key_exists('ID', $array))
-                $user_id = $array['ID'];  
+                $this->id = (int) $array['ID'];  
 
             //Adiciona keys inseridas para não haver repetição de dados
             $repeated = ['user_login', 'favorite', 'following', 'totalFavorite', 'totalMessages', 'totalNotifications', 'session_tokens', 'searched_profile', 'my-videos', 'views'];
@@ -229,21 +241,30 @@ class Report {
                         foreach ($value['value'] as $k => $v) {
 
                             //Instanciando interador
-                            $i = new RecursiveIteratorIterator(new RecursiveArrayIterator($v));
-
-                            if(!$i->callHasChildren())
+                            if (is_array($v)) {
+                                //Tranforma array em objeto
+                                $i = new RecursiveIteratorIterator(new RecursiveArrayIterator($v));
+                                //Verifica se existem dados abaixo
+                                if(!$i->callHasChildren())
                                 continue;
+                            } else {
+                                //Se nessa etapa o dado não for array, pular proximo
+                                continue;
+                            }                           
 
                             //Verifica se existe worksheet, se não cria novo
-                            $statSheet = (is_null($s = $this->spreadsheet->getSheetByName($k)))? new Worksheet($this->spreadsheet, $k) : $s;    
+                            $statSheet = (is_null($s = $this->spreadsheet->getSheetByName($k)))? new Worksheet($this->spreadsheet, $k) : $s;  
 
                             //Adicionando planilha / worksheet
                             $this->spreadsheet->addSheet($statSheet);
 
-                            //Nome da coluna
-                            $colName = $i->key();
-                            $col = 1;
-                            $row = 2;
+                            $colName = $i->key(); //Nome da coluna
+                            $row = 2; //Linha inicial 
+                            $col = 2; //Coluna inicial
+
+                            //Adicionando ID de usuário para inicio da coluna de dados
+                            $statSheet->setCellValueByColumnAndRow(1, 1, 'ID');
+                            $statSheet->setCellValueByColumnAndRow(1, $row, $this->id);
 
                             foreach ($i as $ia => $ib) {
                                 //Escreve valores na posição definida do Excel
@@ -251,7 +272,6 @@ class Report {
                                 $statSheet->setCellValueByColumnAndRow($col, $row, $ib);
                                 $col++; //proxima coluna
                             }
-
                             $row++;//proxima linha
 
                         }

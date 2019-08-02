@@ -28,7 +28,7 @@ export class CommentItem {
 
   commentText: string
 
-  public currentUser: any = {
+  @Input() public currentUser: any = {
     ID: "",
     display_name: "",
     profile_img: "",
@@ -52,11 +52,14 @@ export class CommentItem {
   //Retorna
   ngOnInit() {
     
-    /*this.user.subscribeUser(function ($this) {
-      $this.currentUser = $this.user._user;
-    }, this);*/
-
-    this.currentUser = this.user._user;
+    this.user.dataReady.subscribe((resp) => {
+        
+        if(resp.status != 'ready') return;
+        
+        this.currentUser = this.user._user;
+        
+    }); 
+    
   }
 
   //Mostrar campo de comentário
@@ -68,7 +71,7 @@ export class CommentItem {
 
   //Abre uma nova página de profile
   goToProfile($user_id: number) {
-    this.navCtrl.push('ProfilePage', { 
+    this.navCtrl.push('Profile', { 
       user_id: $user_id
     });
   }

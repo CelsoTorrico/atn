@@ -49,9 +49,9 @@ export class NavMenu {
     
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'FAVORITE',  component: 'FavoritePage' },
-      { title: 'LEARN',     component: 'LearnPage' },
-      { title: 'MESSAGES',  component: 'ChatPage' }
+      { title: 'FAVORITE',  component: 'Favorite' },
+      { title: 'LEARN',     component: 'Learn' },
+      { title: 'MESSAGES',  component: 'Chat' }
     ];
   }
 

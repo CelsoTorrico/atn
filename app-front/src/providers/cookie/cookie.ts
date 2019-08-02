@@ -1,26 +1,25 @@
-import { NavController } from 'ionic-angular';
 import { CookieService } from 'ng2-cookies';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class Cookie {
 
   constructor() {} 
 
-  static checkCookie(cookie:CookieService, nav:NavController):boolean {
+  /** Verifica existencia cookie */
+  static checkCookie():boolean {
+    return (new CookieService).check(environment.cookieName);  
+  }
 
-    //Se cookie de sessão já estiver setado direcionar para dashboard
-    let existsCookie = cookie.check('app_atletas_now');  
+  /** Retorna dados do cookie */
+  static getCookie() {
+    return (new CookieService).get(environment.cookieName);
+  }
 
-    //Se cookie da plataforma estiver presente direcionar para dashboard
-    /*if(!existsCookie){
-      //Redirecionar para página de login
-      nav.setRoot(LoginPage);        
-    }*/
-
-    //Retorna boolean
-    return existsCookie; 
-
+  /** Remover cookie */
+  static deleteCookie() {
+    return (new CookieService).delete(environment.cookieName);
   }
 
 }

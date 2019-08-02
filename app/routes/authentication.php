@@ -9,6 +9,9 @@ $router->group(['prefix' => 'login'], function () use ($router) {
     //SOCIAL LOGIN
     $router->get('/{social:facebook|google|authorized}',  'LoginController@socialProvider');
 
+    //Verifica e válida cookie, se autenticação permitir requisição
+    $router->get('/cookie', 'LoginController@cookieLogin');
+
 });
 
 /** ####### REGISTER ################# */
@@ -27,5 +30,8 @@ $router->get('/logout', 'LoginController@logout');
 
 /** ####### FORGET PASSWORD ################# */
 $router->post('/forget-pass', 'LoginController@forgetPassword');
+
+/** ####### CONFIRM EMAIL ################# */
+$router->post('/confirm-email', 'LoginController@confirmEmail');
 
 

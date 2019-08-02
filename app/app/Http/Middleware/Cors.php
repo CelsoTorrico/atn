@@ -23,7 +23,9 @@ class Cors
             $http_origin = $_SERVER['HTTP_ORIGIN']; //Atribuindo servidor de requisição
         }        
 
-        if (!empty($http_origin) && preg_match('/http(s)?:\/\/(app|api|admin)?'. env('APP_DOMAIN') .'/', $http_origin, $match)){
+        $regex = '/http(s)?:\/\/(app|api|admin)?'. env('APP_DOMAIN') .'/';
+
+        if (!empty($http_origin) && preg_match($regex, $http_origin, $match)){
                 $origin = $match[0];
         } else {
                 $origin = env('APP_FRONT');
@@ -43,7 +45,7 @@ class Cors
             return response()->json('{"method":"OPTIONS"}', 200, $headers);
         }
         
-        $response = $next($request);        
+        $response = $next($request);   
         
         foreach($headers as $key => $value)
         {      

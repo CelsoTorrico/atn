@@ -1,0 +1,43 @@
+<ion-content class="page-initial page-confirm-email" padding>
+
+  <ion-grid fixed>
+
+    <ion-item>
+      <ion-img width="275" height="38" src="assets/img/atletasnow-logotipo.svg" id="main-logo" class="img-center"
+        title="AtletasNOW"></ion-img>
+    </ion-item>
+
+    <ion-row>
+      <ion-col text-center>
+
+        <div *ngIf="status else elseBlock">
+
+          <h2 text-center>
+            {{ "EMAIL_CONFIRM_SUCCESS_TITLE" | translate}}
+          </h2>
+
+          <p>{{ "YOUR_EMAIL_WAS_CONFIRMED" | translate }}</p>
+
+          <button ion-button full (click)="goToDashboard()">
+            {{ "WELCOME_IN_ATLETASNOW" | translate }}
+          </button>
+
+          <h3>{{ "YOU_WILL_REDIRECT" | translate }}{{ count }}</h3>
+
+        </div>
+
+        <ng-template #elseBlock>
+
+          <h2 text-center>
+            {{ "EMAIL_ERROR_TITLE" | translate}}
+          </h2>
+
+          <p>{{ "ERROR_EMAIL_VERIFY" | translate }}<b>{{email}}</b>!</p>
+        </ng-template>
+
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+
+</ion-content>

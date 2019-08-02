@@ -13,7 +13,7 @@ export class Chat {
 
     @Input() public $roomID: number; 
 
-    public currentUser:any = {
+    @Input() public currentUser:any = {
         ID: <number>null
     };
 
@@ -38,7 +38,6 @@ export class Chat {
 
     constructor(
         public api: Api, 
-        public user: User, 
         public params: NavParams, 
         private socket: Socket,
         public translateService: TranslateService ) {
@@ -47,11 +46,6 @@ export class Chat {
 
         //Função para adicionar chat para abrir inicialmente
         this.openChat = this.params.get('room_open');
-
-        //Retorna dados de usuário de contexto
-        this.user.subscribeUser(function($this){
-            $this.currentUser = $this.user._user;
-        }, this); 
 
         //Função que executa após o envio de mensagens
         //Recupera dados do socket.IO

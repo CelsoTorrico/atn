@@ -1,5 +1,6 @@
+import { VisibilityList } from './../../../providers/visibility/visibility';
 import { Component } from '@angular/core';
-import { NavController, ToastController, ViewController } from 'ionic-angular';
+import { ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
@@ -28,42 +29,36 @@ export class MyProfileAchievementsComponent {
         public api: Api,
         public viewCtrl: ViewController,
         public statsList: StatsList,
-        public translateService: TranslateService) { 
+        public translateService: TranslateService,
+        visibilityList: VisibilityList) { 
     
-            this.translateService.setDefaultLang('pt-br');
+        this.translateService.setDefaultLang('pt-br');
 
+        //carrega traduções
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;
-        })
+        });
 
-        //Função a ser executada após requisição de dados de usuário
-        this.addFormData = function ($this: any) {
-
-            //Adicionando valores a classe user
-            let atributes = $this.user._user;
-
-            //Atribuir data de usuário ao modelo
-            $this.titulos_conquistas = atributes.metadata['titulos-conquistas'];
-
-            //Carrega lista de visibilidades
-            $this.getVisibility();
-        }
+        //Carrega visibilidades
+        visibilityList.load().then(() => {
+            this.visibility = visibilityList.table
+        });
+        
     }
 
     //Função que inicializa
     ngOnInit() {
         //Retorna dados de usuário
-        this.user._userObservable.subscribe((resp:any) => {
-            this.addFormData(this);
-        });
-    }
+        this.user.getUserData().then((resp:boolean) => {
+            
+            if(!resp) return;
+            
+            //Adicionando valores a classe user
+            let atributes = this.user._user;
 
-    getVisibility(){
-        //Retorna opções de visibilidade
-        this.user._visibilityObservable.subscribe((resp:any) => {
-            if(Object.keys(resp).length > 0){
-                this.visibility = resp;
-            }
+            //Atribuir data de usuário ao modelo
+            this.titulos_conquistas = atributes.metadata['titulos-conquistas'];
+
         });
     }
 

@@ -1,93 +1,73 @@
 import { MyProfileStatsComponent } from './../../my-profile/stats-data/stats-data.component';
 import { ModalController, ToastController } from 'ionic-angular';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { User } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
 import { MyProfileGeneralStatsComponent } from '../../my-profile/general-stats-data/general-stats-data.component';
 import { MyProfileAchievementsComponent } from '../../my-profile/achievements-data/achievements-data.component';
-import { Observable } from 'rxjs/Observable';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'profile-stats',
   templateUrl: "stats.html",
   animations: [
-     
+
   ]
 })
 export class StatsComponent {
 
-  profile: Observable<ArrayBuffer> 
-  
-  stats: Observable<ArrayBuffer> 
+  @Input() user: User
+  @Input() type: number = null;
 
-  isLogged:boolean = false;
+  isLogged: boolean = false;
 
-  type: number = null; 
-
-  sport: any[] = []; 
-
-  general:any = {
+  general: any = {
     jogos: null,
     vitorias: null,
     empates: null,
     derrotas: null,
     titulos: null,
-    ['titulos-conquistas']: null  
+    ['titulos-conquistas']: null
   }
 
-  performance:any = {
-    stats : null
+  performance: any = {
+    stats: null
   }
 
   private ListComponents: any = {
-    generalData       : MyProfileGeneralStatsComponent,
-    achievementsData  : MyProfileAchievementsComponent,
-    statsData         : MyProfileStatsComponent
+    generalData: MyProfileGeneralStatsComponent,
+    achievementsData: MyProfileAchievementsComponent,
+    statsData: MyProfileStatsComponent
   }
 
   constructor(
     private modalCtrl: ModalController,
     public statsList: StatsList,
     private toastCtrl: ToastController,
-    public translateService: TranslateService) { 
-      this.translateService.setDefaultLang('pt-br'); 
-    }
+    public translateService: TranslateService) {
+
+    this.translateService.setDefaultLang('pt-br');
+
+  }
 
   //Retorna
   ngOnInit() {
-    this.fillUserData();
+    //Retorna s estatisticas do usuario
+    this.getStats();
   }
 
-  //Adiciona valores as variaveis globais
-  fillUserData() {
+  ngAfterViewChecked() {
 
-    this.profile.subscribe((resp: any) => {
+  }
 
-      //Se não existir items a exibir
-      if (resp.length <= 0) { 
-        return;
-      }
-
-      //Adicionando valores as variavel global
-      let atributes = resp;
-
-      //Atribuindo dados aos modelos
-      this.type = atributes.type.ID;
-      this.sport = atributes.sport;
-
-      //Retorna s estatisticas do usuario
-      this.getStats();
-
-    }, err => {
-      return;
-    });
+  loadUserLoadData(userdata: any, $fn = () => { }) {
 
   }
 
   //Retorna estatisticas
   getStats() {
-    this.stats.subscribe((resp: any) => {
+
+    this.user._statsObservable.subscribe((resp: any) => {
 
       //Se não existir items a exibir
       if (resp.length <= 0) {
@@ -96,57 +76,54 @@ export class StatsComponent {
 
       for (const key in resp.general) {
         if (this.general.hasOwnProperty(key)) {
-          this.general[key] = resp.general[key];           
+          this.general[key] = resp.general[key];
         }
       }
 
       //Atribui dados de performance a model
-      this.performance = resp.performance; 
+      this.performance = resp.performance;
 
     }, err => {
-      return; 
+      return;
     });
   }
 
   //Abrir modal passando ID do usuário para alteração
-  editMember($user_id:number){
-    this.editData('teamData', $user_id );
+  editMember($user_id: number) {
+    this.editData('teamData', $user_id);
   }
 
   //Abrir modal com dados para atualizar perfil
-  editData($component: string, $data:any = undefined){ 
+  editData($component: string, $data: any = undefined) {
 
     //Criar modal do respectivo component
-    let modal = this.modalCtrl.create(this.ListComponents[$component], {data: $data});
+    let modal = this.modalCtrl.create(this.ListComponents[$component], { data: $data });
     modal.onDidDismiss((data) => {
 
-        if(data == null){
-          return;
-        }
-        
-        if (Object.keys(data).length <= 0) {
-          return;
-        }
+      if (data == null) {
+        return;
+      }
 
-        if(data.error != undefined){
-          return;
-        }
+      if (Object.keys(data).length <= 0) {
+        return;
+      }
 
-        //Retorna mensagem proveninete do servidor
-        let responseText = data.success[Object.keys(data.success)[0]];
+      if (data.error != undefined) {
+        return;
+      }
 
-        //Mostrar resposta
-        let toast = this.toastCtrl.create({
-            message:  responseText,
-            duration: 3000,
-            position: "bottom"
-        });
+      //Retorna mensagem proveninete do servidor
+      let responseText = data.success[Object.keys(data.success)[0]];
 
-        toast.present();
+      //Mostrar resposta
+      let toast = this.toastCtrl.create({
+        message: responseText,
+        duration: 3000,
+        position: "bottom"
+      });
 
-        //Recarregar dados do profile
-        this.fillUserData();
-        
+      toast.present();
+
     });
 
     //Inicializar modal

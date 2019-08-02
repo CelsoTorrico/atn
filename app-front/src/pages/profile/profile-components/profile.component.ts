@@ -9,256 +9,220 @@ import { User, Api } from '../../../providers';
 import { MyProfilePersonalDataComponent } from '../../my-profile/personal-data/personal-data.component';
 import { MyProfileSportsComponent } from '../../my-profile/sports-data/sports-data.component';
 import { MyProfileStatsComponent } from '../../my-profile/stats-data/stats-data.component';
-import { Observable } from 'rxjs/Observable';
-import { Subscriber, Subscription } from 'rxjs';
 
 @Component({
   selector: 'profile',
-  templateUrl: 'profile.html' 
+  templateUrl: 'profile.html'
 })
 export class ProfileComponent {
 
   //Variveis de template de usuario
 
-  profile: Observable<ArrayBuffer>
+  @Input() user: User
 
-  stats: Observable<ArrayBuffer>
-
-  team_members: Observable<ArrayBuffer>
+  @Input() type: number = null;
 
   isLogged: boolean = false;
 
   ID: number = null;
 
-  type: number = null;
-
   display_name: string = '';
 
-  sport: any = {
-    value: []
-  }
+  sport: any = null
 
-  clubes: any = {
-    value: []
-  }
+  clubes: any = null
 
-  biography: any = {
-    value: ''
-  }
+  biography: any = null
 
-  birthdate: any = {
-    value: ''
-  }
+  birthdate: any = null
 
-  address: any = {
-    value: ''
-  }
+  address: any = null
 
-  city: any = {
-    value: ''
-  }
+  city: any = null
 
-  country: any = {
-    value: ''
-  }
+  country: any = null
 
-  state: any = {
-    value: ''
-  }
+  state: any = null
 
-  cpf: any = {
-    value: ''
-  }
+  cpf: any = null
 
-  rg: any = {
-    value: ''
-  }
+  rg: any = null
 
-  gender: any = {
-    value: ''
-  }
+  gender: any = null
 
-  neighbornhood: any = {
-    value: ''
-  }
+  neighbornhood: any = null
 
-  telefone: any = {
-    value: ''
-  }
+  telefone: any = null
 
-  profile_img: any = {
-    value: ''
-  }
+  profile_img: any = null
 
-  formacao: any = {
-    value: ''
-  }
+  formacao: any = null
 
-  cursos: any = {
-    value: ''
-  }
+  career: any = null
 
-  ['titulos-conquistas'] = {
-    value: ''
-  } 
+  cursos: any = null;
 
-  videos: any = []
-  
+  ['titulos-conquistas'] = null
+
+  videos: any = null
+
   /* Instituição */
-  
-  team:any[] = [];
 
-  max_users:number;
+  team: any = null
+
+  max_users: number = null;
 
   current_users: {
     ids: [''],
     qtd: 0
   }
 
-  club_site:any = {
-    value:''
-  }
+  club_site: any = null
 
-  club_sede:any = {
-    value:''
-  }
+  club_sede: any = null
 
-  club_liga:any = { 
-    value:''
-  }
+  club_liga: any = null
 
-  eventos:any = {
-    value:''
-  }
+  eventos: any = null
 
   /** FIM */
-
-  public $getUser: any;
 
   public loginErrorString;
 
   public showMessageBox: boolean = false;
 
-  public deleteMessage:any;
+  public deleteMessage: any;
 
   private ListComponents: any = {
-    personalData:   MyProfilePersonalDataComponent,
-    sportsData:     MyProfileSportsComponent,
-    videosData:     MyProfileVideosComponent,
-    statsData:      MyProfileStatsComponent,
-    teamData:       MyProfileAddMemberDataComponent,
-    calendarData:   MyProfileCalendarComponent
+    personalData: MyProfilePersonalDataComponent,
+    sportsData: MyProfileSportsComponent,
+    videosData: MyProfileVideosComponent,
+    statsData: MyProfileStatsComponent,
+    teamData: MyProfileAddMemberDataComponent,
+    calendarData: MyProfileCalendarComponent
   }
 
   constructor(
     public navCtrl: NavController,
     public api: Api,
     public toastCtrl: ToastController,
-    public alert:AlertController,
+    public alert: AlertController,
     public modalCtrl: ModalController,
     public domSanitizer: DomSanitizer,
-    public translateService: TranslateService) { 
-    
-      this.translateService.setDefaultLang('pt-br');
+    public translateService: TranslateService) {
 
-      this.translateService.get(["YOU_WILL_EXCLUDE_MEMBER", "YOU_SURE"]).subscribe((data) => {
-        this.deleteMessage = data;
-      })
+    this.translateService.setDefaultLang('pt-br');
+
+    this.translateService.get(["YOU_WILL_EXCLUDE_MEMBER", "YOU_SURE"]).subscribe((data) => {
+      this.deleteMessage = data;
+    })
 
   }
 
   //Função que inicializa
   ngOnInit() {
-    //Carrega dados do usuário de contexto
-    this.loadUserLoadData();
+    
   }
 
   /** Carrega dados de usuário de contexto */
-  public loadUserLoadData($fn = () => {}): Promise<void> {
-    return this.currentUserLoadData($fn);
+  public loadUserLoadData(userdata:any, $fn = () => {}) {
+    return this.currentUserLoadData(userdata, $fn); 
   }
 
-  private currentUserLoadData($fn = () => {}): Promise<void> {
-
-    return this.profile.toPromise().then((resp: any) => {
-
-      //Adicionando valores as variavel global
-      let atributes = resp;
-
-      if (atributes.metadata != undefined) {
-        //Intera sobre objeto e atribui valor aos modelos de metadata
-        for (var key in atributes.metadata) {
-          if (atributes.metadata.hasOwnProperty(key) && this[key] != undefined) {
-            this[key] = atributes.metadata[key];
-          }
-        }
-      }
-
-      //Atribuindo dados aos modelos
-      this.ID = atributes.ID;
-      this.display_name = atributes.display_name;
-
-      if (atributes.type != null) this.type = atributes.type.ID; 
-      if (atributes.sport != null) this.sport = atributes.sport;
-
-      this.clubes = atributes.clubs;
-
-      //Apenas para instituições
-      if(this.type > 3){
-
-        //Atribui data
-        this.current_users = atributes.current_users;
-        this.max_users = atributes.max_users;
-
-        //executa busca de membros da instituição
-        this.getMyMembersTeam();  
-
-      }
-
-      if (atributes.metadata['my-videos'] != undefined) {
-
-        if (atributes.metadata['my-videos'].value.length <= 0)
-          return;
-
-        let videos: any[] = [];
-
-        //Percorre array de links de video, sanitizando e atribuindo
-        atributes.metadata['my-videos'].value.forEach(element => {
-          //Atribui valores ao objeto
-          let embed = element.replace('watch?v=', 'embed/');
-          let trustedVideo = this.domSanitizer.bypassSecurityTrustResourceUrl(embed);
-          videos.push(trustedVideo);
-        });
-
-        //Adiciona videos a variavel de escopo global
-        this.videos = videos;
-      }
-
-      //Carrega função
-      $fn();
-
-    }).catch((reason) => {
+  /** Recarrega dados após atualização */
+  public reloadUserData(){
+    this.user.getUserData().then((resp:boolean) => {
+        
+      if (!resp) return;
+      this.loadUserLoadData(this.user._user, function(){
+        console.log('Dados recarregados!')
+      });
 
     });
+  }
+
+  /** carrega dados de usuário */
+  private currentUserLoadData(userdata:any, $fn = () => {}) {
+
+    let atributes = userdata;
+
+    //Intera sobre objeto e atribui valor aos modelos de metadata
+    if (atributes.metadata != undefined) { 
+      for (const key in atributes.metadata) {
+
+        let attr = atributes.metadata[key];
+        let value = (attr.hasOwnProperty('value')) ? attr.value : attr;
+
+        //Percorre array de metadatas e atribuindo a propriedades da classe
+        if (this.hasOwnProperty(key) && value != null) {
+          this[key] = value;
+        }
+
+      }
+    }
+
+    //Atribuindo dados aos modelos
+    this.ID = atributes.ID;
+    this.display_name = atributes.display_name;
+
+    if (atributes.type != null) this.type = atributes.type.ID;
+    if (atributes.sport != null) this.sport = atributes.sport;
+    if (atributes.clubs != null) this.clubes = atributes.clubs;
+
+    //Apenas para instituições
+    if (this.type > 3) {
+
+      //Atribui data
+      this.current_users = atributes.current_users;
+      this.max_users = atributes.max_users;
+
+      //executa busca de membros da instituição
+      this.getMyMembersTeam(); 
+
+    }
+
+    if (atributes.metadata['my-videos'] && atributes.metadata['my-videos'].value) {
+
+      if (atributes.metadata['my-videos'].value.length <= 0)
+        return;
+
+      let videos: any[] = [];
+
+      //Percorre array de links de video, sanitizando e atribuindo
+      atributes.metadata['my-videos'].value.forEach(element => {
+        //Atribui valores ao objeto
+        let embed = element.replace('watch?v=', 'embed/');
+        let trustedVideo = this.domSanitizer.bypassSecurityTrustResourceUrl(embed);
+        videos.push(trustedVideo);
+      });
+
+      //Adiciona videos a variavel de escopo global
+      this.videos = videos;
+    }
+
+    console.log(this);
+
+    //Carrega função
+    $fn();
 
   }
 
   //Para instituições, carrega lista de usuários pertencentes
-  getMyMembersTeam(){
-    this.team_members.subscribe((resp:any) => { 
-       
-        if(Object.keys(resp).length <= 0){
-          return;
-        }
+  getMyMembersTeam() {
+    this.user._teamObservable.subscribe((resp: any) => {
 
-        //Atribui dados ao modelo
-        this.team = resp; 
+      if (Object.keys(resp).length <= 0) {
+        return;
+      }
+
+      //Atribui dados ao modelo
+      this.team = resp;
 
     });
   }
 
-  deleteMember($user_id:number){
-    
+  deleteMember($user_id: number) {
+
     let confirmDelete = this.alert.create({
       title: this.deleteMessage.YOU_WILL_EXCLUDE_MEMBER,
       subTitle: this.deleteMessage.YOU_SURE,
@@ -275,7 +239,7 @@ export class ProfileComponent {
             //Sucesso 
             if (resp.success != undefined) {
               //Emite um evento para ser capturado pelo componente pai
-              this.currentUserLoadData();
+              this.reloadUserData();
             }
 
           }, err => {
@@ -292,47 +256,55 @@ export class ProfileComponent {
   }
 
   //Abrir modal passando ID do usuário para alteração
-  editMember($user_id:number){
-    this.editData('teamData', $user_id );
+  editMember($user_id: number) {
+    this.editData('teamData', $user_id);
+  }
+
+  //Abrindo modal com dados de item a editar
+  calendarUpdate($event) {
+    this.editData($event.form, $event.event, function () {
+      //Recarrega lista de calendários
+      $event.component.reload();
+    });
   }
 
   //Abrir modal com dados para atualizar perfil
-  editData($component: string, $data:any = undefined, $fn = () => { this.currentUserLoadData() }) {
+  editData($component: string, $data: any = undefined, $fn = () => { this.reloadUserData() }) {
 
     //Criar modal do respectivo component
-    let modal = this.modalCtrl.create(this.ListComponents[$component], {data: $data});
+    let modal = this.modalCtrl.create(this.ListComponents[$component], { data: $data });
     modal.onDidDismiss((data) => {
 
-        //Se modal foi fechado sem enviar dados  
-        if(data == null || data == undefined){
-          return;
-        }
+      //Se modal foi fechado sem enviar dados  
+      if (data == null || data == undefined) {
+        return;
+      }
 
-        //Verificar há mais de um dado no array 
-        if (Object.keys(data).length <= 0) {
-          return;
-        }
+      //Verificar há mais de um dado no array 
+      if (Object.keys(data).length <= 0) {
+        return;
+      }
 
-        //Se houve erro
-        if(data.error != undefined){
-          return;
-        }        
+      //Se houve erro
+      if (data.error != undefined) {
+        return;
+      }
 
-        //Retorna mensagem proveninete do servidor
-        let responseText = data.success[Object.keys(data.success)[0]];
+      //Retorna mensagem proveninete do servidor
+      let responseText = data.success[Object.keys(data.success)[0]];
 
-        //Mostrar resposta
-        let toast = this.toastCtrl.create({
-            message:  responseText,
-            duration: 3000,
-            position: "bottom"
-        });
+      //Mostrar resposta
+      let toast = this.toastCtrl.create({
+        message: responseText,
+        duration: 3000,
+        position: "bottom"
+      });
 
-        toast.present();
+      toast.present();
 
-        //Executar função
-        $fn();
-        
+      //Executar função
+      $fn();
+
     });
 
     //Inicializar modal

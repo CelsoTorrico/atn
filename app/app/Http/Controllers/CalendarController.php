@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\TimelineController;
 use Illuminate\Http\Request;
-use Core\Service\Learn;
-use Core\Profile\User;
 
-use Closure;
 use Core\Service\Calendar;
+use Core\Profile\User;
 
 class CalendarController extends TimelineController
 {
 
     protected $learn;
+    protected $calendar;
     
     /**
      * Create a new controller instance.
@@ -23,11 +22,24 @@ class CalendarController extends TimelineController
     public function __construct(Request $request)
     {
         $this->timeline = new Calendar($request->user());
+        $this->calendar = $this->timeline;
         $this->currentUser = $request->user();
+    }
+
+    function getUserAll(int $user_id, int $paged = 0){
+
+        //Retorna todos os posts pertencentes a usuário
+        $filter = ['post_author' => $user_id];
+        
+        //Carrega timeline de usuário correspondente
+        $response = $this->timeline->getAll($paged, $filter);
+
+        return response()->json( $response );
     }
 
     function getTypes() {
         
+        //Atribuindo lista de tipos de calendários
         $response = $this->calendar->getTypes();
 
         return response()->json($response);

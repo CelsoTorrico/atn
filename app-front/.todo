@@ -14,21 +14,25 @@
 ✔ Requisições:Loading nas requisições @done(19-07-14 16:43)
 ✔ Relatório >> Mostrar conteúdo na versão web @done(19-07-16 00:21)
 ✔ Evento >> Adicionar e Remover comentários @done(19-07-18 21:56)
-☐ Evento >> Listar apenas eventos do usuário
-☐ Evento >> Loading para upload de foto
-☐ Equipe >> Resolver busca ao enviar dados de filtragem
+✔ Evento >> Listar apenas eventos do usuário @done(19-08-01 01:13)
+✔ Evento >> Loading para upload de foto @done(19-07-31 03:30)
+✔ Equipe >> Filtro: Quando adicionado nome buscando geral @done(19-08-01 02:09)
+✔ Evento >> EXibir botões para editar calendário @done(19-08-01 15:44)
+✔ Filtro >> Reduzir para só mostrar os esportes do clube @done(19-08-02 01:48)
+
 
 #Outras
 ☐ Rotas das páginas >> Implementar
+☐ Logout >> Dando erro e redirecionando local erro
 
 #Melhorias secundárias
-☐ Tag Input >> Não está enviado dados, verificar e corrigir
+✔ Tag Input >> Não está enviado dados, verificar e corrigir @done(19-07-31 22:12)
 ☐ Tag Input >> Case insesitive, ignorar caracteres com acentuação
-☐ Página de Busca >> Não está abrindo BrowserModule?
+✔ Página de Busca >> Não está abrindo BrowserModule? @done(19-07-28 13:45)
 ☐ PDF >> Melhorar a exibição dos dados
-☐ Excel >> Melhorar exibição de dados
-
-#Optional
+✔ Excel >> Adicionar ID de usuário nas planilhas de estatísticas @done(19-08-02 01:53)
 ☐ Profile >> Botão de Bloquear Usuário
-☐ Profile >> Editar membros da equipe
+☐ Profile >> PDF de profile substituir numeros e colocar medalhas
+✔ Profile >> Editar membros da equipe @done(19-08-02 00:42)
+✔ Profile >> Habilitar edição quando visitando proprio perfil @done(19-08-01 01:41)
 ☐ Mensagens >> Paginação de mensagens anteriores

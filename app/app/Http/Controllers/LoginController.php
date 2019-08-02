@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Core\Profile\Login;
 use Core\Profile\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use App\Http\Middleware\Authenticate;
 use Socialite;
 
 class LoginController extends Controller
@@ -116,28 +114,28 @@ class LoginController extends Controller
         $require = ['type', 'display_name', 'sport', 'user_email', 'user_pass', 'confirm_pass'];
 
         //Verifica se campos obrigatórios estão presentes
-        if(!$request->has($require)){
-            //TODO: Melhorar resposta json
+        if(!$request->has($require)) {
             return response(['error' =>["register", "Campos não submetidos! Tente novamente!"]]); 
         }
 
         //Verifica se campos obrigatórios estão presentes
-        if(!$request->filled($require)){
-            //TODO: Melhorar resposta json
+        if(!$request->filled($require)) {
             return response(['error' =>["register", "Falta preencher campos obrigatórios!"]]); 
         }
+
+        //Verifica se já existe usuário com mesmo email
+        $exist = $this->isUserExist($request);
         
         //Realiza cadastro e retorna resultado
-        if( array_key_exists('error', $response = $this->user->add($request->all())) ){
+        if( key_exists('error', $response = $exist) || array_key_exists('error', $response = $this->user->add($request->all())) ){
             return response($response);
         }
 
         //Enviar email de boas vindas ao novo usuário se cadastro realizado
-        if (key_exists('success', $response))
-            $this->doWelcomeEmail($request->input('user_email'), $request->input('display_name'));
+        $this->doWelcomeEmail($request->input('user_email'), $request->input('display_name')); 
 
-        //Executa primeiro login na plataforma
-        return $this->login($request);
+        //Retorna resposta
+        return response($response);  
         
     }
 
@@ -156,7 +154,39 @@ class LoginController extends Controller
         
     }
 
-    /** Logout */
+    /** 
+     * Verifica e valida de Cookie 
+     * */
+    function cookieLogin(Request $request) {
+        //Retorna boolean
+        return response($this->login->isValidCookie($request->cookie($this->login->getCookieName())));
+    }
+
+    /** Validar Email de confirmação */
+    function confirmEmail(Request $request) {
+
+        //Verifica se campos obrigatórios estão presentes
+        if(!$request->has('token') && !$request->filled('token')) {
+            return response(['error' =>["confirm_email", "Não foi possível validar email!"]]); 
+        }
+        
+        //Atribui dados enviados
+        $token = $request->input('token');
+
+        //Verifica a validade do token enviado
+        $response =  $this->login->confirmUserEmail($token);
+
+        //Se validação foi realizada com sucesso, retorna password
+        if(key_exists('user_pass', $response) && !empty($response['user_pass'])) {
+            //Adiciona password para realizar login
+            return $this->login($request->merge($response));
+        }
+
+        //Retorna só em caso de mensagem de erro
+        return $response;
+    }
+
+    /** Resetar e enviar nova senha para email */
     function forgetPassword(Request $request){
         
         //Verifica se campos obrigatórios estão presentes
@@ -209,7 +239,7 @@ class LoginController extends Controller
     private function doWelcomeEmail(string $email, string $displayName) {
 
         //Executa metodo de envio de mensagem
-        $response = $this->login->sendWelcomeEmail($email, $displayName);
+       return response($this->login->sendWelcomeEmail($email, $displayName));
 
     }
 

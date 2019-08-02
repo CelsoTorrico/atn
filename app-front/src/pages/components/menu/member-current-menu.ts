@@ -4,6 +4,7 @@ import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { User } from '../../../providers';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'member-current-menu',
@@ -25,13 +26,13 @@ import { User } from '../../../providers';
 })
 export class MemberCurrentMenu { 
 
-    pages: any;
+    @Input() user:User
+    pages:any
 
     @Input() messageCount:number = 0;
 
     constructor(
         public navCtrl: NavController,
-        private user: User,
         private toastCtrl: ToastController,
         public translateService: TranslateService,
         private cookieService: CookieService) {
@@ -40,12 +41,12 @@ export class MemberCurrentMenu {
 
         // used for an example of ngFor and navigation
         this.pages = {
-            "MY_PROFILE": "ProfilePage",
-            "FAVORITE"  : "FavoritePage",
-            "LEARN"     : "LearnPage",
-            "MESSAGES"  : "ChatPage",
-            "SEARCH"    : "SearchPage",
-            "CONFIGURATION" : "SettingsPage", 
+            "MY_PROFILE": "Profile",
+            "FAVORITE"  : "Favorite",
+            "LEARN"     : "Learn",
+            "MESSAGES"  : "Chat",
+            "SEARCH"    : "Search",
+            "CONFIGURATION" : "Settings", 
             "FAQ"       : "",
             "SUPPORT"   : ""
         };
@@ -62,11 +63,8 @@ export class MemberCurrentMenu {
 
     //Abre uma nova página
     doLogout() {
-        //Atribuindo observable
-        let logoutObservable = this.user.logout();
-
         //Subscreve sobre a requisição
-        logoutObservable.subscribe((resp: any) => {
+        this.user.logout().then((resp: any) => {
             if (resp.success) {
 
                 //Exibe mensagem
@@ -76,14 +74,13 @@ export class MemberCurrentMenu {
                     duration: 3000
                 });
 
-                //Exclui dados do cookie
-                this.cookieService.delete('app_atletas_now'); 
-
                 toast.present({
-                    ev: this.navCtrl.setRoot('LoginPage')
+                    disableApp: true,
+                    ev: window.location.assign(environment.apiUrl)
                 });
 
             }
+            
         });
     }
 

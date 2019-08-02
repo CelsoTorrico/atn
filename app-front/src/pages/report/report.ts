@@ -7,7 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { DashboardPage } from '../dashboard/dashboard';
 import { ChartComponent } from 'angular2-chartjs';
 
-@IonicPage()
+@IonicPage({
+  segment: 'report'
+})
 @Component({
   selector: 'report',
   templateUrl: 'report.html'
@@ -110,7 +112,7 @@ export class ReportPage {
     if (this.navCtrl.canGoBack()) {
       this.navCtrl.pop();
     } else {
-      this.navCtrl.setRoot(DashboardPage);
+      this.navCtrl.setRoot('Dashboard');
     }
   }
 

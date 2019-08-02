@@ -49,7 +49,7 @@ class Authenticate
 
         //Se usuário estiver com perfil desativado, permitir requisição
         if (in_array($request->method(), ['POST', 'OPTIONS']) 
-            && ($request->is('login') || $request->is('register'))) {
+            && ($request->is('login') || $request->is('confirm-email'))) {
 
                 //Path
                 $uri = $request->path();
@@ -58,7 +58,7 @@ class Authenticate
                 $control = $this->loginControl;
 
                 //Post credenciais de login
-                $msg = ($uri == 'login')? $control->login($request) : $control->register($request);
+                $msg = ($uri == 'login')? $control->login($request) : $control->confirmEmail($request);
 
                 //Retorna dados de usuário encontrado
                 $userData = $control->getUserData();
@@ -78,11 +78,11 @@ class Authenticate
                     env('APPCOOKIE'), 
                     $control->getToken(), 
                     '/', 
-                    'localhost',//env('APP_DOMAIN'), 
+                    'localhost', //env('APP_DOMAIN'), 
+                    env('SSL_ENABLED'),
                     false, 
                     false, 
-                    false, 
-                    'strict');  
+                    'strict');
 
                 //Atribui a variavel
                 $tokenDatabase = $this->sessionCookie;
@@ -157,7 +157,7 @@ class Authenticate
                 $control->getToken(), 
                 '/', 
                 env('APP_DOMAIN'), 
-                false, 
+                env('SSL_ENABLED'), 
                 false, 
                 false, 
                 'strict');  
@@ -180,13 +180,13 @@ class Authenticate
         }
 
         //Permitir logout mesmo se usuário não estiver logado
-        if ($request->method() == 'POST' && $request->is('register/exist')) {
+        if ($request->method() == 'POST' && ($request->is('register/exist') || $request->is('register'))) {
             //Retorna requisição com dados
             return $next($request);
         }
 
         //Se usuário estiver com perfil desativado, permitir requisição de esqueci minha senha
-        if ($request->method() ==  'POST' && $request->is('forget-pass')) {
+        if ($request->method() == 'POST' && $request->is('forget-pass')) {
             //Retorna requisição com dados
             return $next($request);
         }

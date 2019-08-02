@@ -1,19 +1,19 @@
+import { ConfirmEmailStepPage } from './confirm-email/confirm-email';
 import { SignupStepsService } from './signup-steps.service';
 import { Component } from '@angular/core';
-import { NavController, IonicPage, AlertController } from 'ionic-angular'; 
+import { NavController, IonicPage, AlertController, NavParams } from 'ionic-angular'; 
 import { TranslateService } from '@ngx-translate/core';
-import { ProfileType } from './profile-type/profile-type';
+import { ProfileTypeStepPage } from './profile-type/profile-type';
 import { NgForm } from '@angular/forms';
-import { LoginPage } from '../login/login';
 
 @IonicPage()
 @Component({
     selector: 'page-signup',
-    templateUrl: 'signup-steps.html'   
+    templateUrl: 'signup-steps.html'    
 })
 
-export class SignupStepsPage {  
-
+export class SignupStepsPage { 
+    
     public $account = { 
         display_name:   <string>'', 
         user_email:     <string>'', 
@@ -24,21 +24,36 @@ export class SignupStepsPage {
     public $error:string = '';
   
     constructor(
-        private nav:NavController,
-        public service: SignupStepsService,
-        public alertCtrl: AlertController, 
-        public translateService: TranslateService) {     
-            this.translateService.setDefaultLang('pt-br');
+        private nav: NavController,
+        public  service: SignupStepsService,
+        public  alertCtrl: AlertController, 
+        public  translateService: TranslateService,
+        params: NavParams) {     
+            
+            this.translateService.setDefaultLang('pt-br'); 
+
+            let step    = params.get('step');
+            let email   = params.get('email');
+            let token   = params.get('token');
+            
+            if(step != undefined && step == 'confirm-email') {
+                nav.push(ConfirmEmailStepPage, {
+                    verify: {
+                        user_email: email,
+                        token: token
+                    }                    
+                });  
+            }
         } 
 
     /* Função de inicialização */
-    ngOnInit() {
-        // ...
+    ngOnInit() { 
+        
     }
 
     /** Função para o botão de Login, vai a view de login*/
-    goToLogin(){
-        this.nav.push(LoginPage);         
+    goToLogin() {
+        this.nav.push('Login');         
     }
   
     /** Função que verifica dados existente e abre nova view (etapa2)*/ 
@@ -68,7 +83,7 @@ export class SignupStepsPage {
                 this.showAlert("Usuário já existe. Faça o login!");
             } else {
                 //Carrega a próxima View passando os dados preencheidos
-                this.nav.push(ProfileType, $userData);
+                this.nav.push(ProfileTypeStepPage, $userData);
             }
         });
         
@@ -78,7 +93,7 @@ export class SignupStepsPage {
         
         const alert = this.alertCtrl.create({
             title: $msg,
-            buttons: ['OK']
+            buttons: ['OK'] 
         });
 
         return alert.present();

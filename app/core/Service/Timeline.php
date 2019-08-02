@@ -427,7 +427,7 @@ class Timeline {
     }
 
     /** Verifica a visibilidade do conteúdo */
-    private function isVisibility($viewer_user_id = null):bool{
+    protected function isVisibility($viewer_user_id = null):bool{
         
         //Definindo id do visualizador da timeline
         if(is_null($viewer_user_id)){
@@ -454,8 +454,7 @@ class Timeline {
         }
 
         //Se for maior que 1: Visualizaçõa definida por pertencer a um club
-        //TODO: Verificar essa implementação
-        if ($visibility->meta_value > 1 && $visibility->meta_value != 99) {
+        if ($visibility->meta_value >= 1 && $visibility->meta_value != 99) {
             
             $check = false;
             

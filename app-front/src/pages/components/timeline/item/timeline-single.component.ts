@@ -16,12 +16,18 @@ export class TimelineSingle {
 
   @Output() timelineDeleted = new EventEmitter();
 
+  @Input() public currentUser: any = { 
+    ID: "",
+    display_name: "",
+    metadata: {}
+  };
+
   @Input() public currentTimeline: any = {
     ID: '',
     post_author: {
       ID: '',
       display_name: '',
-      profile_img: { 
+      profile_img: {
         value: ''
       }
     },
@@ -31,58 +37,44 @@ export class TimelineSingle {
     quantity_comments: ''
   };
 
-  public $requestUri:string;
+  public $requestUri: string;
 
   private uri = 'timeline';
 
   public $postID: number;
 
-  public currentUser:any = {
-      ID: "",
-      display_name: "", 
-      metadata: {}    
-  };
-
   public commentText: string;
 
   public commentShow: any;
 
-  public deleteMessage:any;
+  public deleteMessage: any;
 
   constructor(
-    public user: User,
     public alert: AlertController,
     public translateService: TranslateService,
-    public toastCtrl: ToastController,    
+    public toastCtrl: ToastController,
     public api: Api,
     public navCtrl: NavController,
-    public modalCtrl:ModalController,
+    public modalCtrl: ModalController,
     public domSanitizer: DomSanitizer) {
-      
-      //Definindo url de requisição
-      this.$requestUri = this.uri;
 
-      this.translateService.setDefaultLang('pt-br');
-      this.translateService.get(["YOU_WILL_EXCLUDE_POST", "YOU_SURE","DELETE", "CANCEL"]).subscribe((data) => {
-        this.deleteMessage = data;
-      })
+    //Definindo url de requisição
+    this.$requestUri = this.uri;
 
-    }
+    this.translateService.setDefaultLang('pt-br');
+    this.translateService.get(["YOU_WILL_EXCLUDE_POST", "YOU_SURE", "DELETE", "CANCEL"]).subscribe((data) => {
+      this.deleteMessage = data;
+    })
+
+  }
 
   //Inicialização
   ngOnInit() {
-    this.getCurrentUser();
-  }
 
-  //Carrega dados de usuário
-  getCurrentUser(){
-    this.user.subscribeUser(function($this) {
-      $this.currentUser = $this.user._user;
-    }, this);
   }
 
   //Setar url de requisição
-  _setRequestUrl($url:string) {
+  _setRequestUrl($url: string) {
     this.uri = $url;
   }
 
@@ -109,17 +101,17 @@ export class TimelineSingle {
   }
 
   //Abrir modal carregando o componente
-  openView($postID:number, event) {
-    
+  openView($postID: number, event) {
+
     event.preventDefault();
 
     //Impede de executar ações em cascata em botões com evento
-    if(event.target.tagName == 'IMG' || event.target.classList.contains('count-responses') 
-    || event.target.classList.contains('open-view')) {
+    if (event.target.tagName == 'IMG' || event.target.classList.contains('count-responses')
+      || event.target.classList.contains('open-view')) {
       //Invoca um modal passando ID da Timeline
-      
+
       let modal = this.modalCtrl.create(TimelineItem, { post_id: $postID });
-      modal.present();  
+      modal.present();
     }
 
   }
@@ -131,7 +123,7 @@ export class TimelineSingle {
   }
 
   //Deletar um comentário
-  deleteTimeline($post_id:number) {
+  deleteTimeline($post_id: number) {
 
     let confirmDelete = this.alert.create({
       title: this.deleteMessage.YOU_WILL_EXCLUDE_POST,
@@ -157,7 +149,7 @@ export class TimelineSingle {
           });
         }
       }, {
-        text: this.deleteMessage.CANCEL, 
+        text: this.deleteMessage.CANCEL,
       }]
     });
 
@@ -188,7 +180,7 @@ export class TimelineSingle {
         this.commentText = '';
         this.commentShow = false;
 
-        let toast = this.toastCtrl.create({ 
+        let toast = this.toastCtrl.create({
           message: resp.success.comment,
           duration: 8000,
           position: 'bottom'
@@ -205,31 +197,31 @@ export class TimelineSingle {
 
   //Abre uma nova página de profile
   goToProfile($user_id: number) {
-    this.navCtrl.push('ProfilePage', {
+    this.navCtrl.push('Profile', {
       user_id: $user_id
     });
   }
 
   //Incorporar videos do Youtube 
-  static showVideoAttachment($content:string):string {
-    
-    let $expression:string = '/https\:\/\/www\.youtube\.com\/watch\?v\=([^\s\n]*)/gm';
+  static showVideoAttachment($content: string): string {
+
+    let $expression: string = '/https\:\/\/www\.youtube\.com\/watch\?v\=([^\s\n]*)/gm';
 
     //Verifica se variavel é um array válido
-    if($content != undefined && $content.length > 0) {
-      
+    if ($content != undefined && $content.length > 0) {
+
       //Substitui links do youtube para exibição
-      $content = $content.replace(/https\:\/\/www\.youtube\.com\/watch\?v\=([^\s\n]*)/gm, 
-      function(youtube, p1) {
-          
+      $content = $content.replace(/https\:\/\/www\.youtube\.com\/watch\?v\=([^\s\n]*)/gm,
+        function (youtube, p1) {
+
           let url = 'https://www.youtube.com/embed/' + p1; //Url do vídeo
           //TimelineSingle.bypassSecurityTrustResourceUrl(url);
 
-          youtube = url;           
-          
+          youtube = url;
+
           return youtube;
-      });    
-      
+        });
+
     }
 
     return $content;

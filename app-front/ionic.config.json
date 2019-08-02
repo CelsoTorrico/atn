@@ -6,5 +6,6 @@
   "proxies" :[{
     "path": "/"
   }],
-  "type": "ionic-angular"
+  "type": "ionic-angular",
+  "url": ""
 }

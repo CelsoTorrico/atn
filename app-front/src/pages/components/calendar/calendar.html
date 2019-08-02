@@ -2,7 +2,7 @@
 
     <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 300px;"> 
         
-      <calendar-single [calendarAtributes]="calendar" (timelineDeleted)="hideTimeline($event, $i)" (calendarUpdate)="calendarUpdate($event, $i)" *ngFor="let calendar of currentItems; let $i = index"></calendar-single> 
+      <calendar-single [calendarAtributes]="calendar" (timelineDeleted)="hideTimeline($event, $i)" (calendarUpdate)="calendarUpdate($event, $i)" [currentUser]="currentUser" *ngFor="let calendar of currentItems; let $i = index"></calendar-single> 
 
       <ion-infinite-scroll (ionInfinite)="loadMore($event)">
           <ion-infinite-scroll-content></ion-infinite-scroll-content>

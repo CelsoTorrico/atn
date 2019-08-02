@@ -16,11 +16,11 @@
 
   <ion-grid>
     
-    <ion-row padding>
+    <ion-row padding> 
 
-      <profile-resume (changeViewEvent)="changeComponentView($event)" [user]="currentUser" [isLogged]="isLogged"></profile-resume><!-- Resumo de Perfil -->
+      <profile-resume (changeViewEvent)="changeComponentView($event)"></profile-resume><!-- Resumo de Perfil --> 
 
-      <ion-col col-12 col-md-9 offset-md-3>
+      <ion-col col-12 col-md-9 offset-md-3> 
 
         <ion-buttons item-end>
 
@@ -52,7 +52,7 @@
 
       <ion-col id="ProfileData" col-12 col-md-9 offset-md-3>
 
-        <ng-template profile-view></ng-template>
+        <ng-template profile-view></ng-template> 
 
       </ion-col>
 

@@ -6,52 +6,44 @@ import { Api } from '../api/api';
 @Injectable()
 export class PushNotifyService {
 
-    //Web Push
-    webpush = require('web-push');
-
     convertedKey64: any;
 
     constructor(private api: Api, private toastCtrl: ToastController) {
         
-        this.webpush.setVapidDetails(
-            environment.apiUrl,
-            environment.vapidPublicKey,
-            environment.vapidPrivateKey
-        );
-
         this.convertedKey64 = this.urlBase64ToUint8Array(environment.vapidPublicKey);
     }
 
-    isSubscribed(): boolean {
+    // Adicionar/Permissão permissão para notificações via browser
+    public requestDesktopNotificationPermission():void {
+
+        let pushService = this;
+
+        this.isSubscribed().then(function(resp:boolean){
+            
+            if(resp){
+                //Assinar para inscrição de push
+                pushService.subscribe();
+            } else {
+                //Remover inscrição de push
+                pushService.unsubscribe();
+            }
+            
+        }, function(resp:any){
+            alert('Você bloqueou notificações deste site.');
+        });
+    }
+
+    //Verifica se usuário aceitou notificações
+    isSubscribed():Promise<boolean> {
         // When the Service Worker is ready, enable the UI (button),
         // and see if we already have a subscription set up.
+        return navigator.serviceWorker.getRegistration().then(async function(fullfiled) {
+            return true;
+        }, async function(rejected){
+            return false;
+        });
 
-        let response: any;
-
-        navigator.serviceWorker.ready
-            .then(function (registration) {
-                return registration.pushManager.getSubscription();
-            }).then(function (subscription) {
-                if (subscription) {
-                    response = true;
-                } else {
-                    response = false;
-                }
-            });
-
-        return response;
-    }
-
-    // Adicionar/Permissão permissão para notificações via browser
-    public requestDesktopNotificationPermission() {
-        if (this.isSubscribed()) {
-            //Remover notificações
-            this.unsubscribe();
-        } else {
-            //Adicionar notificações
-            this.subscribe();
-        }
-    }
+    }    
 
     // Get the `registration` from service worker and create a new
     // subscription using `registration.pushManager.subscribe`. Then
@@ -59,7 +51,7 @@ export class PushNotifyService {
     // the subscription to the server.
     // @refer https://serviceworke.rs/push-subscription-management_demo.html
     private subscribe() {
-
+ 
         let pubKey = this.convertedKey64;
 
         let api = this.api;
@@ -76,15 +68,26 @@ export class PushNotifyService {
                     userVisibleOnly: true,
                     applicationServerKey: pubKey
                 });
-            }).then(function (subscription) {
+            }).then(function (subscription) { 
+                
+                let endpoint = subscription.endpoint;
+                let key = btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh'))));
+                let auth = btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))));
 
-                let authorize = api.post('user/settings/push-authorize', { subscription: subscription });
+                let authorize = api.post('user/settings/push-authorize', {
+                    subscription: {
+                        endpoint: endpoint,
+                        publicKey: key,
+                        authToken: auth,
+                    }
+                }).subscribe((resp) => {
+                    alert.setMessage('Subscrição OK'); 
+                    alert.present();              
+                }, (error) => {
 
-                return authorize.subscribe((resp) => {
-                    alert.present();                    
                 });
 
-            }).then();
+            });
     }
 
     // Get existing subscription from service worker, unsubscribe
@@ -101,7 +104,7 @@ export class PushNotifyService {
             position: 'bottom'
         });                     
 
-        navigator.serviceWorker.ready
+        navigator.serviceWorker.ready 
             .then(function (registration) {
                 return registration.pushManager.getSubscription();
             }).then(function (subscription) {

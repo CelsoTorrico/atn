@@ -14,7 +14,7 @@ $router->group(['prefix' => 'calendar'], function () use ($router) {
     $router->get('/[paged[/{paged:[0-9]+}]]', 'CalendarController@getAll'); 
     
     //Retorna lista de calendários (usuário visualizado)
-    $router->get('/user/{user_id:[0-9]+}[/paged/{paged:[0-9]+}]', 'TimelineController@getUserAll');
+    $router->get('/user/{user_id:[0-9]+}[/paged/{paged:[0-9]+}]', 'CalendarController@getUserAll');
 
     //Adicionar Calendário
     $router->post('/', 'CalendarController@add');

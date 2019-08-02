@@ -53,6 +53,9 @@ class Friends {
 			(!is_null($this->ID))? ['from_id' => $this->ID] : array()
 		); 
 
+		//Instanciando classe modelo de usuário
+		$usermodel = new UserModel();
+
 		//Carrega array de relacionamentos IDS
 		$friends = $this->model->getIterator($filter);
 		$listFriends = [];
@@ -63,6 +66,10 @@ class Friends {
 			if (!$friends->valid()) {
 				continue;
 			}
+
+			/** Verificar a existencia do usuário na plataforma */
+			$f = $user->getData(); 
+			if(!$usermodel->load(['ID' => $f['to_id']])) continue;
 			
 			//Retorna apenas ids de usuário
 			if ($this->onlyIDS) {

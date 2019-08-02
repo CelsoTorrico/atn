@@ -2,11 +2,12 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, NavController, ToastController } from 'ionic-angular';
 import { User } from '../../../providers';
 import { CookieService } from 'ng2-cookies';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'user-menu',
   template: `
-        <button ion-button clear icon-only class="learn-icon" (click)="goToPage('LearnPage')">
+        <button ion-button clear icon-only class="learn-icon" (click)="goToPage('Learn')">
             <img src="assets/img/dashboard/learn-icon.png"/>
         </button>
 
@@ -39,24 +40,21 @@ export class UserMenu {
 
   //Abre uma nova página
   doLogout() {
-    //Atribuindo observable
-    let logoutObservable = this.user.logout();
 
     //Subscreve sobre a requisição
-    logoutObservable.subscribe((resp: any) => {
+    this.user.logout().then((resp: any) => {
       if (resp.success) {
-        
+
+        //Exibe mensagem
         let toast = this.toastCtrl.create({
           position: 'bottom',
           message: resp.success.logout,
           duration: 3000
-        })
-
-        //Exclui dados do cookie
-        this.cookieService.delete('app_atletas_now');
+        });
 
         toast.present({
-          ev: this.navCtrl.setRoot('LoginPage')
+          disableApp: true,
+          ev: window.location.assign(environment.apiUrl)
         });
 
       }

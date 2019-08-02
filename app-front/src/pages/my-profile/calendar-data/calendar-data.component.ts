@@ -1,12 +1,13 @@
+import { VisibilityList } from './../../../providers/visibility/visibility';
 import { CalendarSingle } from '../../components/calendar/calendar-single.component';
 import { Component } from '@angular/core';
 import { ViewController, NavParams, LoadingController, ToastController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Api, User } from '../../../providers';
+import { Api } from '../../../providers';
 import { StatsList } from '../../../providers/useful/stats';
 import { NgForm } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
-
+import { CalendarList } from '../../../providers/calendartypes/calendar';
 
 @Component({
     selector: 'calendar-data',
@@ -18,9 +19,10 @@ export class MyProfileCalendarComponent {
 
     //Campos para preenchimento
     calendar: any = {
+        ID: <number>null,
         post_title: <string>'',
         post_excerpt: <string>'',
-        post_content: <string>'',
+        post_content: <string>'', 
         post_image: <any>null, 
         post_visibility: <number>null,
         post_video_url: <string>'',
@@ -35,23 +37,23 @@ export class MyProfileCalendarComponent {
 
     public post_id:number
 
-    public visibility: any = []
+    public visibility: any[]
 
-    public eventTypes: any = []
+    public eventTypes: any[]
 
     public errorSubmit:string
 
     public loading_placeholder:string
 
     constructor(
-        public  user: User,
         public  api: Api,
         public  params: NavParams,
         public  viewCtrl: ViewController,
         public  statsList: StatsList,
         private loading: LoadingController,
-        private toastCtrl: ToastController,
-        public  translateService: TranslateService) {
+        public  translateService: TranslateService,
+        visibilityList: VisibilityList,
+        calendarList: CalendarList) {
 
         this.translateService.setDefaultLang('pt-br');
 
@@ -59,33 +61,33 @@ export class MyProfileCalendarComponent {
             this.loading_placeholder    = data.LOADING;
         });
 
+        //Carrega campos de visibilidade
+        visibilityList.load().then(() => {
+            this.visibility = visibilityList.table
+        });
+
+        //Carrega tipos de eventos
+        calendarList.load().then(() => {
+            this.eventTypes = calendarList.table; 
+        });
+
         //Carrega pre-dados no caso de atualização
-        let post_id = this.params.get('data');
-        if (post_id != undefined) {
-            this.loadCalendarData(post_id); //Carregando dados do post
-            this.post_id = post_id; //Atribuindo propriedade da classe
-        }
+        this.post_id = this.params.get('data'); 
 
     }
 
     //Função que inicializa
     ngOnInit() {
-
-        //Carregando campos de visibilidade
-        this.getVisibility();
-
-        //Carregando campos de tipos de eventos
-        this.getTypesEvent();
-    }
+        if (this.post_id != undefined) { 
+            this.loadCalendarData(this.post_id); //Carregando dados do post
+        }
+    } 
 
     //Carrega dados do calendário
     loadCalendarData($post_id:number) {
     
         //Inicializando observer
-        let $observer = this.api.get('calendar/' + $post_id);
-        
-        //Fazendo requisição
-        $observer.subscribe((resp:any) => {
+        this.api.get('calendar/' + $post_id).toPromise().then((resp:any) => {
     
           if (resp.error != undefined || resp.length <= 0) {
             return;
@@ -128,34 +130,6 @@ export class MyProfileCalendarComponent {
         });
         
       }
-
-    //Retorna dados de visibilidade
-    getVisibility() {
-        //Retorna a lista de esportes do banco e atribui ao seletor
-        let items = this.api.get('timeline/visibility').subscribe((resp: any) => {
-
-            //Se não existir items a exibir
-            if (resp.length > 0) {
-                this.visibility = resp;
-            }
-
-        }, err => {
-            return;
-        });
-
-    }
-
-    //Retorna lista com tipos de eventos
-    getTypesEvent() {
-        //Retorna opções de visibilidade
-        let getEventObservable = this.api.get('calendar/types');
-        getEventObservable.subscribe((resp: any) => {
-            if (Object.keys(resp).length > 0) {
-                this.eventTypes = resp;
-            }
-        });
-    }
-
 
     //Salvar dados do formulário
     save(form: NgForm, $event):Subscription {
@@ -228,7 +202,14 @@ export class MyProfileCalendarComponent {
     }
 
     //Quando um input tem valor alterado
-    fileChangeEvent(fileInput: any) {
+    fileChangeEvent(fileInput: any) { 
+
+        //Inicializa loading
+        let loading = this.loading.create({
+            content: this.loading_placeholder
+        });
+        loading.present();
+
         if (fileInput.target.files && fileInput.target.files[0]) {
 
             var reader = new FileReader();
@@ -241,6 +222,9 @@ export class MyProfileCalendarComponent {
 
             reader.readAsDataURL(fileInput.target.files[0]);
         }
+
+        //Fecha loading
+        loading.dismiss();
     }
 
 }

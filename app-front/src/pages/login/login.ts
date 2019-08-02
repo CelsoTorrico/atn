@@ -1,10 +1,8 @@
 import { ForgetPasswordComponent } from './forget-password.component';
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IonicPage, NavController, ToastController, ModalController } from 'ionic-angular';
-import { SignupStepsPage } from '../signup-steps/signup-steps';
+import { IonicPage, NavController, ToastController, ModalController, LoadingController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
-import { CookieService } from 'ng2-cookies';
 import { User, Cookie } from '../../providers';
 
 @IonicPage()
@@ -27,29 +25,32 @@ export class LoginPage implements OnInit{
 
   // Our translated text strings
   private loginErrorString: string;
+  private loadingMessage:string;
 
   constructor(
     public navCtrl: NavController,
     public user: User,
+    public loading: LoadingController,
     public modal: ModalController,
     public toastCtrl: ToastController,
-    public translateService: TranslateService,
-    private cookieService: CookieService) {
+    public translateService: TranslateService) {
 
     this.translateService.setDefaultLang('pt-br'); 
-    this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-      this.loginErrorString = value;  
+    this.translateService.get(['LOGIN_ERROR', 'LOADING']).subscribe((value) => {
+      this.loginErrorString = value.LOGIN_ERROR;
+      this.loadingMessage = value.LOADING;
     })
 
   }
 
-  ionViewDidLoad() {
-    //Verifica existência do cookie e redireciona para página
-    Cookie.checkCookie(this.cookieService, this.navCtrl);  
-  }
-
   ngOnInit(){
-    
+    /** Verifica se usuário já esta logado anteriormente na plataforma */
+    this.user.isLoggedUser().then((resp) => {
+      //Redireciona para a página de Dashboard
+      if (resp) { 
+        this.navCtrl.setRoot('Dashboard');
+      } 
+    }); 
   }
 
   // Realiza login comum via email e senha 
@@ -61,34 +62,51 @@ export class LoginPage implements OnInit{
         return;
     }
 
-    ///Injeta classe com nav controller
-    this.user.injectNavCtrl(this.navCtrl);
+    //Inicializa loading
+    let loading = this.loading.create({ content: 'Loading'});
+    loading.present();
 
     //Envia dados ao servidor
-    this.user.login(this.account);   
+    this.user.login(this.account).then(($resp:boolean) => { 
+
+      //Fecha loading
+      loading.dismiss();
+      
+      //Se login efetuado com sucesso e cookie setado com sucesso
+      if($resp == true) { 
+          
+        //Redireciona para dashboard
+        if($resp) this.navCtrl.setRoot('Dashboard');               
+
+      }
+
+    }).catch((rej) => {
+      
+      //Feha loading
+      loading.dismiss(); 
+
+      //Exibe erro de login
+      this.$error = this.loginErrorString;
+
+    });    
+
   }  
 
   //Realiza login via Facebook
   loginFb() {
-    //Injeta classe com nav controller
-    this.user.injectNavCtrl(this.navCtrl);
-
     //Realiza login
     this.user.socialLogin('facebook');  
   }
 
   //Realiza login vi Google
-  loginGoogle(){
-    //Injeta classe com nav controller
-    this.user.injectNavCtrl(this.navCtrl);
-
+  loginGoogle() {
     //Realiza login
     this.user.socialLogin('google');
   }
 
   //Redireciona para etapas de registro
-  goToRegister(){
-    this.navCtrl.push(SignupStepsPage); 
+  goToRegister() {
+    this.navCtrl.push('Register');  
   }
 
   //Abrir modal de Esqueci Minha Senha 

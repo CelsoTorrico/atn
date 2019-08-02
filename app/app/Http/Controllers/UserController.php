@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Minishlink\WebPush\WebPush;
-use Minishlink\WebPush\Subscription;
+use Core\Service\PushNotify;
+use Core\Profile\UserSettings;
 
 class UserController extends Controller
 {
@@ -33,14 +33,26 @@ class UserController extends Controller
     /** Retorna usuário único  */
     function get(int $id) {
 
-        //Retorna classe de usuário com dados a exibir
-        $result = $this->user->getUser($id);
+        //Retorna classe de usuário requisitado
+        $user = $this->user->getUser($id);
+        
+        //Id do usuário que visualiza o perfil
+        $whoID = $this->user->ID;
 
         //Se usuário da query é current_user, não contabilizar view
-        if( $result->ID != $this->user->ID ){
-            //incrementado qtd view
-            $result->increaseView($id);
+        if( $user->ID != $whoID ){
+            
+            //Função que adiciona visualização de perfil
+            $user->increaseView($whoID);
         }  
+        
+        //retorna resultado
+        return response()->json($user);
+    }
+
+    function getAll() {
+        //Executa metodo que traz lista de usuarios
+        $result = $this->user->getFriends();
         
         //retorna resultado
         return response()->json($result);
@@ -60,12 +72,6 @@ class UserController extends Controller
         }
     }
 
-    function getAll() {
-        //Executa metodo que traz lista de usuarios
-        $result = $this->user->getFriends();
-        //retorna resultado
-        return response()->json($result);
-    }
 
     function getSelf() {
         //retorna resultado
@@ -201,57 +207,24 @@ class UserController extends Controller
         return response()->json($result);
     }
 
+    /** Setar notificações push */
     function setPushSettings(Request $request, bool $add = true) {
 
-        $auth = [
-            'GCM' => 'MY_GCM_API_KEY', // deprecated and optional, it's here only for compatibility reasons
-            'VAPID' => [
-                'subject' => env('APP_FRONT'), // can be a mailto: or your website address
-                'publicKey' => env('VAPID_PUBLIC_KEY'), // (recommended) uncompressed public key P-256 encoded in Base64-URL
-                'privateKey' => env('VAPID_PRIVATE_KEY'), // (recommended) in fact the secret multiplier of the private key encoded in Base64-URL
-                /*'pemFile' => 'path/to/pem', // if you have a PEM file and can link to it on your filesystem
-                'pem' => 'pemFileContent', // if you have a PEM file and want to hardcode its content*/
-            ]
-        ];
+        $subscription = $request->input('subscription'); //dados da subscrição
 
-        //Registrando e enviado notificação
-        $webPush = new WebPush($auth);
-        $var = $request->input('subscription');
-        $sent = $webPush->sendNotification(
-            Subscription::create([
-                "endpoint"      => $var['endpoint'],
-                //@todo criar token 
-                "keys"     => $var['keys']
-            ]), 
-            '{msg: "Hello World!"}', 
-            true);
+        $push = new PushNotify(); //classe webpush
+        $settings = new UserSettings($this->user); //classe de configuração do usuário
+        
+        //Salvar as credentiais de push no banco
+        if($settings->__set('webpush-credentials', $subscription)){
+            $response = $push->sendNotification($subscription, ['title' => 'AtletasNOW', 'body' => 'Obrigado por habilitar nossas notificações!']);
+        }
 
-        /* foreach ($sent as $report) {
-            $endpoint = $report->getEndpoint();
-            if ($report->isSuccess()) {
-                echo "[v] Message sent successfully for subscription {$endpoint}.";
-            } else {
-                echo "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
-                
-                // also available (to get more info)
-                
-                /** @var \Psr\Http\Message\RequestInterface $requestToPushService */
-                //$requestToPushService = $report->getRequest();
-                
-                /** @var \Psr\Http\Message\ResponseInterface $responseOfPushService */
-                //$responseOfPushService = $report->getResponse();
-                
-                /** @var string $failReason */
-                //$failReason = $report->getReason();
-                
-                /** @var bool $isTheEndpointWrongOrExpired */
-                //$isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
-            //} 
-        //}*/
-
-        return response()->json($sent);
+        //Retorna resposta
+        return response()->json($response);
     }
 
+    /** Remove inscrição em notificações push */
     function unsetPushSettings(Request $request) {
         return $this->setPushSettings($request, false);
     }

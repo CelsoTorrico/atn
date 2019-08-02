@@ -2,14 +2,15 @@ import { CookieService } from 'ng2-cookies';
 import { Api } from '../../providers/api/api';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
-import { User, Cookie } from '../../providers';
+import { User } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
-import { DashboardPage } from '../dashboard/dashboard';
 
-@IonicPage()
+@IonicPage({
+    segment: 'favorite',
+})
 @Component({
   selector: 'favorite',
-  templateUrl: 'favorite.html'
+  templateUrl: 'favorite.html' 
 })
 export class FavoritePage {
   
@@ -76,11 +77,6 @@ export class FavoritePage {
 
     }
 
-    ionViewDidLoad() {        
-        //Verifica existência do cookie e redireciona para página
-        Cookie.checkCookie(this.cookieService, this.navCtrl); 
-    }
-
     //Função que inicializa
     ngOnInit() {
         
@@ -126,7 +122,7 @@ export class FavoritePage {
         if(this.navCtrl.canGoBack()){
             this.navCtrl.pop();
         } else {
-            this.navCtrl.setRoot(DashboardPage);
+            this.navCtrl.setRoot('Dashboard');
         }        
     }
 

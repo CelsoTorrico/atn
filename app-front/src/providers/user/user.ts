@@ -1,8 +1,8 @@
+import { Cookie } from './../cookie/cookie';
 import { ToastController } from 'ionic-angular';
 import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Api } from '../api/api';
 import { loadNewPage } from '../load-new-page/load-new-page';
-import { DashboardPage } from '../../pages/dashboard/dashboard';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
@@ -14,72 +14,125 @@ export class User {
 
   @Output() dataReady = new EventEmitter();
 
+  //Userdata
   _user: any;
+
+  //Observables
   _userObservable: Observable<ArrayBuffer>;
   _teamObservable: Observable<ArrayBuffer>;
   _statsObservable: Observable<ArrayBuffer>;
   _visibilityObservable: Observable<ArrayBuffer>;
 
   private filteredData = new Subject<any>();
-  private navCtrl: any;
 
   private requiredFields: string[] = [
     'display_name', 'gender', 'country', 'user_email', 'cpf', 'rg', 'cnpj'
   ]
 
   constructor(
-    private api: Api,
+    private   api: Api,
     protected loadPageService: loadNewPage,
     protected toast: ToastController) {
 
-    //Carrega Observables
-    this.getUserData().then((res) => {
-
-    });
-    
+    //Registra observable nas propriedades 
+    this.getSelfUserObservable();
     this.getSelfStats();
     this.getTeamMembers();
-    this.getSelfVisibility();
+    this.getSelfVisibility(); 
+
+    //Quando inicializar a classe fazer requisição e alimentar propriedade _user
+    this.isLoggedUser().then((resp: boolean) => {
+
+      if (!resp) return; //SE false, para execução
+
+      this.getUserData().then((res: boolean) => {
+        console.log('User ' + this._user.display_name + ' is ready!'); 
+      });
+
+    });
+
   }
 
-  /** Implementa variavel com controlador de navegação */
-  injectNavCtrl(navComponent) {
-    this.navCtrl = navComponent;
-  }
+  /**
+   * Função que verifica se usuário tem cookie ativado
+   * @since 2.1
+   */
+  isLoggedUser(): Promise<boolean> {
 
-  /** Adiciona dados já recebidos */
-  setFilteredData(data) {
-    this.filteredData.next(data);
+    //Verifica se usuário está logado e dados presentes no parametro
+    if (!this._user || Cookie.checkCookie()) {
+
+      //Verifica a existencia do cookie
+      return this.api.get('login/cookie').toPromise().then((resp: any) => {
+
+        //Se retornar erro, parar execução
+        if (resp.error != undefined) return false;
+
+        //cookie de sessão válido
+        return true;
+
+      }, (rej) => {
+
+        //Se retornar erro, parar execução
+        return false;
+
+      });
+
+    } else {
+
+      //Instanciando Promise para a classe
+      let resp: Promise<boolean> = new Promise(() => { return false });
+      return resp.then((r) => {
+        return false;
+      });
+
+    }
+
   }
 
   /**
    * Executa login na plataforma
    */
-  login(accountInfo: any) {
+  login(accountInfo: any): Promise<boolean | void> {
 
-    let seq = this.api.post('login', accountInfo);
-
-    seq.subscribe((res: any) => {
+    return this.api.post('login', accountInfo).toPromise().then((res: any) => {
       // Se mensagem contiver parametro 'success'
       if (res.success != undefined) {
 
-        //Exibe erro de login
+        //Exibe sucesso de login
         let message = this.loadPageService.createToast(res.success.login, 'bottom');
         message.present();
 
-        //Redireciona para página dashboard
-        this.navCtrl.push(DashboardPage);
+        return true;
       }
       else {
         //Exibe erro de login
         let message = this.loadPageService.createToast(res.error.login, 'bottom');
         message.present();
+
+        return false;
       }
     }, err => {
-      console.error('ERROR', err);
+      console.error('LOGIN_ERROR', err);
     });
 
-    return seq;
+  }
+
+  /**
+   * Log the user out, which forgets the session
+   */
+  logout(): Promise<ArrayBuffer> {
+
+    return this.api.get('logout').toPromise().then((resp) => {
+      
+      //Remoove cookie do browser
+      Cookie.deleteCookie();
+
+      //Retorna resposta
+      return resp;
+
+    });
+
   }
 
   //Executa login via Redes Sociais
@@ -90,36 +143,34 @@ export class User {
   /**
    * Registra um novo usuário
    */
-  signup(accountInfo: any) {
+  signup(accountInfo: any): Promise<boolean | void> {
 
-    let seq = this.api.post('register', accountInfo).share();
-
-    seq.subscribe((res: any) => {
+    return this.api.post('register', accountInfo).toPromise().then((res: any) => {
       // If the API returned a successful response, mark the user as logged in
       if (res.success != undefined) {
-        this._loggedIn(res);
 
         //Exibe mensagem de cadastro
         let message = this.loadPageService.createToast("Cadastro realizado com sucesso. Bem Vindo a AtletasNOW.", 'bottom');
         message.present();
 
-        //Após confirmação de cadastro redireciona para página de sucesso
-        this.loadPageService.getPage(res, this.navCtrl, DashboardPage);
-      }
-      else {
+        //Retorna verdadeiro
+        return true;
+
+      } else {
         let $errors: string = '';
         this.requiredFields.forEach(element => {
           //Após confirmação de cadastro redireciona para página de sucesso
           $errors += (res.error[element] != undefined) ? element + ' : ' + res[element] + '\n' : '';
         });
-        this.loadPageService.getPage($errors, this.navCtrl, 'bottom');
+
+        //Retorna falso
+        return false;
       }
 
     }, err => {
       console.error('ERROR', err);
     });
 
-    return seq;
   }
 
   /**
@@ -132,9 +183,8 @@ export class User {
     let method = (isPhoto) ? 'post' : 'put';
 
     //Retorna observable
-    let observable = this.api[method]('user/update', accountData);
+    return this.api[method]('user/update', accountData);
 
-    return observable;
   }
 
   /**
@@ -143,34 +193,117 @@ export class User {
   setNewPassword(userPass: any) {
 
     //Retorna observable
-    let observable = this.api.put('user/settings/update-password', userPass);
-
-    return observable;
+    return this.api.put('user/settings/update-password', userPass);
 
   }
 
-  /**Retornar dados de usuario */
-  getUserData(): Promise<void> {
+  /** Retorna userObservable como Promise */
+  load(): Promise<ArrayBuffer> {
+    //Carrega observable
+    return this._userObservable.toPromise();
+  }
 
-    let observable = this.getSelfUserObservable();
+  /** Adiciona dados já recebidos */
+  setFilteredData(data) {
+    this.filteredData.next(data);
+  }
 
-    return observable.toPromise().then(
-      (resp: any) => {
+  /**
+   * Retorna nova classe User para perfil visualizado usuário requisitado
+   */
+  getUser($user_id: number): User {
 
-        //Se não existir items a exibir
-        if (Object.keys(resp).length <= 0) {
-          return;
+    //Inicializa classe
+    let $user = new User(this.api, this.loadPageService, this.toast);
+
+    //Retorna observable
+    $user._userObservable   = this.api.get('user/' + $user_id);
+    $user._statsObservable  = this.api.get('user/stats/' + $user_id);
+    $user._teamObservable   = this.api.get('user/self/club_user/' + $user_id);
+
+    //Retorna instancia da classe
+    return $user;
+  }
+
+  /** Subscribe ao userdata */
+  subscribeUser() {
+
+    function requestUserData(user) {
+
+      let observers = [];
+
+      return (observer) => {
+
+        observers.push(observer);
+
+        if (observers.length === 1) {
+
+          user._userObservable.subscribe((resp) => {
+
+            //Se não existir items a exibir
+            if (Object.keys(resp).length <= 0) {
+              return;
+            }
+
+            //Adicionando valores a classe user
+            user._user = resp;
+
+            //Preenche campos de usuário
+            user.fillMyProfileData();
+
+          });
+
         }
 
-        //Adicionando valores a classe user
-        this._user = resp;
+        return {
+          unsubscribe() {
+            // Remove from the observers array so it's no longer notified
+            observers.splice(observers.indexOf(observer), 1);
+            // If there's no more listeners, do cleanup
+            if (observers.length === 0) {
 
-        //Preenche campos de usuário
-        this.fillMyProfileData();
+            }
+          }
+        };
 
-      }).catch((reason) => {
-        this.dataReady.emit('Dados de usuário carregado.');
-      });
+      }
+    }
+
+    let source = new Observable(requestUserData(this));
+
+    source.subscribe();
+
+  }
+
+  /** Retornar dados de usuario */
+  getUserData($optionalFn = ($v) => {}, $component = null): Promise<boolean> {
+
+    return this.load().then((resp: any) => {
+
+      //Se não existir items a exibir
+      if (Object.keys(resp).length <= 0 || resp.error != undefined) {
+        return;
+      }
+
+      //Adicionando valores a classe user
+      this._user = resp;
+
+      //Preenche campos de usuário
+      this.fillMyProfileData();
+
+      //Executa função adicional
+      $optionalFn($component);
+
+      //Emite evento de dados prontos
+      this.dataReady.emit({ status: 'ready' });
+
+      return true;
+
+    }).catch((rej) => {
+
+      return false;
+
+    });
 
   }
 
@@ -209,98 +342,6 @@ export class User {
 
     //Retorna observable
     return this._visibilityObservable = this.api.get('timeline/visibility');
-
-  }
-
-  /**
-   * Retorna classe User para perfil visualizado usuário requisitado
-   */
-  getUser($user_id: number): User {
-
-    //Inicializa classe
-    let $user = new User(this.api, this.loadPageService, this.toast);
-
-    //Retorna observable
-    $user._userObservable = this.api.get('user/' + $user_id);
-    $user._statsObservable = this.api.get('user/stats/' + $user_id);
-    $user._teamObservable = this.api.get('user/self/club_user/' + $user_id);
-
-    //Retorna instancia da classe
-    return $user;
-  }
-
-  /**
-   * Log the user out, which forgets the session
-   */
-  logout(): Observable<ArrayBuffer> {
-
-    //Reseta dados do usuário na variavel
-    this._user = null;
-
-    //Define Observable
-    let logout = this.api.get('logout');
-
-    //Retorna observable
-    return logout;
-  }
-
-  /**
-   * Process a login/signup response to store user data
-   */
-  _loggedIn(resp) {
-    this._user = resp.success;
-  }
-
-  /** Subscribe ao userdata */
-  subscribeUser($optionalFn = function ($v) { }, $component = null) {
-
-    function requestUserData(user) {
-
-      let observers = [];
-
-      return (observer) => {
-
-        observers.push(observer);
-
-        if (observers.length === 1) {
-
-          user._userObservable.subscribe((resp) => {
-
-            //Se não existir items a exibir
-            if (Object.keys(resp).length <= 0) {
-              return;
-            }
-
-            //Adicionando valores a classe user
-            user._user = resp;
-
-            //Preenche campos de usuário
-            user.fillMyProfileData();
-
-            //Executa função adicional
-            $optionalFn($component);
-
-          });
-
-        }
-
-        return {
-          unsubscribe() {
-            // Remove from the observers array so it's no longer notified
-            observers.splice(observers.indexOf(observer), 1);
-            // If there's no more listeners, do cleanup
-            if (observers.length === 0) {
-
-            }
-          }
-        };
-
-      }
-    }
-
-    let source = new Observable(requestUserData(this));
-
-    source.subscribe();
 
   }
 
@@ -361,6 +402,12 @@ export class User {
     //Atleta
     if (this._user.type.ID == 1) {
       let arr: string[] = ['weight', 'height', 'posicao', 'stats', 'stats-sports'];
+      Array.prototype.push.apply($fields, arr);
+    }
+
+    //Profissional do Esporte
+    if (this._user.type.ID == 2) {
+      let arr: string[] = ['career'];
       Array.prototype.push.apply($fields, arr);
     }
 

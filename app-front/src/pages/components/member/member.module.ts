@@ -11,10 +11,11 @@ import { IonicModule } from 'ionic-angular';
 import { CommonModule } from '@angular/common';
 import { PipesModule } from '../../../pipes/pipes.module';
 import { MenuPageModule } from '../menu/menu.module';
+import { MemberClub } from './item/member-club';
 
 @NgModule({
     declarations: [
-        Member, MemberItem, MemberList, MemberChat, MemberUser, MemberSuggestion
+        Member, MemberItem, MemberList, MemberChat, MemberUser, MemberSuggestion, MemberClub
       ],
       imports: [
         TranslateModule.forChild(),
@@ -24,9 +25,9 @@ import { MenuPageModule } from '../menu/menu.module';
         MenuPageModule,
         PipesModule
       ],
-      exports: [Member, MemberList, MemberChat, MemberUser,  MemberSuggestion],
+      exports: [Member, MemberItem, MemberList, MemberChat, MemberUser,  MemberSuggestion, MemberClub],
       bootstrap: [Member],
-      entryComponents:[Member, MemberItem, MemberList, MemberChat, MemberUser, MemberSuggestion], 
+      entryComponents:[Member, MemberItem, MemberList, MemberChat, MemberUser, MemberSuggestion, MemberClub], 
       schemas: [],
       providers: []
 })

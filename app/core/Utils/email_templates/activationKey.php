@@ -580,7 +580,7 @@
                                 <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
                                 <h1 style="font-family:Axiforma;color:#d03014;">Confirme seu cadastro!</h1>
                                 <p style="color:#444;font-size:14px;">Agradecemos seu cadastro em nossa plataforma <b>AtletasNOW</b>, agora para continuar, clique no link abaixo para confirmar seu email.</p>
-                                <p style=""><font size="5"><a href="'. env('APP_FRONT') .'/confirm/'. $data['email'] .'/'. $data['activationKey'] .'/" target="_blank">Confirmar</a></font></p>
+                                <p style=""><font size="5"><a href="'. env('APP_FRONT') .'/#/register/confirm-email/'. $data['email'] .'/'. $data['activationKey'] .'" target="_blank">Confirmar</a></font></p>
                                 <p style="color:#444;font-size:14px;">Suporte AtletasNOW</p>
                                 </td>
                             </tr>

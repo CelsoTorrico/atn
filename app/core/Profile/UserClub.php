@@ -203,18 +203,29 @@ class UserClub extends User {
             $response = $user->update($userData); 
 
             //Atribui ID do usuario
-            $user_id = $user->ID;            
+            $user_id = $user->ID;    
+            
+            //Envia email de bem vindo
+            Login::welcomeEmail($user->user_email, $user->display_name);     
         }   
         
         //Verificar qual mensagem exibir de acordo com a solicitação
         if (key_exists('success', $response)) {
             
-            //Adicionar selo de aprovado
-            $this::updateClubCertify($user_id, $this->ID, true);
+            try {
+                //Adicionar selo de aprovado
+                $this::updateClubCertify($user_id, $this->ID, true);
 
-            //Adicionar notificação ao usuário sendo removido da equipe
-            $notify = new Notify($this);
-            $notify->add(10, $user_id, $this->ID);
+                //Adicionar notificação ao usuário sendo removido da equipe
+                $notify = new Notify($this);
+                $notify->add(10, $user_id, $this->ID);
+
+                //Envia email de boas vindas
+                Login::welcomeEmail($userData['user_email'], $userData['display_name']);
+
+            } catch (\Exception $th) {
+                //@todo Implementar log
+            }            
 
             //Retorna mensagem
             return ['success' => ['user' => 'Usuário agora está fazendo parte de sua equipe.']];

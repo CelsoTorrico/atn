@@ -73,7 +73,6 @@ export class MemberUser {
     public notifyElement:any;
 
     constructor(
-        public user: User,
         public navCtrl: NavController,
         public toastCtrl: ToastController,
         public translateService: TranslateService) { 

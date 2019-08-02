@@ -1,8 +1,9 @@
 import { TimelineItem } from './item/timelineItem';
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ModalController } from 'ionic-angular';
-import { Api } from '../../../providers';
+import { Api, User } from '../../../providers';
 import { TranslateService } from '@ngx-translate/core';
+import { TimelineSingle } from './item/timeline-single.component';
 
 @Component({
   selector: 'timeline',
@@ -11,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class Timeline {
   
   //Parametros de URL
+  @ViewChild(TimelineSingle) timelineSingle: TimelineSingle;
   @Input() public timelineID:number;
  
   private $getTimelineUrl:string = 'timeline';
@@ -24,8 +26,12 @@ export class Timeline {
 
   public commentShow:any;
 
+  //Dados de usuário a injectar em componente filho
+  public currentUser:any;
+
   constructor(
     public api: Api,
+    public user:User,
     public modalCtrl: ModalController,
     public translateService: TranslateService) {     
       this.translateService.setDefaultLang('pt-br');
@@ -44,6 +50,17 @@ export class Timeline {
     }    
 
     this.query();
+
+  }
+
+  ngAfterViewChecked() { 
+    if(this.user._user != undefined) {
+      this.currentUser = this.user._user; 
+    }
+
+    this.user.dataReady.subscribe(() => {
+      this.currentUser = this.user._user; 
+    });    
   }
 
   query($fn:any = function(){}) {
@@ -67,7 +84,7 @@ export class Timeline {
         this.currentItems.push(element);
       });         
       
-      $fn();
+      $fn(); 
 
     }, err => { 
         return; 

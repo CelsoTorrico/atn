@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -27,20 +27,23 @@ import { TranslateService } from '@ngx-translate/core';
         </ion-grid>               
     `,
 })
-export class MemberItem{
+export class MemberItem {
 
-    @Input() public members:any[]; 
+    @Output() editMemberAction:EventEmitter<any> = new EventEmitter()
 
-    constructor(public navCtrl:NavController,
-        public translateService: TranslateService) { 
-            this.translateService.setDefaultLang('pt-br'); 
+    @Input() public currentUser:any
+    @Input() public members: any[];
+
+    constructor(public navCtrl: NavController,
+        public translateService: TranslateService) {
+        this.translateService.setDefaultLang('pt-br');
 
     }
 
     //Abre uma nova página de profile
-    goToProfile($user_id:number){
-        this.navCtrl.push('ProfilePage', {
-        user_id: $user_id
-        }); 
+    goToProfile($user_id: number) {
+        this.navCtrl.push('Profile', {
+            user_id: $user_id
+        });
     }
 }

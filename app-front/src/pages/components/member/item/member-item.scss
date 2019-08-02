@@ -1,4 +1,4 @@
-member-item{
+member-item, member-club{
     ion-col{
         text-align: center;
         min-height: 150px !important;
@@ -32,4 +32,11 @@ member-item{
         } 
     
     }
+
+    .edit-button{
+        text-align: center;        
+        ion-buttons{
+            
+        }
+      }
 }

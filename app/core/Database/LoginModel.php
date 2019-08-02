@@ -12,7 +12,9 @@ class LoginModel extends UserModel
         'user_login',
         'user_pass',
         'user_email',
-        'user_status'
+        'display_name',
+        'user_status',
+        'user_activation_key'
     ];
 
     const READ_ONLY = true;

@@ -61,7 +61,7 @@
         </ion-col>
         <ion-col col-12 col-md-6>
           <ion-item>
-            <ion-label stacked>{{ "TYPE" | translate }}</ion-label>
+            <ion-label stacked>{{ "TYPE_EVENT" | translate }}</ion-label>
             <ion-select eventTypes name="post_calendar_type" [(ngModel)]="calendar.post_calendar_type">
               <ion-option *ngFor="let type of eventTypes" [value]="type.ID">
                 {{ type.type }}

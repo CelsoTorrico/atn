@@ -38,7 +38,7 @@ export class searchField{
 
     //Redireciona para página de busca com query
     searchMember($event){
-        this.navCtrl.push('SearchPage', {
+        this.navCtrl.push('Search', {
             display_name: this.search
         }); 
     }

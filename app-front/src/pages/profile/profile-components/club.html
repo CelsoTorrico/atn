@@ -1,4 +1,4 @@
-<ion-row *ngIf="isLogged">
+<ion-row *ngIf="type > 2">
 
   <ion-col col-12 col-lg-5>
 
@@ -19,7 +19,7 @@
       {{ "MY_CALENDAR_INITIAL_MESSAGE" | translate }}
     </p>-->
 
-    <calendar [timelineID]="ID" [isLogged]="isLogged" (updateEvent)="calendarUpdate($event)">
+    <calendar [timelineID]="ID" (updateEvent)="calendarUpdate($event)">
     </calendar>
 
   </ion-col>
@@ -34,7 +34,7 @@
           {{ "MANAGEMENT_MY_TEAM" | translate }}
         </ion-title>
 
-        <button *ngIf="isLogged" float-right edit-profile ion-button icon-start small end clear
+        <button float-right edit-profile ion-button icon-start small end clear
           (click)="editData('teamData');">
           <ion-icon item-start name="create"></ion-icon>
           {{ "ADD_NEW_MEMBER" | translate }}
@@ -42,7 +42,7 @@
 
       </header>
 
-      <p *ngIf="team.length <= 0">
+      <p *ngIf="team">
         {{ "MY_TEAM_INITIAL_MESSAGE" | translate }}
       </p>
 
@@ -164,38 +164,17 @@
               {{ "EXPORT_PDF" | translate }}
             </button>
 
+            <ion-badge right end>{{ current_users.qtd}} / {{ max_users}}</ion-badge>            
+
           </ion-buttons>
 
         </ion-card-content>
 
-        <member-container [listMembers]="team"></member-container>
-
-        <ion-card-content>
-
+        <ion-grid>
           <ion-row>
-
-            <ion-col col-12 col-md-3 *ngFor="let member of team">
-
-              <div class="member">
-
-                <ion-buttons>
-                  <button edit-profile ion-button small start clear (click)="editMember(member.ID);">
-                    {{ "EDIT" | translate }}
-                  </button>
-
-                  <button edit-profile ion-button small end clear (click)="deleteMember(member.ID);">
-                    {{ "DELETE" | translate }}
-                  </button>
-
-                </ion-buttons>
-
-              </div><!-- member -->
-
-            </ion-col>
-
+              <member-club [member]="member" (editMemberAction)="childMemberEvent($event)"  *ngFor="let member of team"></member-club> 
           </ion-row>
-
-        </ion-card-content>
+        </ion-grid>        
 
       </ion-card>
 

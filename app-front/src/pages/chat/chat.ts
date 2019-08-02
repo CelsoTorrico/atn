@@ -4,9 +4,10 @@ import { IonicPage, ToastController, NavController } from 'ionic-angular';
 import { User, Cookie } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ng2-cookies';
-import { DashboardPage } from '../dashboard/dashboard';
 
-@IonicPage()
+@IonicPage({
+    segment: 'chat',
+})
 @Component({
     selector: 'chat',
     templateUrl: 'chat.html'
@@ -29,11 +30,6 @@ export class ChatPage {
         public translateService: TranslateService,
         private cookieService: CookieService) {
         
-    }
-
-    ionViewDidLoad() {        
-        //Verifica existência do cookie e redireciona para página
-        Cookie.checkCookie(this.cookieService, this.navCtrl); 
     }
 
     //Função que inicializa
@@ -70,7 +66,7 @@ export class ChatPage {
         if(this.navCtrl.canGoBack()){
             this.navCtrl.pop();
         } else {
-            this.navCtrl.setRoot(DashboardPage);
+            this.navCtrl.setRoot('Dashboard');
         }        
     }
 

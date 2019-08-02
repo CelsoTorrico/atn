@@ -1,151 +1,150 @@
+import { GenderList } from './../../../providers/gender/gender';
+import { SuccessStepPage } from './../success/success';
 import { User } from './../../../providers/user/user';
 import { Api } from './../../../providers/api/api';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { LoginPage } from '../../login/login';
+import { NavController, NavParams, LoadingController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { BrazilStates } from '../../../providers/useful/states';
 import { TranslateService } from '@ngx-translate/core';
-
+import { SportList } from '../../../providers/sport/sport';
+import { profileTypeList } from '../../../providers/profiletypes/profiletypes';
 
 /* SecondStep Class*/
-@IonicPage({
-    name: 'ProfileType',
-    segment: 'profile-type'
-})
 @Component({
     templateUrl: "profile-type.html"
 })
+export class ProfileTypeStepPage {
 
-export class ProfileType{ 
+    public $account: any = {};
 
-    public $account:any = {};
+    public $typeUserSelected: number = 1;
 
-    public $typeUserSelected:number = 1;    
-    
-    public $sportSelected = [];    
+    public $sportSelected = [];
 
     //Lista de Esportes
-    protected $sportTable:any;
+    protected $sportTable: any;
     protected $sportList = [];
 
     //Lista de tipos de usuário
-    protected $typeUserList = [
-        {valor: 1,  texto: 'Atleta'}, 
-        {valor: 2,  texto: 'Profissional do Esporte'},
-        {valor: 3,  texto: 'Faculdade'},
-        {valor: 4,  texto: 'Clube Esportivo'},
-        {valor: 5,  texto: 'Confederação'} 
-    ];
+    protected $typeUserList:any;
 
     //Lista de generos
-    protected $genderList = [
-        {valor: 'male',     texto: 'Masculino'}, 
-        {valor: 'female',   texto: 'Feminino'}
-    ];
+    protected $genderList:any;
 
     //Lista de Estados
     protected $statesList = [];
 
-    public $error = ''; 
+    public $error = '';
 
     constructor(
-        private navCtrl: NavController, 
-        private params: NavParams, 
-        private api: Api, 
-        private user: User, 
-        public states:BrazilStates,
-        public translateService: TranslateService) { 
-    
+        private navCtrl: NavController,
+        private loading: LoadingController,
+        private params: NavParams,
+        private api: Api,
+        private user: User,
+        public  translateService: TranslateService,
+        states: BrazilStates,
+        sport:  SportList,
+        gender: GenderList,
+        profileType: profileTypeList) {
+
         this.translateService.setDefaultLang('pt-br');
-        
+
         //Adicionando dados provenientes da view anterior
-        this.$account = 
+        this.$account =
             {
-                display_name:   this.params.get('display_name'), 
-                user_email:     this.params.get('user_email'), 
-                user_pass:      this.params.get('user_pass'),
-                confirm_pass:   this.params.get('confirm_pass')
+                display_name: this.params.get('display_name'),
+                user_email: this.params.get('user_email'),
+                user_pass: this.params.get('user_pass'),
+                confirm_pass: this.params.get('confirm_pass')
             };
 
         //Carrega lista de estados do provider
-        this.$statesList = this.states.statesList;    
+        this.$statesList = states.statesList;
+
+        //Carrega lista de esportes
+        sport.load().then((resp) => {
+            //Tabela de Esportes com ID e nome
+            this.$sportTable    = sport.table; 
+            this.$sportList     = sport.list;  
+        })
+
+        //Atribui tipos de usuários
+        this.$typeUserList = profileType.list;
+
+        //Atribui generos
+        this.$genderList = gender.list;
 
     }
 
     //Função que inicializa
-    ngOnInit() {
-        this.getSportList();
+    ngOnInit() { 
+        
     }
 
     /** Função para o botão de Login, vai a view de login*/
-    goToLogin(){
-        this.navCtrl.push(LoginPage);
+    goToLogin() {
+        this.navCtrl.push('Login');
     }
 
-    /** 
-     *  Retorna a lista de esportes do banco e atribui ao seletor
-     *   Lista de apenas nomes de esportes 
-     * */
-    private getSportList() {
-
-        //Retorna a lista de esportes do banco e atribui ao seletor
-        this.api.get('/user/sports').subscribe((resp:any) => { 
-
-            //Tabela de Esportes com ID e nome
-            this.$sportTable = resp;
-
-            resp.forEach(element => {
-                //[0] = id, [1] = sport_name
-                this.$sportList.push({display: element[1], value: element[0] });
-            });
-
-        }, err => { 
-            return; 
-        });       
-        
-    }
-    
     /** Redireciona para próxima etapa junto com as variaveis */
-    submitRegister(form: NgForm){ 
-        
+    submitRegister(form: NgForm) {
+
         //Se formulário estiver inválido, mostrar mensagem
         if (form.status == 'INVALID') {
-            this.$error = 'Por favor, preencha todos campos solicitados!'; 
+            this.$error = 'Por favor, preencha todos campos solicitados!';
             return;
         }
-        
+
         //Adiciona tipo de usuário selecionado
-        this.$account.type  = this.$typeUserSelected;
+        this.$account.type = this.$typeUserSelected;
 
         //Inicializa objeto com array
         this.$account.sport = [];
-        
+
         //Define ID's dos esportes selecionados
         this.$sportSelected.forEach(element => {
-            this.setChooseSports(element); 
+            this.setChooseSports(element);
         });
 
         //Se cadastro com sucesso, ir para página de sucesso
         this.insertRegister(this.$account);
-        
+
     }
 
     //Insere novo usuário no banco
-    private insertRegister(body:any){    
-        
-        //Injetando navControler
-        this.user.injectNavCtrl(this.navCtrl);
+    private insertRegister(body: any) {
 
-        //executa função de registrar
-        this.user.signup(body);
+        //Inicializa loading
+        let loading = this.loading.create({ content: 'Loading'});
+        loading.present();
+
+        //Envia dados ao servidor
+        this.user.signup(body).then(($resp:boolean) => {
+
+            //Fecha loading
+            loading.dismiss();
+
+            //Se cadastro realizado com sucesso direcionar para página 'sucesso'
+            if ($resp) {
+                this.navCtrl.push(SuccessStepPage);
+            }
+
+        }).catch((rej) => {
+            //Feha loading
+            loading.dismiss();
+        });
     }
 
-    private setChooseSports($sportChoose:string) {
+    /** Função que compara esportes selecionados a atribui a variavel para envio
+     * 
+     */
+    private setChooseSports($sportChoose) {
         //Intera sobre items
         for (const element of this.$sportTable) {
             //Compara valores selecionados com tabela de esportes
-            if (element[0] == $sportChoose) {
+            if (element[1] == $sportChoose.display_name) {
                 //Atribui valor a array
                 this.$account.sport.push(element[0]);
                 break;

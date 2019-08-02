@@ -1,29 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Config } from 'ionic-angular';
-import { Settings } from '../providers';
-import { LoginPage } from '../pages/login/login';
+import { User } from '../providers';
 
-@Component({
+@Component({  
   template: `
-    <ion-nav #content [root]="rootPage"></ion-nav>  
+    <ion-nav [root]="rootPage"></ion-nav>
     `
 })
-export class MyApp {
+export class MyApp { 
 
-  rootPage = LoginPage;
+  rootPage:string = 'Login'; 
 
   constructor(
     private translate: TranslateService,
-    settings: Settings,
-    private config: Config) {
+    private config: Config, 
+    private user: User) {  
 
     //Iniciar tradução
-    this.initTranslate();
+    this.initTranslate(); 
+
+    /** Verifica se usuário já esta logado anteriormente na plataforma */
+    this.user.isLoggedUser().then((resp) => {
+      //Redireciona para a página de Login
+      if (!resp) { 
+        this.rootPage = 'Login'; 
+      } 
+    });
 
   }
-
-  
 
   initTranslate() {
     // Set the default language for translation strings, and the current language.
@@ -52,6 +57,6 @@ export class MyApp {
 
   }
 
-  
+
 
 }

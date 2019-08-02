@@ -1,19 +1,27 @@
+import { MemberClub } from './../../components/member/item/member-club';
+import { GenderList } from './../../../providers/gender/gender';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BrazilStates } from './../../../providers/useful/states';
 import { ProfileComponent } from './profile.component';
-import { Component } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { NgForm } from '@angular/forms';
 import { NavController, ToastController, AlertController, ModalController, LoadingController, Loading } from 'ionic-angular';
-import { Api } from '../../../providers';
+import { Api, User } from '../../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { ReportPage } from '../../report/report';
+import { profileTypeList } from '../../../providers/profiletypes/profiletypes';
+import { SportList } from '../../../providers/sport/sport';
 
 @Component({
   selector: 'club',
   templateUrl: 'club.html'
 })
 export class ClubComponent extends ProfileComponent {
+
+  @ViewChild(MemberClub) memberclub: MemberClub
+  @Input() user: User
+  @Input() type: number = null
 
   //Variveis de template de usuario
   calendarObservable: Observable<ArrayBuffer> = this.api.get('/calendar');
@@ -22,9 +30,9 @@ export class ClubComponent extends ProfileComponent {
 
   ID: number = null;
 
-  type: number = null;
-
   display_name: string = '';
+
+  max_users:number
 
   sport: any = [{
     ID: '',
@@ -35,7 +43,6 @@ export class ClubComponent extends ProfileComponent {
   public query: any = {
     display_name: <string>'',
     sport: <any>[],
-    clubs: <string>'',
     type: <string>'',
     city: <string>'',
     state: <string>'',
@@ -44,6 +51,7 @@ export class ClubComponent extends ProfileComponent {
     formacao: <string>''
   };
 
+  //Filtragem
   public filter: boolean = false;
 
   //Campos selecionados
@@ -51,29 +59,16 @@ export class ClubComponent extends ProfileComponent {
   public $sportSelected: any = [];
 
   //Lista de tipos de usuário
-  protected $typeUserList = [
-    { valor: '', texto: 'Qualquer' },
-    { valor: 1, texto: 'Atleta' },
-    { valor: 2, texto: 'Profissional do Esporte' },
-    { valor: 3, texto: 'Faculdade' },
-    { valor: 4, texto: 'Clube Esportivo' },
-    { valor: 5, texto: 'Confederação' }
-  ];
+  protected $typeUserList: any[]
 
-  protected $genderList = [
-    { valor: '', texto: 'Qualquer' },
-    { valor: 'male', texto: 'Masculino' },
-    { valor: 'female', texto: 'Feminino' }
-  ];
+  protected $genderList: any[]
 
   //Lista de Esportes
   protected $sportTable: any;
   protected $sportList = [];
 
   //Lista de Estados
-  //Carrega lista de estados do provider
-  states: BrazilStates = new BrazilStates();
-  protected $statesList = this.states.statesList;
+  protected $statesList: any[];
 
   //Paginação
   public $url: string = '';
@@ -90,7 +85,11 @@ export class ClubComponent extends ProfileComponent {
     public modalCtrl: ModalController,
     public domSanitizer: DomSanitizer,
     public translateService: TranslateService,
-    private loadingCtrl: LoadingController) {
+    private loadingCtrl: LoadingController,
+    statesList: BrazilStates,
+    genderList: GenderList,
+    profiletype: profileTypeList,
+    sportList: SportList) {
 
     super(navCtrl, api, toastCtrl, alert, modalCtrl, domSanitizer, translateService);
 
@@ -99,27 +98,59 @@ export class ClubComponent extends ProfileComponent {
       this.loading_placeholder = data.LOADING;
     });
 
+    //Tabela de Estados
+    this.$statesList = statesList.statesList;
+    this.$statesList.unshift(''); //Adicionando campo para qualquer estado  
+
+    //Tabela de Generos
+    this.$genderList = genderList.list;
+
+    //Tabela de tipos de perfis
+    this.$typeUserList = profiletype.list;
+
+    //Retorna lista de esportes
+    sportList.load().then((resp) => {
+      this.$sportTable = sportList.table
+    });
+
+  }
+
+  ngOnInit() {
+    if (this.user._user != undefined){
+      //Se dados já presentes
+      this.currentClubSportsList();
+    } else{
+      //Se não, subscribe e executa quando pronto
+      this.user.dataReady.subscribe(() =>{
+        this.currentClubSportsList();
+      });
+    }
   }
 
   //Função que inicializa
-  ngOnInit() {
-
-    //Carrega dados do usuário de contexto
-    this.loadUserLoadData().then(() => {
-      this.getSportList();
-    });
-
-    //Adicionando campo para qualquer estado  
-    this.$statesList.unshift('');
+  ngAfterViewChecked() { 
 
   }
 
-  //Abrindo modal com dados de item a editar
-  calendarUpdate($event) {
-    this.editData($event.form, $event.event, function () {
-      //Recarrega lista de calendários
-      $event.component.reload();
+  private currentClubSportsList() {
+    this.user._user.sport.forEach(element => {
+      this.$sportList.push(element.sport_name);
     });
+  }
+
+  childMemberEvent($event) {
+    
+    //Função que escuta evento em componente filho
+    if ($event == undefined) return;
+
+    if ($event.type == 'edit') {
+      this.editMember($event.user_id);
+    }
+
+    if ($event.type == 'delete') {
+      this.deleteMember($event.user_id);
+    }
+
   }
 
   /** Função da Busca de Equipe */
@@ -129,22 +160,6 @@ export class ClubComponent extends ProfileComponent {
     } else {
       this.filter = true;
     }
-  }
-
-  /** 
-   *  Retorna a lista de esportes do banco e atribui ao seletor
-  *   Lista de apenas nomes de esportes 
-  * */
-  private getSportList() {
-
-    //Tabela de Esportes com ID e nome
-    this.$sportTable = this.sport;
-
-    for (const element of this.sport) {
-      //[0] = id, [1] = sport_name
-      this.$sportList.push({ display: element.sport_name, value: element.ID });
-    }
-
   }
 
   /**
@@ -170,10 +185,10 @@ export class ClubComponent extends ProfileComponent {
       //Adiciona usuários ao array
       //Lista de Usuários
       for (const element of resp) {
-        if(element.error != undefined || element == null){
+        if (element.error != undefined || element == null) {
           continue;
         }
-        this.team.push(element);  
+        this.team.push(element);
       }
 
 
@@ -202,7 +217,7 @@ export class ClubComponent extends ProfileComponent {
 
     //Define ID's dos esportes selecionados
     this.$sportSelected.forEach(element => {
-      this.setChooseSports(element.display);
+      this.setChooseSports(element);
     });
 
     //Retorna a lista de clubes para seletor
@@ -210,15 +225,15 @@ export class ClubComponent extends ProfileComponent {
 
   }
 
-  private setChooseSports($sportChoose: string) {
+  private setChooseSports($sportChoose) {
     //Intera sobre items
-    this.$sportTable.forEach(element => {
+    for (const element of this.$sportTable) {
       //Compara valores selecionados com tabela de esportes
-      if (element.sport_name == $sportChoose) {
+      if (element[1] == $sportChoose.display) {
         //Atribui valor a array
-        this.query.sport.push(element.ID);
+        this.query.sport.push(element[0]);
       }
-    });
+    }
 
   }
 

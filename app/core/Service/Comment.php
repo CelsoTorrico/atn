@@ -4,6 +4,7 @@ namespace Core\Service;
 
 use Core\Database\CommentModel;
 use Core\Database\PostModel;
+use Core\Profile\User;
 
 class Comment {
 
@@ -182,7 +183,8 @@ class Comment {
             $post = new PostModel(['ID' => (int) $model->comment_post_ID->ID]);
             
             //Intanciando notificação
-            $notify = new Notify($model->user_id);
+            $user = new User();
+            $notify = new Notify($user->getUser($model->user_id));
             
             //Adicionando notificação
             $r = $notify->add(6, $post->post_author, $model->user_id);

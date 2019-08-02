@@ -23,6 +23,7 @@ use Closure;
 use aryelgois\Medools\ModelIterator;
 use Medoo\Medoo;
 use PDO;
+use Core\Database\UserViewModel;
 
 class User extends GenericUser{
 
@@ -325,9 +326,15 @@ class User extends GenericUser{
                     continue;
                 }
 
-                //Atribui id de usuario
+                //Retornando array de dados
+                $f = $i->getData();
+
                 try {                    
-                    return $id = $i->user_id->ID;
+                    //Verifica se usuario não foi excluido
+                    if(!$this->model->load(['ID' => $f['user_id']])) continue;
+                    
+                    //Atribui id do usuario encontrado
+                    $id = $i->user_id->ID;
                 } catch (\Throwable $th) {
                     //throw $th;
                     continue;
@@ -544,7 +551,7 @@ class User extends GenericUser{
             //Busca por dados pessoais
             if (in_array($k, $personal)) {                
                 //Adiciona a query
-                $where = ['users.'.$k.'[~]' => '%'.$v.'%'];
+                $where = array_merge($where, ['users.'.$k.'[~]' => '%'.$v.'%']); 
                 continue;
             }
 
@@ -815,11 +822,11 @@ class User extends GenericUser{
 
             /** Adicionando suporte a ativação por email
              * @since 2.1 */
-            $activation_key = ['user_activation_key' => $this->hashPassword($filtered['user_login'])];
+            $onlyRegister = ['user_activation_key' => str_random(64), 'user_status' => 1];
             
             //Combina arrays
-            $userColumns[] = 'user_activation_key';
-            $filtered = array_merge($filtered, $activation_key);
+            $userColumns = array_merge($userColumns, ['user_activation_key', 'user_status']);
+            $filtered = array_merge($filtered, $onlyRegister);
 
             //Preenche colunas com valores
             $this->model->fill(array_only($filtered, $userColumns));             
@@ -827,7 +834,7 @@ class User extends GenericUser{
             //Salva os dados no banco
             if( $result = $this->model->save() ) {
                 //Envia email de confirmação para email cadastrado
-                $this->sendActivationKey($activation_key['user_activation_key'], $filtered['user_email'], $filtered['display_name'] );
+                $this->sendActivationKey($onlyRegister['user_activation_key'], $filtered['user_email'], $filtered['display_name'] );
             }     
 
         }
@@ -1093,7 +1100,8 @@ class User extends GenericUser{
 
     /** 
      *  Retorna metadados do usuário
-     *  
+     *  @param int Id   Id do usuário
+     *  @param array $only  metadados a serem exportados  
      * @since 2.0
      * 
      * @return mixed
@@ -1381,21 +1389,28 @@ class User extends GenericUser{
             return null;
         }
 
+        //Retorna instancia de usermeta via database model
+        $meta = new UsermetaModel();
+        $data = ['user_id' => $this->ID, 'meta_key' => $usermeta_key];
+
         //Verifica tipo de dado
         //Se booleano: true = remover
-        if (is_bool($usermeta_value) && $usermeta_value === true) {
-
-            //Retorna instancia de usermeta via database model
-            $this->metaModel = new UsermetaModel();
-            $meta = $this->metaModel->getInstance(['user_id' => $this->ID,'meta_key' => $usermeta_key]);
+        if (is_bool($usermeta_value) && $usermeta_value === true && $meta->load($data)) {
 
             //Deletar usermeta
             $result = $meta->delete();
 
         } else {
-            //Validação de dados
-            //@todo: Implementar
-            $val = $this->appVal;            
+            //Se não existir salva / existe faz update
+            if($meta->isFresh()) {
+                //Preenche com dados
+                $meta->fill(array_merge($data, ['meta_value' => $usermeta_value]));
+                $result = $meta->save();
+            } else {
+                //Preenche com dados
+                $meta->meta_value = $usermeta_value;
+                $result->update('meta_value');
+            }
         }        
 
         //Retorna mensagem de resultado
@@ -1558,39 +1573,44 @@ class User extends GenericUser{
         
     }
 
-    /** Aumenta quantidade 'views' em metadata */
-    public function increaseView($id){
+    /** 
+     * Aumenta quantidade 'views' em metadata 
+     * @param int $whoId    Id do usuário que visualizou o perfil
+     * 
+     * @since 2.1   Implementando contabilização de visitas e rgistro de notificação ao usuário visitado
+     * @since 2.0
+     * */
+    public function increaseView(int $whoId):bool {
 
-        //Filtro
         //Dados para ser utilizando para trazer dados database
-        $filter = ['user_id' => (int) $id, 'meta_key'  => 'views'];
+        $filter = ['to_id' => $this->ID, 'from_id'  => $whoId];
 
         //Inicializa modelo
-        $metaModel = new UsermetaModel();
+        $viewModel = new UserViewModel();
 
-        //Se não existir data para execução de fn
-        if ($metaModel->load($filter)) {
+        //Preenche modelo com dados
+        $viewModel->fill($filter);        
+
+        //Salva registro no banco e retorna true ou false
+        $saved = $viewModel->save();
+
+        //Se foi registrado com sucesso, registra notificação
+        if($saved) {
+            //Retorna total de views 
+            $totalView = $this->_getUsermeta($this->ID, ['views']);
             
-            //Atribui qtd atual
-            $qtdAtual = (int) $metaModel->meta_value;        
+            //Atribui visulização da contagem (senão houver dado atribui 1)
+            $sum = (count($totalView) > 0) ? (int) $totalView['views']['value'] + 1: 1;
 
-            //Insere novo valor a coluna selecionada
-            $metaModel->meta_value = $qtdAtual + 1;
+            //Salva no banco de dados
+            $r = $this->_setUsermeta('views', $sum);
 
-            //Atualiza registro no banco e retorna true ou false
-            return $metaModel->update(['meta_value']);
+            //Implementa notificação
+            $notify = new Notify($this);
+            $notify->add(12, $this->ID, $whoId);
         }
-        else{
-            //Adiciona primeiro view
-            $filter['meta_value'] = 1;
-            $filter['visibility'] = null;
-  
-            //Preenche modelo com dados
-            $metaModel->fill($filter);        
 
-            //Salva registro no banco e retorna true ou false
-            return $metaModel->save();
-        }
+        return $saved;
 
     }
 
@@ -1735,6 +1755,11 @@ class User extends GenericUser{
         //Atleta
         if($typeUser === true || $typeUser == 1){
             $usermeta = array_merge($usermeta, ['weight', 'height','posicao', 'stats', 'stats-sports']);
+        }
+
+        //Profissional do Esporte
+        if($typeUser === true || $typeUser == 2) {
+            $usermeta = array_merge($usermeta, ['career']);
         }
 
         return $usermeta;

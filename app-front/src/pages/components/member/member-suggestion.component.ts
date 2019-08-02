@@ -83,7 +83,7 @@ export class MemberSuggestion {
 
     //Abre uma nova página de profile
     goToProfile($user_id: number) {
-        this.navCtrl.push('ProfilePage', {
+        this.navCtrl.push('Profile', { 
             user_id: $user_id
         });
     }

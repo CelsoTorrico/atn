@@ -2,8 +2,10 @@
 
   <ion-toolbar>
     <ion-buttons left>
-      <button ion-button class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button" style="display: block;" (click)="backButton()">
-          <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+      <button ion-button
+        class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button"
+        style="display: block;" (click)="backButton()">
+        <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
       </button>
     </ion-buttons>
     <ion-title>{{ currentPostItem.post_title }}</ion-title>
@@ -60,42 +62,15 @@
 
         <ion-card>
 
-          <ion-card-header>
+          <ion-card-content>
 
             <ion-item>
               <ion-badge end>
                 {{ "COMMENTS" | translate }} : {{ currentPostItem.quantity_comments }}
               </ion-badge>
-            </ion-item>
+            </ion-item> 
 
-          </ion-card-header>
-          <ion-card-content>
-
-            <ion-item-group class="comment-section">
-
-              <ion-row>
-                <ion-col col-auto>
-                  <ion-item>
-                    <ion-avatar class="btn-cursor" item-start>
-                      <img *ngIf="currentUser.metadata.profile_img, else elseBlock" [src]="currentUser.metadata.profile_img.value" /> 
-                      <ng-template #elseBlock>
-                        <img src="assets/img/user.png" alt="currentUser.display_name" />
-                      </ng-template>
-                    </ion-avatar>
-                  </ion-item>
-                </ion-col>
-                <ion-col>
-                  <ion-textarea name="comment_content" [(ngModel)]="commentText" type="text" placeholder="{{ 'YOUR_COMMENT' | translate }}"
-                    required></ion-textarea>
-                  <button ion-button small end (click)="submitComment(currentPostItem.ID, $event)">{{ "PUBLISH" |
-                    translate
-                    }}</button>
-                </ion-col>
-              </ion-row>
-
-            </ion-item-group>
-
-            <ion-item-group class="postCommentsContainer">
+            <ion-item-group class="postCommentsContainer"> 
               <comments [currentCommentItems]="currentCommentItems" [$postID]="currentPostItem.ID"></comments>
             </ion-item-group>
 

@@ -9,7 +9,7 @@ class FollowersModel extends Medools\Model
 {
     const TABLE = 'followers';
 
-    const PRIMARY_KEY = ['ID'];
+    const PRIMARY_KEY = ['ID']; 
 
     const AUTO_INCREMENT = 'ID';
 

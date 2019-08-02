@@ -25,6 +25,7 @@ class UserModel extends Medools\Model
     ];
 
     const OPTIONAL_COLUMNS = [
+        'user_activation_key',
         'user_nicename',
         'user_url',
         'user_status' => 0, 

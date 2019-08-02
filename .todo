@@ -18,7 +18,8 @@ Cookie: app_atletas_now=%242y%2410%24do5czh6z.x8KJLJFMRi7vuOfb5icv6zDDovxmvXgdIb
 ✔ @high Perfil Meu Clube::Relatório  ->  Estruturar arquivo a ser exportado com dados da plataforma e usuários @done(19-07-03 11:13)
 ✔ Perfil Meu Clube::"GET, POST, UPDATE, DELETE" -> Área de Calendários (em forma de listagem) com definição de visibilidade (CAMPOS EX: JOGOS, REUNIÕES, CONVOCAÇÕES, PALESTRAS, PENEIRAS) @done(19-06-24 16:48)
 ✔ @low ??? Perfil Meu Clube::Calendar:: -> Retornar eventos futuros na data atual @done(19-07-17 14:29)
-☐ @low Perfil Meu Clube::Relatório -> Remover planilha "Worksheet"
+✔ @low Perfil Meu Clube::Relatório -> Remover planilha "Worksheet" @done(19-07-31 03:01)
 ✔ @low Perfil Meu Clube::Relatório -> Arquivo PDF em várias páginas @done(19-07-17 14:29)
-☐ @low Comentário -> Verificar a quantidade de comentários (deveria ignorar excluidos)
-☐ @critical Sugestão de Usuários -> Falha na lógica e consumindo muita memória
+✔ @low Comentário -> Verificar a quantidade de comentários (deveria ignorar excluidos) @done(19-07-31 03:09)
+✔ @critical Sugestão de Usuários -> Falha na lógica e consumindo muita memória @done(19-08-01 01:33)
+✔ @medium Perfil Meu Clube:: Cadastrar -> Não está enviando email de "Boas Vindas" @done(19-07-31 00:51)
