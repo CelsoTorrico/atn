@@ -6,12 +6,13 @@ use Core\Service\PushNotify;
 use Core\Profile\User;
 use Core\Database\NotifyModel;
 use Core\Profile\UserSettings;
+use Core\Utils\SendEmail;
 
 class Notify {
 
     protected   $model;
     protected   $currentUser;
-    protected   $types;
+    protected   $types; 
     private     $push;
 
     public function __construct(User $user){
