@@ -253,20 +253,23 @@ class Chat{
                 //Instancia classe de usuário
                 $user = new User();
 
+                //Retorna dados da room como array
+                $item = $item->getData();
+
                 //Retornar usuário oposto da conversa
-                $room_user = ($item->suser != $this->currentUser->ID) ? $item->suser : $item->fuser;
+                $room_user = (int) ((int) $item['suser'] == (int) $this->currentUser->ID) ? $item['fuser'] : $item['suser'];
 
                 //Se ao retornar usuário vir erro de usuário inexistente
-                if (array_key_exists('error', $room_user = $user->getMinProfile($room_user->ID))) {
+                if (array_key_exists('error', $room_user = $user->getMinProfile((int) $room_user))) {
                     continue;
                 }
 
                 //Combina array timeline e comentários
                 $rooms[] =  [
-                    'room_id'           => $item->room_id,
+                    'room_id'           => $item['room_id'],
                     'user'              => $room_user,
-                    'quantity_messages' => $this->getTotal($item->room_id), 
-                    'last_update'       => $item->last_update         
+                    'quantity_messages' => $this->getTotal($item['room_id']), 
+                    'last_update'       => $item['last_update']         
                 ];
                 
             }

@@ -68,17 +68,26 @@ export class LoginPage implements OnInit{
 
     //Envia dados ao servidor
     this.user.login(this.account).then(($resp:boolean) => { 
-
-      //Fecha loading
-      loading.dismiss();
       
       //Se login efetuado com sucesso e cookie setado com sucesso
       if($resp == true) { 
           
         //Redireciona para dashboard
-        if($resp) this.navCtrl.setRoot('Dashboard');               
+        this.user.getUserData().then((resp:boolean) => {
+
+          //Fecha loading
+          loading.dismiss();
+          
+          if(!resp) return;
+
+          //Rediciona para dashboard
+          this.navCtrl.setRoot('Dashboard');               
+        });        
 
       }
+
+      //Fecha loading
+      loading.dismiss();
 
     }).catch((rej) => {
       

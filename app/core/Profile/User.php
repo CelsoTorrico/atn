@@ -462,6 +462,11 @@ class User extends GenericUser{
         //Carrega classe de composição de PDFS e especifica caminho de download
         $mpdf = new \Mpdf\Mpdf();
 
+        //Adiciona marca dagua
+        $mpdf->showWatermarkImage = true;
+        $mpdf->setAutoTopMargin= true;
+        $mpdf->SetWatermarkImage('https://app-atletasnow.s3-sa-east-1.amazonaws.com/app-images/atletasnow-logotipo-300.png', 0.2, '', [130, 5]);
+        
         //Escreve dados no PDF
         $mpdf->WriteHTML($html);
 

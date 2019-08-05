@@ -36,12 +36,12 @@
 
         <div class="item-edit-buttons" float-right>
           <ul class="list-inline">
-            <li *ngIf="currentUser.ID == calendarAtributes.post_author.ID">
+            <li *ngIf="!onlyRead && currentUser.ID == calendarAtributes.post_author.ID">
               <button no-margin edit-calendar ion-button small start clear (click)="updateItem(calendarAtributes.ID)">
                 {{ "EDIT" | translate }}
               </button>
             </li>
-            <li *ngIf="currentUser.ID == calendarAtributes.post_author.ID">
+            <li *ngIf="!onlyRead && currentUser.ID == calendarAtributes.post_author.ID">
               <button delete-calendar ion-button small clear icon-end (click)="deleteTimeline(calendarAtributes.ID)">
                 {{ "DELETE" | translate }}
                 <ion-icon end name="close-circle"></ion-icon>

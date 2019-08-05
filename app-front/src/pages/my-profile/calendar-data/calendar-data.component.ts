@@ -204,12 +204,6 @@ export class MyProfileCalendarComponent {
     //Quando um input tem valor alterado
     fileChangeEvent(fileInput: any) { 
 
-        //Inicializa loading
-        let loading = this.loading.create({
-            content: this.loading_placeholder
-        });
-        loading.present();
-
         if (fileInput.target.files && fileInput.target.files[0]) {
 
             var reader = new FileReader();
@@ -223,8 +217,6 @@ export class MyProfileCalendarComponent {
             reader.readAsDataURL(fileInput.target.files[0]);
         }
 
-        //Fecha loading
-        loading.dismiss();
     }
 
 }

@@ -266,6 +266,11 @@ class Notify {
     */
     private function registerExtraNotification(array $notify) {
 
+        $content = [
+            'message'   => null,
+            'actions'   => null
+        ];
+
         //Retorna conteúdo de notificação
         $content = $this->defineTypeContent($notify);
 
@@ -279,7 +284,7 @@ class Notify {
         if($credentials = unserialize($config->__get('webpush-credentials'))) {
             
             //Envia notidicação por push
-            $this->push->sendNotification($credentials, ['title' => 'AtletasNOW',  'body' => $content['message']]);
+            $this->push->sendNotification($credentials, ['title' => 'AtletasNOW',  'body' => $content['message']], $content['actions']);
 
         } else {
             
@@ -387,7 +392,7 @@ class Notify {
             "message"       => $user['display_name']." começou a te seguir.",
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT') . '/#/profile/'. $user['ID']
+            "actions"       => ['action' => env('APP_FRONT').'/#/profile/'.$user['ID'], 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -410,7 +415,7 @@ class Notify {
             "message"       => $user['display_name'] ." adicionou seu clube no qual afirma que já fez parte da equipe. Você pode confirmar ou recusar essa informação, visualize o perfil do usuário e defina abaixo se a informação é verdadeira.",
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT').'/#/profile/'.$user['ID']
+            "actions"       => ['action' => env('APP_FRONT').'/#/profile/'.$user['ID'], 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -419,7 +424,7 @@ class Notify {
     }
 
     /**
-     * Formatação de notificação para aprovação de perfil 
+     * Formatação de notificação para comentário em timeline
      */
     private function commentContent(array $notify){
 
@@ -433,7 +438,7 @@ class Notify {
             "message"       => $user['display_name']." comentou em sua publicação.",
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT').'/#/dashboard/'.$user['ID']
+            "actions"       => ['action' => env('APP_FRONT').'/#/dashboard/timeline/'.$user['ID'], 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -456,7 +461,7 @@ class Notify {
             "message"       => $user['display_name']." enviou uma mensagem para você.",
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT') . '/#/chat/'. $user['ID']
+            "actions"       => ['action' => env('APP_FRONT').'/#/chat/'.$user['ID'], 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -479,7 +484,7 @@ class Notify {
             "message"       => "A informação preenchida em seu perfil foi verificada pelo clube ". $user['display_name'],
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT') . '/#/profile'
+            "actions"       => ['action' => env('APP_FRONT').'/#/profile', 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -502,7 +507,7 @@ class Notify {
             "message"       => "A informação preenchida em seu perfil foi reprovada pelo clube ". $user['display_name'],
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT') . '/#/profile'
+            "actions"       => ['action' => env('APP_FRONT').'/#/profile/', 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -525,7 +530,7 @@ class Notify {
             "message"       => "Você foi adicionado como integrante da equipe '" . $user['display_name'] . "' e seu perfil foi atualizado com essa informação!",
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT') . '/#/profile'
+            "actions"       => ['action' => env('APP_FRONT').'/#/profile/', 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -549,7 +554,7 @@ class Notify {
             $user['display_name'] . "'!",
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT') . '/#/profile'
+            "actions"       => ['action' => env('APP_FRONT').'/#/profile/', 'title' => 'Veja agora']
         ];
         
         //Retorna notificação
@@ -572,7 +577,7 @@ class Notify {
             "message"       => $user['display_name'] . " viu seu perfil!",
             "date"          => $notify["date"],
             "user_profile"  => $user,
-            "url"           => env('APP_FRONT') . '/#/profile/'. $user['ID']
+            "actions"       => ['action' => env('APP_FRONT').'/#/profile/'.$user['ID'], 'title' => 'Veja agora']
         ];
         
         //Retorna notificação

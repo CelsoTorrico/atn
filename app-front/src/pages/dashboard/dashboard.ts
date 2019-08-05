@@ -22,9 +22,10 @@ export class DashboardPage {
     @ViewChild(MemberCurrentMenu) currentMenu: MemberCurrentMenu;
     @ViewChild(MemberUser) currentUser: MemberUser;
 
-    public loginErrorString;
-    public timeline_placeholder: string;
-    public loading_placeholder: string;
+    public      loginErrorString;
+    public      timeline_placeholder: string;
+    public      loading_placeholder: string;
+    protected   interval;
 
     //Informações básicas de usuário
     public currentUserData: any = {
@@ -114,7 +115,7 @@ export class DashboardPage {
             
         });
 
-        setInterval(() => {
+        this.interval = setInterval(() => {
             this.btn_refresh = true;
         }, 1000 * 30);
 
@@ -161,7 +162,13 @@ export class DashboardPage {
                 this.getLastActivity();
                 this.timeline.reload();
 
-                this.btn_refresh = false; 
+                //Limpa interval e esconde botão
+                clearInterval(this.interval);
+                this.btn_refresh = false;
+
+                this.interval = setInterval(() => {
+                    this.btn_refresh = true;
+                }, 1000 * 30);
                 
             });            
 

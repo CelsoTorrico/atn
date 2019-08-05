@@ -50,6 +50,8 @@ export class ProfileResumeComponent {
     }
 
     public views: any[] = null;
+    public adminViews:any[] = null;
+    enableAdminClubButton:boolean = false;
 
     /** Upload de Photo */
     uploadPhoto: any;
@@ -94,7 +96,12 @@ export class ProfileResumeComponent {
         // used for an example of ngFor and navigation
         this.views = [
             { title: 'PROFILE', component: 'personalView' },
-            { title: 'STATS', component: 'statsView' }
+            { title: 'STATS',   component: 'statsView' }
+        ];
+
+        // telas de admin de usuário
+        this.adminViews = [
+            { title: 'MY_CLUB', component: 'clubView' }
         ];
 
     }
@@ -137,11 +144,9 @@ export class ProfileResumeComponent {
         }
 
         //Adicionar botão de "Meu Clube"
-        if (this.type.ID > 2) {
-            //Adiciona elemento no final
-            this.views.push(
-                { title: 'MY_CLUB', component: 'clubView' }
-            );
+        if (this.type.ID > 2 && this.isLogged) {
+            //Habilita botão de admin
+            this.enableAdminClubButton = true;
         }
 
         //Pega os dados de estatística 

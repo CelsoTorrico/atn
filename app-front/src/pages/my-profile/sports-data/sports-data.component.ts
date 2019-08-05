@@ -139,8 +139,9 @@ export class MyProfileSportsComponent {
             this.sport = atributes.sport;
             this.clubes = atributes.clubs;
 
-            //Define os esportes selecionados
+            //Define os clubes selecionados
             this.savedClubsList();
+            //Define os esportes selecionados
             this.savedSportList();
         });
     }
@@ -183,7 +184,7 @@ export class MyProfileSportsComponent {
     }
 
     /** Compara esportes selecionados: array $sportTable */
-    private setChooseSports($sportChoose) {
+    protected setChooseSports($sportChoose) {
         //Intera sobre items
         for (const element of this.$sportTable) {
             //Compara valores selecionados com tabela de esportes

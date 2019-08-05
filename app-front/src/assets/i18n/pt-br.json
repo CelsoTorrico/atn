@@ -199,6 +199,7 @@
   "CHART": "Gráfico",
   "CHART_MORE_DETAIL": "Gráfico representativo da quantidade de usuários encontrados comparado com o total de membros",
   "LIST_USERS": "Lista de Usuários Encontrados",
-  "LISTS_USERS_MORE_DETAIL": "Principais informações dos usuários encontrados (*Exporte no formato Excel para dados mais completos)"
+  "LISTS_USERS_MORE_DETAIL": "Principais informações dos usuários encontrados (*Exporte no formato Excel para dados mais completos)",
+  "CAREER": "Profissão"
 
 }

@@ -4,8 +4,9 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, ToastController, AlertController, ModalController, IonicPage, NavParams } from 'ionic-angular';
 import { Api } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
-import { DashboardPage } from '../dashboard/dashboard';
 import { ChartComponent } from 'angular2-chartjs';
+import * as html2canvas from 'html2canvas';
+import * as jspdf from '../../../node_modules/jspdf';
 
 @IonicPage({
   segment: 'report'
@@ -15,6 +16,13 @@ import { ChartComponent } from 'angular2-chartjs';
   templateUrl: 'report.html'
 })
 export class ReportPage {
+
+  /**
+   * html2canavas => Apenas versão 1.0.0-rc1 funciona com essa versão do TypeScript
+   * Referencia: https://itnext.io/javascript-convert-html-css-to-pdf-print-supported-very-sharp-and-not-blurry-c5ffe441eb5e 
+   **/
+  h2c = html2canvas;
+  jspdf = jspdf;
 
   @ViewChild(ChartComponent) chart: ChartComponent;
 
@@ -49,7 +57,6 @@ export class ReportPage {
     responsive: true,
     maintainAspectRatio: false,
   };
-
 
   constructor(
     public navCtrl: NavController,
@@ -104,7 +111,21 @@ export class ReportPage {
 
   /** Exporta os relatório utilizando classe clubComponent */
   exportReport($isPdf:boolean = false) {
-      this.clubComponent.exportReport($isPdf);
+      
+      //Exportar Formato Excel
+      if(!$isPdf) {
+        return this.clubComponent.exportReport(false);
+      }
+      
+      //Converte domElement em PDF
+      const filename = "export.pdf";
+      let domHtmlElement = document.getElementById('report-windows');
+      this.h2c(domHtmlElement).then(canvas => {
+        let jspdf = this.jspdf('p', 'mm', 'a4'); 
+        jspdf.addImage(canvas.toDataURL('image/png'), 'PNG', 1, 1);
+        jspdf.save(filename);
+      });      
+
   }
 
   /* Abre uma nova página */

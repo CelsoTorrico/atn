@@ -17,16 +17,16 @@
   }
 
   //Compatibilidade para iPhone
-  .list-chat-members,
   .messages-list{
-    height: calc(100% - 116px);
-    margin-top: 56px;
+    height: 100%;
+    margin-top: 0px;
   }
 
   .list-chat-members {
-    //margin: $toolbar-wp-height 0px;
+    margin-top: 0px;
     padding: 0px 0px;
     background: $branco;
+    height: 100%;
 
     h1{
       padding: 0px 15px;

@@ -2,7 +2,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastController } from 'ionic-angular';
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { User } from '../../../../providers';
 
 @Component({
     selector: 'member-current-user',

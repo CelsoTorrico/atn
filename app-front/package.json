@@ -29,9 +29,11 @@
     "angular2-chartjs": "^0.5.1",
     "cordova-browser": "^6.0.0",
     "express": "^4.17.1",
+    "html2canvas": "^1.0.0-rc.1",
     "http-proxy": "^1.17.0",
     "ionic-angular": "^3.9.3",
     "ionicons": "3.0.0",
+    "jspdf": "^1.5.3",
     "ng-chartjs": "0.1.1",
     "ng-socket-io": "^0.2.4",
     "ng2-cookies": "^1.0.12",
@@ -48,10 +50,11 @@
     "@angular/cli": "^1.7.4",
     "@ionic/app-scripts": "3.2.3",
     "@ionic/lab": "2.0.6",
-    "sw-toolbox": "3.6.0",
-    "typescript": "~2.6.2",
+    "@types/html2canvas": "0.0.35",
     "gulp": "4.0.2",
+    "gulp-run": "1.7.1",
     "gulp-watch": "5.0.1",
-    "gulp-run": "1.7.1"
+    "sw-toolbox": "3.6.0",
+    "typescript": "~2.6.2"
   }
 }

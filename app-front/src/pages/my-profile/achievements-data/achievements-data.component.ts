@@ -56,8 +56,11 @@ export class MyProfileAchievementsComponent {
             //Adicionando valores a classe user
             let atributes = this.user._user;
 
-            //Atribuir data de usuário ao modelo
-            this.titulos_conquistas = atributes.metadata['titulos-conquistas'];
+            //Verifica se dado já existe
+            if (atributes.metadata['titulos-conquistas'] != undefined) {
+                //Atribuir data de usuário ao modelo
+                this.titulos_conquistas = atributes.metadata['titulos-conquistas'];
+            }            
 
         });
     }

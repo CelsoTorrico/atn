@@ -34,9 +34,17 @@
       </ul>
 
       <ion-list no-margin *ngIf="views">
-        <button ion-button outline small *ngFor="let v of views" (click)="loadView(v)">
-          {{ v.title | translate }}
+        
+        <button ion-button outline small *ngFor="let v of views"  (click)="loadView(v)">
+            {{ v.title | translate }}
         </button>
+
+        <ng-container *ngIf="enableAdminClubButton" >
+            <button ion-button outline small *ngFor="let v of adminViews"  (click)="loadView(v)">
+                {{ v.title | translate }}
+            </button>
+        </ng-container>        
+          
       </ion-list>
 
     </header>

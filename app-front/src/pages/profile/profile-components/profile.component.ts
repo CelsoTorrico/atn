@@ -200,8 +200,6 @@ export class ProfileComponent {
       this.videos = videos;
     }
 
-    console.log(this);
-
     //Carrega função
     $fn();
 

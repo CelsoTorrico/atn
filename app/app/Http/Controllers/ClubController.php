@@ -65,7 +65,7 @@ class ClubController extends Controller
         }
         
         //Campos obrigatórios
-        $require = ['display_name', 'user_email', 'user_pass', 'confirm_pass', 'type'];
+        $require = ['display_name', 'user_email', 'type'];
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has($require)) {
@@ -75,6 +75,11 @@ class ClubController extends Controller
         //Verifica se campos obrigatórios estão presentes
         if(!$request->filled($require)) {
             return response(['error' =>["register", "Falta preencher campos obrigatórios!"]]); 
+        }
+
+        //Se as senhas enviadas não corresponderem, terminar execução
+        if($request->has('user_pass') || $request->has('confirm_pass')) {
+            return ($request->input('user_pass') == $request->input('confirm_pass'))?: response(['error' => ['register' => 'As senhas enviadas não conferem. Tente novamente.']]);
         }
 
         //Realiza cadastro e retorna resultado
@@ -92,6 +97,11 @@ class ClubController extends Controller
         //Verifica se é array ao invés de objeto
         if (is_array($this->club) && isset($this->club['error']) || is_null($this->club)) {
             return $this->club;
+        }
+
+        //Se as senhas enviadas não corresponderem, terminar execução
+        if($request->has('user_pass') || $request->has('confirm_pass')) {
+            return ($request->input('user_pass') == $request->input('confirm_pass'))?: response(['error' => ['register' => 'As senhas enviadas não conferem. Tente novamente.']]);
         }
 
         //Atualizando perfil

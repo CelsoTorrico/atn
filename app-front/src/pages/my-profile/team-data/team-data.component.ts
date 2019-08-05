@@ -1,15 +1,19 @@
+import { ClubList } from './../../../providers/clubs/clubs';
 import { Component, Input } from '@angular/core';
-import { ViewController, NavParams, LoadingController } from 'ionic-angular';
+import { ViewController, NavParams, LoadingController, NavController, ToastController, ModalController, AlertController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { User, Api } from '../../../providers';
 import { NgForm } from '@angular/forms';
 import { profileTypeList } from '../../../providers/profiletypes/profiletypes';
+import { MyProfileSportsComponent } from '../sports-data/sports-data.component';
+import { VisibilityList } from '../../../providers/visibility/visibility';
+import { SportList } from '../../../providers/sport/sport';
 
 @Component({
     selector: 'team-data-edit',
     templateUrl: 'team-data.html'
 })
-export class MyProfileAddMemberDataComponent {
+export class MyProfileAddMemberDataComponent extends MyProfileSportsComponent {
 
     page_title:string = "ADD_NEW_MEMBER";
 
@@ -25,6 +29,8 @@ export class MyProfileAddMemberDataComponent {
 
     type:number = 1;
 
+    sport: any[] = []
+
     sportSelected:any
 
     //Url de requisição de usuário
@@ -38,16 +44,30 @@ export class MyProfileAddMemberDataComponent {
 
     //Lista de tipos de usuário
     public $typeUserList:any;
-    @Input() public $sportList:any[] 
+    
+    //Lista de Esportes
+    public $sportsSelected = [];
+    protected $sportTable = [];
+    protected $sportListClub = [];
 
     constructor(
+        public navCtrl: NavController,
         public user: User,
         public api: Api,
+        private alert: AlertController,
+        public toastCtrl: ToastController,
         public viewCtrl: ViewController,
+        public modal: ModalController,
         public translateService: TranslateService,
+        public visibilityList: VisibilityList,
+        public sportList: SportList,
+        public clubList: ClubList,        
         private loading: LoadingController,
-        public params: NavParams,
+        params: NavParams,
         profileType: profileTypeList) { 
+
+        //Extendendo classe SportsComponent
+        super(navCtrl, user, api, toastCtrl, viewCtrl, modal, translateService, visibilityList, sportList, clubList);
     
         this.translateService.setDefaultLang('pt-br');
 
@@ -55,9 +75,19 @@ export class MyProfileAddMemberDataComponent {
             this.loading_placeholder    = data.LOADING;
         });
 
+        //Atribuindo lista de usuários
         this.$typeUserList = profileType.list;
 
-        this.$user_id = this.params.get('data');
+        //Zerando lista de esportes
+        this.$sportList = [];
+        
+        //Atribuindo lista de esportes disponíveis baseado no clube
+        for (const element of this.user._user.sport) {
+            this.$sportListClub.push(element.sport_name);    
+        }
+
+        //Data de usuário
+        this.$user_id = params.get('data');
 
     }
 
@@ -77,11 +107,20 @@ export class MyProfileAddMemberDataComponent {
                 if (resp.status != 'ready') return;
 
                 //Atribuindo dados aos modelos
-                this.page_title = "UPDATE_MEMBER";
-                this.method = "put";
+                this.page_title     = "UPDATE_MEMBER";
+                this.method         = "put";
                 this.display_name   = user._user.display_name;
                 this.user_email     = user._user.user_email;
-                this.type = user._user.type.ID;
+                this.type           = user._user.type.ID;
+                this.sport          = user._user.sport; 
+                
+                //Atribuindo os esportes anteriores do usuário, assim permitindo remover e adicionar novamente.
+                this.sport.forEach(element => {
+                    this.$sportListClub.push(element.sport_name); 
+                });       
+                
+                //Define os esportes selecionados
+                this.savedSportList();
 
             });
         }
@@ -100,13 +139,20 @@ export class MyProfileAddMemberDataComponent {
 
         loading.present();
 
+        //Define ID's dos esportes selecionados
+        this.sport = [];
+        this.$sportsSelected.forEach(element => {
+            this.setChooseSports(element);
+        });
+
         //Campos válidos
         let saveFields = {
             display_name: null,
             user_email: null,
             user_pass: null,
             confirm_pass: null,
-            type: null,           
+            type: null,   
+            //sport: null        
         }
 
         //Intera sobre objeto e atribui valor aos modelos de metadata
@@ -123,7 +169,14 @@ export class MyProfileAddMemberDataComponent {
         //Realiza update de dados do usuario
         this.api[method](MyProfileAddMemberDataComponent.$getProfile + url, saveFields).subscribe((resp:any) => {
             
-            if(Object.keys(resp).length <= 0 ){
+            if(resp.error != undefined) {
+                
+                //Mostrar alerta de erro
+                let alert = this.alert.create({
+                    message: resp.error
+                });
+
+                alert.present();
                 return;
             }
 

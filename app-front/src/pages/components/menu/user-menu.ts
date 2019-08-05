@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Nav, NavController, ToastController } from 'ionic-angular';
-import { User } from '../../../providers';
+import { User, Cookie } from '../../../providers';
 import { CookieService } from 'ng2-cookies';
 import { environment } from '../../../environments/environment';
 
@@ -25,8 +25,9 @@ export class UserMenu {
   constructor(
     public navCtrl: NavController,
     public toastCtrl: ToastController,
-    public user: User,
-    private cookieService: CookieService) { }
+    public user: User) {
+      
+  }
 
   //Função que inicializa
   ngOnInit() {
@@ -42,24 +43,38 @@ export class UserMenu {
   doLogout() {
 
     //Subscreve sobre a requisição
+    if (this.user == undefined) {
+      //Remoove cookie do browser
+      Cookie.deleteCookie();
+      return this.logoutMessageRedirect('Você foi deslogado.');
+    }
+
+    //Logout no caso de classe user setada corretamente
     this.user.logout().then((resp: any) => {
       if (resp.success) {
-
-        //Exibe mensagem
-        let toast = this.toastCtrl.create({
-          position: 'bottom',
-          message: resp.success.logout,
-          duration: 3000
-        });
-
-        toast.present({
-          disableApp: true,
-          ev: window.location.assign(environment.apiUrl)
-        });
-
+        //Faz o logout
+        this.logoutMessageRedirect(resp.success.logout);
       }
     });
 
+  }
+
+  private logoutMessageRedirect(resp: string) {
+
+    //Exibe mensagem
+    let toast = this.toastCtrl.create({
+      position: 'bottom',
+      message: resp,
+      duration: 3000
+    });
+
+    toast.present().then((res) => {
+      //Aguarda 3 segundos para redirecionar
+      setTimeout(() => {
+        window.location.assign(environment.apiOrigin);
+      }, 1000 * 3)
+
+    });
   }
 
 }

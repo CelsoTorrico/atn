@@ -141,10 +141,11 @@ export class ProfileTypeStepPage {
      * 
      */
     private setChooseSports($sportChoose) {
+        console.log($sportChoose);
         //Intera sobre items
         for (const element of this.$sportTable) {
             //Compara valores selecionados com tabela de esportes
-            if (element[1] == $sportChoose.display_name) {
+            if (element[1] == $sportChoose.display) {
                 //Atribui valor a array
                 this.$account.sport.push(element[0]);
                 break;

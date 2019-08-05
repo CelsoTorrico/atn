@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Cookie } from './../cookie/cookie';
 import { ToastController } from 'ionic-angular';
 import { Injectable, Output, EventEmitter } from '@angular/core';

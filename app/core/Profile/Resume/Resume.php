@@ -27,18 +27,20 @@ class Resume {
 
         //Array de dados do usuário
         $profileMain = [
-            'Telefone' => 'telefone',
-            'Gênero' => 'gender',
+            'Telefone'  => 'telefone',
+            'Gênero'    => 'gender',
             'Data de Nascimento' => 'birthdate', 
-            'CPF' => 'cpf', 
-            'RG' => 'rg', 
-            'CNPJ' => 'cnpj',
-            'Endereço' => 'address', 
-            'Bairro' => 'neighbornhood', 
-            'Cidade' => 'city', 
-            'Estado' => 'state', 
-            'País' => 'country',
-            'CEP'   => 'zipcode'
+            'CPF'       => 'cpf', 
+            'RG'        => 'rg', 
+            'CNPJ'      => 'cnpj',
+            'Endereço'  => 'address', 
+            'Bairro'    => 'neighbornhood', 
+            'Cidade'    => 'city', 
+            'Estado'    => 'state', 
+            'País'      => 'country',
+            'CEP'       => 'zipcode',
+            //'Membro'    => 'parent_user',
+            'Profissão'  => 'career',
         ];
 
         //Array de dados do usuário
@@ -52,6 +54,13 @@ class Resume {
             'Títulos | Conquistas' => 'titulos-conquistas',
         ];
 
+        //Array de images de medalhas
+        $medalsImagesLinks = [
+            '1' => 'https://app-atletasnow.s3-sa-east-1.amazonaws.com/app-images/gold-medal.png',
+            '2' => 'https://app-atletasnow.s3-sa-east-1.amazonaws.com/app-images/silver-medal.png',
+            '3' => 'https://app-atletasnow.s3-sa-east-1.amazonaws.com/app-images/bronze-medal.png'
+        ];
+
         /** Dados Pessoais e Empresariais */
         $html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -63,32 +72,22 @@ class Resume {
      
      $html.= '<title>'.  $data->display_name . '</title>;
 
-     <style type="text/css">
-        * { margin: 0; padding: 0; }
-        body { background-color: #000, color:#fff; }
-     </style>
 </head>
 
-<body style="font: 16px Helvetica, Sans-Serif; line-height: 24px; background: url(images/noise.jpg);">
+<body style="font: 16px Calibri, text-spacing:1px; Sans-Serif; line-height: 24px; background: url(images/noise.jpg);">
 
     <div id="page-wrap" style="width: 800px; margin: 40px auto 60px;">';
     
         $html .= '<table style="width:100%;margin:0;padding:0;border:0;">
                     <tr>
-                        <td valign="top" style="margin:0 15px 0 0;padding:0;border:0;">
+                        <td valign="top" style="width:100px;margin:0 15px 0 0;padding:0;border:0;">
                             <img src="' . 
                                 $this->isAtributeSet('profile_img', $data->metadata) 
                             .'" alt="Photo" id="pic" style="position:relative; float:left; margin: 30px 15px 15px 0px;width:100px;" />
                         </td>
                         <td valign="top" style="margin:0;padding:0;border:0;">
-                            <div id="contact-info" class="vcard">        
-                            <!-- Microformats! -->
-                            <h1 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 32px; font-weight: bold; letter-spacing: -2px; border-bottom: 1px solid #999;">' . $data->display_name .'</h1><br />
-                            <div id="objective">
-                                <p style="margin: 0 0 16px 0;">'
-                                . $this->isAtributeSet('biography', $data->metadata)
-                                .'</p>
-                            </div>
+                            <h1 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 32px; font-weight: bold; letter-spacing: 1px; border-bottom: 1px solid #999;text-decoration:none;">' . $data->display_name .'</h1><br />
+                            <p style="margin: 0;font-size:13px;font-family:Calibri, Arial,no-serif;">'. $this->isAtributeSet('biography', $data->metadata) .'</p>
                         </td>
                     </tr>
                 </table>
@@ -98,8 +97,8 @@ class Resume {
                 <table style="width:100%;margin:0;padding:0;border:0;">
                     <tr>
                         <td valign="top" style="margin:0 15px 0 0;padding:0;border:0;width:50%;">
-                            <h2 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 18px; font-weight: bold; letter-spacing: -2px;">Dados Pessoais</h2>
-                            <p style="margin: 0 0 16px 0;font-size:13px;">';
+                            <h2 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 18px; font-weight: bold; letter-spacing: 1px;margin-bottom:20px;">Dados Pessoais</h2>
+                            <p style="margin: 0 0 16px 0;font-size:13px;font-family:Calibri, Arial,no-serif;">';
 
         foreach ($profileMain as $key => $value) {
 
@@ -118,8 +117,8 @@ class Resume {
         $html .= '          </p>
                         </td>
                         <td valign="top" style="margin:0;padding:0 0 0 10px;border:0;">
-                            <h2 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 18px; font-weight: bold; letter-spacing: -2px;">Dados Esportivos</h2>
-                            <p style="margin: 0 0 0 16px;font-size:13px;">';
+                            <h2 class="fn" style="margin: 0 0 35px 0; padding: 0 0 20px 0; font-size: 18px; font-weight: bold; letter-spacing: 1px;margin-bottom:20px;">Dados Esportivos</h2>
+                            <p style="margin: 0 0 0 16px;font-size:13px;font-family:Calibri, Arial,no-serif;">';
 
         //Criando array com apenas dados não mostrados 
         $keys = array_keys(array_flip(array_merge($profileMain, $profileDetails)));
@@ -133,7 +132,7 @@ class Resume {
             }
 
             //Ignorar estes dados
-            if(in_array($key, ['my-videos', 'profile_img', 'type', 'views', 'searched_profile', 'biography', 'session_tokens', 'stats'])){
+            if(in_array($key, ['my-videos', 'profile_img', 'type', 'views', 'searched_profile', 'biography', 'session_tokens', 'stats', 'stats-sports', 'parent_user'])){
                 continue;
             }
 
@@ -182,7 +181,7 @@ class Resume {
 
                     $club_certify = (key_exists('certify', $v))? '<span style="position: absolute; bottom: 0; right: 0; font-style: italic; font-family: Georgia, Serif; font-size: 16px; color: #999; font-weight: normal;">'. $v['certify'] . '</span>':'';
                     
-                    if (!key_exists('ID', $v)){
+                    if (!key_exists('ID', $v)) {
                         //Atribui ao html
                         $html .= '<p style="margin: 0 0 16px 0;">'. $v['club_name'] . $club_certify.'<br />';
                     } else {
@@ -202,6 +201,11 @@ class Resume {
                     $html .= ($sport)? '<div style="margin: 0 10px 10px 0;">'. $model->sport_name .'</div>': '';
 
                 }//Se for array atribui valores 
+                else if($key == 'Títulos | Conquistas') {
+
+                    //Atribui ao html
+                    $html .= '<h2 style="font-size: 20px; margin: 0 0 6px 0; position: relative;"><img src='. $medalsImagesLinks[$v[0]] .' width="31px" alt="medal"/> '. $v[0] . 'º lugar</h2><p style="margin: 0 0 16px 0;">'. $v[1] .'<br />' . $v[2].'<br />'; 
+                }
                 else{
                     //Atribui ao html
                     $html .= '<h2 style="font-size: 20px; margin: 0 0 6px 0; position: relative;">'. $v[0] .'</h2><p style="margin: 0 0 16px 0;">'. $v[1] .'<br />' . $v[2].'<br />';

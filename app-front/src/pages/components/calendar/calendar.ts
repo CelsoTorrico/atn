@@ -12,8 +12,8 @@ export class Calendar extends Timeline {
 
   //Parametros de URL
   @Input()  public timelineID:number;
-  @Input()  public isLogged: boolean = false
-  @Output() public updateEvent = new EventEmitter()
+  @Input()  public onlyRead: boolean = true;
+  @Output() public updateEvent = new EventEmitter();
  
   //Lista de Items 
   @Input()  public currentItems:any[] = [];

@@ -23,16 +23,24 @@
 
 #Outras
 ☐ Rotas das páginas >> Implementar
-☐ Logout >> Dando erro e redirecionando local erro
+✔ Login >> Iniciar classe User @done(19-08-03 22:40)
+✔ Logout >> Dando erro e redirecionando local erro @done(19-08-05 03:30)
+☐ Pesquisa >> Melhorar filtragem de usuários
+✔ PDF >> Melhorar a exibição dos dados @done(19-08-03 20:53)
+✔ Profile >> PDF de profile substituir numeros e colocar medalhas @done(19-08-03 21:50)
+✔ Profile >> PDF adicionar marca dagua @done(19-08-03 22:30)
+✔ Calendários >> Remover editar de ProfileComponent @done(19-08-02 13:37)
+✔ Calendários >> Verificar upload de imagem @done(19-08-02 13:26)
+✔ Botão Meu Clube >> Exibir apenas para usuário logado @done(19-08-02 13:47)
+
 
 #Melhorias secundárias
 ✔ Tag Input >> Não está enviado dados, verificar e corrigir @done(19-07-31 22:12)
 ☐ Tag Input >> Case insesitive, ignorar caracteres com acentuação
+☐ Meu Clube >> Listar esportes ao add ou editar usuário
 ✔ Página de Busca >> Não está abrindo BrowserModule? @done(19-07-28 13:45)
-☐ PDF >> Melhorar a exibição dos dados
 ✔ Excel >> Adicionar ID de usuário nas planilhas de estatísticas @done(19-08-02 01:53)
 ☐ Profile >> Botão de Bloquear Usuário
-☐ Profile >> PDF de profile substituir numeros e colocar medalhas
 ✔ Profile >> Editar membros da equipe @done(19-08-02 00:42)
 ✔ Profile >> Habilitar edição quando visitando proprio perfil @done(19-08-01 01:41)
 ☐ Mensagens >> Paginação de mensagens anteriores

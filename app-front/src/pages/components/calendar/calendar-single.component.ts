@@ -13,8 +13,8 @@ import { CalendarView } from './calendar-view.component';
 })
 export class CalendarSingle extends TimelineSingle {
 
-  @Input() public calendarAtributes: any;
-
+  @Input()  public calendarAtributes: any;
+  @Input()  public onlyRead:boolean = true;
   @Output() public calendarUpdate = new EventEmitter();
 
   public img_thumbnail:string; 

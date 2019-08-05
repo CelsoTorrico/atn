@@ -42,7 +42,7 @@ class PushNotify {
     }
 
 
-    function sendNotification(array $subscription, array $message = []) {
+    function sendNotification(array $subscription, array $message = [], array $options = []) {
         
         //Instancia Subscrição
         $webPushSubscription = Subscription::create($subscription);
@@ -50,7 +50,9 @@ class PushNotify {
         //Contruindo notificação e enviando
         $res = $this->webPush->sendNotification( 
             $webPushSubscription, 
-            json_encode($message)
+            json_encode($message),
+            true,
+            $options
         );
 
         //Verificação de erros

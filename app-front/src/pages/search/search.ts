@@ -102,6 +102,7 @@ export class SearchPage {
       if(this.query.display_name != ''){
         this.widgetSearch(); 
       }  
+      
   }
 
   ngOnInit() { 
