@@ -202,14 +202,14 @@ export class MyProfileCalendarComponent {
     }
 
     //Quando um input tem valor alterado
-    fileChangeEvent(fileInput: any) { 
+    fileChangeEvent(fileInput: any) {
 
         if (fileInput.target.files && fileInput.target.files[0]) {
 
             var reader = new FileReader();
 
             reader.onload = function (e: any) {
-                let preview = document.getElementById('preview');
+                let preview = document.getElementById('post_image_calendar_preview');
                 preview.style.backgroundImage = 'url(' + e.target.result + ')';
                 preview.style.display = 'block';
             }

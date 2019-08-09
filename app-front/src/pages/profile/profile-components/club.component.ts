@@ -191,7 +191,6 @@ export class ClubComponent extends ProfileComponent {
         this.team.push(element);
       }
 
-
       //Reseta dados do campo "sport"
       this.query.sport = [];
 

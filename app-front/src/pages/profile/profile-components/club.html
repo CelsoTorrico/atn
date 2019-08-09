@@ -15,10 +15,6 @@
 
     </header>
 
-    <!--<p *ngIf="listCalendar.length <= 0">
-      {{ "MY_CALENDAR_INITIAL_MESSAGE" | translate }}
-    </p>-->
-
     <calendar [onlyRead]="false" [timelineID]="ID" (updateEvent)="calendarUpdate($event)">
     </calendar>
 
@@ -152,17 +148,20 @@
 
           <ion-buttons>
 
-            <button edit-profile ion-button small start outline (click)="viewReport();">
+            <button edit-profile ion-button small start icon-end outline (click)="viewReport();">
               {{ "VIEW_REPORT" | translate }}
+              <ion-icon item-end name="eye"></ion-icon>
             </button>
 
-            <button edit-profile ion-button small start clear (click)="exportReport();">
+            <button edit-profile ion-button small start icon-end clear (click)="exportReport();">
               {{ "EXPORT_EXCEL" | translate }}
+              <ion-icon item-end name="document"></ion-icon>
             </button>
 
-            <button edit-profile ion-button small end clear (click)="exportReport(true);">
+            <!--<button edit-profile ion-button small end clear (click)="exportReport(true);">
               {{ "EXPORT_PDF" | translate }}
-            </button>
+              <ion-icon item-end name="document"></ion-icon>
+            </button>-->
 
             <ion-badge right end>{{ current_users.qtd}} / {{ max_users}}</ion-badge>            
 

@@ -9,6 +9,7 @@ page-dashboard {
     ion-header{
 
         background-color: $branco;
+        border-bottom: 1px solid #ccc !important;
     
         #main-logo{
             max-width: 200px;
@@ -34,8 +35,8 @@ page-dashboard {
         }
         
         .menu-desktop{
-            background-color: $branco !important;
-            background: initial;
+            padding: 0px;
+            background: initial;            
         }
     } 
     
@@ -46,7 +47,7 @@ page-dashboard {
     background-color: #f1f1f1;
 
     .refresh{
-        background-color: rgba(255,255,255,0.4);
+        background-color: rgba(255,255,255,0.9);
         padding: 10px 15px;
         margin-top: 0px;
         border-bottom: 1px dashed #ddd;

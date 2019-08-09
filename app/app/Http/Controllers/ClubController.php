@@ -69,17 +69,19 @@ class ClubController extends Controller
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has($require)) {
-            return response(['error' =>["register", "Campos não submetidos! Tente novamente!"]]); 
+            return response(['error' => ["register" => "Campos não submetidos! Tente novamente!"]]); 
         }
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->filled($require)) {
-            return response(['error' =>["register", "Falta preencher campos obrigatórios!"]]); 
+            return response(['error' => ["register" => "Falta preencher campos obrigatórios!"]]); 
         }
 
         //Se as senhas enviadas não corresponderem, terminar execução
         if($request->has('user_pass') || $request->has('confirm_pass')) {
-            return ($request->input('user_pass') == $request->input('confirm_pass'))?: response(['error' => ['register' => 'As senhas enviadas não conferem. Tente novamente.']]);
+            //Se as senhas forem diferentes
+            if ($request->input('user_pass') != $request->input('confirm_pass'))
+            return response(['error' => ['register' => 'As senhas enviadas não conferem. Tente novamente.']]);
         }
 
         //Realiza cadastro e retorna resultado

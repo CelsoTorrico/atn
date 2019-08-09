@@ -15,7 +15,7 @@
 </ion-menu>
 <!-- /Menu-Mobile -->
 
-<ion-nav #content [root]="Dashboard"></ion-nav>
+<ion-nav #content [root]="Dashboard"></ion-nav> 
 
 <ion-header>
   <ion-toolbar>
@@ -29,7 +29,7 @@
           <ion-row justify-content-end>
             <ion-col col-auto no-padding>
 
-              <ul class="list-inline">
+              <ul class="list-inline"> 
                 <li class="menu-icons">
                   <notify [notifyCount]="info.notifications"></notify><!-- Notificações -->
                 </li>
@@ -86,7 +86,6 @@
       {{ 'REFRESH_BUTTON' | translate }}
     </button>
   </p><!-- Botão que aparece a cada 30 segundos -->
-
 
   <ion-grid fixed>
 
@@ -252,19 +251,19 @@
 
                   </ion-item>
 
-                  <div id="preview" class="image-container"></div>
+                  <div id="post_image_timeline_preview" class="image-container"></div>
 
                 </ion-col>
                 <ion-col col-6>
                   <div class="input-image">
 
-                    <label class="item btn-cursor" for="post_image">
+                    <label class="item btn-cursor" for="post_image_timeline">
                       <ion-icon item-start name="images"></ion-icon>
                       <span>{{ "ATTACH_IMAGE" | translate }}</span>
                     </label>
 
-                    <input id="post_image" [(ngModel)]="addTimeline.post_image" (change)="fileChangeEvent($event)"
-                      type="file" name="post_image" accept="image/*" />
+                    <input id="post_image_timeline" [(ngModel)]="addTimeline.post_image" (change)="fileChangeEvent($event)"
+                      type="file" name="post_image" accept="image/*" multiple="false" webkitdirectory="true" />
 
                   </div>
                 </ion-col>

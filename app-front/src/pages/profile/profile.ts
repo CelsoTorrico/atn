@@ -2,7 +2,7 @@ import { ProfileViewDirective } from './profile-view.directive';
 import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
 import { Api } from './../../providers/api/api';
 import { Component, ComponentFactoryResolver, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, AlertController, LoadingController } from 'ionic-angular';
 import { User } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileComponent } from './profile-components/profile.component';
@@ -24,7 +24,18 @@ export class ProfilePage {
     personalView: ProfileComponent,
     statsView: StatsComponent,
     clubView: ClubComponent
+  } 
+
+  //Dados de Usuário de contexto
+  loggedUser: any = {
+    type: {
+      ID: <number>null
+    }
   }
+
+  //Duas instancias de usuário
+  profileUser:User
+  currentUser:User
 
   //Variveis de template de usuario
   ID: number = null;
@@ -32,7 +43,7 @@ export class ProfilePage {
   favorite: boolean = false;
   following: boolean = false;
   isLogged: boolean = false;
-  typeUser: number = null;
+  typeUser: number = 1;
   addedTeam: boolean = false;
 
   //Profile visited
@@ -42,21 +53,38 @@ export class ProfilePage {
 
   public loginErrorString;
 
+  public title:any;
+
+  private loading;
+
   constructor(
-    public navCtrl: NavController,
-    public modalCtrl: ModalController,
-    public alertCtrl: AlertController,
+    public  navCtrl: NavController,
+    loading: LoadingController,
+    public  modalCtrl: ModalController,
+    public  alertCtrl: AlertController,
     private api: Api,
     private user: User,
     private params: NavParams,
     private componentFactoryResolver: ComponentFactoryResolver,
-    public translateService: TranslateService) {
+    public  translateService: TranslateService) {
 
     this.translateService.setDefaultLang('pt-br');
 
+    let loadMessage;
+
     //Tradução
-    this.translateService.get('LOGIN_ERROR').subscribe((value) => {
-      this.loginErrorString = value;
+    this.translateService.get(['LOGIN_ERROR', 'LOADING', 'ADD_USER_TO_CLUB', 'REMOVE_USER_TO_CLUB']).subscribe((value) => {
+      this.loginErrorString = value.LOGIN_ERROR;
+      this.title = {
+        REMOVE_USER_TO_CLUB : value.REMOVE_USER_TO_CLUB,
+        ADD_USER_TO_CLUB: value.ADD_USER_TO_CLUB
+      };
+      loadMessage = value.LOADING;
+    });
+
+    //Inicializando loading
+    this.loading = loading.create({
+      content:loadMessage
     });
 
     //Retorna id de usuário de contexto
@@ -65,7 +93,7 @@ export class ProfilePage {
     //Verifica se usuário de contexto existe, ou seja, visita a um perfil
     if (this.$user_ID != null && this.$user_ID > 0) {
       //Atribui classe de usuário definido pelo $user_id
-      this.user = this.user.getUser(this.$user_ID);
+      this.profileUser = this.user.getUser(this.$user_ID);
     }
 
   }
@@ -74,46 +102,77 @@ export class ProfilePage {
   //Função que inicializa
   ngOnInit() {
 
-    //Quando primeira página de acesso for 'Profile'
-    if(this.user._user != undefined ) {
-      
-      //Verifica se usuário é editavel pelo usuário logado   
-      this.isLogged = this.canEdit(true); 
-      
-      //Popula parametros da classe
-      this.populateParameters(); 
+    this.loading.present();
 
-    }
+    //Setando informações do usuário de contexto
+    this.setCurrentUser();
 
     //Quando classe User emitir evento após requisição de dados
-    this.user.dataReady.subscribe((resp) => {
+    if (this.profileUser != undefined) {
+      this.profileUser.dataReady.subscribe((resp) => {
 
-      if (resp.status != 'ready') return;
-      
+        if (resp.status != 'ready') return;
+
+        //Popula parametros da classe
+        this.currentUser = this.profileUser;
+        this.isLogged = false;
+        this.populateParameters(this.profileUser);
+
+      });
+    }
+  }
+
+  //Setando informações do usuário de contexto
+  private setCurrentUser() {
+
+    //Se instanciado anteriormente com usuário de contexto
+    if (this.user._user != undefined) {
+
+      //Atribuindo dados de usuário de contexto
+      this.currentUser  = this.user; 
+      this.loggedUser   = this.user._user;
+
+      //Verifica se usuário é editavel pelo usuário logado   
+      this.isLogged = true;
+
       //Popula parametros da classe
-      this.populateParameters(); 
+      if (!this.profileUser) {
+        this.populateParameters();
+      }
+        
 
-    });
+    } else {
+      this.user.dataReady.subscribe((resp) => {
+
+        if (resp.status != 'ready') return;
+
+        //Carrega usuário de contexto
+        this.setCurrentUser();
+
+      })
+    }
 
   }
 
   /** Faz a atribuição de dados do perfil de usuário nos parametros da classe */
-  private populateParameters() {
+  private populateParameters($user:User = this.user) {
     
     //Atribuindo em cada parametro
-    this.ID = this.user._user.ID;
-    this.following = this.user._user.following;
-    this.typeUser = this.user._user.type.ID;
+    this.ID = $user._user.ID;
+    this.following  = $user._user.following;
+    this.typeUser   = $user._user.type.ID;
 
     //Verifica se usuário pertence a equipe 
-    this.addedTeam = this.isAddedToTeam();
+    this.addedTeam = this.isAddedToTeam($user._user.ID);
 
     this.profileResume.isLogged = this.isLogged; //Injeta visibilidade
-    this.profileResume.user = this.user; //Injecta classe
-    this.profileResume.loadUserData(this.user._user); //Carrega dados de usuário
+    this.profileResume.user = $user; //Injecta classe
+    this.profileResume.loadUserData($user._user); //Carrega dados de usuário
 
     //Carrega componente inicial
     this.loadComponent(this.ListComponents.personalView);
+
+    this.loading.dismiss();
 
   }
 
@@ -130,9 +189,9 @@ export class ProfilePage {
 
     //Injeta classe de usuário no componente filho
     componentRef.instance.isLogged = this.isLogged;
-    componentRef.instance.user = this.user;
-    componentRef.instance.type = this.user._user.type.ID;
-    componentRef.instance.loadUserLoadData(this.user._user);
+    componentRef.instance.user = this.currentUser;
+    componentRef.instance.type = this.currentUser._user.type.ID;
+    componentRef.instance.loadUserLoadData(this.currentUser._user);
 
   }
 
@@ -146,30 +205,25 @@ export class ProfilePage {
    * Função de permitir a exibição dos botões de edição 
    * @since 2.1
    * */
-  canEdit($valid:boolean = false): boolean {
-
+  canEdit($valid: boolean = false): boolean {
     //Se usuário estiver logado na propria pagina de perfil
-    if ($valid) return true;
-
-    //Verifica se usuário é pertecente ao usuario logado
-    return this.myUsers(this.$user_ID);
-
+    return $valid;
   }
 
   /**
    * Verifica se usuário já foi adicionado ao time/clube/instituição
    * @since 2.1
    */
-  isAddedToTeam(): boolean {
+  isAddedToTeam($id:number): boolean {
     //Adicionado dados do usuário que esta visualizando perfil
-    return this.myUsers(this.$user_ID);
+    return this.myUsers($id);
   }
 
   /** 
    * Retorna array de ids FALSE 
    * @return mixed  Array de ids ou Bolean para encontrar um id
    * */
-  private myUsers($exist: number = null) {
+  private myUsers($id:number):boolean {
 
     //Se não existir parametro
     if (this.user._user.current_users == (undefined || null)) {
@@ -184,21 +238,21 @@ export class ProfilePage {
       return false;
     }
 
+    //Resposta da função
+    let resp:boolean = false;
+
     //Se solicitado encontrar um id dentro do array de ids
-    if ($exist != null) {
-      for (const element of $list.ids) {
-        if ($exist == element) {
-          $list = true;
-          break;
-        }
+    for (const memberID of $list.ids) {
+      if ($id == Number(memberID)) {
+        resp = true;
+        break;
       }
     }
 
     //Retorna array de ids
-    return $list;
+    return resp;
 
   }
-
 
 
   /** --------------------------------------------------
@@ -276,11 +330,11 @@ export class ProfilePage {
     let $id = this.ID;
 
     let $alert = this.alertCtrl.create({
-      title: 'Adicionar usuário a sua equipe?',
-      message: 'Tem certeza que deseja realizar essa ação?',
-      buttons: [{
-        text: 'Cancelar',
-        role: 'cancel'
+      title:    (this.addedTeam)? this.title.REMOVE_USER_TO_CLUB : this.title.ADD_USER_TO_CLUB,
+      message:  'Tem certeza que deseja realizar essa ação?',
+      buttons:  [{
+        text:   'Cancelar',
+        role:   'cancel'
       },
       {
         text: 'Sim',

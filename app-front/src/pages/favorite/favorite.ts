@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { CookieService } from 'ng2-cookies';
 import { Api } from '../../providers/api/api';
 import { Component } from '@angular/core';
@@ -54,13 +55,21 @@ export class FavoritePage {
     public loginErrorString;
   
     constructor(
-        public navCtrl: NavController,
-        public user: User,
-        public api: Api,
-        public toastCtrl: ToastController,
+        public  navCtrl: NavController,
+        public  user: User,
+        public  api: Api,
+        public  toastCtrl: ToastController,
         private params: NavParams, 
-        public translateService: TranslateService,
+        public  translateService: TranslateService,
         private cookieService: CookieService) { 
+
+        /** Verifica se usuário já esta logado anteriormente na plataforma */
+        this.user.isLoggedUser().then((resp) => {
+            //Redireciona para a página de Login
+            if (!resp) { 
+                location.assign(environment.apiOrigin);       
+            } 
+        });
 
         this.translateService.get('LOGIN_ERROR').subscribe((value) => {
             this.loginErrorString = value;

@@ -242,7 +242,7 @@ class Login implements LoginInterface{
 
         //Instancia usuário com dados do banco
         $user = new User([
-            'user_login'=> $this->model->user_login, 
+            'user_email'=> $this->model->user_email, 
             'user_pass' => $this->model->user_pass  ]);
 
         //Atribuindo nova senha ao usuário que solicitou reenvio de senha

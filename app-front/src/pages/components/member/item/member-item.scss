@@ -1,4 +1,13 @@
 member-item, member-club{
+
+    &.disabled{
+        cursor: default;
+
+        ion-avatar{
+            position: relative;
+        }
+    }
+
     ion-col{
         text-align: center;
         min-height: 150px !important;
@@ -30,6 +39,13 @@ member-item, member-club{
                 color: $titulos;
             }
         } 
+
+        .user-inative{
+            position: absolute;
+            top: -5px;
+            left: 0px;
+            font-size: 0.8rem;
+        }
     
     }
 

@@ -81,7 +81,7 @@ export class PushNotifyService {
                         authToken: auth,
                     }
                 }).subscribe((resp) => {
-                    alert.setMessage('Subscrição OK'); 
+                    //alert.setMessage(); 
                     alert.present();              
                 }, (error) => {
 

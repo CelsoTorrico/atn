@@ -74,14 +74,18 @@ export class LoginPage implements OnInit{
           
         //Redireciona para dashboard
         this.user.getUserData().then((resp:boolean) => {
-
-          //Fecha loading
-          loading.dismiss();
           
-          if(!resp) return;
+          if(!resp){
+            //Fecha loading
+            loading.dismiss();
+            return;
+          } 
 
           //Rediciona para dashboard
-          this.navCtrl.setRoot('Dashboard');               
+          this.navCtrl.setRoot('Dashboard').then((resp) => {
+            loading.dismiss();
+          }); 
+
         });        
 
       }

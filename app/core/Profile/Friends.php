@@ -67,13 +67,15 @@ class Friends {
 				continue;
 			}
 
-			/** Verificar a existencia do usuário na plataforma */
+			//Retorna dados do usuário em forma array
 			$f = $user->getData(); 
-			if(!$usermodel->load(['ID' => $f['to_id']])) continue;
+
+			/** Verificar a existencia do usuário na plataforma com status ativo */
+			if(!$usermodel->load(['ID' => $f['to_id'], 'user_status' => 0])) continue;
 			
 			//Retorna apenas ids de usuário
 			if ($this->onlyIDS) {
-				$listFriends[] = $user->to_id;
+				$listFriends[] = $user->to_id->ID;
 				continue;
 			}
 

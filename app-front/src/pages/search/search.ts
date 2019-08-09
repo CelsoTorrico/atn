@@ -1,11 +1,9 @@
 import { NgForm } from '@angular/forms';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { Api, Cookie } from '../../providers';
+import { IonicPage, NavController, NavParams, LoadingController, Loading } from 'ionic-angular';
+import { Api } from '../../providers';
 import { BrazilStates } from '../../providers/useful/states';
 import { TranslateService } from '@ngx-translate/core';
-import { CookieService } from 'ng2-cookies';
-import { DashboardPage } from '../dashboard/dashboard';
 import { GenderList } from '../../providers/gender/gender';
 import { profileTypeList } from '../../providers/profiletypes/profiletypes';
 import { SportList } from '../../providers/sport/sport';
@@ -61,6 +59,9 @@ export class SearchPage {
   public $url:string = '';
   public $paged:number = 1;  
 
+  //tradução
+  loading_placeholder:string
+
   constructor(
       public api:Api, 
       public navCtrl: NavController, 
@@ -70,7 +71,13 @@ export class SearchPage {
       profileType: profileTypeList,
       sportList: SportList,
       clubList: ClubList,
-      public translateService: TranslateService) { 
+      private loadingCtrl: LoadingController,
+      translateService: TranslateService) { 
+
+      //Tradução
+      translateService.get(["LOADING"]).subscribe((resp:any) => {
+        this.loading_placeholder = resp.LOADING;
+      });
     
       //Carrega lista de estados do provider
       this.$statesList = states.statesList;  
@@ -118,9 +125,15 @@ export class SearchPage {
   }
 
   private widgetSearch($fn:any = function(){}) {
+
+      //Criando objeto loading
+      let loading = this.createLoading();
+      loading.present();
       
       //Retorna a lista de clubes para seletor
       this.api.post('/user/search' + this.$url + '/paged/' + this.$paged, this.query).subscribe((resp:any) => {
+
+        loading.dismiss(); //Fechar loading
 
         //Se reposta não existir
         if(resp.error != undefined || resp == null) {
@@ -180,6 +193,7 @@ export class SearchPage {
 
   }
 
+  /** Carrega mais usuários  */
   loadMore($event) {
 
     setTimeout(() => {
@@ -205,6 +219,16 @@ export class SearchPage {
     } else {
         this.navCtrl.setRoot('Dashboard'); 
     }        
+  }
+
+  /**
+   *  Cria objeto de loading
+   */
+  private createLoading(): Loading {
+    //Define objeto Loading
+    return this.loadingCtrl.create({
+      content: this.loading_placeholder
+    });
   }
 
 

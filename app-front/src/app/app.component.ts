@@ -1,32 +1,39 @@
+import { environment } from './../environments/environment';
 import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Config } from 'ionic-angular';
+import { Config, IonicApp, NavController } from 'ionic-angular';
 import { User } from '../providers';
 
 @Component({  
   template: `
-    <ion-nav [root]="rootPage"></ion-nav>
+    <ion-nav #navRoot [root]="rootPage"></ion-nav>
     `
 })
 export class MyApp { 
 
   rootPage:string = 'Login'; 
 
+  @ViewChild('navRoot') nav: NavController;
+
   constructor(
     private translate: TranslateService,
-    private config: Config, 
+    private config: Config,
     private user: User) {  
 
     //Iniciar tradução
     this.initTranslate(); 
 
     /** Verifica se usuário já esta logado anteriormente na plataforma */
-    this.user.isLoggedUser().then((resp) => {
+    /*this.user.isLoggedUser().then((resp) => {
       //Redireciona para a página de Login
       if (!resp) { 
-        this.rootPage = 'Login'; 
+        //Retorna ativo
+        let view = this.nav.getActive();
+        if (view.name != 'LoginPage') {
+          location.assign(environment.apiOrigin);
+        }        
       } 
-    });
+    });*/
 
   }
 

@@ -490,14 +490,22 @@ class Timeline {
         
         //Aplicando a lista de visibilidade
         foreach ($usertypes as $item) {
+
+            /** 
+             * Não exibir opções para instituições
+             * @since 2.1
+             * */
+            if ((int) $this->currentUser->type['ID'] > 2 && in_array($item->ID, [99, 3, 4, 5])) continue;
+
             $levels[] = ['option' => $item->type, 'value' => (int) $item->ID];
         }        
 
-        //Se usuário for um clube, adicionar visibilidade para posts privados para somente os pertencentes ao grupo
+        //Se usuário for uma instituição, adicionar visibilidade para posts privados para somente os pertencentes ao grupo
         if ((int)$this->currentUser->type['ID'] > 2) {
-            $levels[] = [
-                'option'    => $this->currentUser->display_name, 
-                'value'     => (int) $this->currentUser->ID];
+            
+            array_unshift($levels, [
+                'option'    => 'Meu ' . $this->currentUser->type['type'], 
+                'value'     => (int) $this->currentUser->ID]);            
         }
 
         //Se usuário for pertecente a um clube, adicionar visibilidade para posts privados para somente os pertencentes ao clube

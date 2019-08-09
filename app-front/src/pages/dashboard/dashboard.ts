@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment.prod';
 import { MemberCurrentMenu } from './../components/menu/member-current-menu';
 import { DashboardLastActivityService } from './dashboardactivity.service';
 import { VisibilityList } from '../../providers/visibility/visibility';
@@ -78,6 +79,14 @@ export class DashboardPage {
         private user: User,
         private lastActivity: DashboardLastActivityService,
         visibilityList: VisibilityList) {
+
+        /** Verifica se usuário já esta logado anteriormente na plataforma */
+        this.user.isLoggedUser().then((resp) => {
+            //Redireciona para a página de Login
+            if (!resp) { 
+                location.assign(environment.apiOrigin);       
+            } 
+        });
 
         this.translateService.setDefaultLang('pt-br');
 
@@ -184,7 +193,7 @@ export class DashboardPage {
             var reader = new FileReader();
 
             reader.onload = function (e: any) {
-                let preview = document.getElementById('preview');
+                let preview = document.getElementById('post_image_timeline_preview');
                 preview.style.backgroundImage = 'url(' + e.target.result + ')';
                 preview.style.display = 'block';
             }
@@ -256,7 +265,7 @@ export class DashboardPage {
                 this.addTimeline.post_image = null;
 
                 //Reseta container de foto
-                this.preview = document.getElementById('preview');
+                this.preview = document.getElementById('post_image_timeline_preview');
                 this.preview.style.backgroundImage = 'none';
                 this.preview.style.display = 'none';
 

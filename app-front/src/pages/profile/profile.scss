@@ -96,6 +96,18 @@
     }
   }
 
+  @media screen and (min-width: map-get($grid-breakpoints, md ) ) {
+    #profile-menu{
+      margin-left: calc(25% + 10px);
+    }
+  }
+
+  @media screen and (max-width: map-get($grid-breakpoints, md )) {
+    ion-title{
+      margin-top: 20px;
+    }
+  }
+
   
 
 }

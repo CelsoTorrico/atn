@@ -20,30 +20,41 @@
 
       <profile-resume (changeViewEvent)="changeComponentView($event)"></profile-resume><!-- Resumo de Perfil --> 
 
-      <ion-col col-12 col-md-9 offset-md-3> 
+      <ion-col id="profile-menu" col-12 col-md-9 offset-md-3> 
 
         <ion-buttons item-end>
-
-          <button *ngIf="isLogged == false" ion-button small icon-end clear 
+    
+          <button *ngIf="!isLogged"  ion-button small icon-end clear 
           (click)="followProfile($event)"> 
             {{ (following == true)? 'FOLLOWING': 'FOLLOW' | translate }}
             <ion-icon item-end [name]="(following == true)? 'checkmark-circle': ''"></ion-icon>
           </button><!-- Seguir usuário-->
 
-          <button *ngIf="typeUser <= 3" ion-button small outline (click)="addToTeam($event)">
-            {{ (addedTeam == false)? 'ADD_MY_CLUB': 'REMOVE_MY_CLUB' | translate }}
-          </button><!-- Exibido apenas para usuários 'não-institucionais' -->
+          <button *ngIf="loggedUser.type.ID > 2 && addedTeam; else addClub" ion-button small icon-end outline (click)="addToTeam($event)">
+            {{ 'REMOVE_MY_CLUB' | translate }}
+            <ion-icon item-end name="remove"></ion-icon>
+          </button><!-- Exibido apenas para usuários que fazem parte da equipe -->
 
-          <a ion-button small outline [href]="downloadProfilePDF()" download>
+          <ng-template #addClub>
+            <button *ngIf="typeUser < 3"  ion-button small icon-end clear (click)="addToTeam($event)">
+              {{ 'ADD_MY_CLUB' | translate }}
+              <ion-icon item-end name="add"></ion-icon>
+            </button><!-- Exibido se usuário não faz parte da equipe -->
+          </ng-template>          
+
+          <a ion-button small icon-end outline [href]="downloadProfilePDF()" download>
             {{ "DOWNLOAD_PROFILE" | translate }}
+            <ion-icon item-end name="download"></ion-icon>
           </a><!-- Download de Profile -->
 
-          <button *ngIf="following" ion-button small outline (click)="sendChatMessage()">
+          <button *ngIf="following" ion-button small icon-end outline (click)="sendChatMessage()">
             {{ "MESSAGE" | translate }}
+            <ion-icon item-end name="chatboxes"></ion-icon>
           </button><!-- Abrir Chat com usuário  -->
 
-          <button *ngIf="following" ion-button small outline (click)="sendProfileMessage()">
+          <button *ngIf="following" ion-button small icon-end outline (click)="sendProfileMessage()">
             {{ "SEND_EMAIL" | translate }}
+            <ion-icon item-end name="mail"></ion-icon>
           </button><!-- Enviar Email -->
 
         </ion-buttons>

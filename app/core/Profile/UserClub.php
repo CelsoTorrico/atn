@@ -34,11 +34,11 @@ class UserClub extends User {
     private function selfUserInstance($args = array()) {
         
         //Verifica se parametros estão presentes
-        if (array_key_exists('user_login', $args) 
+        if (array_key_exists('user_email', $args) 
         && array_key_exists('user_pass', $args)) {
 
             //Carrega respectivo user no banco
-            if ($this->model->load(['user_login' => $args['user_login'], 'user_pass' => $args['user_pass']])) {
+            if ($this->model->load(['user_email' => $args['user_email'], 'user_pass' => $args['user_pass']])) {
                 //Retorna array de dados
                 $user = $this->model->getData(); 
                 //Verifica se há dados
@@ -113,6 +113,14 @@ class UserClub extends User {
             if (array_key_exists('error', 
                 $item = ($minProfile)? $user->getMinProfile($id) : $user->get($id))) {
                 continue;
+            }
+
+            /**
+             *  Se usuário estiver inativado adicionar parametro ao array
+             *  @since 2.1
+             */
+            if ($this->model->load($id) && $this->model->user_status == 1) {
+                $item['status'] = 1;
             }
 
             //Atribui usuário
@@ -198,15 +206,15 @@ class UserClub extends User {
             //Atribui ID do usuario
             $user_id = $this->model->ID;
 
+            //Envia email de bem vindo (apenas usuários criados)
+            Login::welcomeEmail($userData['user_email'], $userData['display_name']);  
+
         } else {
             //Atualiza usuário atribuindo a equipe
             $response = $user->update($userData); 
 
             //Atribui ID do usuario
-            $user_id = $user->ID;    
-            
-            //Envia email de bem vindo
-            Login::welcomeEmail($user->user_email, $user->display_name);     
+            $user_id = $user->ID;       
         }   
         
         //Verificar qual mensagem exibir de acordo com a solicitação
@@ -219,9 +227,6 @@ class UserClub extends User {
                 //Adicionar notificação ao usuário sendo removido da equipe
                 $notify = new Notify($this);
                 $notify->add(10, $user_id, $this->ID);
-
-                //Envia email de boas vindas
-                Login::welcomeEmail($userData['user_email'], $userData['display_name']);
 
             } catch (\Exception $th) {
                 //@todo Implementar log
@@ -364,14 +369,6 @@ class UserClub extends User {
             'meta_key' => 'type', 
             'meta_value' => ['4']]);
 
-        //Verifica se existe e retorna boolean
-        if($response){
-            //Envia notificação
-            $currentUser = new UserClub();
-            $notify = new Notify($currentUser->get($clubID));
-            $response = $notify->add(3, $clubID, $user_id);
-        }
-
         return $response;
     }
 
@@ -387,6 +384,12 @@ class UserClub extends User {
         //Array para reservar
         $userIDS = [];
 
+        /** 
+         * Importante contagem, apenas "Profissionais do Esporte"  
+         * @since 2.1
+         * */
+        $qtdProfessionalUsers = 0; 
+
         //Percorre array de usuários
 		foreach ($childUsers as $user) {
             
@@ -394,16 +397,31 @@ class UserClub extends User {
             if ( !$childUsers->valid() ) {
                 continue;
             }
-            
-            //Instancia modelo UserModel
-            $userModel = $user->user_id;
 
+            //Atribui id de usuário
+            try {
+                $user = $user->getData();
+                $id = $user['user_id'];
+            } catch (\Throwable $th) {
+                //throw $th;
+                continue;
+            }            
+            
             //Atribui IDS de usuários
-            $userIDS[] = $userModel->ID;
+            $userIDS[] = $id;
+
+            //Retorna o tipo de usuário
+            $typeUser = $this->getUserType($id);
+
+            //Se usuário for do tipo profissional do esporte, contabilizar
+            if($typeUser['ID'] == 2) {
+                $qtdProfessionalUsers++;
+            }            
+            
         }
 
         $currentUsers = array_merge([
-            'qtd' => (int) count($childUsers), 
+            'qtd' => (int) $qtdProfessionalUsers, 
             'ids' => $userIDS
         ]);
 

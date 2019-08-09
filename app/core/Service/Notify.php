@@ -18,9 +18,9 @@ class Notify {
     public function __construct(User $user){
         
         //Instanciando classe de modelo
-        $this->model    = new NotifyModel();
-        $this->push     = new PushNotify();
-        $this->currentUser = $user;
+        $this->model        = new NotifyModel();
+        $this->push         = new PushNotify();
+        $this->currentUser  = $user;
 
         //Tipos de notificações
         $this->types = [
@@ -31,6 +31,8 @@ class Notify {
             5 => 'block', 
             6 => 'comment', 
             7 => 'message', 
+            8 => 'clubApproved',
+            9 => 'clubReproved',
             10 => 'add_team', 
             11 => 'remove_team', 
             12 => 'see_profile'];
@@ -69,6 +71,13 @@ class Notify {
 
                 //Atribui dados do comentário
                 $notifyData = $item->getData();
+
+                /**
+                 * Verifica se usuário existe antes de formatar conteúdo de notificação
+                 * @since 2.1
+                 */
+                if (!(new User)->isUserExist($notifyData['from_id'])) 
+                    continue;                    
 
                 //Combina array notify e comentários
                 $notifys[] = $this->defineTypeContent($notifyData);
@@ -150,7 +159,7 @@ class Notify {
 
         //Filtrar inputs e validação de dados
         $notify = [
-            'type'      => (array_key_exists($type, $this->types)) ? $type : 0,
+            'type'      => (int) (array_key_exists($type, $this->types)) ? $type : 0,
             'user_id'   => $toID,
             'from_id'   => $fromID
         ];   
@@ -241,11 +250,11 @@ class Notify {
         $response = User::updateClubCertify($notify['from_id'], $notify['user_id'], $confirm);
 
         if($confirm){
-            //Envia notificação de aprovação
-            $this->register(8, $notify['user_id'], $id);
+            //Envia notificação de aprovação ao atleta / profissional
+            $this->register(8, $notify['from_id'], $notify['user_id']);
         } else {
-            //Envia notificação de reprovação
-            $this->register(9, $notify['user_id'], $id);
+            //Envia notificação de reprovação atleta / profissional
+            $this->register(9, $notify['from_id'], $notify['user_id']);
         } 
 
         //Se resultado for true, continua execução
@@ -335,7 +344,7 @@ class Notify {
     private function defineTypeContent(array $notify) {
 
         //Se tipo não permitido retornar false
-        if (!array_key_exists($type = $notify['type'], $this->types)) {
+        if (!array_key_exists($type = (int) $notify['type'], $this->types)) {
             return false;
         }
 
@@ -381,10 +390,10 @@ class Notify {
     /**
      *  Formatação de notificação para aprovação de perfil
      */
-    private function followContent(array $notify){
+    private function followContent(array $notify) {
 
         //Retorna dados do usuário
-        $user = (new User)->getMinProfile($notify['from_id']);
+        $user = (new User)-> getMinProfile($notify['from_id']);
 
         //Pegar estilo da notificação
         $content = [
@@ -404,10 +413,10 @@ class Notify {
     /**
      *  Formatação de notificação para aprovação de perfil
      */
-    private function approveContent(array $notify){
+    private function approveContent(array $notify) {
 
         //Retorna dados do usuário
-        $user = (new User)->getMinProfile($notify['from_id']);
+        $user = (new User)->getMinProfile((int) $notify['from_id']);
 
         //Pegar estilo da notificação
         $content = [
@@ -473,16 +482,16 @@ class Notify {
     /**
      *  Formatação de notificação para aprovação de perfil
      */
-    private function approvedClub(array $notify){
+    private function approvedClub(array $notify) {
 
         //Retorna dados do usuário
-        $user = (new User)->getMinProfile($notify['from_id']);
+        $user = (new User)->getMinProfile((int) $notify['user_id']);
 
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify["ID"],
             "type"          => $notify["type"],
-            "message"       => "A informação preenchida em seu perfil foi verificada pelo clube ". $user['display_name'],
+            "message"       => "A informação preenchida em seu perfil foi verificada e aprovada pelo clube ". $user['display_name'],
             "date"          => $notify["date"],
             "user_profile"  => $user,
             "actions"       => ['action' => env('APP_FRONT').'/#/profile', 'title' => 'Veja agora']
@@ -499,13 +508,13 @@ class Notify {
     private function repprovedClub(array $notify){
 
         //Retorna dados do usuário
-        $user = (new User)->getMinProfile($notify['from_id']);
+        $user = (new User)->getMinProfile($notify['user_id']);
 
         //Pegar estilo da notificação
         $content = [
             "ID"            => $notify["ID"],
             "type"          => $notify["type"],
-            "message"       => "A informação preenchida em seu perfil foi reprovada pelo clube ". $user['display_name'],
+            "message"       => "A informação preenchida em seu perfil foi verificada e reprovada pelo clube ". $user['display_name'],
             "date"          => $notify["date"],
             "user_profile"  => $user,
             "actions"       => ['action' => env('APP_FRONT').'/#/profile/', 'title' => 'Veja agora']

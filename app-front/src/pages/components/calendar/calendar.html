@@ -9,10 +9,12 @@
       </ion-card>
         
       <calendar-single [calendarAtributes]="calendar" (timelineDeleted)="hideTimeline($event, $i)" (calendarUpdate)="calendarUpdate($event, $i)" [onlyRead]="onlyRead" [currentUser]="currentUser" *ngFor="let calendar of currentItems; let $i = index"></calendar-single>
- 
-      <ion-infinite-scroll (ionInfinite)="loadMore($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-      </ion-infinite-scroll> 
+
+      <p class="refresh" text-center>
+        <button ion-button small mr-15 (click)="loadMore($event);">
+          {{ 'LOAD_MORE' | translate }}
+        </button>
+      </p><!-- Botão para carregar mais -->
 
     </ion-scroll>
 

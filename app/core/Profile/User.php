@@ -56,11 +56,11 @@ class User extends GenericUser{
         $this->appVal = new AppValidation();
         
         //Verifica se parametros estão presentes
-        if (array_key_exists('user_login', $args) 
+        if (array_key_exists('user_email', $args) 
         && array_key_exists('user_pass', $args)) {
 
             //Carrega respectivo user no banco
-            if ($this->model->load(['user_login' => $args['user_login'], 'user_pass' => $args['user_pass']])) {
+            if ($this->model->load(['user_email' => $args['user_email'], 'user_pass' => $args['user_pass']])) {
                 $user = $this->model->getData();
                 return $this->getCurrentLoggedUser($user['ID']);
             } else {
@@ -208,7 +208,7 @@ class User extends GenericUser{
 
         if(!is_null($id)){
             //Filtro
-            $filter = ['ID' => $id, 'user_status' => 0];
+            $filter = ['ID' => $id];
 
             //Retorna instancia de modelo User
             $userData = $this->model->getInstance($filter);
@@ -509,7 +509,7 @@ class User extends GenericUser{
         $isMetaArray    = ['clubs','sport'];
 
         //Variavel para montar query
-        $where = [];
+        $where = ['user_status' => 0];
         $whereJoin = [];
         $content = [];
         $foundUsers = [];
@@ -620,7 +620,7 @@ class User extends GenericUser{
         }
 
         //Qtd de itens por página
-        $perPage = 500;
+        $perPage = 200;
         
         //A partir de qual item contar
         $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
@@ -732,6 +732,16 @@ class User extends GenericUser{
     /** Retorna erro email de usuário existente */
     public function isUserEmailExist(string $email) {
         return $this->can_update_user_email($email);
+    }
+
+    /**
+     * Verifica se usuário existe e está ativo na plataforma
+     * 
+     * @param int $id   Id de usuário a ser verificado
+     * @since 2.1
+     */
+    public function isUserExist(int $id, bool $status = false) {
+        return $this->check_if_user_exist($id, $status);
     }
 
     /* Addicionar um único usuário */
@@ -1114,7 +1124,7 @@ class User extends GenericUser{
     private function _getUsermeta($ID, $only = []):array {
 
         if (is_null($ID) || empty($ID) ) {
-            return null;
+            return [];
         }
 
         //Instancia classe de modelo passando filtro
@@ -1458,7 +1468,7 @@ class User extends GenericUser{
 
         //Instancia classe para utilização
         $class = new $typeClass[$typeID]([
-            'user_login'   => $userModel->user_login, 
+            'user_email'   => $userModel->user_email, 
             'user_pass'    => $userModel->user_pass
         ]);
 
@@ -1531,6 +1541,24 @@ class User extends GenericUser{
 
         //Habilitado para update de email
         return [];
+    }
+
+    /**
+     * Verifica se usuário existe e está ativo usando referencia de seu ID
+     * 
+     * @param int $id   Id do usuario a verificar
+     * @since 2.1
+     */
+    private function check_if_user_exist(int $id, bool $checkDisabled = false):bool {
+
+        //Se setado, desabilita procura apenas de usuários ativos 
+        $status = ($checkDisabled)? 1 : 0;
+
+        //Faz requisição no banco pelo ID e Status
+        $resp = $this->model->load(['ID' => $id, 'user_status' => $status]);
+
+        //Retorna resposta
+        return $resp;
     }
 
     //Instancia classe PasswordHash e retorna string hashead
@@ -1610,9 +1638,11 @@ class User extends GenericUser{
             //Salva no banco de dados
             $r = $this->_setUsermeta('views', $sum);
 
-            //Implementa notificação
+            //Instancia classe de notificação
             $notify = new Notify($this);
-            $notify->add(12, $this->ID, $whoId);
+            
+            //Registra notificação
+            $notify->add(12, $this->ID,  $whoId);
         }
 
         return $saved;
@@ -1708,8 +1738,19 @@ class User extends GenericUser{
      * de enviar notificação ao clube
      */
     private function sendNotifyClub(int $clubID, int $user_id) {
-        $response = UserClub::isClubExist($clubID, $user_id);
-        if (!$response){
+        
+        //Verifica se clube existe
+        $exist = UserClub::isClubExist($clubID, $user_id);
+
+        //Verifica se existe e retorna boolean
+        if($exist){
+            
+            //Envia notificação
+            $currentUser = new UserClub();
+            $notify = new Notify($currentUser->get($clubID));
+            $notify->add(3, $clubID, $user_id);
+
+        }else {
             return;
         } 
 

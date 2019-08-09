@@ -1,8 +1,27 @@
-.searchbar-md .searchbar-input,
-.searchbar-input {
+search-member{
     
+    max-height: 38px;
+    overflow: hidden;
+
+    button, input, .searchbar-input{
+        margin: 0px 0px !important;
+        border-radius: 0px !important;
+        height: 38px !important;
+        max-height: 38px;
+    }
+    
+    .searchbar-input{
+        background-color: #e2e2e2;
+        color: #555;
+        border-left: 1px solid #ccc !important;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;        
+    
+        &::placeholder, &::-webkit-input-placeholder{
+            color: #777;
+        }
+    }
 }
 
-button{
-    margin-right: 10px !important;
-}
+

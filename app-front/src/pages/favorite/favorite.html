@@ -34,7 +34,7 @@
               </ion-badge>
             </ion-list>
 
-            <member-list *ngFor="let userSugg of friendsSuggestion.found" [member]="userSugg"></member-list>
+            <member-suggestion *ngFor="let userSugg of friendsSuggestion.found" [member]="userSugg"></member-suggestion>
 
             <div *ngIf="friendsSuggestion.found.length <= 0">
               <hr />

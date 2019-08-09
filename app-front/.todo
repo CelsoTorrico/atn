@@ -25,6 +25,7 @@
 ☐ Rotas das páginas >> Implementar
 ✔ Login >> Iniciar classe User @done(19-08-03 22:40)
 ✔ Logout >> Dando erro e redirecionando local erro @done(19-08-05 03:30)
+✔ Botão ADD_MY_CLUB >> Exibindo para todos os usuários, resover apenas para clubes @done(19-08-06 13:26)
 ☐ Pesquisa >> Melhorar filtragem de usuários
 ✔ PDF >> Melhorar a exibição dos dados @done(19-08-03 20:53)
 ✔ Profile >> PDF de profile substituir numeros e colocar medalhas @done(19-08-03 21:50)

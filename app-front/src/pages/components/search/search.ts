@@ -10,8 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
                 <input type="search" placeholder="{{ input_name | translate }}" [(ngModel)]="search" class="searchbar-input" />
             </ion-col>
             <ion-col col-auto text-left align-self-end>
-                <button ion-button icon-end (click)="searchMember($event)">
-                    {{ "SEARCH" | translate }}
+                <button ion-button icon-only (click)="searchMember($event)">
                     <ion-icon item-end name="search"></ion-icon>
                 </button>
             </ion-col>

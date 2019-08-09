@@ -33,7 +33,7 @@ export class MyProfilePersonalDataComponent {
 
     career: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     birthdate: any = {

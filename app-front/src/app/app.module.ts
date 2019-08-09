@@ -37,7 +37,7 @@ import { profileTypeList } from '../providers/profiletypes/profiletypes';
 import { VisibilityList } from '../providers/visibility/visibility';
 
 //Habilita Angular em produção
-//enableProdMode();
+enableProdMode();
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.

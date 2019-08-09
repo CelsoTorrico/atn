@@ -142,7 +142,7 @@
   "TOURNAMENT": "Torneios",
   "ADD_MORE": "Adicionar",
   "ABOUT": "Mais informações",
-  "POSITION": "Posição",
+  "POSITION": "Colocação",
   "CHAMPIONSHIP": "Campeonato",
   "WEBSITE": "Website",
   "HEADQUARTERS": "Matriz",
@@ -200,6 +200,10 @@
   "CHART_MORE_DETAIL": "Gráfico representativo da quantidade de usuários encontrados comparado com o total de membros",
   "LIST_USERS": "Lista de Usuários Encontrados",
   "LISTS_USERS_MORE_DETAIL": "Principais informações dos usuários encontrados (*Exporte no formato Excel para dados mais completos)",
-  "CAREER": "Profissão"
+  "CAREER": "Profissão",
+  "ORGANIZER_BY": "Organizado por",
+  "LOAD_MORE": "Carregar mais",
+  "ADD_USER_TO_CLUB": "Adicionar usuário a sua equipe?",
+  "REMOVE_USER_TO_CLUB": "Remover usuário a sua equipe?"
 
 }

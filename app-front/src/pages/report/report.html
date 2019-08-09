@@ -12,12 +12,14 @@
 
     <ion-buttons right>
 
-      <button edit-profile ion-button small start clear (click)="exportReport();">
+      <button edit-profile ion-button icon-end small start clear (click)="exportReport();">
         {{ "EXPORT_EXCEL" | translate }}
+        <ion-icon item-end name="document"></ion-icon>
       </button>
 
-      <button edit-profile ion-button small end clear (click)="exportReport(true);">
+      <button edit-profile ion-button icon-end small end clear (click)="exportReport(true);">
         {{ "EXPORT_PDF" | translate }}
+        <ion-icon item-end name="document"></ion-icon>
       </button>
 
     </ion-buttons>
@@ -32,40 +34,32 @@
 
     <ion-row id="report-windows" class="report-windows">
 
-      <ion-col col-12>
+      <ion-col col-12 col-lg-6>
 
-        <ion-row>
+        <h2>{{ "QUERY_PARAMETERS" | translate }}</h2>
 
-          <ion-col col-12 col-lg-6>
+        <p>
+          {{ "QUERY_PARAMETERS_MORE_DETAIL" | translate}}
+        </p>
 
-            <h2>{{ "QUERY_PARAMETERS" | translate }}</h2>
+        <ul no-padding no-margin no-list class="list-inline query-parameters">
+          <li [style.display]="(item.term)? 'inline-block' : 'none' " *ngFor="let item of fields">
+            <ion-badge badge>
+              {{ item.term | translate }}
+            </ion-badge>
+          </li>
+        </ul>
+      </ion-col>
 
-            <p>
-              {{ "QUERY_PARAMETERS_MORE_DETAIL" | translate}}
-            </p>
+      <ion-col col-12 col-lg-5>
 
-            <ul no-padding no-margin no-list class="list-inline query-parameters">
-              <li [style.display]="(item.term)? 'inline-block' : 'none' " *ngFor="let item of fields">
-                <ion-badge badge>
-                    {{ item.term | translate }}
-                </ion-badge>                
-              </li>
-            </ul>
-          </ion-col>
+        <h2>{{ "CHART" | translate }}</h2>
 
-          <ion-col col-12 col-lg-5>
+        <p>
+          {{ "CHART_MORE_DETAIL" | translate}}
+        </p>
 
-            <h2>{{ "CHART" | translate }}</h2>
-
-            <p>
-              {{ "CHART_MORE_DETAIL" | translate}}
-            </p>
-
-            <chart [type]="typeChart" [data]="data" [options]="options"></chart>
-
-          </ion-col>
-
-        </ion-row>
+        <chart [type]="typeChart" [data]="data" [options]="options"></chart>
 
       </ion-col>
 

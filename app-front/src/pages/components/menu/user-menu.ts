@@ -1,8 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, NavController, ToastController } from 'ionic-angular';
+import { Nav, NavController, ToastController, LoadingController } from 'ionic-angular';
 import { User, Cookie } from '../../../providers';
 import { CookieService } from 'ng2-cookies';
 import { environment } from '../../../environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'user-menu',
@@ -22,11 +23,19 @@ export class UserMenu {
   // A reference to the ion-nav in our component
   @ViewChild(Nav) nav: Nav;
 
+  loading_placeholder: string
+
   constructor(
     public navCtrl: NavController,
     public toastCtrl: ToastController,
+    private translateService: TranslateService,
+    private loading: LoadingController,
     public user: User) {
-      
+
+    this.translateService.get('LOADING').subscribe((data: any) => {
+      this.loading_placeholder = data;
+    })
+
   }
 
   //Função que inicializa
@@ -42,18 +51,29 @@ export class UserMenu {
   //Abre uma nova página
   doLogout() {
 
+    //Criando loader
+    let loading = this.loading.create({ content: this.loading_placeholder });
+    loading.present();
+
     //Subscreve sobre a requisição
     if (this.user == undefined) {
       //Remoove cookie do browser
       Cookie.deleteCookie();
-      return this.logoutMessageRedirect('Você foi deslogado.');
+      this.logoutMessageRedirect('Você foi deslogado.').then((resp) => {
+        loading.dismiss()
+      });
+
+      return;
+
     }
 
     //Logout no caso de classe user setada corretamente
     this.user.logout().then((resp: any) => {
       if (resp.success) {
         //Faz o logout
-        this.logoutMessageRedirect(resp.success.logout);
+        this.logoutMessageRedirect(resp.success.logout).then((resp) => {
+          loading.dismiss()
+        });
       }
     });
 
@@ -68,12 +88,9 @@ export class UserMenu {
       duration: 3000
     });
 
-    toast.present().then((res) => {
-      //Aguarda 3 segundos para redirecionar
-      setTimeout(() => {
-        window.location.assign(environment.apiOrigin);
-      }, 1000 * 3)
-
+    return toast.present().then((res) => {
+      //Redirecionar
+      window.location.assign(environment.apiOrigin);
     });
   }
 

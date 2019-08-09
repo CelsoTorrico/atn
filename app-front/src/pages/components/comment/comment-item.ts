@@ -51,13 +51,16 @@ export class CommentItem {
 
   //Retorna
   ngOnInit() {
+
+    //Se requisição efetuda e com dados de usuário presente
+    if(this.user._user != undefined) {
+      this.currentUser = this.user._user;
+    }
     
-    this.user.dataReady.subscribe((resp) => {
-        
-        if(resp.status != 'ready') return;
-        
-        this.currentUser = this.user._user;
-        
+    //Adiciona dados de usuário após requisição
+    this.user.dataReady.subscribe((resp) => {        
+        if(resp.status != 'ready') return;        
+        this.currentUser = this.user._user;        
     }); 
     
   }

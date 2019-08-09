@@ -23,47 +23,47 @@ export class MyProfileSportsComponent {
 
     weight: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     height: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     posicao = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     formacao: any = {
         value: <any>[],
-        visibility: <number>null
+        visibility: <number>0
     }
 
     cursos: any = {
         value: <any>[],
-        visibility: <number>null
+        visibility: <number>0
     }
 
     eventos: any = {
         value: <any>[],
-        visibility: <number>null
+        visibility: <number>0
     }
 
     club_site: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     club_liga: any = {
         value: <any>[],
-        visibility: <number>null
+        visibility: <number>0
     }
 
     club_sede: any = {
         value: <string>'',
-        visibility: <number>null
+        visibility: <number>0
     }
 
     //Lista de Esportes
@@ -100,7 +100,7 @@ export class MyProfileSportsComponent {
 
         //Lista de visibilidade
         visibilityList.load().then((resp) => {
-            this.visibility     = visibilityList.table;
+            this.visibility  = visibilityList.table;
         });
 
         //Lista de Esportes
