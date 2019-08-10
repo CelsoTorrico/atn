@@ -47,7 +47,7 @@ class Notify {
     /** 
      * Retorna lista de notify 
      * */ 
-    function get(){
+    function get() {
 
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
@@ -60,7 +60,7 @@ class Notify {
         if( $allnotifys->count() > 0){
 
             //Array para retornar dados
-            $notifys = [];
+            $notifys = ['notifyList' => [], 'total' => 0];
             
             foreach ($allnotifys as $item) {
 
@@ -80,9 +80,12 @@ class Notify {
                     continue;                    
 
                 //Combina array notify e comentários
-                $notifys[] = $this->defineTypeContent($notifyData);
+                $notifys['notifyList'][] = $this->defineTypeContent($notifyData);
                 
             }
+
+            //Atribui total de notificações não lidas
+            $notifys['total'] = $this->getTotal();
 
             //Retorna array de notifys
             return $notifys;
@@ -103,8 +106,7 @@ class Notify {
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
             'user_id'   => $this->currentUser->ID,
-            'read'      => 1,
-            'deleted'   => 0
+            'read'      => 1
         ]);
 
         $saved = false; //Não salvo
@@ -215,7 +217,8 @@ class Notify {
         //Retorna interador de todas as notificações 
         $allnotifys = $this->model->getIterator([
             'user_id'   => $this->currentUser->ID,
-            'read'      => 1
+            'read'      => 1,
+            'deleted'   => 0
         ]);
         
         //Retorna totol de notificações

@@ -65,18 +65,15 @@ export class Notify {
       if(Object.keys(resp).length < 0){
         return;
       }
-
-      let count = 0;
         
       //Retorna array de timelines
-      for (const element of resp) {
+      for (const element of resp.notifyList) {
         if(element == '' || element == undefined) continue;
-        if(element.read == 1) count++;
-        this.currentNotifyItems.push(element);
+          this.currentNotifyItems.push(element);
       }      
 
       //Atribui numero de notificações não lidas
-      this.notifyCount = count;
+      this.notifyCount = resp.total;
 
     }, err => { 
         return; 
@@ -85,12 +82,16 @@ export class Notify {
   }
 
   //Recarrega os itens de notificação
-  reloadNotify($event, $i){
+  reloadNotify($event, $i:number, notifyData:any){
+      
       //Exclui item do array
       this.currentNotifyItems.splice($i, 1);
       
       //Diminui um item na contagem
-      this.notifyCount = (this.notifyCount > 0)? this.notifyCount - 1 : null;
+      if (notifyData.read == 1){
+          this.notifyCount = (this.notifyCount > 0)? this.notifyCount - 1 : null;
+      }
+      
   }
 
   //Marca todas notificações como lida

@@ -11,8 +11,8 @@
       <ion-grid no-padding class="notification-container">
 
         <ion-list *ngIf="currentNotifyItems.length > 0; else nothingShow">
-          <notify-single *ngFor="let data of currentNotifyItems; let $i = index" class="notifyItem" [currentNotify]="data"
-            (updateCounty)="reloadNotify($event, $i);"></notify-single>
+          <notify-single [ngClass]="{'unread': data.read == 1}" *ngFor="let data of currentNotifyItems; let $i = index" class="notifyItem" [currentNotify]="data"
+            (updateCounty)="reloadNotify($event, $i, data);"></notify-single>
         </ion-list>
         <ng-template #nothingShow><ion-item padding>{{ "NOT_TO_SHOW" | translate }}</ion-item></ng-template>
 

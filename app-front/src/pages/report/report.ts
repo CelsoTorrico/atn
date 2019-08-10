@@ -80,7 +80,7 @@ export class ReportPage {
 
     //Chart Labels
     this.data.labels = [this.reportData.total[0], this.reportData.found[0]];
-    
+
     //Chart Data 
     this.data.datasets[0].data = [this.reportData.total[1] - this.reportData.found[1], this.reportData.found[1]];
 
@@ -90,41 +90,41 @@ export class ReportPage {
     this.queryParameters();
   }
 
-  queryParameters():any[] {
-    
-    let $data:any = [];
-    
+  queryParameters(): any[] {
+
+    let $data: any = [];
+
     for (const f in this.fields) {
-      
-      if(f == 'sport') {
-          for (const el of this.fields[f]) {
-            $data.push({ type: f+el, term: el }); 
-          }
-          continue;
+
+      if (f == 'sport') {
+        for (const el of this.fields[f]) {
+          $data.push({ type: f + el, term: el });
+        }
+        continue;
       }
 
       $data.push({ type: f, term: this.fields[f] });
     }
-    
+
     return this.fields = $data;
   }
 
   /** Exporta os relatório utilizando classe clubComponent */
-  exportReport($isPdf:boolean = false) {
-      
-      //Exportar Formato Excel
-      if(!$isPdf) {
-        return this.clubComponent.exportReport(false);
-      }
-      
-      //Converte domElement em PDF
-      const filename = "export.pdf";
-      let domHtmlElement = document.getElementById('report-windows');
-      this.h2c(domHtmlElement).then(canvas => {
-        let jspdf = this.jspdf('p', 'mm', 'a4'); 
-        jspdf.addImage(canvas.toDataURL('image/png'), 'PNG', 1, 1);
-        jspdf.save(filename);
-      });      
+  exportReport($isPdf: boolean = false) {
+
+    //Exportar Formato Excel
+    if (!$isPdf) {
+      return this.clubComponent.exportReport(false);
+    }
+
+    //Converte domElement em PDF
+    const filename = "export.pdf";
+    let domHtmlElement = document.getElementById('report-windows');
+    this.h2c(domHtmlElement).then(canvas => {
+      let jspdf = this.jspdf('p', 'mm', 'a4');
+      jspdf.addImage(canvas.toDataURL('image/png'), 'PNG', 1, 1);
+      jspdf.save(filename);
+    });
 
   }
 

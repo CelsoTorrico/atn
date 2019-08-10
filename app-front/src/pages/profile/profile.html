@@ -36,7 +36,7 @@
           </button><!-- Exibido apenas para usuários que fazem parte da equipe -->
 
           <ng-template #addClub>
-            <button *ngIf="typeUser < 3"  ion-button small icon-end clear (click)="addToTeam($event)">
+            <button *ngIf="loggedUser.type.ID > 2 && typeUser < 3"  ion-button small icon-end clear (click)="addToTeam($event)">
               {{ 'ADD_MY_CLUB' | translate }}
               <ion-icon item-end name="add"></ion-icon>
             </button><!-- Exibido se usuário não faz parte da equipe -->

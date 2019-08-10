@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { Settings, User } from '../../providers';
-import { DashboardPage } from '../dashboard/dashboard'; 
+import { DashboardPage } from '../dashboard/dashboard';
 import { PushNotifyService } from '../../providers/notification/notification';
 
 /**
@@ -18,8 +18,8 @@ import { PushNotifyService } from '../../providers/notification/notification';
   selector: 'page-settings',
   templateUrl: 'settings.html'
 })
-export class SettingsPage { 
-  
+export class SettingsPage {
+
   // Our local settings object
   options: any;
 
@@ -27,7 +27,7 @@ export class SettingsPage {
 
   form: FormGroup;
 
-  $errors:string;
+  $errors: string;
 
   constructor(
     public user: User,
@@ -38,7 +38,17 @@ export class SettingsPage {
     public navParams: NavParams,
     public translate: TranslateService,
     public push: PushNotifyService) {
-      
+
+  }
+
+  ionViewDidLoad() {
+    /** Verifica se usuário já esta logado anteriormente na plataforma */
+    this.user.isLoggedUser().then((resp) => {
+      //Redireciona para a página de Login
+      if (!resp) {
+        this.navCtrl.setRoot('Login');
+      }
+    });
   }
 
   ngOnInit() {
@@ -47,15 +57,10 @@ export class SettingsPage {
     this._buildForm();
   }
 
-  
-  ionViewDidLoad() {
-    
-  }
-
   ionViewWillEnter() {
     // Build an empty form for the template to render
     //this.form = this.formBuilder.group({});
-    
+
 
     /*this.settings.load().then(() => {
       this.settingsReady = true;
@@ -65,11 +70,11 @@ export class SettingsPage {
   }
 
   _buildForm() {
-    
+
     let group: any = {
       //defaultLang   : [this.options.defaultLang],
-      user_pass     : '',
-      confirm_pass  : ''
+      user_pass: '',
+      confirm_pass: ''
     };
 
     this.form = this.formBuilder.group(group);
@@ -85,7 +90,7 @@ export class SettingsPage {
 
   //Ao Enviar formulário
   submitForm(event) {
-    
+
     event.preventDefault();
 
     let observable = this.user.setNewPassword(this.form.value);
@@ -95,8 +100,8 @@ export class SettingsPage {
       if (res.success != undefined) {
 
         //Exibe mensagem de cadastro
-        let message = this.toastCtrl.create({ 
-          message: res.success.user_pass, 
+        let message = this.toastCtrl.create({
+          message: res.success.user_pass,
           position: 'bottom',
           duration: 2000
         });
@@ -109,23 +114,23 @@ export class SettingsPage {
       }
 
     }, err => {
-      console.error('ERROR', err); 
+      console.error('ERROR', err);
     });
 
   }
 
   // Adicionar/Permissão permissão para notificações via browser
-  enableDesktopNotification() {  
+  enableDesktopNotification() {
     this.push.requestDesktopNotificationPermission();
   }
 
   //Abre uma nova página
   backButton() {
-    if(this.navCtrl.canGoBack()){
-        this.navCtrl.pop();
+    if (this.navCtrl.canGoBack()) {
+      this.navCtrl.pop();
     } else {
-        this.navCtrl.setRoot('Dashboard');
-    }        
+      this.navCtrl.setRoot('Dashboard');
+    }
   }
-  
+
 }

@@ -64,6 +64,16 @@ export class PostPage {
 
     }
 
+    ionViewDidLoad(){
+        /** Verifica se usuário já esta logado anteriormente na plataforma */
+        this.user.isLoggedUser().then((resp) => {
+            //Redireciona para a página de Login
+            if (!resp) { 
+                this.navCtrl.setRoot('Login');       
+            } 
+        });
+    }
+
     //Função que inicializa
     ngOnInit() {
 

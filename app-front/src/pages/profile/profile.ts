@@ -24,7 +24,7 @@ export class ProfilePage {
     personalView: ProfileComponent,
     statsView: StatsComponent,
     clubView: ClubComponent
-  } 
+  }
 
   //Dados de Usuário de contexto
   loggedUser: any = {
@@ -34,8 +34,8 @@ export class ProfilePage {
   }
 
   //Duas instancias de usuário
-  profileUser:User
-  currentUser:User
+  profileUser: User
+  currentUser: User
 
   //Variveis de template de usuario
   ID: number = null;
@@ -53,20 +53,20 @@ export class ProfilePage {
 
   public loginErrorString;
 
-  public title:any;
+  public title: any;
 
   private loading;
 
   constructor(
-    public  navCtrl: NavController,
+    public navCtrl: NavController,
     loading: LoadingController,
-    public  modalCtrl: ModalController,
-    public  alertCtrl: AlertController,
+    public modalCtrl: ModalController,
+    public alertCtrl: AlertController,
     private api: Api,
     private user: User,
     private params: NavParams,
     private componentFactoryResolver: ComponentFactoryResolver,
-    public  translateService: TranslateService) {
+    public translateService: TranslateService) {
 
     this.translateService.setDefaultLang('pt-br');
 
@@ -76,7 +76,7 @@ export class ProfilePage {
     this.translateService.get(['LOGIN_ERROR', 'LOADING', 'ADD_USER_TO_CLUB', 'REMOVE_USER_TO_CLUB']).subscribe((value) => {
       this.loginErrorString = value.LOGIN_ERROR;
       this.title = {
-        REMOVE_USER_TO_CLUB : value.REMOVE_USER_TO_CLUB,
+        REMOVE_USER_TO_CLUB: value.REMOVE_USER_TO_CLUB,
         ADD_USER_TO_CLUB: value.ADD_USER_TO_CLUB
       };
       loadMessage = value.LOADING;
@@ -84,7 +84,7 @@ export class ProfilePage {
 
     //Inicializando loading
     this.loading = loading.create({
-      content:loadMessage
+      content: loadMessage
     });
 
     //Retorna id de usuário de contexto
@@ -98,6 +98,15 @@ export class ProfilePage {
 
   }
 
+  ionViewDidLoad() {
+    /** Verifica se usuário já esta logado anteriormente na plataforma */
+    this.user.isLoggedUser().then((resp) => {
+      //Redireciona para a página de Login
+      if (!resp) {
+        this.navCtrl.setRoot('Login');
+      }
+    });
+  }
 
   //Função que inicializa
   ngOnInit() {
@@ -129,8 +138,8 @@ export class ProfilePage {
     if (this.user._user != undefined) {
 
       //Atribuindo dados de usuário de contexto
-      this.currentUser  = this.user; 
-      this.loggedUser   = this.user._user;
+      this.currentUser = this.user;
+      this.loggedUser = this.user._user;
 
       //Verifica se usuário é editavel pelo usuário logado   
       this.isLogged = true;
@@ -139,7 +148,7 @@ export class ProfilePage {
       if (!this.profileUser) {
         this.populateParameters();
       }
-        
+
 
     } else {
       this.user.dataReady.subscribe((resp) => {
@@ -155,12 +164,12 @@ export class ProfilePage {
   }
 
   /** Faz a atribuição de dados do perfil de usuário nos parametros da classe */
-  private populateParameters($user:User = this.user) {
-    
+  private populateParameters($user: User = this.user) {
+
     //Atribuindo em cada parametro
     this.ID = $user._user.ID;
-    this.following  = $user._user.following;
-    this.typeUser   = $user._user.type.ID;
+    this.following = $user._user.following;
+    this.typeUser = $user._user.type.ID;
 
     //Verifica se usuário pertence a equipe 
     this.addedTeam = this.isAddedToTeam($user._user.ID);
@@ -214,7 +223,7 @@ export class ProfilePage {
    * Verifica se usuário já foi adicionado ao time/clube/instituição
    * @since 2.1
    */
-  isAddedToTeam($id:number): boolean {
+  isAddedToTeam($id: number): boolean {
     //Adicionado dados do usuário que esta visualizando perfil
     return this.myUsers($id);
   }
@@ -223,7 +232,7 @@ export class ProfilePage {
    * Retorna array de ids FALSE 
    * @return mixed  Array de ids ou Bolean para encontrar um id
    * */
-  private myUsers($id:number):boolean {
+  private myUsers($id: number): boolean {
 
     //Se não existir parametro
     if (this.user._user.current_users == (undefined || null)) {
@@ -239,7 +248,7 @@ export class ProfilePage {
     }
 
     //Resposta da função
-    let resp:boolean = false;
+    let resp: boolean = false;
 
     //Se solicitado encontrar um id dentro do array de ids
     for (const memberID of $list.ids) {
@@ -330,11 +339,11 @@ export class ProfilePage {
     let $id = this.ID;
 
     let $alert = this.alertCtrl.create({
-      title:    (this.addedTeam)? this.title.REMOVE_USER_TO_CLUB : this.title.ADD_USER_TO_CLUB,
-      message:  'Tem certeza que deseja realizar essa ação?',
-      buttons:  [{
-        text:   'Cancelar',
-        role:   'cancel'
+      title: (this.addedTeam) ? this.title.REMOVE_USER_TO_CLUB : this.title.ADD_USER_TO_CLUB,
+      message: 'Tem certeza que deseja realizar essa ação?',
+      buttons: [{
+        text: 'Cancelar',
+        role: 'cancel'
       },
       {
         text: 'Sim',

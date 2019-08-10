@@ -7,7 +7,11 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'notify-single',
   templateUrl: 'notify-single.html',
-  styles: [``]
+  styles: [`
+    .unread{
+      background-color: #ccc;
+    }
+  `]
 })
 export class NotifySingle {
 

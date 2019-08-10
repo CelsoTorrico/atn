@@ -22,7 +22,7 @@
 
 
 #Outras
-☐ Rotas das páginas >> Implementar
+✔ Rotas das páginas >> Implementar @done(19-08-09 20:51)
 ✔ Login >> Iniciar classe User @done(19-08-03 22:40)
 ✔ Logout >> Dando erro e redirecionando local erro @done(19-08-05 03:30)
 ✔ Botão ADD_MY_CLUB >> Exibindo para todos os usuários, resover apenas para clubes @done(19-08-06 13:26)
@@ -36,12 +36,14 @@
 
 
 #Melhorias secundárias
-✔ Tag Input >> Não está enviado dados, verificar e corrigir @done(19-07-31 22:12)
+✔ Adicionar a equipe >> Mostrar apenas para clubes! @done(19-08-09 21:07)
+✔ Contagem de Notificações >> Não exibindo! @done(19-08-09 21:46)
 ☐ Tag Input >> Case insesitive, ignorar caracteres com acentuação
 ☐ Meu Clube >> Listar esportes ao add ou editar usuário
+☐ Profile >> Botão de Bloquear Usuário
+☐ Mensagens >> Paginação de mensagens anteriores
 ✔ Página de Busca >> Não está abrindo BrowserModule? @done(19-07-28 13:45)
 ✔ Excel >> Adicionar ID de usuário nas planilhas de estatísticas @done(19-08-02 01:53)
-☐ Profile >> Botão de Bloquear Usuário
+✔ Tag Input >> Não está enviado dados, verificar e corrigir @done(19-07-31 22:12)
 ✔ Profile >> Editar membros da equipe @done(19-08-02 00:42)
 ✔ Profile >> Habilitar edição quando visitando proprio perfil @done(19-08-01 01:41)
-☐ Mensagens >> Paginação de mensagens anteriores

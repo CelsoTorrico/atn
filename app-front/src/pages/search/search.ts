@@ -1,7 +1,7 @@
 import { NgForm } from '@angular/forms';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController, Loading } from 'ionic-angular';
-import { Api } from '../../providers';
+import { Api, User } from '../../providers';
 import { BrazilStates } from '../../providers/useful/states';
 import { TranslateService } from '@ngx-translate/core';
 import { GenderList } from '../../providers/gender/gender';
@@ -19,31 +19,31 @@ import { ClubList } from '../../providers/clubs/clubs';
 })
 export class SearchPage {
 
-  public query:any = { 
+  public query: any = {
     display_name: <string>'',
-    sport:  <any>[],
-    clubs:  <string>'',
-    type:   <string>'',
-    city:   <string>'',
-    state:  <string>'',
-    neighbornhood: <string>'', 
-    gender:   <string>'',
+    sport: <any>[],
+    clubs: <string>'',
+    type: <string>'',
+    city: <string>'',
+    state: <string>'',
+    neighbornhood: <string>'',
+    gender: <string>'',
     formacao: <string>''
   };
 
-  public filter:boolean = false;
+  public filter: boolean = false;
 
   //Campos selecionados
-  public $typeUserSelected:string;
-  public $sportSelected:any = [];
+  public $typeUserSelected: string;
+  public $sportSelected: any = [];
 
   //Lista de tipos de usuário
-  protected $typeUserList:any[];
+  protected $typeUserList: any[];
   //Lista de Genêros  
-  protected $genderList:any;
+  protected $genderList: any;
 
   //Lista de Esportes
-  protected $sportTable:any;
+  protected $sportTable: any;
   protected $sportList = [];
 
   //Lista de Clubes
@@ -56,110 +56,121 @@ export class SearchPage {
   protected $statesList = [];
 
   //Paginação
-  public $url:string = '';
-  public $paged:number = 1;  
+  public $url: string = '';
+  public $paged: number = 1;
 
   //tradução
-  loading_placeholder:string
+  loading_placeholder: string
 
   constructor(
-      public api:Api, 
-      public navCtrl: NavController, 
-      public navParams: NavParams, 
-      states:BrazilStates,
-      gender: GenderList,
-      profileType: profileTypeList,
-      sportList: SportList,
-      clubList: ClubList,
-      private loadingCtrl: LoadingController,
-      translateService: TranslateService) { 
+    private user: User,
+    public api: Api,
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    states: BrazilStates,
+    gender: GenderList,
+    profileType: profileTypeList,
+    sportList: SportList,
+    clubList: ClubList,
+    private loadingCtrl: LoadingController,
+    translateService: TranslateService) {
 
-      //Tradução
-      translateService.get(["LOADING"]).subscribe((resp:any) => {
-        this.loading_placeholder = resp.LOADING;
-      });
-    
-      //Carrega lista de estados do provider
-      this.$statesList = states.statesList;  
-      this.$statesList.unshift('Qualquer Estado');
+    //Tradução
+    translateService.get(["LOADING"]).subscribe((resp: any) => {
+      this.loading_placeholder = resp.LOADING;
+    });
 
-      //Lista de tipos de usuário
-      this.$typeUserList = profileType.list;
-      this.$typeUserList.unshift('Qualquer Usuário');
-      
-      //Lista de genêros
-      this.$genderList =  gender.list;
-      this.$genderList.unshift('Qualquer Genêro');
+    //Carrega lista de estados do provider
+    this.$statesList = states.statesList;
+    this.$statesList.unshift('Qualquer Estado');
 
-      //Lista de Esportes
-      sportList.load().then((resp) => {
-        this.$sportTable  = sportList.table;
-        this.$sportList   = sportList.list;
-      });      
+    //Lista de tipos de usuário
+    this.$typeUserList = profileType.list;
+    this.$typeUserList.unshift('Qualquer Usuário');
 
-      //Lista de Clubes
-      clubList.load().then((resp) => {
-        this.$clubsList  = clubList.table;
-      });
+    //Lista de genêros
+    this.$genderList = gender.list;
+    this.$genderList.unshift('Qualquer Genêro');
 
-      //Retorna dados vindos do widget de busca
-      this.query.display_name = this.navParams.get('display_name');
+    //Lista de Esportes
+    sportList.load().then((resp) => {
+      this.$sportTable = sportList.table;
+      this.$sportList = sportList.list;
+    });
 
-      //Se widget tiver dados enviados
-      if(this.query.display_name != ''){
-        this.widgetSearch(); 
-      }  
-      
+    //Lista de Clubes
+    clubList.load().then((resp) => {
+      this.$clubsList = clubList.table;
+    });
+
+    //Retorna dados vindos do widget de busca
+    this.query.display_name = this.navParams.get('display_name');
+
+    //Se widget tiver dados enviados
+    if (this.query.display_name != '') {
+      this.widgetSearch();
+    }
+
   }
 
-  ngOnInit() { 
-  
+  ionViewDidLoad() {
+    /** Verifica se usuário já esta logado anteriormente na plataforma */
+    this.user.isLoggedUser().then((resp) => {
+      //Redireciona para a página de Login
+      if (!resp) {
+        this.navCtrl.setRoot('Login');
+      }
+    });
   }
 
-  showFilterOptions(){
-    if (this.filter) {  
+  ngOnInit() {
+
+  }
+
+  showFilterOptions() {
+    if (this.filter) {
       this.filter = false;
     } else {
       this.filter = true;
     }
   }
 
-  private widgetSearch($fn:any = function(){}) {
+  private widgetSearch($fn: any = function () { }) {
 
-      //Criando objeto loading
-      let loading = this.createLoading();
-      loading.present();
-      
-      //Retorna a lista de clubes para seletor
-      this.api.post('/user/search' + this.$url + '/paged/' + this.$paged, this.query).subscribe((resp:any) => {
+    //Criando objeto loading
+    let loading = this.createLoading();
+    loading.present();
 
-        loading.dismiss(); //Fechar loading
+    //Retorna a lista de clubes para seletor
+    this.api.post('/user/search' + this.$url + '/paged/' + this.$paged, this.query).subscribe((resp: any) => {
 
-        //Se reposta não existir
-        if(resp.error != undefined || resp == null) {
-          $fn(); return;
+      loading.dismiss(); //Fechar loading
+
+      //Se reposta não existir
+      if (resp.error != undefined || resp == null) {
+        $fn(); return;
+      }
+
+      //Lista de Usuários
+      for (const element of resp) {
+        if (element.error != undefined || element == null) {
+          continue;
         }
+        this.$memberList.push(element);
+      }
 
-        //Lista de Usuários
-        for (const element of resp) {
-          if(element.error != undefined || element == null){
-            continue;
-          }
-          this.$memberList.push(element);  
-        }        
+      //Reseta dados do campo "sport"
+      this.query.sport = [];
 
-        //Reseta dados do campo "sport"
-        this.query.sport = [];
+      $fn();
 
-        $fn();
-
-      }, err => { 
-          return; 
-      });
+    }, err => {
+      return;
+    });
   }
 
-  submitSearch(form:NgForm, event){
-    
+  submitSearch(form: NgForm, event) {
+
     event.preventDefault();
 
     //Reseta o contador de páginas
@@ -169,11 +180,11 @@ export class SearchPage {
     this.$memberList = [];
 
     //Adiciona tipo de usuário selecionado
-    this.query.type  = this.$typeUserSelected;
-    
+    this.query.type = this.$typeUserSelected;
+
     //Define ID's dos esportes selecionados
     this.$sportSelected.forEach(element => {
-        this.setChooseSports(element); 
+      this.setChooseSports(element);
     });
 
     //Retorna a lista de clubes para seletor
@@ -184,10 +195,10 @@ export class SearchPage {
   private setChooseSports($sportChoose) {
     //Intera sobre items
     for (const element of this.$sportTable) {
-        //Compara valores selecionados com tabela de esportes
-        if (element[1] == $sportChoose.display) {
-          //Atribui valor a array
-          this.query.sport.push(element[0]);
+      //Compara valores selecionados com tabela de esportes
+      if (element[1] == $sportChoose.display) {
+        //Atribui valor a array
+        this.query.sport.push(element[0]);
       }
     }
 
@@ -197,16 +208,16 @@ export class SearchPage {
   loadMore($event) {
 
     setTimeout(() => {
-      
+
       //Adiciona uma página a mais para adicionar itens
       this.$paged = this.$paged + 1;
 
       //Função para finalizar
-      let endFn = function(){
+      let endFn = function () {
         $event.complete();
       };
 
-      this.widgetSearch(endFn); 
+      this.widgetSearch(endFn);
 
     }, 1000);
 
@@ -214,11 +225,11 @@ export class SearchPage {
 
   //Abre uma nova página
   backButton() {
-    if(this.navCtrl.canGoBack()){
-        this.navCtrl.pop();
+    if (this.navCtrl.canGoBack()) {
+      this.navCtrl.pop();
     } else {
-        this.navCtrl.setRoot('Dashboard'); 
-    }        
+      this.navCtrl.setRoot('Dashboard');
+    }
   }
 
   /**

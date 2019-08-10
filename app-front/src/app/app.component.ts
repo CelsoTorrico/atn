@@ -24,16 +24,37 @@ export class MyApp {
     this.initTranslate(); 
 
     /** Verifica se usuário já esta logado anteriormente na plataforma */
-    /*this.user.isLoggedUser().then((resp) => {
-      //Redireciona para a página de Login
+    this.user.isLoggedUser().then((resp) => {      
+      
       if (!resp) { 
-        //Retorna ativo
+        
+        //Páginas permitidas sem cookie
+        let canPages:any = ['LoginPage', 'SignupStepsPage'];
+        
+        //Retorna view da página atual
         let view = this.nav.getActive();
-        if (view.name != 'LoginPage') {
-          location.assign(environment.apiOrigin);
-        }        
-      } 
-    });*/
+        
+        //Percorre array e verifica, se false redireciona para home
+        canPages.forEach(element => {
+          if (view.name != element) {            
+            //Redireciona para home
+            view.willEnter.subscribe((resp) => {
+              this.nav.setRoot('Login');
+            });
+          }  
+        });       
+              
+      } else {
+        
+        //Define dashboard como root 
+        this.rootPage = 'Dashboard';
+        this.nav.setRoot('Dashboard').then(() => { 
+          this.nav.popToRoot(); 
+        });
+        
+      }
+
+    });
 
   }
 

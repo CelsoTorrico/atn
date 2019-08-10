@@ -80,14 +80,6 @@ export class DashboardPage {
         private lastActivity: DashboardLastActivityService,
         visibilityList: VisibilityList) {
 
-        /** Verifica se usuário já esta logado anteriormente na plataforma */
-        this.user.isLoggedUser().then((resp) => {
-            //Redireciona para a página de Login
-            if (!resp) { 
-                location.assign(environment.apiOrigin);       
-            } 
-        });
-
         this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get(["POST", "LOADING"]).subscribe((data) => {
@@ -104,6 +96,16 @@ export class DashboardPage {
         //Habilitar popup para permissão de notificação
         this.push.requestDesktopNotificationPermission();
 
+    }
+
+    ionViewDidLoad(){
+        /** Verifica se usuário já esta logado anteriormente na plataforma */
+        this.user.isLoggedUser().then((resp) => {
+            //Redireciona para a página de Login
+            if (!resp) { 
+                this.navCtrl.setRoot('Login');       
+            } 
+        });
     }
 
     //Função que inicializa
