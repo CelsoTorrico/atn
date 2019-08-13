@@ -204,6 +204,7 @@
   "ORGANIZER_BY": "Organizado por",
   "LOAD_MORE": "Carregar mais",
   "ADD_USER_TO_CLUB": "Adicionar usuário a sua equipe?",
-  "REMOVE_USER_TO_CLUB": "Remover usuário a sua equipe?"
+  "REMOVE_USER_TO_CLUB": "Remover usuário a sua equipe?",
+  "DISABLED_USER": "Usuário Inativo"
 
 }

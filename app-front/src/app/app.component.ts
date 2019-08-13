@@ -44,14 +44,6 @@ export class MyApp {
           }  
         });       
               
-      } else {
-        
-        //Define dashboard como root 
-        this.rootPage = 'Dashboard';
-        this.nav.setRoot('Dashboard').then(() => { 
-          this.nav.popToRoot(); 
-        });
-        
       }
 
     });

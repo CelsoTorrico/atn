@@ -10,7 +10,7 @@ import { User, Api } from '../../providers';
 import { Timeline } from '../components/timeline/timeline';
 import { PushNotifyService } from '../../providers/notification/notification';
 import { MemberUser } from '../components/member/item/member-current-user';
-
+import { Notify } from '../components/notify/notify';
 
 @IonicPage()
 @Component({
@@ -22,11 +22,12 @@ export class DashboardPage {
     @ViewChild(Timeline) timeline: Timeline;
     @ViewChild(MemberCurrentMenu) currentMenu: MemberCurrentMenu;
     @ViewChild(MemberUser) currentUser: MemberUser;
+    @ViewChild(Notify) notify: Notify;
 
-    public      loginErrorString;
-    public      timeline_placeholder: string;
-    public      loading_placeholder: string;
-    protected   interval;
+    public loginErrorString;
+    public timeline_placeholder: string;
+    public loading_placeholder: string;
+    protected interval;
 
     //Informações básicas de usuário
     public currentUserData: any = {
@@ -70,12 +71,12 @@ export class DashboardPage {
     }
 
     constructor(
-        public  navCtrl: NavController,
-        public  api: Api,
-        public  toastCtrl: ToastController,
-        public  translateService: TranslateService,
+        public navCtrl: NavController,
+        public api: Api,
+        public toastCtrl: ToastController,
+        public translateService: TranslateService,
         private loading: LoadingController,
-        public  push: PushNotifyService,
+        public push: PushNotifyService,
         private user: User,
         private lastActivity: DashboardLastActivityService,
         visibilityList: VisibilityList) {
@@ -98,13 +99,13 @@ export class DashboardPage {
 
     }
 
-    ionViewDidLoad(){
+    ionViewDidLoad() {
         /** Verifica se usuário já esta logado anteriormente na plataforma */
         this.user.isLoggedUser().then((resp) => {
             //Redireciona para a página de Login
-            if (!resp) { 
-                this.navCtrl.setRoot('Login');       
-            } 
+            if (!resp) {
+                this.navCtrl.setRoot('Login');
+            }
         });
     }
 
@@ -112,18 +113,18 @@ export class DashboardPage {
     ngOnInit() {
 
         //Quando primeira página de acesso for 'Profile'
-        if(this.user._user != undefined ) {
+        if (this.user._user != undefined) {
             //Popula parametros da classe
-            this.populateProperties();     
+            this.populateProperties();
         }
 
         this.user.dataReady.subscribe((resp) => {
 
-            if(resp.status != 'ready') return;
+            if (resp.status != 'ready') return;
 
             //Popula a propriedade da classe
             this.populateProperties();
-            
+
         });
 
         this.interval = setInterval(() => {
@@ -139,7 +140,7 @@ export class DashboardPage {
 
         //Atribui dados a componentes filhos
         this.currentUser.member = this.currentUserData;
-        this.currentMenu.user   = this.user;
+        this.currentMenu.user = this.user;
 
         //Carrega dados das infos do painel
         this.setViews();
@@ -160,29 +161,28 @@ export class DashboardPage {
         //Carrega loading
         loading.present();
 
+        this.user.dataReady.subscribe((resp) => {
+
+            if (resp.status != 'ready') return;
+
+            //Recarregando dados da dashboard
+            this.setViews();
+            this.getLastActivity();
+            this.timeline.reload();
+            this.notify.query();
+
+            //Limpa interval e esconde botão
+            clearInterval(this.interval);
+            this.btn_refresh = false;
+
+            this.interval = setInterval(() => {
+                this.btn_refresh = true;
+            }, 1000 * 30);
+
+        });
+
         this.user.getUserData().then(() => {
-            
             loading.dismiss();
-
-            this.user.dataReady.subscribe((resp) => {
-
-                if(resp.status != 'ready') return;
-
-                //Recarregando dados da dashboard
-                this.setViews();
-                this.getLastActivity();
-                this.timeline.reload();
-
-                //Limpa interval e esconde botão
-                clearInterval(this.interval);
-                this.btn_refresh = false;
-
-                this.interval = setInterval(() => {
-                    this.btn_refresh = true;
-                }, 1000 * 30);
-                
-            });            
-
         });
 
     }

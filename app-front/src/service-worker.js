@@ -42,11 +42,12 @@ self.addEventListener('push', function (event) {
       
       return self.registration.showNotification(payload.title, {
           lang: 'la',
-          badge: 'https://atletasnow.com/wp-content/themes/nova_atletasnow/assets/images/logo-cor-2.png',
-          icon: 'https://atletasnow.com/wp-content/themes/nova_atletasnow/assets/images/logo-cor-2.png',
+          badge: 'https://atletasnow.com/wp-content/uploads/2019/08/notify-icon.png',
+          icon: 'https://atletasnow.com/wp-content/uploads/2019/08/notify-icon.png',
           body: payload.body,
           vibrate: [500, 100, 500],
-          click_action: payload.click_action
+          data: payload.actions,
+          actions: payload.actions
       });
   };
 

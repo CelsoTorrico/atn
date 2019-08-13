@@ -351,8 +351,12 @@ export class ProfilePage {
           //Começar ou deixar de seguir profile
           this.api.get('user/add_team/' + $id).subscribe((resp: any) => {
             if (resp.success != undefined) {
+              
               //Mudar status do botão
               this.addedTeam = (this.addedTeam) ? false : true;
+              
+              //Recarrega dados de usuário logado na classe user
+              this.user.getUserData();
             }
           });
         }
