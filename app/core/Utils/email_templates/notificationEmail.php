@@ -3,7 +3,7 @@
     /**
      * Template de Email
      * 
-     * Gerar uma nova senha de acesso a plataforma
+     * Notificações de plataforma
      * @since 2.1
      *  
      */
@@ -579,13 +579,13 @@
                             <tbody><tr>
                                 <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
                                 <h1 style="font-family:Axiforma;color:#d03014;">
-                                    Notificação - Plataforma AtletasNOW
+                                    Notificação
                                 </h1>
                                 <p style="color:#444;font-size:14px;">'
                                 . $data['message']
                                 .'</p>
                                 <p style=""><font size="5">
-                                    <a href="'. env('APP_FRONT') .$data['click_action'] .'/" target="_blank">Veja Aqui</a></font></p>
+                                    <a href="'. $data['actions']['action'] .'/" target="_blank">'.$data['actions']['title'].'</a></font></p>
                                 <p style="color:#444;font-size:14px;">Suporte AtletasNOW</p>
                                 </td>
                             </tr>

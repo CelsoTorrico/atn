@@ -6,6 +6,7 @@ use Core\Database\PrivatemetaModel;
 use Core\Database\UsermetaModel;
 use Core\Database\UserModel;
 use Core\Database\ListClubModel;
+use Core\Service\Follow;
 use Core\Service\Notify;
 use Core\Utils\AppValidation as AppValidation;
 
@@ -166,6 +167,18 @@ class UserClub extends User {
             $result = $this->addUser([], $user);
         }
 
+        /**
+         *  Automaticamente setar usuário como seguidor
+         *  @since 2.1
+         */
+        if($result) {
+            //Instaciar classe de usuário que foi adicionado ao clube
+            $follow = new Follow($user);
+            
+            //Definir que este siga o clube
+            $isFollow = $follow->addFollow($this->ID);
+        }
+
         //Retorna mensagem
         return $result;
     }
@@ -224,7 +237,7 @@ class UserClub extends User {
                 //Adicionar selo de aprovado
                 $this::updateClubCertify($user_id, $this->ID, true);
 
-                //Adicionar notificação ao usuário sendo removido da equipe
+                //Adicionar notificação ao usuário sendo adicionado a equipe
                 $notify = new Notify($this);
                 $notify->add(10, $user_id, $this->ID);
 
@@ -340,7 +353,7 @@ class UserClub extends User {
             //Instanciar a classe de notificação
             $notify = new Notify($this);
 
-            //Adicionar notificação ao usuário sendo integrado a equipe
+            //Adicionar notificação ao usuário sendo removido da equipe
             $notify->add(11, $user->ID, $this->ID);
 
             return ['success' => ['user' => 'Usuário não faz mais parte de sua equipe.']];

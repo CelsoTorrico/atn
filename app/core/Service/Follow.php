@@ -170,7 +170,8 @@ class Follow {
         }        
 
         if($result){
-            //Registra notificação para seguido
+            
+            //Registra notificação para usuário que começou a ser seguido
             $notify = new Notify($this->currentUser);
             $notify->add(4, $user_id, $this->currentUser->ID);
             
@@ -227,7 +228,7 @@ class Follow {
         }        
 
         if($result){
-            //Registra notificação para bloqueado
+            //Registra notificação para usuário que foi bloqueado
             $notify = new Notify($this->currentUser);
             $notify->add(5, $user_id, $this->currentUser->ID);
 

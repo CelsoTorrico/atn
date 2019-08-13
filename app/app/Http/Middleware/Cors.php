@@ -23,9 +23,9 @@ class Cors
             $http_origin = $_SERVER['HTTP_ORIGIN']; //Atribuindo servidor de requisição
         }        
 
-        $regex = '/http(s)?:\/\/(app|api|admin)?'. env('APP_DOMAIN') .'/';
+        $regex = '/http(s)?:\/\/(app|api|admin)?'. env('APP_DOMAIN') .'/'; 
 
-        if (!empty($http_origin) && preg_match($regex, $http_origin, $match)){
+        if (!empty($http_origin) && preg_match($regex, $http_origin, $match)) {
                 $origin = $match[0];
         } else {
                 $origin = env('APP_FRONT');

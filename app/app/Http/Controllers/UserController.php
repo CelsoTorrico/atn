@@ -217,7 +217,9 @@ class UserController extends Controller
         
         //Salvar as credentiais de push no banco
         if($settings->__set('webpush-credentials', $subscription)){
-            $response = $push->sendNotification($subscription, ['title' => 'AtletasNOW', 'body' => 'Obrigado por habilitar nossas notificações!']);
+            $response = $push->sendNotification($subscription, [
+                'title' => 'AtletasNOW', 
+                'body' => 'Obrigado por habilitar nossas notificações!']);
         }
 
         //Retorna resposta

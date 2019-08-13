@@ -147,7 +147,7 @@ class Favorite {
         }        
 
         if($result){
-            //Registra notificação para seguido
+            //Registra notificação para usuário que começou a ser favoritado
             $notify = new Notify($this->currentUser);
             $notify->add(4, $user_id, $this->currentUser->ID);
             

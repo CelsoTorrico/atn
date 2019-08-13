@@ -62,8 +62,7 @@ $router->group(['prefix' => 'user'], function () use ($router) {
         $router->delete('/club_user/{user_id:[0-9]+}', 'ClubController@deleteUser');
 
         //Reativar usuário de posse
-        $router->put('/club_user/active/{id:[0-9]+}', 'ClubController@activeUser');
-         
+        $router->put('/club_user/active/{id:[0-9]+}', 'ClubController@activeUser');         
 
     });
 

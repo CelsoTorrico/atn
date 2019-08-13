@@ -43,7 +43,7 @@ class PushNotify {
 
 
     function sendNotification(array $subscription, array $message = [], array $options = []) {
-        
+
         //Instancia Subscrição
         $webPushSubscription = Subscription::create($subscription);
         

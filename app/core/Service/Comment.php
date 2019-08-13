@@ -182,11 +182,11 @@ class Comment {
             //Modelo de timeline
             $post = new PostModel(['ID' => (int) $model->comment_post_ID->ID]);
             
-            //Intanciando notificação
+            //Intanciando classe de usuario
             $user = new User();
-            $notify = new Notify($user->getUser($model->user_id));
             
             //Adicionando notificação
+            $notify = new Notify($user->getUser($model->user_id));
             $r = $notify->add(6, $post->post_author, $model->user_id);
             
             //Mensagem de sucesso no cadastro

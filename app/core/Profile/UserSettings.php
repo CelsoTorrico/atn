@@ -32,13 +32,15 @@ class UserSettings {
     /** Retorna valor pelo tipo */
     function __get(string $name)
     {
+        //Retorna configuração pelo nome
         $this->__getConfig($name);
 
+        //Retorna ultima valor buscado
         return $this->getLastValue();
     }
 
     /** Retorna ultimo valor inserido ou requisitado */
-    function getLastValue(){
+    function getLastValue() {
         return $this->config;
     }
 
@@ -76,7 +78,7 @@ class UserSettings {
     private function __getConfig(string $config_type) {
         
         //Verifica se tipo de dados existe
-        if(!$this->model->load(['config_type' => $config_type])) {
+        if(!$this->model->load(['user_id' => $this->user->ID, 'config_type' => $config_type])) {
             return null;
         }
 
