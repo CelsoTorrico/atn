@@ -505,7 +505,7 @@ class Timeline {
             $check = false;
 
             //Verifica se existe clubs no usuário (Atletas, Profissionais do Esporte)
-            if (!key_exists('clubs', $this->currentUser)) return $check;
+            if (!key_exists('clubs', $this->currentUser) || is_null($this->currentUser->clubs) ) return $check;
             
             foreach ($this->currentUser->clubs as $key => $value) {
                 if ($value['ID'] == $visibility->meta_value) {
