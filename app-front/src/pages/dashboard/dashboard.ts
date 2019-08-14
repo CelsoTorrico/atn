@@ -23,6 +23,7 @@ export class DashboardPage {
     @ViewChild(MemberCurrentMenu) currentMenu: MemberCurrentMenu;
     @ViewChild(MemberUser) currentUser: MemberUser;
     @ViewChild(Notify) notify: Notify;
+    @ViewChild('post_image_timeline') inputFile;
 
     public loginErrorString;
     public timeline_placeholder: string;
@@ -187,6 +188,12 @@ export class DashboardPage {
 
     }
 
+    //Abrir dialogo de input de arquivo de imagem
+    openFileInput($event) {
+        $event.preventDefault();
+        let fileInput = document.getElementById('post_image_timeline');
+        fileInput.click();
+    }
 
     //Quando um input tem valor alterado
     fileChangeEvent(fileInput: any) {
@@ -234,6 +241,8 @@ export class DashboardPage {
      * Adicionar um novo item de timeline
      */
     addItem(form: NgForm, $event) {
+
+        $event.preventDefault();
 
         //Carregando
         const loading = this.loading.create({

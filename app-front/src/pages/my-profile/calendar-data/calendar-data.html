@@ -80,7 +80,7 @@
           <ion-item>
             <div class="input-image">
 
-              <label class="item btn-cursor" for="post_image_calendar" >
+              <label class="item btn-cursor" (click)="openFileInput($event)" >
                 <ion-icon item-start name="images"></ion-icon>
                 <span>{{ "ATTACH_IMAGE" | translate }}</span>                 
               </label>

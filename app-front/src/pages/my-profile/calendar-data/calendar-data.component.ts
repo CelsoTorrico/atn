@@ -201,6 +201,13 @@ export class MyProfileCalendarComponent {
         return index;
     }
 
+    //Abrir dialogo de input de arquivo de imagem
+    openFileInput($event) {
+        $event.preventDefault();
+        let fileInput = document.getElementById('post_image_calendar');
+        fileInput.click();
+    }
+
     //Quando um input tem valor alterado
     fileChangeEvent(fileInput: any) {
 

@@ -2,7 +2,7 @@ import { ProfileViewDirective } from './profile-view.directive';
 import { ProfileResumeComponent } from './../components/profile-resume/profile.resume.component';
 import { Api } from './../../providers/api/api';
 import { Component, ComponentFactoryResolver, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, AlertController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, AlertController, LoadingController, Loading } from 'ionic-angular';
 import { User } from '../../providers';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileComponent } from './profile-components/profile.component';
@@ -55,22 +55,21 @@ export class ProfilePage {
 
   public title: any;
 
-  private loading;
+  loading:Loading;
+  loadingMessage:string;
 
   constructor(
-    public navCtrl: NavController,
-    loading: LoadingController,
-    public modalCtrl: ModalController,
-    public alertCtrl: AlertController,
+    public  navCtrl: NavController,
+    private loadingCtrl: LoadingController,
+    public  modalCtrl: ModalController,
+    public  alertCtrl: AlertController,
     private api: Api,
     private user: User,
     private params: NavParams,
     private componentFactoryResolver: ComponentFactoryResolver,
-    public translateService: TranslateService) {
+    public  translateService: TranslateService) {
 
     this.translateService.setDefaultLang('pt-br');
-
-    let loadMessage;
 
     //Tradução
     this.translateService.get(['LOGIN_ERROR', 'LOADING', 'ADD_USER_TO_CLUB', 'REMOVE_USER_TO_CLUB']).subscribe((value) => {
@@ -79,12 +78,12 @@ export class ProfilePage {
         REMOVE_USER_TO_CLUB: value.REMOVE_USER_TO_CLUB,
         ADD_USER_TO_CLUB: value.ADD_USER_TO_CLUB
       };
-      loadMessage = value.LOADING;
+      this.loadingMessage = value.LOADING;
     });
 
     //Inicializando loading
-    this.loading = loading.create({
-      content: loadMessage
+    this.loading = this.loadingCtrl.create({
+      content: this.loadingMessage
     });
 
     //Retorna id de usuário de contexto
@@ -99,13 +98,16 @@ export class ProfilePage {
   }
 
   ionViewDidLoad() {
+    
     /** Verifica se usuário já esta logado anteriormente na plataforma */
     this.user.isLoggedUser().then((resp) => {
       //Redireciona para a página de Login
       if (!resp) {
+        this.loading.dismiss();
         this.navCtrl.setRoot('Login');
       }
     });
+
   }
 
   //Função que inicializa
@@ -351,10 +353,10 @@ export class ProfilePage {
           //Começar ou deixar de seguir profile
           this.api.get('user/add_team/' + $id).subscribe((resp: any) => {
             if (resp.success != undefined) {
-              
+
               //Mudar status do botão
               this.addedTeam = (this.addedTeam) ? false : true;
-              
+
               //Recarrega dados de usuário logado na classe user
               this.user.getUserData();
             }
@@ -369,8 +371,8 @@ export class ProfilePage {
 
   /* Abre uma nova página */
   backButton() {
-    if (this.navCtrl.canGoBack()) {
-      this.navCtrl.pop();
+    if (this.navCtrl.canSwipeBack()) {
+      this.navCtrl.getPrevious();
     } else {
       this.navCtrl.setRoot('Dashboard');
     }

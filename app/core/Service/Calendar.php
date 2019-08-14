@@ -50,7 +50,10 @@ class Calendar extends Timeline {
     }
 
     /* Retorna lista de timeline */
-    function getAll(int $paged = 0, array $filter = []) {     
+    function getAll(int $paged = 0, array $filter = ['' => '']) {     
+
+        //Retorna lista de usuário que está conectado
+        $following = $this->following;
 
          //Qtd de itens por página
          $perPage = 4;
@@ -61,31 +64,69 @@ class Calendar extends Timeline {
          //Paginação de eventos
          $limit = [$initPageCount, $perPage];
 
+         //Atribuir todos itens de timeline
+        $allCalendars   = [];
+
+        //Localiza posts com determinada visibilidade
+        $visibilityPosts = [
+            'postmeta.meta_key'      => 'post_visibility',
+            'postmeta.meta_value'    => [(int) $this->currentUser->type['ID']]
+        ];
+
+        /**
+         * Atribuir posts de clubes na requisição de timelines
+         * @since 2.1
+         */
+        if(count($this->currentUser->clubs) > 0) {
+            foreach ($this->currentUser->clubs as $key => $value) {
+                if (!key_exists('ID', $value)) continue;
+                //Adiciona ao filtro para localizar posts de clubes que pertence
+                $visibilityPosts['postmeta.meta_value'][] = (int) $value['ID'];
+            }
+        }
+
         //Retorna todos posts de feed baseado nas conexões
-        $allCalendars = $this->model->getIterator(array_merge([
-            'post_type'     =>  static::TYPE,
-            'post_status'   => ['open', 'publish', '0'],
-            'ORDER'         => ['post_date' => 'DESC'],
-            'LIMIT'         => $limit
-        ], $filter));
+        $db = $this->model->getDatabase();
+
+        //Atribui filtro para pesquisa de tl de perfis que segue
+        $following = (count($following) > 0)? ['posts.post_author' =>  $following] : ['posts.post_author[!]' => ''];
+
+        //Retorna todos posts de feed baseado nas conexões
+        $allCalendars = $db->select('posts', 
+            ['[><]postmeta' => ['ID' => 'post_id']],
+            ['posts.ID'], 
+            [ 
+                'posts.post_type'     => static::TYPE,
+                'posts.post_status'   => [
+                    'open', 'publish', '0'
+                ],
+                'OR'   => array_merge($following, [
+                    'AND'   => $visibilityPosts,
+                    'AND'   => $filter
+                ]),               
+                'LIMIT'  => $limit,
+                'ORDER'  => ['posts.post_date' => 'DESC'],
+                'GROUP'  => 'posts.ID'
+            ]);
         
         //Retorna resposta
-        if( $allCalendars->count() > 0){
+        if( count($allCalendars) > 0){
 
             //Array para retornar dados
             $calendars = [];
             
             foreach ($allCalendars as $key => $item) {
 
-                //Verifica se é valido
-                if ( !$allCalendars->valid() ) {
+                //Carrega modelo
+                $this->model->load(['ID' => $item['ID']]);
+
+                //Atribui dados do modelo
+                $timelineData = $this->model->getData();
+
+                //Verifica se usuário tem permissão de enxergar post
+                if (!$this->isVisibility()) {
                     continue;
                 }
-
-                //Atribui dados do comentário
-                $timelineData = $item->getData();
-
-                $this->model = $item;
 
                 //Verifica se usuário tem permissão de enxergar post
                 if (key_exists('post_author', $filter) && !$this->isVisibility($filter['post_author'])) {
@@ -93,15 +134,15 @@ class Calendar extends Timeline {
                 }
 
                 $user = new User();
-                $timelineData['post_author'] = $user->getMinProfile($item->post_author);
+                $timelineData['post_author'] = $user->getMinProfile($timelineData['post_author']);
 
                //Inicializa classe de comentários passando ID do POST
-                $comment = new Comment($item->ID);
+                $comment = new Comment($timelineData['ID']);
 
                 //Combina array timeline e comentários
                 $calendars[$key] = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity(),
-                    'has_like' => $this->like->isPostLiked($item->ID)             
+                    'has_like' => $this->like->isPostLiked($timelineData['ID'])             
                 ]); 
 
                 //Instanciando modelo para gravação dos dados
@@ -109,7 +150,7 @@ class Calendar extends Timeline {
 
                 //Retornando valores de postmeta
                 $postmeta = $metaModel->getIterator([
-                    'post_id'   => $item->ID, 
+                    'post_id'   => $timelineData['ID'], 
                     'meta_key'  => ['post_image', 'post_video_url', 'post_visibility', 'post_calendar_date', 'post_calendar_type', 'post_calendar_address', 'post_calendar_people']
                 ]);
 
@@ -142,7 +183,7 @@ class Calendar extends Timeline {
 
                 //Se item tiver mídias anexadas
                 $attachModel = new PostModel();
-                if ($attachAll = $attachModel->getIterator(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
+                if ($attachAll = $attachModel->getIterator(['post_parent' => $timelineData['ID'], 'post_type' => 'attachment'])) {
                     
                     foreach ($attachAll as $attachItem) {
                         

@@ -318,9 +318,9 @@ class Notify {
         } 
         
         /** 
-         * Notificações por email para os tipos [Mensagens, Follow] e verifica se notificação por email está habilitado
+         * Notificações por email para os tipos [Mensagens, Follow, Add Team e Remove Team]
          * */
-        if (!in_array($notify['type'], [4, 7, 10, 11]) || $notifyByEmailEnabled = $userConfig->__get('notification-email-enabled') === false) 
+        if (!in_array($notify['type'], [4, 7, 10, 11])) 
             return;          
 
         //Efetua disparo de email de notificação

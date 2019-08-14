@@ -3,9 +3,11 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, ToastController, ModalController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Api, User } from '../../../providers';
-import { NgForm } from '@angular/forms';
+import { NgForm, FormControl } from '@angular/forms';
 import { SportList } from '../../../providers/sport/sport';
 import { ClubList } from '../../../providers/clubs/clubs';
+import { TagInputModule } from 'ngx-chips';
+import { TranslateChar } from '../../../providers/useful/translateChar';
 
 
 @Component({
@@ -83,6 +85,8 @@ export class MyProfileSportsComponent {
     public visibility: any;
 
     public fieldToAdd: any = [null, null, null];
+
+    tagInputAdd:any;
 
     constructor(
         public navCtrl: NavController,
@@ -307,6 +311,43 @@ export class MyProfileSportsComponent {
             this.dismiss(resp);
         });
 
+    }
+
+    /** 
+     * Implementa a seleção de esportes. Inserir valores sem acentuação correta é considerado 
+     * @since  2.1
+     * */
+    tagInputChange(value, target) {
+
+        //Para esportes cadastrados
+        if(value == target.display) {
+            return true;
+        }
+
+        let sport = target.display;
+        for (const i in target.display) {
+
+            //Caracteres
+            let currentChar = target.display.charAt(i);
+            let changed = TranslateChar.change(currentChar);
+
+            //Se não foi encotrado caracter para para substituição
+            if (!changed) continue;
+
+            //Substitui ocorrências do caracter na string
+            sport = target.display.replace(currentChar, changed);
+        }
+
+        //Procura pelo valor na string de esporte
+        let regex = new RegExp(value, 'igm');
+        let found = sport.match(regex);
+    
+        if(found) {
+            return target.display; 
+        }
+
+        return false;
+        
     }
 
     //Fechar modal

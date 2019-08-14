@@ -15,10 +15,10 @@
           </ng-template>
 
           <ng-container *ngIf="isLogged">
-            <label for="update-photo" class="change-photo btn-cursor ion-button large img-center clear">
+            <label (click)="openFileInput($event)" class="change-photo btn-cursor ion-button large img-center clear">
               <ion-icon item-start name="camera"></ion-icon>
             </label>
-            <input id="update-photo" type="file" ([ngModel])="uploadPhoto" (change)="changePhoto($event)" style="display:none;"  accept="image/*" capture/>
+            <input id="update-photo" type="file" ([ngModel])="uploadPhoto" (change)="changePhoto($event)" style="display:none;"  accept="image/*" />
           </ng-container>
 
         </ion-avatar>

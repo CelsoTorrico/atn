@@ -35,6 +35,7 @@ import { ClubList } from '../providers/clubs/clubs';
 import { CalendarList } from '../providers/calendartypes/calendar';
 import { profileTypeList } from '../providers/profiletypes/profiletypes';
 import { VisibilityList } from '../providers/visibility/visibility';
+import { TranslateChar } from '../providers/useful/translateChar';
 
 //Habilita Angular em produção
 enableProdMode();
@@ -171,6 +172,7 @@ const deeplinkconfig:DeepLinkConfig = {
   providers: [
     Api,
     loadNewPage,
+    TranslateChar,
     BrazilStates,
     GenderList,
     profileTypeList,

@@ -40,7 +40,7 @@
               <tag-input [(ngModel)]="$sportSelected" 
                  [onlyFromAutocomplete]="true" placeholder="{{ 'WRITE_SPORT' | translate}}" name="sportSelected"
                 required>
-                <tag-input-dropdown [autocompleteItems]="$sportList"></tag-input-dropdown>
+                <tag-input-dropdown [autocompleteItems]="$sportList" [matchingFn]="tagInputChange"></tag-input-dropdown>
               </tag-input>
             </ion-col>
           </ion-row>

@@ -31,7 +31,7 @@
               </ion-select>
             </ion-item>
           </ion-list>-->
-      <hr />
+
       <ion-list margin>
         <ion-row padding>
           <ion-col col-12="">
@@ -63,11 +63,19 @@
 
     </form>
 
+    <hr />
 
-    <ion-list>
-      <button ion-button (click)="enableDesktopNotification()">
-        {{ "BROWSER_PERMISSION" | translate }}
-      </button>
+    <ion-list margin>
+      <ion-row padding>
+          <ion-col col-12>
+              <h2>{{ 'PUSH_NOTIFICATIONS' | translate }}</h2>
+          </ion-col>
+          <ion-col col-12>
+              <button ion-button full (click)="enableDesktopNotification()">
+                  {{ "ENABLE_NOTIFICATION_PERMISSION" | translate }}
+              </button>
+          </ion-col>          
+      </ion-row>      
     </ion-list>
 
   </ion-grid>

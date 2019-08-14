@@ -4,7 +4,7 @@
 
 export const environment = { 
   
-  /*
+  /**/ /*
   production: false,
   apiOrigin: 'https://localhost/desenvolvimento/atletasNOW/app-front/www/', 
   apiUrl: 'https://localhost/desenvolvimento/atletasNOW/app/public',

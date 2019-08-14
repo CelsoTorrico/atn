@@ -176,7 +176,7 @@
         @section Header Container Style
         */
             #templateHeader{
-                /*@editable*/background-color:#292929;
+                /*@editable*/background-color:#e8e8e8;
                 /*@editable*/background-image:none;
                 /*@editable*/background-repeat:no-repeat;
                 /*@editable*/background-position:center;
@@ -206,7 +206,7 @@
         @section Header Text
         */
             .headerContainer .mcnTextContent,.headerContainer .mcnTextContent p{
-                /*@editable*/color:#ffffff;
+                /*@editable*/color:#222222;
                 /*@editable*/font-family:Helvetica;
                 /*@editable*/font-size:16px;
                 /*@editable*/line-height:150%;
@@ -534,7 +534,7 @@
                             
                             <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
                             
-                                <h3 style="text-align: center;"><img data-file-id="3982613" height="30" src="https://atletasnow.com/wp-content/themes/nova_atletasnow/assets/images/logo-cor-2.png" style="border: 0px  ; width: 250px; height: 30px; margin: 0px;" width="250"></h3>
+                                <h3 style="text-align: center;"><img data-file-id="3982613" height="30" src="https://atletasnow.com/wp-content/uploads/2019/08/atletasnow-logoemail.png" style="border: 0px  ; width: 250px; height: 30px; margin: 0px;" width="250"></h3>
     
     <p style="text-align: center;">Os melhores atletas do Brasil estão aqui.<br>
     <br>

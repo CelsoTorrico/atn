@@ -194,6 +194,13 @@ export class ProfileResumeComponent {
         });
     }
 
+    //Abrir dialogo de input de arquivo de imagem
+    openFileInput($event) {
+        $event.preventDefault();
+        let fileInput = document.getElementById('update-photo');
+        fileInput.click();
+    }
+
     changePhoto($event) {
 
         if ($event.target.files[0] == undefined) {

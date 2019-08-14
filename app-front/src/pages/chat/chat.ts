@@ -27,8 +27,7 @@ export class ChatPage {
         public api: Api,
         public toastCtrl: ToastController,
         public navCtrl: NavController,
-        public translateService: TranslateService,
-        private cookieService: CookieService) {
+        public translateService: TranslateService) {
         
     }
 
@@ -73,11 +72,11 @@ export class ChatPage {
 
     //Abre uma nova página
     backButton() {
-        if(this.navCtrl.canGoBack()){
-            this.navCtrl.pop();
+        if (this.navCtrl.canSwipeBack()) {
+          this.navCtrl.getPrevious();
         } else {
-            this.navCtrl.setRoot('Dashboard');
-        }        
-    }
+          this.navCtrl.setRoot('Dashboard');
+        }
+      }
 
 }

@@ -8,6 +8,7 @@ import { GenderList } from '../../providers/gender/gender';
 import { profileTypeList } from '../../providers/profiletypes/profiletypes';
 import { SportList } from '../../providers/sport/sport';
 import { ClubList } from '../../providers/clubs/clubs';
+import { TranslateChar } from '../../providers/useful/translateChar';
 
 
 @IonicPage({
@@ -225,8 +226,8 @@ export class SearchPage {
 
   //Abre uma nova página
   backButton() {
-    if (this.navCtrl.canGoBack()) {
-      this.navCtrl.pop();
+    if (this.navCtrl.canSwipeBack()) {
+      this.navCtrl.getPrevious();
     } else {
       this.navCtrl.setRoot('Dashboard');
     }
@@ -240,6 +241,43 @@ export class SearchPage {
     return this.loadingCtrl.create({
       content: this.loading_placeholder
     });
+  }
+
+  /** 
+     * Implementa a seleção de esportes. Inserir valores sem acentuação correta é considerado 
+     * @since  2.1
+     * */
+    tagInputChange(value, target) {
+
+      //Para esportes cadastrados
+      if(value == target.display) {
+          return true;
+      }
+
+      let sport = target.display;
+      for (const i in target.display) {
+
+          //Caracteres
+          let currentChar = target.display.charAt(i);
+          let changed = TranslateChar.change(currentChar);
+
+          //Se não foi encotrado caracter para para substituição
+          if (!changed) continue;
+
+          //Substitui ocorrências do caracter na string
+          sport = target.display.replace(currentChar, changed);
+      }
+
+      //Procura pelo valor na string de esporte
+      let regex = new RegExp(value, 'igm');
+      let found = sport.match(regex);
+  
+      if(found) {
+          return target.display; 
+      }
+
+      return false;
+      
   }
 
 

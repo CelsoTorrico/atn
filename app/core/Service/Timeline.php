@@ -96,33 +96,62 @@ class Timeline {
         //Paginação de timeline
         $limit = [$initPageCount, $perPage];
 
+        //Atribuir todos itens de timeline
+        $allTimelines   = [];
+
+        //Localiza posts com determinada visibilidade
+        $visibilityPosts = [
+            'postmeta.meta_key'      => 'post_visibility',
+            'postmeta.meta_value'    => [(int) $this->currentUser->type['ID']]
+        ];
+
+        /**
+         * Atribuir posts de clubes na requisição de timelines
+         * @since 2.1
+         */
+        if(count($this->currentUser->clubs) > 0) {
+            foreach ($this->currentUser->clubs as $key => $value) {
+                if (!key_exists('ID', $value)) continue;
+                //Adiciona ao filtro para localizar posts de clubes que pertence
+                $visibilityPosts['postmeta.meta_value'][] = (int) $value['ID'];
+            }
+        }
+
         //Retorna todos posts de feed baseado nas conexões
-        $allTimelines = $this->model->getIterator([
-            'post_author'   => $following,
-            'post_type'     => static::TYPE,
-            'post_status'   => ['open', 'publish', '0'],
-            'ORDER'         => ['post_date' => 'DESC'],
-            'LIMIT'         => $limit
-        ]);
+        $db = $this->model->getDatabase();
+
+        //Atribui filtro para pesquisa de tl de perfis que segue
+        $following = (count($following) > 0)? ['posts.post_author' =>  $following] : ['posts.post_author[!]' => ''];
+            
+        $allTimelines = $db->select('posts', 
+            ['[><]postmeta' => ['ID' => 'post_id']],
+            ['posts.ID'], 
+            [ 
+                'posts.post_type'     => static::TYPE,
+                'posts.post_status'   => [
+                    'open', 'publish', '0'
+                ],
+                'OR'   => array_merge($following, [
+                    'AND' => $visibilityPosts
+                ]),               
+                'LIMIT'  => $limit,
+                'ORDER'  => ['posts.post_date' => 'DESC'],
+                'GROUP'  => 'posts.ID'
+            ]);
         
         //Retorna resposta
-        if( $allTimelines->count() > 0){
+        if ( count($allTimelines) > 0) {
 
             //Array para retornar dados
             $timelines = [];
             
             foreach ($allTimelines as $key => $item) {
 
-                //Verifica se é valido
-                if ( !$allTimelines->valid() ) {
-                    continue;
-                }
+                //Carrega modelo
+                $this->model->load(['ID' => $item['ID']]);
 
-                //Atribui dados do comentário
-                $timelineData = $item->getData();
-
-                //Atribui modelo da timeline corrente para verificação de permissão
-                $this->model = $item;
+                //Atribui dados do modelo
+                $timelineData = $this->model->getData();
 
                 //Verifica se usuário tem permissão de enxergar post
                 if (!$this->isVisibility()) {
@@ -130,19 +159,19 @@ class Timeline {
                 }
 
                //Inicializa classe de comentários passando ID do POST
-                $comment = new Comment($item->ID);
+                $comment = new Comment($timelineData['ID']);
 
                 //Combina array timeline e comentários
                 $timeline = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity(),
-                    'has_like' => $this->like->isPostLiked($item->ID)         
+                    'has_like' => $this->like->isPostLiked($timelineData['ID'])         
                 ]); 
 
                 //Adiciona dados básico do autor do post timeline
                 $timeline['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
 
                 //Se item tiver foto anexada
-                if ($attach = $this->model->getInstance(['post_parent' => $item->ID, 'post_type' => 'attachment'])) {
+                if ($attach = $this->model->getInstance(['post_parent' => $timelineData['ID'], 'post_type' => 'attachment'])) {
                     $timeline['attachment'] = $attach->guid;
                 }
 
@@ -307,22 +336,35 @@ class Timeline {
                 //Verifica se visibilidade definida é válido para usuário
                 foreach ($levels as $key => $value) {
                     if( $value['value'] == $visibility){
-                        $visibilityInsert = $value['value'];
+                        $visibilityInsert = (int) $value['value'];
                         break;
                     }                        
                 }
 
                 //Inicializando modelo
                 $postmeta = new PostmetaModel();
-                
-                $postmeta->fill([
-                    'post_id'       => $lastInsert['ID'],
-                    'meta_key'      => 'post_visibility',
-                    'meta_value'    => $visibilityInsert
+
+                //Carrega modelo
+                $postmeta->load([
+                    'post_id'       => (int) $lastInsert['ID'],
+                    'meta_key'      => 'post_visibility'
                 ]);
 
-                //Atribui valor de visibilidade ao post
-                $postmeta->save();
+                if($postmeta->isFresh()){
+                    //Salva novos dados
+                    $postmeta->fill([
+                        'post_id'       => (int) $lastInsert['ID'],
+                        'meta_key'      => 'post_visibility',
+                        'meta_value'    => $visibilityInsert
+                    ]);
+
+                    $postmeta->save();
+
+                } else {
+                    //Atualiza dados já salvos
+                    $postmeta->meta_value = $visibilityInsert;
+                    $postmeta->update('meta_value');
+                }
 
             }
 
@@ -539,30 +581,47 @@ class Timeline {
         $limit = 10;
 
         //Retorna todos posts de feed baseado nas conexões
-        $allTimelines = $this->model->getIterator([
-            'post_author[!]'    => $this->currentUser->ID,
-            'ORDER'             => ['post_date' => 'DESC'],
-            'LIMIT'             => $limit
-        ]);
+        $db = $this->model->getDatabase();
+
+        //Selecionar somente posts públicos
+        $allTimelines = $db->select('posts', 
+            ['[><]postmeta' => ['ID' => 'post_id']],
+            ['posts.ID', 'posts.post_content', 'posts.post_date', 'posts.post_type', 'posts.post_author', 'postmeta.meta_value'], 
+            [ 
+                'posts.post_author[!]'    => $this->currentUser->ID,
+                'posts.post_type[!]'      => 'attachment',
+                'posts.post_status'   => [
+                    'open', 'publish', '0'
+                ],
+                'AND' => [
+                    'postmeta.meta_value' => 0,
+                    'AND #visibilidade' => [
+                        'postmeta.meta_key' => 'post_visibility'                        
+                    ]
+                ],               
+                'LIMIT'  => $limit,
+                'ORDER'  => ['posts.post_date' => 'DESC'],
+                'GROUP'  => 'posts.ID'
+            ]);
 
         //Retorna resposta
-        if( $allTimelines->count() > 0){
+        if( count($allTimelines) > 0){
 
             //Array para retornar dados
             $timelines = [];
             
             foreach ($allTimelines as $key => $item) {
 
-                //Verifica se é valido
-                if ( !$allTimelines->valid() ) {
-                    continue;
-                }
-
                 //Atribui dados do comentário
-                $timelineData = $item->getData();
+                $timelineData = $item;
 
                 //Atribui modelo da timeline corrente para verificação de permissão
                 $this->model = $item;
+
+                //Adiciona data do post
+                $timeline['ID'] = $timelineData['ID'];
+
+                $timeline['post_content'] = $timelineData['post_content'];
 
                 //Adiciona data do post
                 $timeline['post_date'] = $timelineData['post_date'];

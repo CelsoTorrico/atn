@@ -69,11 +69,11 @@ export class LearnPage {
 
     //Abre uma nova página
     backButton() {
-        if(this.navCtrl.canGoBack()){
-            this.navCtrl.pop();
+        if (this.navCtrl.canSwipeBack()) {
+          this.navCtrl.getPrevious();
         } else {
-            this.navCtrl.setRoot('Dashboard');
-        }        
-    }
+          this.navCtrl.setRoot('Dashboard');
+        }
+      }
 
 }

@@ -1,7 +1,7 @@
 import { ForgetPasswordComponent } from './forget-password.component';
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IonicPage, NavController, ToastController, ModalController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, ToastController, ModalController, LoadingController, ViewController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { User, Cookie } from '../../providers';
 
@@ -28,12 +28,12 @@ export class LoginPage implements OnInit{
   private loadingMessage:string;
 
   constructor(
-    public navCtrl: NavController,
-    public user: User,
-    public loading: LoadingController,
-    public modal: ModalController,
-    public toastCtrl: ToastController,
-    public translateService: TranslateService) {
+    public  navCtrl: NavController,
+    public  user: User,
+    public  loading: LoadingController,
+    public  modal: ModalController,
+    public  toastCtrl: ToastController,
+    public  translateService: TranslateService) {
 
     this.translateService.setDefaultLang('pt-br'); 
     this.translateService.get(['LOGIN_ERROR', 'LOADING']).subscribe((value) => {

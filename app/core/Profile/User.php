@@ -531,8 +531,9 @@ class User extends GenericUser{
                     continue;
                 }
 
-                //Atribui id do usuário
-                $foundUsers[] = (int) $value->user_id->ID; 
+                //Atribui dados do usuário
+                $user = $value->getData();
+                $foundUsers[] = (int) $user['user_id']; 
 
             }
 
