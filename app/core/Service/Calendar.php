@@ -77,7 +77,7 @@ class Calendar extends Timeline {
          * Atribuir posts de clubes na requisição de timelines
          * @since 2.1
          */
-        if(count($this->currentUser->clubs) > 0) {
+        if(is_array($this->currentUser->clubs) && count($this->currentUser->clubs) > 0) {
             foreach ($this->currentUser->clubs as $key => $value) {
                 if (!key_exists('ID', $value)) continue;
                 //Adiciona ao filtro para localizar posts de clubes que pertence
