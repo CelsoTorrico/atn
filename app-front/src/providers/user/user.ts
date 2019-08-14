@@ -67,7 +67,7 @@ export class User {
       return this.api.get('login/cookie').toPromise().then((resp: any) => {
 
         //Se retornar erro, parar execução
-        if (resp.error != undefined) return false;
+        if (!resp || resp.error != undefined) return false;
 
         //cookie de sessão válido
         return true;

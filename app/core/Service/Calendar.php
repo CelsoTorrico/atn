@@ -110,7 +110,7 @@ class Calendar extends Timeline {
             ]);
         
         //Retorna resposta
-        if( count($allCalendars) > 0){
+        if( !is_null($allCalendars) && count($allCalendars) > 0) {
 
             //Array para retornar dados
             $calendars = [];
@@ -143,7 +143,7 @@ class Calendar extends Timeline {
                 $calendars[$key] = array_merge($timelineData, [
                     'quantity_comments' => $comment->getQuantity(),
                     'has_like' => $this->like->isPostLiked($timelineData['ID'])             
-                ]); 
+                ]);
 
                 //Instanciando modelo para gravação dos dados
                 $metaModel = new PostmetaModel();

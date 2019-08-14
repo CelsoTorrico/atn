@@ -15,7 +15,7 @@ export const environment = {
   vapidPrivateKey: 'mixFQhh6Q8VH-BrhQdkPSBMGhmYh1-Q9SyoXRP7LTxM',
   gcMapIKey: 'AAAA3Z-nKJQ:APA91bHe2mKAXSYPDPu4Wbvw7smJIqiI3yw570juurwTJWrvulgW93c1MpPBEo4pTbEWB_m_L6cU2yRKt1b-2GYyJ-oEyFj3dOKtGhuBPF2SRyFyoitaPGp80HHGwOc8GiWEd0iP86u8' 
 
-  /**/ 
+  /**/
   production: true,
   apiOrigin: 'https://developing.atletasnow.com/app-atletasnow-front/',
   apiUrl: 'https://developing.atletasnow.com/atletasNOW/app/public/',

@@ -212,15 +212,10 @@ class UserController extends Controller
 
         $subscription = $request->input('subscription'); //dados da subscrição
 
-        $push = new PushNotify(); //classe webpush
-        $settings = new UserSettings($this->user); //classe de configuração do usuário
+        $settings   = new UserSettings($this->user); //classe de configuração do usuário
         
         //Salvar as credentiais de push no banco
-        if($settings->__set('webpush-credentials', $subscription)){
-            $response = $push->sendNotification($subscription, [
-                'title' => 'AtletasNOW', 
-                'body' => 'Obrigado por habilitar nossas notificações!']);
-        }
+        $response = $settings->__set('webpush-credentials', $subscription);
 
         //Retorna resposta
         return response()->json($response);

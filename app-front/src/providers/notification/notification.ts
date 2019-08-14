@@ -67,9 +67,12 @@ export class PushNotifyService {
                 return registration.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: pubKey
-                });
+                });          
             }).then(function (subscription) { 
-                
+
+                console.log(subscription);
+                console.log(navigator.serviceWorker.getRegistration());
+
                 let endpoint = subscription.endpoint;
                 let key = btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh'))));
                 let auth = btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))));
@@ -81,7 +84,6 @@ export class PushNotifyService {
                         authToken: auth,
                     }
                 }).subscribe((resp) => {
-                    //alert.setMessage(); 
                     alert.present();              
                 }, (error) => {
 

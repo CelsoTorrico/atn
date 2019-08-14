@@ -125,8 +125,9 @@ class Timeline {
             
         $allTimelines = $db->select('posts', 
             ['[><]postmeta' => ['ID' => 'post_id']],
-            ['posts.ID'], 
+            ['posts.ID', 'postmeta.meta_key', 'postmeta.meta_value'], 
             [ 
+                'posts.post_author[!]' => $this->currentUser->ID,
                 'posts.post_type'     => static::TYPE,
                 'posts.post_status'   => [
                     'open', 'publish', '0'
@@ -140,7 +141,7 @@ class Timeline {
             ]);
         
         //Retorna resposta
-        if ( count($allTimelines) > 0) {
+        if ( !is_null($allTimelines) && count($allTimelines) > 0) {
 
             //Array para retornar dados
             $timelines = [];
@@ -166,6 +167,9 @@ class Timeline {
                     'quantity_comments' => $comment->getQuantity(),
                     'has_like' => $this->like->isPostLiked($timelineData['ID'])         
                 ]); 
+
+                //Atribuindo valor de visibilidade
+                $timeline[$item['meta_key']] = $item['meta_value'];
 
                 //Adiciona dados básico do autor do post timeline
                 $timeline['post_author'] = (new User)->getMinProfile($timelineData['post_author']);

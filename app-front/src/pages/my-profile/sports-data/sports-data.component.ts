@@ -123,10 +123,11 @@ export class MyProfileSportsComponent {
 
     //Função que inicializa
     ngOnInit() {
-        //Retorna dados de usuário
-        this.user.getUserData().then((resp: boolean) => {
-
-            if (!resp) return;
+        
+        //Aguarda setup de dados e atribui
+        this.user.dataReady.subscribe((resp) => {
+            
+            if(resp.status != 'ready') return;
 
             //Adicionando valores a classe user
             let atributes = this.user._user;
@@ -139,15 +140,32 @@ export class MyProfileSportsComponent {
             }
 
             //Atribuindo dados aos modelos
-            this.type = atributes.type.ID;
+            this.type  = atributes.type.ID;
             this.sport = atributes.sport;
             this.clubes = atributes.clubs;
 
-            //Define os clubes selecionados
-            this.savedClubsList();
-            //Define os esportes selecionados
-            this.savedSportList();
+            //Intervalo para correta assimilação dos campos esportes e clubes
+            setTimeout(function($this){
+                
+                //Define os clubes selecionados
+                $this.savedClubsList();
+                
+                //Define os esportes selecionados
+                $this.savedSportList();
+
+            }, 2000, this);
+            
+
         });
+
+        //Realiza requisição de dados
+        this.user.getUserData().then((resp: boolean) => {
+            if (!resp) return;
+        });
+    }
+
+    ionViewDidEnter() {
+        
     }
 
     //Define esportes selecionados = salvos
@@ -159,14 +177,12 @@ export class MyProfileSportsComponent {
     }
 
     //Define clubes selecionados = salvos
-    savedClubsList() {
-        if (this.clubes != undefined) {
-            //Define ID's dos clubes selecionados
-            this.$clubsTable.forEach(element => {
-                let arrayItem = ['', element.display_name];
-                this.setChoosed(arrayItem, this.clubes, 'club_name', '$clubsSelected');
-            });
-        }
+    savedClubsList() {        
+        //Define ID's dos clubes selecionados
+        this.$clubsTable.forEach(element => {
+            //elementos do clube vem como objetos, abaixo criamos array com a propriedade
+            this.setChoosed([null, element.display_name], this.clubes, 'club_name', '$clubsSelected');
+        });        
     }
 
     //Adiciona elementos já selecionados a partir do perfil de usuário
