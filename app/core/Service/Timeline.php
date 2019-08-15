@@ -49,7 +49,7 @@ class Timeline {
         }
 
         //Verifica se usuário tem permissão de enxergar post
-        if (!$this->isVisibility()) {
+        if (!$this->isVisibility($this->model->getData())) {
             return ['error' => ['timeline' => 'Você não tem permissão para ver este post.']];
         }
 
@@ -85,7 +85,9 @@ class Timeline {
     function getAll(int $paged = 0, array $filter = []) {     
 
         //Retorna lista de usuário que está conectado
-        $following = $this->following;
+        $following = [];
+        $follow = new Follow($this->currentUser);
+        $following = $follow->getFollowing(true);
 
         //Qtd de itens por página
         $perPage = 24;
@@ -120,16 +122,24 @@ class Timeline {
         //Retorna todos posts de feed baseado nas conexões
         $db = $this->model->getDatabase();
 
-        //Atribui filtro para pesquisa de tl de perfis que segue
-        $following = (count($following) > 0)? ['posts.post_author' =>  $following] : ['posts.post_author[!]' => ''];
+        //Ids de usuário a não exibir posts
+        $not_user_ids = [$this->currentUser->ID];
+
+        //Atribui ids de perfis que seguem
+        if (is_array($following) && count($following) > 0): 
+            $following = ['posts.post_author' =>  $following];
+        else: 
+            //senão adiciona '0' ao perfis para não exibir
+            $not_user_ids[] = 0;     
+        endif;
             
         $allTimelines = $db->select('posts', 
             ['[><]postmeta' => ['ID' => 'post_id']],
             ['posts.ID', 'postmeta.meta_key', 'postmeta.meta_value'], 
             [ 
-                'posts.post_author[!]' => $this->currentUser->ID,
-                'posts.post_type'     => static::TYPE,
-                'posts.post_status'   => [
+                'posts.post_author[!]' => $not_user_ids,
+                'posts.post_type'      => static::TYPE,
+                'posts.post_status'    => [
                     'open', 'publish', '0'
                 ],
                 'OR'   => array_merge($following, [
@@ -155,7 +165,7 @@ class Timeline {
                 $timelineData = $this->model->getData();
 
                 //Verifica se usuário tem permissão de enxergar post
-                if (!$this->isVisibility()) {
+                if (!$this->isVisibility($timelineData)) {
                     continue;
                 }
 
@@ -235,7 +245,7 @@ class Timeline {
                 $this->model = $item;
 
                 //Verifica se usuário tem permissão de enxergar post
-                if (!$this->isVisibility($currentViewUser)) {
+                if (!$this->isVisibility($timelineData, $currentViewUser)) {
                     continue;
                 }
 
@@ -473,7 +483,7 @@ class Timeline {
     }
 
     /** Verifica a visibilidade do conteúdo */
-    protected function isVisibility($viewer_user_id = null):bool{
+    protected function isVisibility(array $post, $viewer_user_id = null):bool{
         
         //Definindo id do visualizador da timeline
         if(is_null($viewer_user_id)){
@@ -484,12 +494,12 @@ class Timeline {
         $visibility = new PostmetaModel();
 
         //Se autor post é mesmo usuário que quer visualizar
-        if ($this->model->post_author == $viewer_user_id) {
+        if ($post['post_author'] == $viewer_user_id) {
             return true;
         }
 
         //Se não estiver nenhuma definição o post é público por definição 
-        if (!$visibility->load(['post_id' => $this->model->ID, 'meta_key' => 'post_visibility'])
+        if (!$visibility->load(['post_id' => $post['ID'], 'meta_key' => 'post_visibility'])
         || $visibility->meta_value == 0) {
             return true;            
         }
@@ -499,8 +509,17 @@ class Timeline {
             return in_array($viewer_user_id, $this->following);
         }
 
-        //Se for maior que 1: Visualizaçõa definida por pertencer a um club
-        if ($visibility->meta_value >= 1 && $visibility->meta_value != 99) {
+        //Se post tiver visibilidade por tipo de usuário, verifica se usuário atual tem permissão de visualizar
+        if ($visibility->meta_value == $this->currentUser->type['ID']) {
+            return true;
+        }
+
+        //Instancia Modelo de tipos de usuário
+        $usertypeModelDB  = UsertypeModel::getDatabase();
+        $lastTypeUser   = $usertypeModelDB->max('usertype', 'ID');
+        
+        //Se for maior visibilidade foi definida maior que qtd de tipos de usuário, significa que é id de instituição e visualizaçõa definida por usuario pertencer a um club
+        if ($visibility->meta_value > $lastTypeUser && $visibility->meta_value != 99) {
             
             $check = false;
 
@@ -515,7 +534,9 @@ class Timeline {
             }
 
             return $check;
-        }        
+        } 
+        
+        return false;
 
     }
 

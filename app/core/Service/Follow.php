@@ -5,8 +5,6 @@ namespace Core\Service;
 use Core\Profile\User;
 use Core\Service\Notify;
 use Core\Database\FollowersModel;
-use Core\Utils\DataConverter;
-use Illuminate\Http\Request;
 use Core\Database\UserModel;
 
 class Follow {

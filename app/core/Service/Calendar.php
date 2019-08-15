@@ -52,20 +52,17 @@ class Calendar extends Timeline {
     /* Retorna lista de timeline */
     function getAll(int $paged = 0, array $filter = ['' => '']) {     
 
-        //Retorna lista de usuário que está conectado
-        $following = $this->following;
+        //Qtd de itens por página
+        $perPage = 4;
 
-         //Qtd de itens por página
-         $perPage = 4;
-
-         //A partir de qual item contar
-         $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
+        //A partir de qual item contar
+        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
  
-         //Paginação de eventos
-         $limit = [$initPageCount, $perPage];
+        //Paginação de eventos
+        $limit = [$initPageCount, $perPage];
 
-         //Atribuir todos itens de timeline
-        $allCalendars   = [];
+        //Atribuir todos itens de timeline
+        $allCalendars = [];
 
         //Localiza posts com determinada visibilidade
         $visibilityPosts = [
@@ -88,9 +85,6 @@ class Calendar extends Timeline {
         //Retorna todos posts de feed baseado nas conexões
         $db = $this->model->getDatabase();
 
-        //Atribui filtro para pesquisa de tl de perfis que segue
-        $following = (count($following) > 0)? ['posts.post_author' =>  $following] : ['posts.post_author[!]' => ''];
-
         //Retorna todos posts de feed baseado nas conexões
         $allCalendars = $db->select('posts', 
             ['[><]postmeta' => ['ID' => 'post_id']],
@@ -100,10 +94,10 @@ class Calendar extends Timeline {
                 'posts.post_status'   => [
                     'open', 'publish', '0'
                 ],
-                'OR'   => array_merge($following, [
+                'OR'   => [
                     'AND'   => $visibilityPosts,
                     'AND'   => $filter
-                ]),               
+                ],               
                 'LIMIT'  => $limit,
                 'ORDER'  => ['posts.post_date' => 'DESC'],
                 'GROUP'  => 'posts.ID'
@@ -124,12 +118,12 @@ class Calendar extends Timeline {
                 $timelineData = $this->model->getData();
 
                 //Verifica se usuário tem permissão de enxergar post
-                if (!$this->isVisibility()) {
+                if (!$this->isVisibility($timelineData)) {
                     continue;
                 }
 
                 //Verifica se usuário tem permissão de enxergar post
-                if (key_exists('post_author', $filter) && !$this->isVisibility($filter['post_author'])) {
+                if (key_exists('post_author', $filter) && !$this->isVisibility($timelineData, $filter['post_author'])) {
                     continue;
                 }
 
