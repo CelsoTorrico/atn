@@ -176,7 +176,7 @@ class UserClub extends User {
             $follow = new Follow($user);
             
             //Definir que este siga o clube
-            $isFollow = $follow->addFollow($this->ID);
+            $isFollow = $follow->addFollow($this->ID, false);
         }
 
         //Retorna mensagem
@@ -192,10 +192,13 @@ class UserClub extends User {
         }
 
         //Define parametros de dados para atribuição de usuário a equipe
-        $userData = array_merge($data, [
+        $userData = array_merge($data);
+        
+        //Propriedade para setar usuário como pertencente ao clube
+        $addClubProperties = [
             'parent_user' => $this->ID, 
-            'clubes' => [$this->ID]
-        ]);
+            'clubes' => $this->ID
+        ];
 
         //Se usuário estiver sendo criado
         if (is_null($user)) {
@@ -223,8 +226,38 @@ class UserClub extends User {
             Login::welcomeEmail($userData['user_email'], $userData['display_name']);  
 
         } else {
-            //Atualiza usuário atribuindo a equipe
+            
+            //Atualiza dados básicos de usuário
             $response = $user->update($userData); 
+
+            /**
+             * Setar propriedades em usuário e definindo não exibir notificação ao clube (anteriormente enviamos o dado via $user->update que gerava notificação desnecessária ao clube)
+             * @since 2.1
+             */
+            foreach ($addClubProperties as $key => $value) {
+                
+                //Se registrar 'parent_user' o valor tem que ser único
+                if ($key == 'parent_user') {
+                    $newData = $value;
+                } else {
+                    //Retorna dados armazenados no bd
+                    $oldData = (key_exists('clubes', $d = $user->getmeta([$key])))? $d['clubes']['value'] : [];
+
+                    //Atribui novo valor
+                    $ids = [$value];
+
+                    //Percorre clubes anteriores e adicionando IDs 
+                    foreach ($oldData as $club) {
+                        $ids[] = $club['ID'];
+                    }
+
+                    //Atribui id do clube ao existentes e remove valores duplicados
+                    $newData = array_unique($ids);
+                }
+                
+                //Gravar dados no perfil do usuário
+                $user->setmeta($key, $newData, true, false);
+            }            
 
             //Atribui ID do usuario
             $user_id = $user->ID;       

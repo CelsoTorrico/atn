@@ -3,10 +3,10 @@ import { MemberCurrentMenu } from './../components/menu/member-current-menu';
 import { DashboardLastActivityService } from './dashboardactivity.service';
 import { VisibilityList } from '../../providers/visibility/visibility';
 import { NgForm } from '@angular/forms';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController, LoadingController } from 'ionic-angular';
-import { User, Api } from '../../providers';
+import { User, Api, Cookie } from '../../providers';
 import { Timeline } from '../components/timeline/timeline';
 import { PushNotifyService } from '../../providers/notification/notification';
 import { MemberUser } from '../components/member/item/member-current-user';
@@ -17,7 +17,7 @@ import { Notify } from '../components/notify/notify';
     selector: 'page-dashboard',
     templateUrl: 'dashboard.html'
 })
-export class DashboardPage {
+export class DashboardPage implements OnInit {
 
     @ViewChild(Timeline) timeline: Timeline;
     @ViewChild(MemberCurrentMenu) currentMenu: MemberCurrentMenu;
@@ -100,34 +100,31 @@ export class DashboardPage {
 
     }
 
-    ionViewDidLoad() {
-        /** Verifica se usuário já esta logado anteriormente na plataforma */
-        this.user.isLoggedUser().then((resp) => {
-            //Redireciona para a página de Login
-            if (!resp) {
-                this.navCtrl.setRoot('Login');
-            }
-        });
-    }
-
     //Função que inicializa
     ngOnInit() {
 
-        //Quando primeira página de acesso for 'Profile'
-        if (this.user._user != undefined) {
+        /** Verifica se usuário já esta logado anteriormente na plataforma */
+        this.user.isLoggedUser().then((resp: boolean) => {
+            //Redireciona para a página de Login
+            if (!resp) {
+                return this.user.logout();
+            }
+        });
+
+        //Se já foi feita requisição
+        if (this.user._user) {
             //Popula parametros da classe
             this.populateProperties();
         }
 
+        //Verifica quando dados forem retornados em requisição
         this.user.dataReady.subscribe((resp) => {
-
             if (resp.status != 'ready') return;
-
             //Popula a propriedade da classe
             this.populateProperties();
-
         });
 
+        //Mostrar botao de reloading em tempos em tempos
         this.interval = setInterval(() => {
             this.btn_refresh = true;
         }, 1000 * 30);

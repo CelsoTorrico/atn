@@ -26,13 +26,13 @@ export class MyApp {
     /** Verifica se usuário já esta logado anteriormente na plataforma */
     this.user.isLoggedUser().then((resp) => {      
       
+      //Retorna view da página atual
+      let view = this.nav.getActive();
+
       if (!resp) { 
         
         //Páginas permitidas sem cookie
         let canPages:any = ['LoginPage', 'SignupStepsPage'];
-        
-        //Retorna view da página atual
-        let view = this.nav.getActive();
         
         //Percorre array e verifica, se false redireciona para home
         canPages.forEach(element => {
@@ -44,6 +44,11 @@ export class MyApp {
           }  
         });       
               
+      } else {
+        //Redireciona para dashboard
+        if(view.name == 'LoginPage') {
+          this.nav.setRoot('Dashboard');
+        }
       }
 
     });

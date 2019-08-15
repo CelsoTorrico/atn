@@ -68,10 +68,7 @@ export class PushNotifyService {
                     userVisibleOnly: true,
                     applicationServerKey: pubKey
                 });          
-            }).then(function (subscription) { 
-
-                console.log(subscription);
-                console.log(navigator.serviceWorker.getRegistration());
+            }).then(function (subscription) {
 
                 let endpoint = subscription.endpoint;
                 let key = btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh'))));

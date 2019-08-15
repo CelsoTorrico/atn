@@ -41,10 +41,12 @@ class ClubController extends Controller
             return $this->search($request);
         };
 
+        $result = null;
+        
         //Define tipo de visulização de usuário: visitante e logado
         if(!is_null($id)){
             $club = $this->user->getUser($id);
-            if($club && $club->type['ID'] >= 3){
+            if($club && $club->type['ID'] >= 3) {
                 $result = $club->getTeamUsers();
             }             
         } else {

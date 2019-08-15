@@ -120,9 +120,10 @@ export class ProfilePage {
 
     //Quando classe User emitir evento após requisição de dados
     if (this.profileUser != undefined) {
-      this.profileUser.dataReady.subscribe((resp) => {
+      this.profileUser.getUserData().then((resp) => {
 
-        if (resp.status != 'ready') return;
+        //if (resp.status != 'ready') return;
+        if(!resp) return;
 
         //Popula parametros da classe
         this.currentUser = this.profileUser;

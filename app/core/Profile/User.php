@@ -198,6 +198,33 @@ class User extends GenericUser{
         return $this->_setUsermeta($key, $value);
     }
 
+
+    /**
+     *  Atribui um valor usermeta definida via parametros 
+     * 
+     *  @param $key  usermeta key
+     *  @param $value usermeta value
+     *  @since 2.1
+     */
+    public function setmeta(string $meta_key, $meta_value, bool $check, bool $notify ) {
+        //Registrar dados de usermeta de usuário
+        return $this->register_usermeta($meta_key, $meta_value, $this->ID, $check, $notify);
+    }
+
+
+    /**
+     *  Atribui um valor usermeta definida via parametros 
+     * 
+     *  @param $key  usermeta key
+     *  @param $value usermeta value
+     *  @since 2.1
+     */
+    public function getmeta(array $only) {
+        
+        //Verifica se existe usermetas de usuário
+        return $this->_getUsermeta($this->ID, $only);
+    }
+
     /**
      * Retorna dados de usuário único por ID
      * @since 2.0
@@ -907,7 +934,7 @@ class User extends GenericUser{
     }  
 
     /** Registra usermeta baseado nos parametros */
-    private function register_usermeta($meta_key, $meta_value, $user_id, $check = true) {
+    private function register_usermeta($meta_key, $meta_value, $user_id, $check = true, $notifyClub = true) {
 
         /*Se valor for false (validação não permitida), 
         não registrar usermeta e encerrar execução da função */
@@ -932,7 +959,7 @@ class User extends GenericUser{
             //Percorre e verifica existencia de clube
             foreach ($meta_value as $item) {
                 //Atribui marcação
-                $itemTagged[] = (\preg_match('/^[0-9]+/', $item))? ['ID' => $item, 'certify' => $this->sendNotifyClub($item, $user_id)]: ['club_name' => $item];
+                $itemTagged[] = (\preg_match('/^[0-9]+/', $item))? ['ID' => $item, 'certify' => $this->sendNotifyClub($item, $user_id, $notifyClub)]: ['club_name' => $item];
             }
 
             //Reseta valor da variavel
@@ -1735,10 +1762,11 @@ class User extends GenericUser{
         return $status;
     } 
 
-    /** Verifica se houve sucesso na inclusão dos dados e executa função
+    /** 
+     * Verifica se houve sucesso na inclusão dos dados e executa função
      * de enviar notificação ao clube
      */
-    private function sendNotifyClub(int $clubID, int $user_id) {
+    private function sendNotifyClub(int $clubID, int $user_id, $notifyClub = true) {
         
         //Verifica se clube existe
         $exist = UserClub::isClubExist($clubID, $user_id);
@@ -1749,7 +1777,7 @@ class User extends GenericUser{
             //Envia notificação
             $currentUser = new UserClub();
             $notify = new Notify($currentUser->get($clubID));
-            $notify->add(3, $clubID, $user_id);
+            if ($notifyClub) $notify->add(3, $clubID, $user_id);
 
         }else {
             return;

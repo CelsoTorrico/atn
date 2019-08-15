@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { environment } from './../../environments/environment';
 import { Cookie } from './../cookie/cookie';
 import { ToastController } from 'ionic-angular';
 import { Injectable, Output, EventEmitter } from '@angular/core';
@@ -6,6 +6,7 @@ import { Api } from '../api/api';
 import { loadNewPage } from '../load-new-page/load-new-page';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { Storage } from '@ionic/storage';
 
 /**
  * User Context
@@ -31,26 +32,23 @@ export class User {
   ]
 
   constructor(
-    private   api: Api,
+    private api: Api,
     protected loadPageService: loadNewPage,
-    protected toast: ToastController) {
+    protected toast: ToastController,
+    protected cache: Storage) {
 
     //Registra observable nas propriedades 
     this.getSelfUserObservable();
     this.getSelfStats();
     this.getTeamMembers();
-    this.getSelfVisibility(); 
+    this.getSelfVisibility();
 
     //Quando inicializar a classe fazer requisição e alimentar propriedade _user
-    this.isLoggedUser().then((resp: boolean) => {
-
-      if (!resp) return; //SE false, para execução
-
+    if (Cookie.checkCookie()) { 
       this.getUserData().then((res: boolean) => {
-        console.log('User ' + this._user.display_name + ' is ready!'); 
+        console.log('User ' + this._user.display_name + ' is ready!');
       });
-
-    });
+    }
 
   }
 
@@ -60,34 +58,21 @@ export class User {
    */
   isLoggedUser(): Promise<boolean> {
 
-    //Verifica se usuário está logado e dados presentes no parametro
-    if (!this._user || Cookie.checkCookie()) {
+    //Verifica a existencia do cookie
+    return this.api.get('login/cookie').toPromise().then((resp: any) => {
 
-      //Verifica a existencia do cookie
-      return this.api.get('login/cookie').toPromise().then((resp: any) => {
+      //Se retornar erro, parar execução
+      if (!resp || resp.error != undefined) return false;
 
-        //Se retornar erro, parar execução
-        if (!resp || resp.error != undefined) return false;
+      //cookie de sessão válido
+      return true;
 
-        //cookie de sessão válido
-        return true;
+    }, (rej) => {
 
-      }, (rej) => {
+      //Se retornar erro, parar execução
+      return false;
 
-        //Se retornar erro, parar execução
-        return false;
-
-      });
-
-    } else {
-
-      //Instanciando Promise para a classe
-      let resp: Promise<boolean> = new Promise(() => { return false });
-      return resp.then((r) => {
-        return false;
-      });
-
-    }
+    });
 
   }
 
@@ -122,18 +107,38 @@ export class User {
   /**
    * Log the user out, which forgets the session
    */
-  logout(): Promise<ArrayBuffer> {
+  logout():void {
 
-    return this.api.get('logout').toPromise().then((resp) => {
-      
-      //Remoove cookie do browser
+    this.api.get('logout').subscribe((resp:any) => {
+
+      //Remove cookie do browser
       Cookie.deleteCookie();
 
-      //Retorna resposta
-      return resp;
+      //Limpar cache do app/navegador
+      this.cache.clear();
+      localStorage.clear();
+
+      //Faz o logout
+      this.logoutMessageRedirect(resp.success.logout);
 
     });
 
+  }
+
+  /** Exibe mensagem e redireciona para tela de login */
+  private logoutMessageRedirect(resp: string) {
+
+    //Exibe mensagem
+    let toast = this.toast.create({
+      position: 'bottom',
+      message: resp,
+      duration: 3000
+    });
+
+    toast.present().then((res) => {
+      //redirecionar
+      window.open(environment.apiOrigin, '_self', 'location=no,clearsessioncache=yes');
+    });
   }
 
   //Executa login via Redes Sociais
@@ -215,7 +220,7 @@ export class User {
   getUser($user_id: number): User {
 
     //Inicializa classe
-    let $user = new User(this.api, this.loadPageService, this.toast);
+    let $user = new User(this.api, this.loadPageService, this.toast, this.cache);
 
     //Retorna observable
     $user._userObservable   = this.api.get('user/' + $user_id);
@@ -277,7 +282,7 @@ export class User {
   }
 
   /** Retornar dados de usuario */
-  getUserData($optionalFn = ($v) => {}, $component = null): Promise<boolean> {
+  getUserData($optionalFn = ($v) => { }, $component = null): Promise<boolean> {
 
     return this.load().then((resp: any) => {
 

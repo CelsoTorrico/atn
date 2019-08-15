@@ -320,11 +320,10 @@ class Notify {
         /** 
          * Notificações por email para os tipos [Mensagens, Follow, Add Team e Remove Team]
          * */
-        if (!in_array($notify['type'], [4, 7, 10, 11])) 
-            return;          
-
-        //Efetua disparo de email de notificação
-        $this->sendNotificationEmail($user, $content, $notify);
+        if (in_array($notify['type'], [4, 7, 10, 11])){
+            //Efetua disparo de email de notificação
+            $this->sendNotificationEmail($user, $content, $notify);
+        }
 
     }
 

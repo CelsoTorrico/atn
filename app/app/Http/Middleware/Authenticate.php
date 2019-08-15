@@ -72,6 +72,9 @@ class Authenticate
                     return $next($request);
                 }
 
+                //Remove cookies antigo para precaver problemas
+                app('cookie')->forget(env('APPCOOKIE'), '/', env('APP_DOMAIN'));
+                
                 //Seta cookie de sessão : cookie HTTP_ONLY=false
                 //25.03 = habilitar SameSite para funcionar no Edge
                 $this->sessionCookie = app('cookie')->forever(

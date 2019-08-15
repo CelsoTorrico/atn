@@ -135,7 +135,7 @@ class Follow {
     }
 
     /** Começar a seguir */
-    public function addFollow(int $user_id){
+    public function addFollow(int $user_id, bool $notifyUser = true){
 
         //Se zero, para execução
         if($user_id <= 0){
@@ -171,7 +171,9 @@ class Follow {
             
             //Registra notificação para usuário que começou a ser seguido
             $notify = new Notify($this->currentUser);
-            $notify->add(4, $user_id, $this->currentUser->ID);
+            
+            //Enviar notificação ao usuário
+            if ($notifyUser) $notify->add(4, $user_id, $this->currentUser->ID);
             
             //Mensagem de sucesso no cadastro
             return ['success' => ['follow' => 'Está começando a seguir!']];

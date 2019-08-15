@@ -1,11 +1,10 @@
 import { loadNewPage } from './../../../providers/load-new-page/load-new-page';
-import { CookieService } from 'ng2-cookies';
 import { ToastController, LoadingController } from 'ionic-angular';
 import { Component, Input } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from '../../../environments/environment';
 import { Cookie, User, Api } from '../../../providers';
+import { Storage } from '@ionic/storage';
 
 @Component({
     selector: 'member-current-menu',
@@ -32,24 +31,25 @@ export class MemberCurrentMenu {
 
     @Input() messageCount: number = 0;
 
-    loading_placeholder:string
+    loading_placeholder: string
 
     constructor(
-        public  navCtrl: NavController,
+        public navCtrl: NavController,
         private toastCtrl: ToastController,
-        public  translateService: TranslateService,
+        public translateService: TranslateService,
         private loading: LoadingController,
         api: Api,
-        loadNewPage: loadNewPage) {
+        loadNewPage: loadNewPage,
+        cache:Storage) {
 
         //Se classe user não estiver instanciada
         if (this.user == undefined) {
-            this.user = new User(api, loadNewPage, toastCtrl)
+            this.user = new User(api, loadNewPage, toastCtrl, cache)
         }
 
         this.translateService.setDefaultLang('pt-br');
 
-        this.translateService.get('LOADING').subscribe((data:any) => {
+        this.translateService.get('LOADING').subscribe((data: any) => {
             this.loading_placeholder = data;
         })
 
@@ -75,50 +75,13 @@ export class MemberCurrentMenu {
         this.navCtrl.push($page, { user_id: null });
     }
 
-    //Abre uma nova página
+    //Faz logout na plataforma
     doLogout() {
-
         //Criando loader
-        let loading = this.loading.create({ content: this.loading_placeholder});
-        loading.present();
-        
-        //Subscreve sobre a requisição
-        if(this.user == undefined) {
-            //Remoove cookie do browser
-            Cookie.deleteCookie();
-
-            //Desloga e fecha loading
-            this.logoutMessageRedirect('Você foi deslogado.').then((resp) => {
-                loading.dismiss()
-            });
-
-            return;
-        } 
-
-        //Logout no caso de classe user setada corretamente
-        this.user.logout().then((resp: any) => {
-            if (resp.success) {
-                //Faz o logout
-                this.logoutMessageRedirect(resp.success.logout).then((resp) => {
-                    loading.dismiss()
-                });
-            }
-        });
-    }
-
-    private logoutMessageRedirect(resp:string){
-        
-        //Exibe mensagem
-        let toast = this.toastCtrl.create({
-            position: 'bottom',
-            message: resp,
-            duration: 3000
-        });
-
-        return toast.present().then((res) => {
-            //redirecionar
-            window.location.assign(environment.apiOrigin);
-            
+        let loading = this.loading.create({ content: this.loading_placeholder });
+        loading.present().then(() => {
+            //Logout no caso de classe user setada corretamente
+            this.user.logout();
         });
     }
 

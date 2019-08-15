@@ -57,7 +57,7 @@ class NotifyController extends Controller
         }
 
         //Envia dados submetidos
-        $response = $this->notify->approveNotify($id, $bool);
+        $response = $this->notify->approveNotify($id, (bool) $bool);
         
         //Resposta da adicão
         return response()->json($response);

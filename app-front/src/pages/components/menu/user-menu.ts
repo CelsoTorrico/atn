@@ -48,50 +48,16 @@ export class UserMenu {
     this.navCtrl.push($page, { currentUser: $data });
   }
 
-  //Abre uma nova página
+  //Faz logout na plataforma
   doLogout() {
 
     //Criando loader
     let loading = this.loading.create({ content: this.loading_placeholder });
-    loading.present();
-
-    //Subscreve sobre a requisição
-    if (this.user == undefined) {
-      //Remoove cookie do browser
-      Cookie.deleteCookie();
-      this.logoutMessageRedirect('Você foi deslogado.').then((resp) => {
-        loading.dismiss()
-      });
-
-      return;
-
-    }
-
-    //Logout no caso de classe user setada corretamente
-    this.user.logout().then((resp: any) => {
-      if (resp.success) {
-        //Faz o logout
-        this.logoutMessageRedirect(resp.success.logout).then((resp) => {
-          loading.dismiss()
-        });
-      }
+    loading.present().then(() => {
+      //Logout no caso de classe user setada corretamente
+      this.user.logout();
     });
 
-  }
-
-  private logoutMessageRedirect(resp: string) {
-
-    //Exibe mensagem
-    let toast = this.toastCtrl.create({
-      position: 'bottom',
-      message: resp,
-      duration: 3000
-    });
-
-    return toast.present().then((res) => {
-      //Redirecionar
-      window.location.assign(environment.apiOrigin);
-    });
   }
 
 }

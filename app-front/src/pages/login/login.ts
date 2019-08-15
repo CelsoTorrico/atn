@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, ToastController, ModalController, LoadingController, ViewController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
-import { User, Cookie } from '../../providers';
+import { User } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -44,13 +44,7 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-    /** Verifica se usuário já esta logado anteriormente na plataforma */
-    this.user.isLoggedUser().then((resp) => {
-      //Redireciona para a página de Dashboard
-      if (resp) {
-        this.navCtrl.setRoot('Dashboard');
-      }
-    });
+   
   }
 
   // Realiza login comum via email e senha 
@@ -71,27 +65,23 @@ export class LoginPage implements OnInit {
       this.user.login(this.account).then(($resp: boolean) => {
 
         //Se login efetuado com sucesso e cookie setado com sucesso
-        if ($resp == true) {
-
-          //Redireciona para dashboard
-          this.user.getUserData().then((resp: boolean) => {
-
-            if (!resp) {
-              //Fecha loading
-              loading.dismiss();
-              return;
-            }
-
-            //Rediciona para dashboard
+        if ($resp) {
+          
+          //Faz requisição de dados do usuário
+          this.user.getUserData().then((resp) => {
+            //Redireciona para dashboard
             this.navCtrl.setRoot('Dashboard').then((resp) => {
               loading.dismiss();
             });
-
           });
+          
 
         } else {
           //Fecha loading
           loading.dismiss();
+          
+          //Exibe erro de login
+          this.$error = this.loginErrorString;
         }
 
       }).catch((rej) => {

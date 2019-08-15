@@ -2,6 +2,7 @@ export const environment = {
   
   /*
   production: true,
+  domain: 'app.atletasnow.com',
   apiOrigin: 'https://app.atletasnow.com',
   apiUrl: 'https://app.atletasnow.com',
   socketIO: 'https://app.atletasnow.com:8890',
@@ -13,6 +14,7 @@ export const environment = {
   /* Development */
 
   production: true,
+  domain: 'developing.atletasnow.com',
   apiOrigin: 'https://developing.atletasnow.com/app-atletasnow-front/',
   apiUrl: 'https://developing.atletasnow.com/atletasNOW/app/public/',
   socketIO: 'https://developing.atletasnow.com:8890',

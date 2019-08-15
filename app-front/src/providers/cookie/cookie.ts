@@ -19,7 +19,7 @@ export class Cookie {
 
   /** Remover cookie */
   static deleteCookie() {
-    return (new CookieService).delete(environment.cookieName);
+    return (new CookieService).deleteAll('/', environment.domain);
   }
 
 }
