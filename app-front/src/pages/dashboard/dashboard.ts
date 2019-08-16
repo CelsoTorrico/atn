@@ -148,39 +148,39 @@ export class DashboardPage implements OnInit {
     }
 
     //Recarrega dados
-    doRefresh($refreshEvent) {
+    doRefresh($refreshEvent = null) {
 
         //Carregando
         const loading = this.loading.create({
-            content: this.loading_placeholder,
-            duration: 2000
+            content: this.loading_placeholder
         });
 
         //Carrega loading
-        loading.present();
+        loading.present().then(() => {
+            
+            this.user.getUserData().then((resp) => {
 
-        this.user.dataReady.subscribe((resp) => {
+                if (!resp) return;
+    
+                //Recarregando dados da dashboard
+                this.setViews();
+                this.getLastActivity();
+                this.timeline.reload();
+                this.notify.query();
+    
+                //Limpa interval e esconde botão
+                clearInterval(this.interval);
+                this.btn_refresh = false;
 
-            if (resp.status != 'ready') return;
+                if ($refreshEvent != null) $refreshEvent.complete();
+                loading.dismiss();
+    
+                this.interval = setInterval(() => {
+                    this.btn_refresh = true;
+                }, 1000 * 30);
+    
+            });
 
-            //Recarregando dados da dashboard
-            this.setViews();
-            this.getLastActivity();
-            this.timeline.reload();
-            this.notify.query();
-
-            //Limpa interval e esconde botão
-            clearInterval(this.interval);
-            this.btn_refresh = false;
-
-            this.interval = setInterval(() => {
-                this.btn_refresh = true;
-            }, 1000 * 30);
-
-        });
-
-        this.user.getUserData().then(() => {
-            loading.dismiss();
         });
 
     }
