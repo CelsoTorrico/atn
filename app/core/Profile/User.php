@@ -24,6 +24,7 @@ use aryelgois\Medools\ModelIterator;
 use Medoo\Medoo;
 use PDO;
 use Core\Database\UserViewModel;
+use Guzzle\Plugin\CurlAuth\CurlAuthPlugin;
 
 class User extends GenericUser{
 
@@ -97,7 +98,9 @@ class User extends GenericUser{
     }
 
     /**
-     * 
+     *  Retorna classe de usuário instanciada pelo id de usuario  válido
+     * @param int $id   Id de usuário valido
+     * @return User
      */
     public function getUser(int $id){
         
@@ -275,7 +278,7 @@ class User extends GenericUser{
     } 
 
     /** Retorna dados de estatistica */
-    public function getStats(int $id = null){
+    public function getStats(int $id = null) {
 
         //Se id for null, mostrar dados do usuário corrente
         if (is_null($id)){
@@ -301,7 +304,7 @@ class User extends GenericUser{
     }
 
     /** REtorna usuários com relevancia ao perfil logado 
-     *
+     *  @return array
     */
     public function getFriendsSuggestions() {
 
@@ -931,7 +934,56 @@ class User extends GenericUser{
             return ['error' => ['register' => 'Houve erro em seu cadastro. Contate nosso administrador.']];
         }
 
-    }  
+    } 
+    
+    /** 
+     * Realiza login na plataforma  Affinibox - Benefícios
+     * @since 2.2
+     */
+    public function loginAffinibox() {
+        
+        //Inicializa classe curl para requisição
+        $curl = curl_init();
+
+        //Retorna dados de usuário
+        $this->model->load(['user_email' => $this->user_email]);
+
+        //Dados para enviar a API 
+        $data = [
+            'api_key'       => env('AFFINIBOX_KEY'),
+            'secret_token'  => env('AFFINIBOX_SECRET'),
+            'email'         => $this->user_email,
+            'password'      => $this->model->user_pass
+        ];
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => env('AFFINIBOX_URL'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_TIMEOUT => 30000,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => array(
+                // Set here requred headers
+                "accept: */*",
+                "accept-language: en-US,en;q=0.8",
+                "content-type: application/json",
+            ),
+        ]);
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            return ['error' => ['affinibox' => 'cURL Error'. $err]];
+        } else {
+            return json_decode($response);
+        }
+        
+    }
 
     /** Registra usermeta baseado nos parametros */
     private function register_usermeta($meta_key, $meta_value, $user_id, $check = true, $notifyClub = true) {

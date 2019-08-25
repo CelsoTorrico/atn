@@ -307,6 +307,42 @@ export class DashboardPage implements OnInit {
         this.navCtrl.push($page, { currentUser: $data });
     }
 
+    //Abre uma nova página
+    goToBenefitSite($event) {
+
+        $event.preventDefault();
+
+        //Carregando
+        const loading = this.loading.create({
+            content: this.loading_placeholder
+        });
+
+        loading.present();
+        
+        this.api.get('user/benefits').subscribe((resp: any) => {
+
+            loading.dismiss();
+
+            //Se erro, mostrar erro
+            if (resp.error != undefined) {
+
+                let toast = this.toastCtrl.create({
+                    message: resp.error.affinibox,
+                    showCloseButton: true,
+                    position: 'bottom'
+                });
+
+                return toast.present();
+            }
+
+            //Se houve sucesso de login na plataforma > redirecionar
+            if(resp.success){
+                return window.open(resp.link, '_blank');
+            }            
+
+        });
+    }
+
     //Abre uma nova página de profile
     goToProfile($user_id: number) {
         this.navCtrl.push('Profile', {

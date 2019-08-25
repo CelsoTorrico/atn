@@ -41,13 +41,18 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     $router->post('/search/paged/{page:[0-9]+}', 'UserController@search');
     $router->post('/search', 'UserController@search');
 
+    /**
+     * Faz login na plataforma Affinibox
+     * @version v2.2 - Criado
+     */
+    $router->get('/benefits', 'UserController@loginBenefits');
+
     //CLUBES e CONFEDERAÇÔES
     $router->group(['prefix' => 'self'], function() use ($router){
         
         /**
          *  Listar membros da instituição
          *  @version v2.1 - Alterado o método para POST para suportar filtragem 
-         *  @todo: Implementar metodo POST
          */        
         $router->get('/club_user[/{id:[0-9]+}]', 'ClubController@getAll');
         $router->post('/club_user/search[/paged/{id:[0-9]+}]', 'ClubController@getAll');

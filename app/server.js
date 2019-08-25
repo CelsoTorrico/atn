@@ -1,5 +1,10 @@
+var fs = require( 'fs' );
 var app = require('express')();
-var server = require('http').Server(app);
+var server = require('https').createServer({ key: fs.readFileSync('/etc/letsencrypt/live/app.atletasnow.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/app.atletasnow.com/cert.pem'),
+  ca: fs.readFileSync('/etc/letsencrypt/live/app.atletasnow.com/chain.pem'),
+  requestCert: false, rejectUnauthorized: false
+},app);
 var io = require('socket.io')(server);
 var redis = require('redis');
 

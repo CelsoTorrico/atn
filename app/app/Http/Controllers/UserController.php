@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Core\Service\PushNotify;
 use Core\Profile\UserSettings;
+use Core\Profile\User;
 
 class UserController extends Controller
 {
@@ -25,9 +25,9 @@ class UserController extends Controller
         $server = $request->server->getHeaders();
 
         //Verificamos se requisição partiu de nossos servidores, adicionando um usuário se SIM
-        /*if( !is_a($this->user, 'Core\Profiler\User') && isset($server['ORIGIN']) && preg_match('/^https?:\/\/?'. env('APP_DOMAIN') . '/', $server['ORIGIN']) ){
-            $this->user = new User(); 
-        }*/
+        if( !is_a($this->user, 'Core\Profile\User') && isset($server['ORIGIN']) && preg_match('/^https?:\/\/?'. env('APP_DOMAIN') . '/', $server['ORIGIN']) ){
+            $this->user = new User();
+        }
     }
 
     /** Retorna usuário único  */
@@ -40,7 +40,7 @@ class UserController extends Controller
         $whoID = $this->user->ID;
 
         //Se usuário da query é current_user, não contabilizar view
-        if( $user->ID != $whoID ){
+        if( $user->ID != $whoID && !is_null($whoID) ) {
             
             //Função que adiciona visualização de perfil
             $user->increaseView($whoID);
@@ -181,7 +181,6 @@ class UserController extends Controller
     }
 
     /** Settings */
-
     function setPassword(Request $request){
         
         //Somente permissão de atualização de proprio perfil
@@ -224,6 +223,14 @@ class UserController extends Controller
     /** Remove inscrição em notificações push */
     function unsetPushSettings(Request $request) {
         return $this->setPushSettings($request, false);
+    }
+
+    /**
+     * Faz login na plataforma Affinibox
+     * @version v2.2 - Criado
+     */
+    function loginBenefits() {
+        return response()->json($this->user->loginAffinibox());
     }
 
 }
