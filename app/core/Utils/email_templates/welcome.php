@@ -558,11 +558,11 @@
         <tbody class="mcnButtonBlockOuter">
             <tr>
                 <td style="padding-top:0; padding-right:18px; padding-bottom:18px; padding-left:18px;" valign="top" align="center" class="mcnButtonBlockInner">
-                    <table border="0" cellpadding="0" cellspacing="0" class="mcnButtonContentContainer" style="border-collapse: separate !important;border: 1px solid #FFFFFF;border-radius: 0px;">
+                    <table border="0" cellpadding="0" cellspacing="0" class="mcnButtonContentContainer" style="border-collapse: separate !important;border: 1px solid #222222;border-radius: 0px;">
                         <tbody>
                             <tr>
                                 <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Helvetica; font-size: 14px; padding: 18px;">
-                                    <a class="mcnButton " title="Comece" href="https://app.atletasnow.com/#/dashboard?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Comece</a>
+                                    <a class="mcnButton " title="Comece" href="https://app.atletasnow.com/#/dashboard?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #222222;">Comece</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -585,9 +585,9 @@
                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width:100%; min-width:100%;" width="100%" class="mcnTextContentContainer">
                         <tbody><tr>
                             
-                            <td valign="top" class="mcnTextContent" style="padding: 0px 18px 9px;color: #FFFFFF;font-size: 12px;line-height: 125%;text-align: center;">
+                            <td valign="top" class="mcnTextContent" style="padding: 0px 18px 9px;color: #222222;font-size: 12px;line-height: 125%;text-align: center;">
                             
-                                <h3 style="text-align: center;"><span style="color:#FFF0F5"><span style="font-size:12px">Vamos ter a certeza que tudo está pronto!!!</span></span></h3>
+                                <h3 style="text-align: center;"><span style="color:#222222"><span style="font-size:12px">Vamos ter a certeza que tudo está pronto!!!</span></span></h3>
     
                             </td>
                         </tr>
@@ -777,25 +777,8 @@
                 </td>
             </tr>
         </tbody>
-    </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
-        <tbody class="mcnDividerBlockOuter">
-            <tr>
-                <td class="mcnDividerBlockInner" style="min-width: 100%; padding: 15px 18px;">
-                    <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;">
-                        <tbody><tr>
-                            <td>
-                                <span></span>
-                            </td>
-                        </tr>
-                    </tbody></table>
-    <!--            
-                    <td class="mcnDividerBlockInner" style="padding: 18px;">
-                    <hr class="mcnDividerContent" style="border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;" />
-    -->
-                </td>
-            </tr>
-        </tbody>
-    </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
         <tbody class="mcnTextBlockOuter">
             <tr>
                 <td valign="top" class="mcnTextBlockInner" style="padding-top:9px;">
@@ -826,6 +809,138 @@
                     </table>
                     <![endif]-->
                 </td>
+            </tr>
+        </tbody>
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+        <tbody class="mcnDividerBlockOuter">
+            <tr>
+                <td class="mcnDividerBlockInner" style="min-width: 100%; padding: 15px 18px;">
+                    <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;">
+                        <tbody><tr>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                    </tbody></table>
+    <!--            
+                    <td class="mcnDividerBlockInner" style="padding: 18px;">
+                    <hr class="mcnDividerContent" style="border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;" />
+    -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+        <tbody class="mcnDividerBlockOuter">
+            <tr>
+                <td class="mcnDividerBlockInner" style="min-width:100%; padding:18px;">
+                    <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%;border-top: 2px solid #A8A8A8;">
+                        <tbody><tr>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                    </tbody></table>
+    <!--            
+                    <td class="mcnDividerBlockInner" style="padding: 18px;">
+                    <hr class="mcnDividerContent" style="border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;" />
+    -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+        <tbody class="mcnDividerBlockOuter">
+            <tr>
+                <td class="mcnDividerBlockInner" style="min-width: 100%; padding: 15px 18px 30px;">
+                    <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;">
+                        <tbody><tr>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                    </tbody></table>
+    <!--            
+                    <td class="mcnDividerBlockInner" style="padding: 18px;">
+                    <hr class="mcnDividerContent" style="border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;" />
+    -->
+                </td>
+            </tr>
+        </tbody>
+    </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnImageBlock" style="min-width:100%;">
+        <tbody class="mcnImageBlockOuter">
+                <tr>
+                    <td valign="top" style="padding:9px" class="mcnImageBlockInner">
+                        <table align="left" width="100%" border="0" cellpadding="0" cellspacing="0" class="mcnImageContentContainer" style="min-width:100%;">
+                            <tbody><tr>
+                                <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
+                                    
+                                    <a href="https://atletasnow.com/beneficios?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img align="center" alt="" src="https://atletasnow.com/wp-content/uploads/2019/08/clube-beneficios-final-2.png" width="77" style="max-width:77px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage"></a>
+                                        
+                                    
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+        </tbody>
+    </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+        <tbody class="mcnTextBlockOuter">
+            <tr>
+                <td valign="top" class="mcnTextBlockInner" style="padding-top:9px;">
+                      <!--[if mso]>
+                    <table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
+                    <tr>
+                    <![endif]-->
+                    
+                    <!--[if mso]>
+                    <td valign="top" width="600" style="width:600px;">
+                    <![endif]-->
+                    <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width:100%; min-width:100%;" width="100%" class="mcnTextContentContainer">
+                        <tbody><tr>
+                            
+                            <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
+                            
+                                <h3 style="text-align: center;"><span style="font-size:13px">Acesse seu clube de benefícios</span>&nbsp;<a href="https://atletasnow.com/beneficios?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img data-file-id="3129189" height="20" src="https://atletasnow.com/wp-content/uploads/2019/06/right-arrow-angle.png" style="border: 0px initial ; width: 20px; height: 20px; margin: 0px;" width="20"></a></h3>
+    
+                            </td>
+                        </tr>
+                    </tbody></table>
+                    <!--[if mso]>
+                    </td>
+                    <![endif]-->
+                    
+                    <!--[if mso]>
+                    </tr>
+                    </table>
+                    <![endif]-->
+                </td>
+            </tr>
+        </tbody>
+    </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnDividerBlock" style="min-width:100%;">
+        <tbody class="mcnDividerBlockOuter">
+            <tr>
+                <td class="mcnDividerBlockInner" style="min-width: 100%; padding: 15px 18px;">
+                    <table class="mcnDividerContent" border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;">
+                        <tbody><tr>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                    </tbody></table>
+    <!--            
+                    <td class="mcnDividerBlockInner" style="padding: 18px;">
+                    <hr class="mcnDividerContent" style="border-bottom-color:none; border-left-color:none; border-right-color:none; border-bottom-width:0; border-left-width:0; border-right-width:0; margin-top:0; margin-right:0; margin-bottom:0; margin-left:0;" />
+    -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
+        <tbody class="mcnTextBlockOuter">
+            <tr>
+                <td valign="top" class="mcnTextBlockInner" style="padding-top:9px;"></td>
             </tr>
         </tbody>
     </table></td>
