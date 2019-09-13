@@ -1,9 +1,28 @@
 ion-card-header.card-header-md{
     position:relative;
     border: 0px;
+
+    &.post-institucional{
+        background-image: linear-gradient(100deg, $button-primary-color, $vermelho-contraste);
+        h2, h3{
+            color: $branco !important;
+        }
+    }
 }
 
 ion-card-content{
+
+    &.post-institucional{
+        padding-top: 15px !important;
+        
+        .timeline-content{
+            font-weight: 400;
+        }
+    
+        .button[like].active span, .button[like] span.active, .button[favorite].active span, .button[favorite] span.active, .button-default.button-md[like].active span, .button-default.button-md[like] span.active, .button-default.button-md[favorite].active span, .button-default.button-md[favorite] span.active{
+            color: $branco !important;
+        }
+    }
     
     ion-note{
         margin: auto 0px auto auto;

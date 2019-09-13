@@ -1,4 +1,4 @@
-<ion-card-header>
+<ion-card-header [ngClass]="{'post-institucional': currentTimeline.post_author.type == 'administrator'}" >
 
   <ion-list>
     <ion-item>
@@ -22,11 +22,13 @@
 
 </ion-card-header>
 
-<ion-card-content>
+<ion-card-content [ngClass]="{'post-institucional': currentTimeline.post_author.type == 'administrator'}">
 
-  <div class="timeline-content">
-    {{ currentTimeline.post_content }}
-  </div>
+  <div *ngIf="currentTimeline.post_author.type == 'administrator'; else noHtml" class="timeline-content" [innerHTML]="currentTimeline.post_content"></div>
+
+  <ng-template #noHtml>
+    <div class="timeline-content">{{ currentTimeline.post_content }}</div>
+  </ng-template>
 
   <ion-item class="image-content btn-cursor" *ngIf="currentTimeline.attachment">
     <img [src]="currentTimeline.attachment" />

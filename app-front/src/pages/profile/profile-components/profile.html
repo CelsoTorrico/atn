@@ -163,7 +163,19 @@
           <ion-row no-padding>
 
             <ng-container *ngFor="let video of videos">
-              <iframe width="100%" height="240" [src]="video" frameborder="0" allowfullscreen></iframe>
+
+              <iframe *ngIf="video.error == undefined; else showError" width="100%" height="240" [src]="video" frameborder="0" 
+              allowfullscreen style="margin-bottom:10px;"></iframe>
+
+              <ng-template #showError>
+                  <ion-card *ngIf="isLogged" style="margin-bottom:10px;">
+                    <ion-card-content>
+                        <ion-icon name="alert" item-start></ion-icon>
+                        {{ 'VIDEO_ERROR' | translate }}
+                    </ion-card-content>
+                  </ion-card>
+              </ng-template>
+
             </ng-container>
 
           </ion-row>

@@ -160,7 +160,7 @@ class AppValidation
             'eventos' => '.*',
             'formacao'  => '.*',
             'cursos'    => '.*',
-            'my-videos'     => 'https?\:\/\/www\.youtube\.com\/.*'
+            'my-videos'     => 'https?\:\/\/(www\.)?youtu\.?be(\.com)?\/.*'
         );
 
         foreach ($data as $key => $originalValue) {

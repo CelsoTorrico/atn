@@ -189,12 +189,30 @@ export class ProfileComponent {
       let videos: any[] = [];
 
       //Percorre array de links de video, sanitizando e atribuindo
-      atributes.metadata['my-videos'].value.forEach(element => {
-        //Atribui valores ao objeto
-        let embed = element.replace('watch?v=', 'embed/');
-        let trustedVideo = this.domSanitizer.bypassSecurityTrustResourceUrl(embed);
+      for(const element of atributes.metadata['my-videos'].value) {
+
+        let trustedVideo:any;
+
+        //Se 'false' houve falha na verificação do link do vídeo
+        if(element == false || element == null || element == '') {
+          trustedVideo = { error : true};
+        } else {
+          //Atribui valores ao objeto
+          let regex = RegExp('(\/watch.v\=|\/embed\/|youtu\.be\/)(.{11})', 'g');
+          let embed = regex.exec(element);
+          
+          if(embed == null) {
+              continue;
+          } 
+          
+          trustedVideo = this.domSanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + embed[2]);
+
+        }
+        
+        //Atribui ao array
         videos.push(trustedVideo);
-      });
+
+      }
 
       //Adiciona videos a variavel de escopo global
       this.videos = videos;

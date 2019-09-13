@@ -89,6 +89,12 @@ class Timeline {
         $follow = new Follow($this->currentUser);
         $following = $follow->getFollowing(true);
 
+        /**
+         * Atribuir posts dos administradores AtletasNow
+         * @since 2.1
+         **/ 
+        $following[] = '0';
+
         //Qtd de itens por página
         $perPage = 24;
 
@@ -130,7 +136,7 @@ class Timeline {
             $following = ['posts.post_author' =>  $following];
         else: 
             //senão adiciona '0' ao perfis para não exibir
-            $not_user_ids[] = 0;     
+            $not_user_ids[] = 999999999999999999999;     
         endif;
             
         $allTimelines = $db->select('posts', 

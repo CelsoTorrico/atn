@@ -237,6 +237,11 @@ export class ProfilePage {
    * */
   private myUsers($id: number): boolean {
 
+    //Se não existir parametros
+    if(this.user == (undefined || null) || this.user._user == (undefined || null)) {
+      return false;
+    }
+
     //Se não existir parametro
     if (this.user._user.current_users == (undefined || null)) {
       return false;

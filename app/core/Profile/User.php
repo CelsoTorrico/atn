@@ -20,6 +20,7 @@ use Core\Service\Chat;
 use Core\Service\Notify;
 
 use Closure;
+use stdClass;
 use aryelgois\Medools\ModelIterator;
 use Medoo\Medoo;
 use PDO;
@@ -236,17 +237,32 @@ class User extends GenericUser{
      */
     public function getMinProfile( int $id=null, $usermeta = [] ) {
 
-        if(!is_null($id)){
+        if(!is_null($id) && $id > 0){
             //Filtro
             $filter = ['ID' => $id];
 
             //Retorna instancia de modelo User
             $userData = $this->model->getInstance($filter);
-
+         
         } else{
             //Atribuindo dados do usuário corrente
             $userData = $this->model;
             $id = $this->model->ID;
+        }
+
+        /**
+        * Para posts da plataforma atribuir ID = 0 a empresa AtletasNow 
+        * @since 2.1 */
+        if($id == 0) {
+            $userData = new stdClass();
+            $userData->ID = null;
+            $userData->type = 'administrator';
+            $userData->display_name = 'AtletasNow';
+            $userData->profile_img = [
+                'value' => 'https://atletasnow.com/wp-content/uploads/2019/08/notify-icon.png'
+            ];
+
+            return $userData;
         }
 
         //Verifica se existe usuário
