@@ -101,6 +101,8 @@ class Follow {
     /** Retornar quem sigo */
     public function getFollowing($only_ids = false){
 
+        if(is_null($this->currentUser)) return;
+        
         //Filtrar inputs e validação de dados
         $followData = [
             'to_id'   => $this->currentUser->ID,

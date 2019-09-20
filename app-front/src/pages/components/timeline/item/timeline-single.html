@@ -16,7 +16,7 @@
     </ion-item>
   </ion-list>
 
-  <div *ngIf="currentUser.ID == currentTimeline.post_author.ID"  class="close-button" (click)="deleteTimeline(currentTimeline.ID)">
+  <div *ngIf="currentUser != undefined && currentUser.ID == currentTimeline.post_author.ID"  class="close-button" (click)="deleteTimeline(currentTimeline.ID)">
     <ion-icon name="close-circle"></ion-icon>
   </div>
 

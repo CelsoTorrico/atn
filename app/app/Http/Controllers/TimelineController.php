@@ -45,7 +45,7 @@ class TimelineController extends Controller
         //Classe de usuário
         $user = new User();
         $profileUser = $user->get($user_id);
-        $currentUser = $this->currentUser->ID;
+        $currentUser = (!is_null($cUser = $this->currentUser))? $cUser->ID : 0;
         $timeline = new Timeline($profileUser);
         
         //Carrega timeline de usuário correspondente
