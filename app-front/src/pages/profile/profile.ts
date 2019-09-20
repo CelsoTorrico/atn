@@ -8,6 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProfileComponent } from './profile-components/profile.component';
 import { StatsComponent } from './profile-components/stats.component';
 import { ClubComponent } from './profile-components/club.component';
+import { Meta } from '@angular/platform-browser';
+import { environment } from '../../environments/environment.prod';
 
 @IonicPage()
 @Component({
@@ -26,8 +28,12 @@ export class ProfilePage {
     clubView: ClubComponent
   }
 
+  //Define como visitante externo
+  siteVisitor:boolean = true;
+
   //Dados de Usuário de contexto
   loggedUser: any = {
+    ID: <number>null,
     type: {
       ID: <number>null
     }
@@ -67,7 +73,8 @@ export class ProfilePage {
     private user: User,
     private params: NavParams,
     private componentFactoryResolver: ComponentFactoryResolver,
-    public  translateService: TranslateService) {
+    public  translateService: TranslateService,
+    private meta: Meta) {
 
     this.translateService.setDefaultLang('pt-br');
 
@@ -89,23 +96,19 @@ export class ProfilePage {
     //Retorna id de usuário de contexto
     this.$user_ID = this.params.get('user_id');
 
-    //Verifica se usuário de contexto existe, ou seja, visita a um perfil
-    if (this.$user_ID != null && this.$user_ID > 0) {
-      //Atribui classe de usuário definido pelo $user_id
-      this.profileUser = this.user.getUser(this.$user_ID);
-    }
-
   }
 
-  ionViewDidLoad() {
+  ionViewWillLoad() {
     
     /** Verifica se usuário já esta logado anteriormente na plataforma */
     this.user.isLoggedUser().then((resp) => {
-      //Redireciona para a página de Login
-      if (!resp) {
-        this.loading.dismiss();
-        this.navCtrl.setRoot('Login');
-      }
+
+      //Setando informações do usuário de contexto
+      this.setCurrentUser();  
+
+      //Carrega dados do perfil visitado
+      this.setProfileUser(); 
+
     });
 
   }
@@ -115,43 +118,53 @@ export class ProfilePage {
 
     this.loading.present();
 
-    //Setando informações do usuário de contexto
-    this.setCurrentUser();
+  }
 
-    //Quando classe User emitir evento após requisição de dados
-    if (this.profileUser != undefined) {
-      this.profileUser.getUserData().then((resp) => {
+  //Carrega informações do perfil visualizado
+  private setProfileUser() {
+      
+      //Verifica se usuário de contexto existe, ou seja, visita a um perfil
+      if (this.$user_ID > 0 ) {
+        
+        //Atribui classe de usuário definido pelo $user_id
+        this.profileUser = this.user.getUser(this.$user_ID);
 
-        //if (resp.status != 'ready') return;
-        if(!resp) return;
+        //Carregar dados do Open Graph quando dados de usuário forem carregados
+        this.profileUser.dataReady.subscribe((r) => {
+          this.addMetaTags();
+        });
 
-        //Popula parametros da classe
-        this.currentUser = this.profileUser;
-        this.isLogged = false;
-        this.populateParameters(this.profileUser);
+        //Carrega dados de usuário do perfil
+        this.profileUser.getUserData().then((resp) => {
 
-      });
-    }
+          if(!resp) return;
+
+          //Popula parametros da classe
+          this.currentUser = this.profileUser;
+
+          //Caso usuário logado seja mesmo que perfil visitado
+          if(this.loggedUser.ID == this.$user_ID) {
+            //Verifica se usuário é editavel pelo usuário logado   
+            this.isLogged = true;
+          }
+          
+          //Popular dados no perfil
+          this.populateParameters(this.profileUser);
+
+        });
+
+      }
+
   }
 
   //Setando informações do usuário de contexto
-  private setCurrentUser() {
+  private setCurrentUser() {  
 
     //Se instanciado anteriormente com usuário de contexto
     if (this.user._user != undefined) {
 
-      //Atribuindo dados de usuário de contexto
-      this.currentUser = this.user;
-      this.loggedUser = this.user._user;
-
-      //Verifica se usuário é editavel pelo usuário logado   
-      this.isLogged = true;
-
-      //Popula parametros da classe
-      if (!this.profileUser) {
-        this.populateParameters();
-      }
-
+      this.loggedUser   = this.user._user;
+      this.siteVisitor  = false;
 
     } else {
       this.user.dataReady.subscribe((resp) => {
@@ -161,13 +174,14 @@ export class ProfilePage {
         //Carrega usuário de contexto
         this.setCurrentUser();
 
-      })
+      });
+
     }
 
   }
 
   /** Faz a atribuição de dados do perfil de usuário nos parametros da classe */
-  private populateParameters($user: User = this.user) {
+  private populateParameters($user:User = this.user) {
 
     //Atribuindo em cada parametro
     this.ID = $user._user.ID;
@@ -375,6 +389,27 @@ export class ProfilePage {
 
   }
 
+  /** Função de adicionar metatags Open Graph de acordo com perfil de usuário */
+  addMetaTags() {
+    
+    //Opengraph
+    this.meta.updateTag({ property: 'og:url', content: environment.apiOrigin +'/#/profile/'+ this.$user_ID });
+    this.meta.updateTag({ property: 'og:type', content: 'profile' });
+    this.meta.addTag({ property: 'og:profile:first_name', 
+    content: this.profileUser._user.display_name });
+
+    //Se existir metadado de Imagem de Perfil
+    if(this.profileUser._user.metadata.profile_img) {
+      this.meta.updateTag({ property: 'og:image', content: this.profileUser._user.metadata.profile_img.value });
+    }
+    
+    //Se existir metadado de Gênero (Atletas e Profissionais)
+    if(this.profileUser._user.metadata.gender) {
+      this.meta.addTag({ property: 'og:profile:gender', content: this.profileUser._user.metadata.gender.value });
+    }        
+    
+  }
+
   /* Abre uma nova página */
   backButton() {
     if (this.navCtrl.canSwipeBack()) {
@@ -382,6 +417,11 @@ export class ProfilePage {
     } else {
       this.navCtrl.setRoot('Dashboard');
     }
+  }
+
+  //Direciona para a página de Login
+  goLogin() {
+    this.navCtrl.setRoot('Login');
   }
 
 

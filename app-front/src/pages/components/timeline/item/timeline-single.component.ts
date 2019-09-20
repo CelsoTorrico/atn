@@ -196,9 +196,10 @@ export class TimelineSingle {
   }
 
   //Abre uma nova página de profile
-  goToProfile($user_id: number) {
+  goToProfile($author:any) {
     this.navCtrl.push('Profile', {
-      user_id: $user_id
+      user_id: $author.ID,
+      user_login: $author.user_login
     });
   }
 

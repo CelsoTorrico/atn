@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
     selector: 'member-list',
     template: `
             <ion-card>
-                <button class="btn-cursor" ion-item (click)="goToProfile(member.ID)">
+                <button class="btn-cursor" ion-item (click)="goToProfile(member)">
                     
                     <ion-avatar item-start>
                         <img *ngIf="member.profile_img, else elseBlock" 
@@ -32,9 +32,10 @@ export class MemberList {
         }
 
     //Abre uma nova página de profile
-    goToProfile($user_id: number) {
+    goToProfile($user: any) {
         this.navCtrl.push('Profile', { 
-            user_id: $user_id
+            user_id:    $user.ID,
+            user_login: $user.user_login
         });
     }
 }

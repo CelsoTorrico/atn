@@ -123,7 +123,7 @@ const deeplinkconfig:DeepLinkConfig = {
     },
     {
       name: 'Profile',
-      segment: 'profile/:user_id',
+      segment: 'profile/:user_id/:user_login',
       defaultHistory: ['Dashboard'],
       component: ProfilePage
     },

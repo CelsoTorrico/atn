@@ -18,14 +18,12 @@ class UserController extends Controller
      */
     public function __construct(Request $request)
     {
-        //Atribui usuário do contexto
-        $this->user = $request->user();
-
-        //Atribuindo dados de servidor
-        $server = $request->server->getHeaders();
-
-        //Verificamos se requisição partiu de nossos servidores, adicionando um usuário se SIM
-        if( !is_a($this->user, 'Core\Profile\User') && isset($server['ORIGIN']) && preg_match('/^https?:\/\/?'. env('APP_DOMAIN') . '/', $server['ORIGIN']) ){
+        //Verifica se existe um perfil de usuário logado
+        if(!is_null($request->user()) && is_a($request->user(), 'Core\Profile\User')) {
+            //Atribui usuário do contexto (logado)
+            $this->user = $request->user();
+        } else {
+            //Usuário genérico apenas para requisições de perfis
             $this->user = new User();
         }
     }

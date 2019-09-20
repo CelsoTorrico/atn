@@ -55,7 +55,8 @@ export class MemberItem {
 
         //Redirecionar para página de usuário
         this.navCtrl.push('Profile', {
-            user_id: $user.ID
+            user_id:    $user.ID,
+            user_login: $user.user_login
         });
     }
 }

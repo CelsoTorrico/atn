@@ -215,6 +215,14 @@ class Authenticate
             return $next($request); 
         }
 
+        /**
+         * Habilitar acesso a dados públicos de usuário de qualquer origem
+         * @since 2.1
+         */
+        if ($request->is('user/*') && $request->method() == "GET") {
+            return $next($request);
+        }
+
         //Se usuário não está autenticado
         if ($this->auth->guard($guard)->guest()) {
             return response(['error' => ['login' => 'Acesso não autorizado.']], 401);

@@ -122,7 +122,13 @@ class Follow {
             if($item->from_id == $this->currentUser->ID){
                 continue;
             }
-            
+
+            /** Verifica se usuário está inativado, se sim não mostrar atualizações deste */
+            $usermodel = new UserModel();
+            if (!$usermodel->load(['ID' => $item->from_id, 'user_status' => '0'])) {
+                continue;
+            }
+
             //Instanciando classe de usuário
             $user = new User();
             

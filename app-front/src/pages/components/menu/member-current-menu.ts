@@ -72,7 +72,11 @@ export class MemberCurrentMenu {
 
     //Abre uma nova página de profile
     goToPage($page: string) {
-        this.navCtrl.push($page, { user_id: null });
+
+        //Atribuir argumentos de usuário na navegação em caso de profile
+        let $data = ($page == 'Profile')? { user_id: this.user._user.ID, user_login: this.user._user.user_login }: {};
+
+        this.navCtrl.push($page, $data);
     }
 
     //Faz logout na plataforma

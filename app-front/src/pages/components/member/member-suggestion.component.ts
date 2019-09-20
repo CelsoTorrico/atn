@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'member-suggestion',
     template: `
-            <ion-card class="btn-cursor" ion-item (click)="goToProfile(memberModel.ID, $event)">
+            <ion-card class="btn-cursor" ion-item (click)="goToProfile(memberModel, $event)">
 
                 <ion-avatar class="btn-cursor" item-start>
                     <img *ngIf="memberModel.profile_img.value, else elseBlock" [src]="memberModel.profile_img.value" />
@@ -82,9 +82,10 @@ export class MemberSuggestion {
     }
 
     //Abre uma nova página de profile
-    goToProfile($user_id: number) {
+    goToProfile($user: any) {
         this.navCtrl.push('Profile', { 
-            user_id: $user_id
+            user_id:    $user.ID,
+            user_login: $user.user_login
         });
     }
 }

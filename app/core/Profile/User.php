@@ -255,9 +255,10 @@ class User extends GenericUser{
         * @since 2.1 */
         if($id == 0) {
             $userData = new stdClass();
-            $userData->ID = null;
+            $userData->ID = 0;
             $userData->type = 'administrator';
             $userData->display_name = 'AtletasNow';
+            $userData->user_login = 'atletasnow';
             $userData->profile_img = [
                 'value' => 'https://atletasnow.com/wp-content/uploads/2019/08/notify-icon.png'
             ];
@@ -273,7 +274,8 @@ class User extends GenericUser{
         //Retorna dados do usuário
         $userData = [
             'ID' => $userData->ID,
-            'display_name' => $userData->display_name,
+            'display_name'  => $userData->display_name,
+            'user_login'    => $userData->user_login,
             'type' => $this->_getType($userData->ID)
         ];
 

@@ -1,14 +1,37 @@
 <ion-header>
 
-  <ion-toolbar>
-    <ion-buttons left>
-      <button ion-button class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button" style="display: block;" (click)="backButton()">
-          <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
-      </button>
-    </ion-buttons>
-    <ion-title>{{ "PROFILE" | translate }}</ion-title>
+  <ion-toolbar>    
+    
+    <ng-container *ngIf="siteVisitor; else showBackButton">
 
-  </ion-toolbar>
+        <ion-buttons left>
+      
+            <button ion-button icon-start color="light" class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button" style="float:left;" (click)="goLogin()"> 
+                <ion-icon name="contact"></ion-icon>
+                {{ "LOGIN" | translate }}
+            </button>
+      
+        </ion-buttons>
+        
+        <ion-title>{{ "INVITATION_REGISTER" | translate }}</ion-title>
+
+    </ng-container>
+
+    <ng-template #showBackButton>
+        
+        <ion-buttons left>     
+
+          <button ion-button class="back-button bar-button bar-button-md back-button-md bar-button-default bar-button-default-md show-back-button" style="display: block;float:left;" (click)="backButton()">
+              <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+          </button>
+      
+        </ion-buttons>
+          
+        <ion-title>{{ "PROFILE" | translate }}</ion-title>
+
+    </ng-template>    
+
+  </ion-toolbar>  
 
 </ion-header>
 
@@ -20,7 +43,7 @@
 
       <profile-resume (changeViewEvent)="changeComponentView($event)"></profile-resume><!-- Resumo de Perfil --> 
 
-      <ion-col id="profile-menu" col-12 col-md-9 offset-md-3> 
+      <ion-col *ngIf="isLogged"  id="profile-menu" col-12 col-md-9 offset-md-3> 
 
         <ion-buttons item-end>
     

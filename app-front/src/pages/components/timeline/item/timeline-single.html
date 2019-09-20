@@ -3,7 +3,7 @@
   <ion-list>
     <ion-item>
 
-      <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author.ID)">
+      <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author)">
         <img *ngIf="currentTimeline.post_author.profile_img, else elseBlock" 
         [src]="currentTimeline.post_author.profile_img.value" />
         <ng-template #elseBlock>

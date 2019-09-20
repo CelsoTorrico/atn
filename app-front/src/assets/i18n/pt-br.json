@@ -22,7 +22,7 @@
   "CONFIRM_PASSWORD": "Confirme a senha",
   "CONFIRM_REGISTER": "Confirmar cadastro",
   "TERMS_LINK": "Termos de Uso",
-  "USE_POLITICS_LINK": "Políticas de Uso",
+  "USE_POLITICS_LINK": "Política de Privacidade",
   "WELCOME_LOGIN": "Bem-vindo à AtletasNow",
   "WELCOME_LOGIN_TEXT": "Agora você faz parte da maior plataforma voltada a atletas do Brasil.",
   "WELCOME_TITLE_VIDEO": "Entenda como funciona a AtletasNow",
@@ -212,6 +212,6 @@
   "BENEFITS_CONTENT": "Disponibilizamos para você uma grande variedade de benefícios exclusivos!!!",
   "GET_YOUR_BENEFITS_NOW": "GARANTA SEUS BENEFÍCIOS!",
   "ERROR": "Erro",
-  "VIDEO_ERROR": "Url inválida. Insira URL do Youtube corretamente."
-
+  "VIDEO_ERROR": "Url inválida. Insira URL do Youtube corretamente.",
+  "INVITATION_REGISTER": "Conecte-se à AtletasNow, faça login ou registre-se!"
 }
