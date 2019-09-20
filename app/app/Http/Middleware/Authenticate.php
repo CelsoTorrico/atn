@@ -216,10 +216,18 @@ class Authenticate
         }
 
         /**
-         * Habilitar acesso a dados públicos de usuário de qualquer origem
+         * Habilitar acesso a dados públicos de usuário de qualquer origem = perfil
          * @since 2.1
          */
         if ($request->is('user/*') && $request->method() == "GET") {
+            return $next($request);
+        }
+
+        /**
+         * Habilitar acesso a dados públicos de usuário de qualquer origem = timeline de perfil
+         * @since 2.1
+         */
+        if ($request->is('timeline/user/*') && $request->method() == "GET") {
             return $next($request);
         }
 
