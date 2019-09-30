@@ -71,9 +71,6 @@ class Authenticate
                     //Se houve erro retorna resultado
                     return $next($request);
                 }
-
-                //Remove cookies antigo para precaver problemas
-                app('cookie')->forget(env('APPCOOKIE'), '/', env('APP_DOMAIN'));
                 
                 //Seta cookie de sessão : cookie HTTP_ONLY=false
                 //25.03 = habilitar SameSite para funcionar no Edge
@@ -233,7 +230,8 @@ class Authenticate
 
         //Se usuário não está autenticado
         if ($this->auth->guard($guard)->guest()) {
-            return response(['error' => ['login' => 'Acesso não autorizado.']], 401);
+            //Remove cookies antigo para precaver problemas
+            return response(['error' => ['login' => 'Acesso não autorizado.']], 401)->withCookie(app('cookie')->forget(env('APPCOOKIE'), '/', env('APP_DOMAIN')));
         }
 
         return $next($request);        
