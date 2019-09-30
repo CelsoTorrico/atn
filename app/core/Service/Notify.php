@@ -5,6 +5,7 @@ namespace Core\Service;
 use Core\Service\PushNotify;
 use Core\Profile\User;
 use Core\Database\NotifyModel;
+use Core\Database\UserModel;
 use Core\Profile\UserSettings;
 use Core\Utils\SendEmail;
 
@@ -296,14 +297,24 @@ class Notify {
         //Instancia classe de usuário destinatário da notificação 
         $user  = (new User)->get($notify['user_id']);
 
-        //Retorna dados de configurações do usuário
-        $userConfig = new UserSettings($user); 
+        //Verifica se usuário instanciado corretamente
+        if(is_a($user, 'Core\Profile\User')){
+            //Retorna dados de configurações do usuário
+            $userConfig = new UserSettings($user); 
+            
+            //Atribui credenciais
+            $credentials = $userConfig->__get('webpush-credentials');
 
-        //Atribui credenciais
-        $credentials = $userConfig->__get('webpush-credentials');
+        } else{
+            //Lógica para casos de usuários inativados que necessitam receber notificações, por exemplo usuários adicionados pela instituição
+            $usermodel = new UserModel(['ID' => $notify['user_id']]);
+            $user = new User();
+            $user->user_email = $usermodel->user_email;
+            $user->display_name = $usermodel->display_name;
+        }
         
         //Formatando credenciais do banco
-        if($credentials) {
+        if(isset($credentials) && $credentials) {
 
             //Desserializa credenciais de push
             $credentials = unserialize($credentials);
@@ -398,7 +409,7 @@ class Notify {
                 $response = $this->seeProfile($notify);
                 break; 
             default:
-                $response = '';
+                $response = [];
                 break;
         }
 

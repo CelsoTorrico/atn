@@ -87,15 +87,16 @@ class UserClub extends User {
      * @version 2.1 - Permitido filtragem através de argumento $filter(array)
      * @since 2.0
      * */
-    public function getTeamUsers(Array $filter = [], bool $minProfile = true) {
+    public function getTeamUsers(Array $filter = [], bool $minProfile = true, int $pageNumber = 0) {
         
         //Retorna se houve erro ou nenhum usuário
         if(count($this->current_users['ids']) <= 0){
             return ['error' => ['users' => 'Nenhum usuário a exibir.']];
         }
 
-        //array de users
-        $users = [];
+        $users = []; //array de users
+        $count = 0;  //contagem no looping
+        $paged = 24; //máximo de usuários por paginação
 
         //Se há ids de usuário a filtrar
         if (count($filter) > 0) {
@@ -105,12 +106,18 @@ class UserClub extends User {
         }
 
         //Percorre array atribuindo usuário
-        foreach ($this->current_users['ids'] as $id) {
+        foreach ($this->current_users['ids'] as $position => $id) {
+
+            //Permitir inserção a partir de indice array
+            if($pageNumber > 1 && $position < (($pageNumber-1)*$paged)) continue;
+
+            //Se looping atingir máximo permitido, terminar
+            if($count == $paged || $count > $paged) break;
             
             //Inicializa a classe de usuário (User)
             $user = new parent;
             
-            //Se houve erro, por causa de usuário inativado
+            //Se houver erro, em casos de usuarios inexistentes ou excluídos
             if (array_key_exists('error', 
                 $item = ($minProfile)? $user->getMinProfile($id) : $user->get($id))) {
                 continue;
@@ -126,6 +133,9 @@ class UserClub extends User {
 
             //Atribui usuário
             $users[] = $item;
+
+            //Contabiliza looping
+            $count++;
         }
 
         //Retorna se houve erro ou nenhum usuário
@@ -184,56 +194,25 @@ class UserClub extends User {
     }
 
     /** Adicionar usuário pertecente a usuário pai = instituto */
-    public function addUser(Array $data = [], User $user = null) {
+    public function addUser(Array $userData = [], User $user = null) {
 
         //Verifica se ainda é possível adicionar usuários
         if(!$this->current_users['qtd'] > $this->max_users){
             return ['error' => ['register', 'Você já atingiu número máximo de usuários permitidos']];
         }
 
-        //Define parametros de dados para atribuição de usuário a equipe
-        $userData = array_merge($data);
-        
         //Propriedade para setar usuário como pertencente ao clube
         $addClubProperties = [
-            'parent_user' => $this->ID, 
-            'clubes' => $this->ID
+            'parent_user'   => $this->ID, 
+            'clubes'        => $this->ID
         ];
 
-        //Se usuário estiver sendo criado
-        if (is_null($user)) {
+        /**
+         * Setar propriedades em usuário e definindo não exibir notificação ao clube (anteriormente enviamos o dado via $user->update que gerava notificação desnecessária ao clube)
+         * @since 2.1
+         */
+        function setUsermeta(array $addClubProperties, User $user){
             
-            // definir o tipo de usuário padrão
-            $userData = array_merge($userData, [
-                'type' => (!empty($data['type']))? (int) $data['type'] : self::TYPE_CHILD 
-            ]);
-
-            //Adiciona usuário ou atualizar e atribuir resposta
-            $response = $this->add($userData);
-
-            //Se houve algum erro na inserção de usuário
-            if(key_exists('error', $response)){
-                return $response;
-            }
-
-            //Carrega dados do usuário inserido
-            $this->model->load(['user_email' => $userData['user_email']]);
-
-            //Atribui ID do usuario
-            $user_id = $this->model->ID;
-
-            //Envia email de bem vindo (apenas usuários criados)
-            Login::welcomeEmail($userData['user_email'], $userData['display_name']);  
-
-        } else {
-            
-            //Atualiza dados básicos de usuário
-            $response = $user->update($userData); 
-
-            /**
-             * Setar propriedades em usuário e definindo não exibir notificação ao clube (anteriormente enviamos o dado via $user->update que gerava notificação desnecessária ao clube)
-             * @since 2.1
-             */
             foreach ($addClubProperties as $key => $value) {
                 
                 //Se registrar 'parent_user' o valor tem que ser único
@@ -257,7 +236,47 @@ class UserClub extends User {
                 
                 //Gravar dados no perfil do usuário
                 $user->setmeta($key, $newData, true, false);
-            }            
+            }  
+        }
+
+        //Se usuário estiver sendo criado
+        if (is_null($user)) {
+            
+            // definir o tipo de usuário padrão
+            $userData = array_merge($userData, [
+                'type' => (!empty($userData['type']))? (int) $userData['type'] : self::TYPE_CHILD 
+            ]);
+
+            //Adiciona usuário ou atualizar e atribuir resposta
+            $response = $this->add($userData);
+
+            //Se houve algum erro na inserção de usuário
+            if(key_exists('error', $response)){
+                return $response;
+            }
+
+            //Carrega dados do usuário inserido
+            $user = new User($this->model->toArray());
+            
+            //Atribuindo ID do usuario
+            $user->ID = $this->model->ID;
+
+            //Setando usermetas para usuário
+            setUsermeta($addClubProperties, $user);
+
+            //Atribui ID do usuario
+            $user_id = $user->ID;
+
+            //Envia email de bem vindo (apenas usuários criados)
+            Login::welcomeEmail($userData['user_email'], $userData['display_name']);  
+
+        } else {
+            
+            //Atualiza dados básicos de usuário
+            $response = $user->update($userData); 
+
+            //Setando usermetas para usuário
+            setUsermeta($addClubProperties, $user);
 
             //Atribui ID do usuario
             $user_id = $user->ID;       

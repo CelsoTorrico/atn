@@ -44,7 +44,12 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-   
+    //Verifica se usuário tem cookie válido, se sim redireciona para Dashboard
+    this.user.isLoggedUser().then((resp) => {
+      if(resp){
+        this.navCtrl.setRoot('Dashboard');
+      }
+    });
   }
 
   // Realiza login comum via email e senha 

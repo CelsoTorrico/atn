@@ -8,15 +8,19 @@
         {{ "MANAGEMENT_MY_EVENTS" | translate }}
       </ion-title>
 
-      <button float-right edit-profile ion-button icon-start small end clear (click)="editData('calendarData');">
-        <ion-icon item-start name="create"></ion-icon>
-        {{ "ADD_EVENT" | translate }}
-      </button>
-
     </header>
 
-    <calendar [onlyRead]="false" [timelineID]="ID" (updateEvent)="calendarUpdate($event)">
-    </calendar>
+    <ion-card style="padding-bottom: 10px;">
+        
+        <button float-right edit-profile ion-button icon-start small end clear (click)="reloadCalendarAfterCreate()">
+            <ion-icon item-start name="create"></ion-icon>
+            {{ "ADD_EVENT" | translate }}
+        </button>
+
+        <calendar [onlyRead]="false" [timelineID]="ID" (updateEvent)="calendarUpdate($event)">
+        </calendar>
+        
+    </ion-card>    
 
   </ion-col>
 
@@ -30,21 +34,17 @@
           {{ "MANAGEMENT_MY_TEAM" | translate }}
         </ion-title>
 
+      </header>
+
+      <ion-card>
+
         <button float-right edit-profile ion-button icon-start small end clear
-          (click)="editData('teamData');">
+          (click)="reloadTeamAfterCreate()">
           <ion-icon item-start name="create"></ion-icon>
           {{ "ADD_NEW_MEMBER" | translate }}
         </button>
 
-      </header>
-
-      <p *ngIf="team">
-        {{ "MY_TEAM_INITIAL_MESSAGE" | translate }}
-      </p>
-
-      <ion-card>
-
-        <form #searchForm="ngForm" (submit)="submitSearch(searchForm, $event)">
+        <form #searchForm="ngForm" (submit)="submitSearch(); $event.preventDefault()">
 
           <ion-card padding>
 
@@ -171,9 +171,9 @@
 
         <ion-grid>
           <ion-row>
-              <member-club col-md-4 col-6 [member]="member" (editMemberAction)="childMemberEvent($event)"  *ngFor="let member of team"></member-club> 
+              <member-club col-md-4 col-6 [member]="member" (editMemberAction)="childMemberEvent($event)"  *ngFor="let member of searchTeam"></member-club> 
           </ion-row>
-        </ion-grid>        
+        </ion-grid> 
 
       </ion-card>
 

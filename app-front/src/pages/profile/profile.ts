@@ -10,6 +10,7 @@ import { StatsComponent } from './profile-components/stats.component';
 import { ClubComponent } from './profile-components/club.component';
 import { Meta } from '@angular/platform-browser';
 import { environment } from '../../environments/environment.prod';
+import { window } from 'rxjs/operator/window';
 
 @IonicPage()
 @Component({
@@ -185,8 +186,8 @@ export class ProfilePage {
 
     //Atribuindo em cada parametro
     this.ID = $user._user.ID;
-    this.following = $user._user.following;
-    this.typeUser = $user._user.type.ID;
+    this.following  = $user._user.following;
+    this.typeUser   = $user._user.type.ID;
 
     //Verifica se usuário pertence a equipe 
     this.addedTeam = this.isAddedToTeam($user._user.ID);
@@ -198,6 +199,7 @@ export class ProfilePage {
     //Carrega componente inicial
     this.loadComponent(this.ListComponents.personalView);
 
+    //Fecha loading
     this.loading.dismiss();
 
   }
@@ -408,6 +410,47 @@ export class ProfilePage {
       this.meta.addTag({ property: 'og:profile:gender', content: this.profileUser._user.metadata.gender.value });
     }        
     
+  }
+
+  shareProfile($event) {
+    
+    $event.preventDefault();
+
+    this.alertCtrl.create({
+      title:    'Compartilhar Perfil',
+      subTitle: 'Copie e compartilhe em suas redes',
+      cssClass: 'share-alert',
+      inputs: [
+        {
+          id: 'share-input',
+          name: 'profile_url',
+          value: location.href,
+          type: 'text',
+          disabled: true
+        }
+      ],
+      buttons: [{
+        text: 'Copiar',
+        role: null,
+        handler: data => {
+          let $textarea = document.createElement('textarea');
+          $textarea.style.position = 'fixed';
+          $textarea.style.left = '0';
+          $textarea.style.top = '0';
+          $textarea.style.opacity = '0';
+          $textarea.value = location.href;
+          document.body.appendChild($textarea);
+          $textarea.focus();
+          $textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild($textarea);
+        }
+      },{
+        text: 'Cancelar',
+        role: 'cancel'
+      }]
+    }).present();
+
   }
 
   /* Abre uma nova página */

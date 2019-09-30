@@ -39,6 +39,10 @@ export class ProfileResumeComponent {
         { ID: null, sport_name: null }
     ];
 
+    career:any = {
+        value: null
+    }
+
     height: number = null;
 
     weight: number = null;
@@ -119,8 +123,8 @@ export class ProfileResumeComponent {
         //Atribuindo dados aos modelos
         this.ID = atributes.ID;
         this.display_name = atributes.display_name;
-        if (atributes.type  != null) this.type = atributes.type;
-        if (atributes.sport != null) this.sport = atributes.sport;
+        if (atributes.type      != null) this.type = atributes.type;
+        if (atributes.sport     != null) this.sport = atributes.sport;
         this.favorite = atributes.favorite;
 
         if (atributes.metadata.hasOwnProperty('profile_img')) {
@@ -141,6 +145,10 @@ export class ProfileResumeComponent {
 
         if (atributes.metadata.hasOwnProperty('posicao')) {
             this.posicao = atributes.metadata.posicao.value;
+        }
+
+        if (atributes.metadata.hasOwnProperty('career')) {
+            this.career = atributes.metadata.career;
         }
 
         //Adicionar botão de "Meu Clube"

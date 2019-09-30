@@ -30,7 +30,10 @@
       <ul class="list-inline">
         <li padding-right><small>{{ type.type }}</small></li>
         <li padding-right><small>{{ posicao | stringTitlecaseSpecialChars }}</small></li>
-        <li><small>{{ sport[0].sport_name }}</small></li>
+        <li *ngIf="type.ID != 2; else showCareer" ><small>{{ sport[0].sport_name }}</small></li>
+        <ng-template #showCareer>
+            <li><small>{{ career.value }}</small></li>
+        </ng-template>
       </ul>
 
       <ion-list no-margin *ngIf="views">

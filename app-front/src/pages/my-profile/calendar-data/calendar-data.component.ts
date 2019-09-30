@@ -49,6 +49,7 @@ export class MyProfileCalendarComponent {
         public  api: Api,
         public  params: NavParams,
         public  viewCtrl: ViewController,
+        private toastCtrl: ToastController,
         public  statsList: StatsList,
         private loading: LoadingController,
         public  translateService: TranslateService,
@@ -184,6 +185,14 @@ export class MyProfileCalendarComponent {
 
             //Remove tela de loading
             loading.dismiss();
+
+            if(resp.error != undefined) {
+                return this.toastCtrl.create({
+                    message: resp.error.calendar,
+                    position: 'bottom',
+                    showCloseButton: true
+                }).present();
+            }
 
             //Fechar modal e retornar data
             this.dismiss(resp);

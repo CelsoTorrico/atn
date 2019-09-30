@@ -6,6 +6,12 @@
     
 }
 
+ion-card.calendar-feed{
+    .scroll-content{
+        padding: 0px !important;
+    }
+}
+
 .list-calendar-item {
 
     @media screen and (min-width:768px) {

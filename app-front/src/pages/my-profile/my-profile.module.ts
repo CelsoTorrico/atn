@@ -17,6 +17,7 @@ import { PipesModule } from '../../pipes/pipes.module';
 import { MyProfileStatsComponent } from './stats-data/stats-data.component';
 import { MyProfileGeneralStatsComponent } from './general-stats-data/general-stats-data.component';
 import { MyProfileVideosComponent } from './videos-data/videos-data.component';
+import { CareerList } from '../../providers/career/career';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { MyProfileVideosComponent } from './videos-data/videos-data.component';
   ],
   bootstrap: [MyProfilePage],
   providers: [
-    StatsList
+    StatsList,
+    CareerList
   ]
 })
 export class MyProfilePageModule { }

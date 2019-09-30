@@ -55,6 +55,8 @@ class User extends GenericUser{
 
         //Inicializa modelos e classes
         $this->model = new UserModel();
+        
+        //Inicializa classe de valição de dados
         $this->appVal = new AppValidation();
         
         //Verifica se parametros estão presentes
@@ -210,9 +212,13 @@ class User extends GenericUser{
      *  @param $value usermeta value
      *  @since 2.1
      */
-    public function setmeta(string $meta_key, $meta_value, bool $check, bool $notify ) {
+    public function setmeta(string $meta_key, $meta_value, bool $check, bool $notify, int $user_id = null ) {
+        
+        //Valor padrão
+        if (is_null($user_id)) $user_id = $this->ID;
+        
         //Registrar dados de usermeta de usuário
-        return $this->register_usermeta($meta_key, $meta_value, $this->ID, $check, $notify);
+        return $this->register_usermeta($meta_key, $meta_value, $user_id, $check, $notify);
     }
 
 
@@ -223,10 +229,13 @@ class User extends GenericUser{
      *  @param $value usermeta value
      *  @since 2.1
      */
-    public function getmeta(array $only) {
+    public function getmeta(array $only, int $user_id = null) {
         
+        //Valor padrão
+        if (is_null($user_id)) $user_id = $this->ID;
+
         //Verifica se existe usermetas de usuário
-        return $this->_getUsermeta($this->ID, $only);
+        return $this->_getUsermeta($user_id, $only);
     }
 
     /**
@@ -669,7 +678,7 @@ class User extends GenericUser{
         }
 
         //Qtd de itens por página
-        $perPage = 200;
+        $perPage = 100;
         
         //A partir de qual item contar
         $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
@@ -912,9 +921,6 @@ class User extends GenericUser{
             //inicializa array
             $usermetaID = [];
 
-            //Inicializa modelo de usermeta
-            $this->metaModel = new UsermetaModel();
-
             //Se for novo usuário usa valor enviado
             if( is_null($getType = $this->_getType($primaryKey['ID'])) ){
                 //Se não definido usa valor padrão 1
@@ -1011,6 +1017,9 @@ class User extends GenericUser{
         if($meta_value == false){
             return;
         }
+
+        //Inicializa modelo
+        $this->metaModel = new UsermetaModel();
 
         //Retorna instancia de modelo
         $meta = $this->metaModel->getInstance(['user_id' => $user_id,'meta_key' => $meta_key]);

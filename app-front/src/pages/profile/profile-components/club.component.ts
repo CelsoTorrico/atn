@@ -13,6 +13,7 @@ import { ReportPage } from '../../report/report';
 import { profileTypeList } from '../../../providers/profiletypes/profiletypes';
 import { SportList } from '../../../providers/sport/sport';
 import { TranslateChar } from '../../../providers/useful/translateChar';
+import { Calendar } from '../../components/calendar/calendar';
 
 @Component({
   selector: 'club',
@@ -21,11 +22,14 @@ import { TranslateChar } from '../../../providers/useful/translateChar';
 export class ClubComponent extends ProfileComponent {
 
   @ViewChild(MemberClub) memberclub: MemberClub
+  @ViewChild(Calendar) calendar: Calendar
   @Input() user: User
   @Input() type: number = null
 
   //Variveis de template de usuario
   calendarObservable: Observable<ArrayBuffer> = this.api.get('/calendar');
+
+  $refresh: any
 
   isLogged: boolean = false;
 
@@ -33,12 +37,15 @@ export class ClubComponent extends ProfileComponent {
 
   display_name: string = '';
 
-  max_users:number
+  max_users: number
 
   sport: any = [{
     ID: '',
     sport_name: ''
   }]
+
+  //Lista de usuários
+  searchTeam: any = []
 
   /** Variaveis para a busca  */
   public query: any = {
@@ -117,19 +124,18 @@ export class ClubComponent extends ProfileComponent {
   }
 
   ngOnInit() {
-    if (this.user._user != undefined){
+    if (this.user._user != undefined) {
       //Se dados já presentes
       this.currentClubSportsList();
-    } else{
+    } else {
       //Se não, subscribe e executa quando pronto
-      this.user.dataReady.subscribe(() =>{
+      this.user.dataReady.subscribe(() => {
         this.currentClubSportsList();
       });
     }
-  }
 
-  //Função que inicializa
-  ngAfterViewChecked() { 
+    //Retorna todos usuários
+    this.submitSearch();
 
   }
 
@@ -139,8 +145,9 @@ export class ClubComponent extends ProfileComponent {
     });
   }
 
+  //Escuta evento disparado em componente filho e redireciona para função
   childMemberEvent($event) {
-    
+
     //Função que escuta evento em componente filho
     if ($event == undefined) return;
 
@@ -189,7 +196,7 @@ export class ClubComponent extends ProfileComponent {
         if (element.error != undefined || element == null) {
           continue;
         }
-        this.team.push(element);
+        this.searchTeam.push(element);
       }
 
       //Reseta dados do campo "sport"
@@ -202,15 +209,16 @@ export class ClubComponent extends ProfileComponent {
     });
   }
 
-  submitSearch(form: NgForm, event) {
-
-    event.preventDefault();
+  /**
+   * Faz busca/requisição de usuários pertecentes ao clube
+   */
+  submitSearch() {
 
     //Reseta o contador de páginas
     this.$paged = 1;
 
     //Reseta lista de usuários já pesquisados
-    this.team = [];
+    this.searchTeam = [];
 
     //Adiciona tipo de usuário selecionado
     this.query.type = this.$typeUserSelected;
@@ -225,6 +233,16 @@ export class ClubComponent extends ProfileComponent {
 
   }
 
+  /** Carrega proxima página de usuários encontrados na busca */
+  getSearchTeamNextPage() {
+    //Reseta o contador de páginas
+    this.$paged = this.$paged + 1;
+
+    //Retorna a lista de clubes para seletor
+    this.widgetSearch();
+  }
+
+  /** Define esportes selecionados */
   private setChooseSports($sportChoose) {
     //Intera sobre items
     for (const element of this.$sportTable) {
@@ -235,6 +253,20 @@ export class ClubComponent extends ProfileComponent {
       }
     }
 
+  }
+
+  //Recarregar componente após adicionar evento
+  reloadCalendarAfterCreate() {
+    this.editData('calendarData', undefined, () => { 
+      this.calendar.reload();
+    });    
+  }
+
+  //Recarregar membros após adicionar novo usuário
+  reloadTeamAfterCreate() {
+    this.editData('teamData', undefined, () => { 
+      this.widgetSearch();
+    });
   }
 
   //Relatório de forma visual
@@ -249,7 +281,7 @@ export class ClubComponent extends ProfileComponent {
       filter: []
     };
 
-    this.team.forEach(element => {
+    this.searchTeam.forEach(element => {
       $reportFilter.user_ids.push(element.ID);
     });
 
@@ -287,7 +319,7 @@ export class ClubComponent extends ProfileComponent {
 
     let $extension: string = ($isPdf) ? 'pdf' : 'xlsx';
 
-    this.team.forEach(element => {
+    this.searchTeam.forEach(element => {
       $reportFilter.user_ids.push(element.ID);
     });
 
@@ -335,37 +367,37 @@ export class ClubComponent extends ProfileComponent {
      * Implementa a seleção de esportes. Inserir valores sem acentuação correta é considerado 
      * @since  2.1
      * */
-    tagInputChange(value, target) {
+  tagInputChange(value, target) {
 
-      //Para esportes cadastrados
-      if(value == target.display) {
-          return true;
-      }
+    //Para esportes cadastrados
+    if (value == target.display) {
+      return true;
+    }
 
-      let sport = target.display;
-      for (const i in target.display) {
+    let sport = target.display;
+    for (const i in target.display) {
 
-          //Caracteres
-          let currentChar = target.display.charAt(i);
-          let changed = TranslateChar.change(currentChar);
+      //Caracteres
+      let currentChar = target.display.charAt(i);
+      let changed = TranslateChar.change(currentChar);
 
-          //Se não foi encotrado caracter para para substituição
-          if (!changed) continue;
+      //Se não foi encotrado caracter para para substituição
+      if (!changed) continue;
 
-          //Substitui ocorrências do caracter na string
-          sport = target.display.replace(currentChar, changed);
-      }
+      //Substitui ocorrências do caracter na string
+      sport = target.display.replace(currentChar, changed);
+    }
 
-      //Procura pelo valor na string de esporte
-      let regex = new RegExp(value, 'igm');
-      let found = sport.match(regex);
-  
-      if(found) {
-          return target.display; 
-      }
+    //Procura pelo valor na string de esporte
+    let regex = new RegExp(value, 'igm');
+    let found = sport.match(regex);
 
-      return false;
-      
+    if (found) {
+      return target.display;
+    }
+
+    return false;
+
   }
 
 

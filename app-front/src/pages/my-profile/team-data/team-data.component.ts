@@ -168,20 +168,21 @@ export class MyProfileAddMemberDataComponent extends MyProfileSportsComponent {
 
         //Realiza update de dados do usuario
         this.api[method](MyProfileAddMemberDataComponent.$getProfile + url, saveFields).subscribe((resp:any) => {
+
+            //Fechar tela de loading
+            loading.dismiss();
             
             if(resp.error != undefined) {
                 
                 //Mostrar alerta de erro
                 let alert = this.alert.create({
-                    message: resp.error
+                    title: resp.error.register
                 });
 
+                //Mostrar mensagem
                 alert.present();
                 return;
             }
-
-            //Fechar tela de loading
-            loading.dismiss();
 
             //Fechar modal e passar data para pai
             this.dismiss(resp); 

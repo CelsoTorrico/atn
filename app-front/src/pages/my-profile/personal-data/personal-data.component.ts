@@ -3,13 +3,13 @@ import { NavController, ToastController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { User, Api } from '../../../providers';
 import { BrazilStates } from '../../../providers/useful/states';
-import {  NgForm } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { VisibilityList } from '../../../providers/visibility/visibility';
+import { CareerList } from '../../../providers/career/career';
 
 @Component({
     selector: 'personal-data-edit',
     templateUrl: 'personal-data.html',
-
 })
 export class MyProfilePersonalDataComponent {
 
@@ -105,6 +105,8 @@ export class MyProfilePersonalDataComponent {
     //Lista de Estados
     protected $statesList:any[];
 
+    protected $careerList:any[];
+
     //Url de requisição de usuário
     private static readonly $getProfile: string = 'user/self';
 
@@ -118,12 +120,16 @@ export class MyProfilePersonalDataComponent {
         public viewCtrl: ViewController,
         public translateService: TranslateService,
         statesList: BrazilStates,
+        careerList: CareerList,
         visibilityList: VisibilityList) {
 
         this.translateService.setDefaultLang('pt-br');
 
         //Carrega lista de estados do provider
         this.$statesList = statesList.statesList;
+
+        //Carrega lista de profissões
+        this.$careerList = careerList.list;
 
         //Carregar campos de visibilidade
         visibilityList.load().then(() => {

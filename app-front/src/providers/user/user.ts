@@ -226,6 +226,9 @@ export class User {
     $user._userObservable   = this.api.get('user/' + $user_id);
     $user._statsObservable  = this.api.get('user/stats/' + $user_id);
     $user._teamObservable   = this.api.get('user/self/club_user/' + $user_id);
+    
+    //Carregar dados do usuário
+    $user.getUserData();
 
     //Retorna instancia da classe
     return $user;
@@ -341,6 +344,16 @@ export class User {
     //Retorna observable
     return this._teamObservable = this.api.get('user/self/club_user');
 
+  }
+
+  /**
+   * Permite definir a página de membros da equipe retornando observable
+   * @since 2.1
+   */
+  public getTeamMembersByPage($paged:number): Observable<ArrayBuffer> {
+
+    //Retorna observable
+    return this._teamObservable = this.api.get('user/self/club_user/'+ this._user.ID + '/paged/'+ $paged);
   }
 
   //Retorna observable de visibilidade

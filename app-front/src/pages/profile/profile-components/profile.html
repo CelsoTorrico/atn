@@ -30,6 +30,8 @@
             {{ rg }}</li>
           <li *ngIf="cpf"><strong>{{ "CPF" | translate }}</strong>
             {{ cpf }}</li>
+          <li *ngIf="cnpj"><strong>{{ "CNPJ" | translate }}</strong>
+              {{ cnpj }}</li> 
           <li *ngIf="gender"><strong>{{ "GENDER" | translate }}</strong>
             {{ gender | translate }}</li>
           <li *ngIf="telefone"><strong>{{ "TELEPHONE" | translate }}</strong>
@@ -184,13 +186,19 @@
 
     </ion-card><!-- My Videos -->
 
-    <ion-card class="my-team" *ngIf="team != undefined">
+    <ion-card class="my-team" *ngIf="type > 2">
 
       <ion-card-header>
         {{ "MY_TEAM" | translate }}
       </ion-card-header>
 
       <member-container [listMembers]="team"></member-container>
+
+      <p *ngIf="$canPage"  class="refresh" text-center>
+        <button ion-button small mr-15 (click)="getTeamNextPage($event);">
+          {{ 'LOAD_MORE' | translate }}
+        </button>
+      </p><!-- Botão para carregar mais -->
 
     </ion-card><!-- MY-TEAM -->
 

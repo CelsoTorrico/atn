@@ -51,13 +51,24 @@
 
     <ion-item *ngIf="type == 2">
       <ion-label stacked>{{ "CAREER" | translate}}</ion-label>
-      <ion-input type="text" name="career" [(ngModel)]="career.value" full></ion-input>
+      
+      <!--<tag-input margin [(ngModel)]="career.value" [addOnBlur]="false" [onlyFromAutocomplete]="true"
+        placeholder="{{ 'WRITE_CAREER' | translate }}" name="career">
+        <tag-input-dropdown [autocompleteItems]="$careerList"></tag-input-dropdown>
+      </tag-input>-->
+
+      <ion-select name="career.value" [(ngModel)]="career.value" interface="popover">
+          <ion-option *ngFor="let item of $careerList" [value]="item">
+            {{ item }}
+          </ion-option>
+      </ion-select>
 
       <ion-select visibility name="career.visibility" [(ngModel)]="career.visibility" interface="popover">
         <ion-option *ngFor="let item of visibility" [value]="item.value">
           {{item.option}}
         </ion-option>
       </ion-select>
+
     </ion-item>
 
     <ion-item-group *ngIf="type < 3">

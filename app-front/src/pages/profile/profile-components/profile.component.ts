@@ -48,6 +48,8 @@ export class ProfileComponent {
 
   rg: any = null
 
+  cnpj: any = null
+
   gender: any = null
 
   neighbornhood: any = null
@@ -68,7 +70,7 @@ export class ProfileComponent {
 
   /* Instituição */
 
-  team: any = null
+  team: any = []
 
   max_users: number = null;
 
@@ -85,8 +87,6 @@ export class ProfileComponent {
 
   eventos: any = null
 
-  /** FIM */
-
   public loginErrorString;
 
   public showMessageBox: boolean = false;
@@ -95,12 +95,16 @@ export class ProfileComponent {
 
   private ListComponents: any = {
     personalData: MyProfilePersonalDataComponent,
-    sportsData: MyProfileSportsComponent,
-    videosData: MyProfileVideosComponent,
-    statsData: MyProfileStatsComponent,
-    teamData: MyProfileAddMemberDataComponent,
+    sportsData:   MyProfileSportsComponent,
+    videosData:   MyProfileVideosComponent,
+    statsData:    MyProfileStatsComponent,
+    teamData:     MyProfileAddMemberDataComponent,
     calendarData: MyProfileCalendarComponent
   }
+
+  /** Membros paginação */
+  public $canPage:boolean   = true;
+  public $pagedTeam:number  = 1;
 
   constructor(
     public navCtrl: NavController,
@@ -115,13 +119,14 @@ export class ProfileComponent {
 
     this.translateService.get(["YOU_WILL_EXCLUDE_MEMBER", "YOU_SURE"]).subscribe((data) => {
       this.deleteMessage = data;
-    })
+    });
 
   }
 
-  //Função que inicializa
-  ngOnInit() {
-    
+  ngAfterViewInit() {
+    //Reinicializa paginação
+    this.$pagedTeam = 1;
+    this.user.getTeamMembersByPage(this.$pagedTeam);
   }
 
   /** Carrega dados de usuário de contexto */
@@ -225,18 +230,40 @@ export class ProfileComponent {
 
   //Para instituições, carrega lista de usuários pertencentes
   getMyMembersTeam() {
-    this.user._teamObservable.subscribe((resp: any) => {
+    
+    return this.user._teamObservable.subscribe((resp: any) => {
 
-      if (Object.keys(resp).length <= 0) {
-        return;
+      //Se não retornar resultado ou chegar ao fim de paginação
+      if (Object.keys(resp).length <= 0 || resp.error != undefined) {
+        return this.$canPage = false;
       }
 
-      //Atribui dados ao modelo
-      this.team = resp;
+      //Merge arrays atribuindo dados ao modelo
+      this.team = this.team.concat(resp);       
 
     });
   }
 
+  /**
+   * Carregar usuários com paginação
+   * @since 2.1
+   * @param $event 
+   */
+  getTeamNextPage($event) {
+    
+    $event.preventDefault();
+
+    //Adiciona uma página a mais para adicionar itens
+    this.$pagedTeam = this.$pagedTeam + 1;
+    
+    //Retorna observable e faz requisição invocando função da classe
+    this.user.getTeamMembersByPage(this.$pagedTeam).subscribe(() => {
+      this.getMyMembersTeam();
+    });
+
+  }
+
+  //Deleta um membro
   deleteMember($user_id: number) {
 
     let confirmDelete = this.alert.create({
@@ -285,7 +312,7 @@ export class ProfileComponent {
   }
 
   //Abrir modal com dados para atualizar perfil
-  editData($component: string, $data: any = undefined, $fn = () => { this.reloadUserData() }) {
+  editData($component:string, $data:any = undefined, $fn = () => { this.reloadUserData() }) {
 
     //Criar modal do respectivo component
     let modal = this.modalCtrl.create(this.ListComponents[$component], { data: $data });

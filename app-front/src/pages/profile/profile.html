@@ -43,7 +43,7 @@
 
       <profile-resume (changeViewEvent)="changeComponentView($event)"></profile-resume><!-- Resumo de Perfil --> 
 
-      <ion-col *ngIf="isLogged"  id="profile-menu" col-12 col-md-9 offset-md-3> 
+      <ion-col *ngIf="!siteVisitor"  id="profile-menu" col-12 col-md-9 offset-md-3> 
 
         <ion-buttons item-end>
     
@@ -79,6 +79,12 @@
             {{ "SEND_EMAIL" | translate }}
             <ion-icon item-end name="mail"></ion-icon>
           </button><!-- Enviar Email -->
+
+          <button *ngIf="isLogged"  ion-button small icon-end clear 
+          (click)="shareProfile($event)">
+            {{ "SHARE_PROFILE" | translate }}
+            <ion-icon name="share-alt"></ion-icon>
+          </button><!-- Seguir usuário-->
 
         </ion-buttons>
 

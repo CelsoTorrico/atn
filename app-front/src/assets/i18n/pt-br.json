@@ -131,7 +131,6 @@
   "SUBMIT_BUTTON": "Enviar",
   "PUT_YOUR_EMAIL_AND_RECEIVE_A_NEW_PASS": "Se você esqueceu sua senha de acesso insera seu email e receba uma nova.",
   "MY_TEAM": "Minha Equipe",
-  "MY_TEAM_INITIAL_MESSAGE": "",
   "ADD_NEW_MEMBER": "Adicionar novo usuário",
   "UPDATE_MEMBER": "Atualizar dados do usuário",
   "DELETE": "Deletar",
@@ -166,7 +165,7 @@
   "PORTUGUESE": "Português",
   "ENGLISH": "Inglês",
   "SPANISH": "Espanhol",
-  "MY_CLUB": "Meu Clube",
+  "MY_CLUB": "Minha Instituição",
   "MY_CONFEDERATION": "Minha Confederação",
   "MY_UNIVERSITY": "Minha Universidade",
   "MANAGEMENT_MY_EVENTS": "Gerenciar Meus Eventos",
@@ -213,5 +212,6 @@
   "GET_YOUR_BENEFITS_NOW": "GARANTA SEUS BENEFÍCIOS!",
   "ERROR": "Erro",
   "VIDEO_ERROR": "Url inválida. Insira URL do Youtube corretamente.",
-  "INVITATION_REGISTER": "Conecte-se à AtletasNow, faça login ou registre-se!"
+  "INVITATION_REGISTER": "Conecte-se à AtletasNow, faça login ou registre-se!",
+  "SHARE_PROFILE": "Compartilhar Perfil"
 }

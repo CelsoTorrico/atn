@@ -54,7 +54,8 @@ $router->group(['prefix' => 'user'], function () use ($router) {
          *  Listar membros da instituição
          *  @version v2.1 - Alterado o método para POST para suportar filtragem 
          */        
-        $router->get('/club_user[/{id:[0-9]+}]', 'ClubController@getAll');
+        //$router->get('/club_user[/{id:[0-9]+}]', 'ClubController@getAll');
+        $router->get('/club_user/{id:[0-9]+}[/paged/{page_number:[0-9]+}]', 'ClubController@getAll');
         $router->post('/club_user/search[/paged/{id:[0-9]+}]', 'ClubController@getAll');
 
         //Adicionar usuário de posse

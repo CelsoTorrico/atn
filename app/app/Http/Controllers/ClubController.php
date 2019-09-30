@@ -33,12 +33,15 @@ class ClubController extends Controller
      * @version 2.1 Adicionado argumento $filter (array) para filtragem
      * @since 2.0
      */
-    function getAll(int $id = null, Request $request) {
-        
+    function getAll(int $id = null, int $page_number = null, Request $request) {
+
+        //Se for enviado página para paginação
+        $page_number = (!is_null($page_number))? $page_number : 0;
+
         //Se for enviado dados de filtragem = POST Method
         if( $request->method() == 'POST') {            
             //Realiza a pesquisa
-            return $this->search($request);
+            return $this->search($request, $page_number);
         };
 
         $result = null;
@@ -47,11 +50,11 @@ class ClubController extends Controller
         if(!is_null($id)){
             $club = $this->user->getUser($id);
             if($club && $club->type['ID'] >= 3) {
-                $result = $club->getTeamUsers();
+                $result = $club->getTeamUsers([], true, $page_number);
             }             
         } else {
             //Atribui resposta
-            $result = $this->club->getTeamUsers();
+            $result = $this->club->getTeamUsers([], true, $page_number);
         }
         
         //Retorna resposta
@@ -105,7 +108,9 @@ class ClubController extends Controller
 
         //Se as senhas enviadas não corresponderem, terminar execução
         if($request->has('user_pass') || $request->has('confirm_pass')) {
-            return ($request->input('user_pass') == $request->input('confirm_pass'))?: response(['error' => ['register' => 'As senhas enviadas não conferem. Tente novamente.']]);
+            if ($request->input('user_pass') != $request->input('confirm_pass')) {
+                return response(['error' => ['register' => 'As senhas enviadas não conferem. Tente novamente.']]);
+            }
         }
 
         //Atualizando perfil
