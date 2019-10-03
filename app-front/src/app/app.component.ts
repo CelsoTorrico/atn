@@ -1,3 +1,4 @@
+import { Cookie } from './../providers/cookie/cookie';
 import { environment } from './../environments/environment';
 import { Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,6 +38,10 @@ export class MyApp {
         //Percorre array e verifica, se false redireciona para home
         canPages.forEach(element => {
           if (view.name != element) {            
+            
+            //Remove cookie
+            Cookie.deleteCookie();
+
             //Redireciona para home
             view.willEnter.subscribe((resp) => {
               this.nav.setRoot('Login');

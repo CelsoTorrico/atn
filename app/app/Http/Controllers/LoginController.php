@@ -69,7 +69,7 @@ class LoginController extends Controller
             
             //Se usuário não existir na base de dados, redireciona ao registro 
             //juntamente com os dados
-            return response()->json(array_only($userData, ['success' => ['social-register' => ['display_name', 'user_email']]]));
+            return response()->json(array_intersect_key($userData, ['success' => ['social-register' => ['display_name', 'user_email']]]));
         }
         
         //Retorna resposta
