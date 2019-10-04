@@ -120,13 +120,16 @@ class Login implements LoginInterface{
             //Carrega dados de usuários
             $this->model->load(['user_email' => $userData['user_email']]);
 
-            //Ativar usuário e enviar mensagens de boas vindas
+            //Ativar usuário token de usuário
             $confirm = $this->confirmUserEmail($this->model->user_activation_key);
 
             //Verificar se houve erro
             if(key_exists('error', $confirm)) {
                 return $confirm;
             }
+
+            //Enviar email de boas vindas
+            $this->sendWelcomeEmail($this->model->user_email, $this->model->display_name);
 
         }      
         
@@ -345,6 +348,10 @@ class Login implements LoginInterface{
 
         //Filtrando e sanitinizando email
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+
+        //Carregando modelo da base para inserir ID de usuário em url
+        // @todo: Melhorar isso, não precisar invocar modelo de usuário novamente
+        $this->model->load(['user_email' => $email]);
         
         //SETUP DE EMAIL
         $phpmailer = new SendEmail();
@@ -353,7 +360,7 @@ class Login implements LoginInterface{
         $phpmailer->setSubject('Bemvindo para a AtletasNOW');
         
         //Carrega template prédefinido
-        $phpmailer->loadTemplate('welcome', ['email' => $email, 'name' => $displayName]);
+        $phpmailer->loadTemplate('welcome', ['email' => $email, 'name' => $displayName, 'id' => $this->model->ID]);
 
         return $phpmailer->send();
         

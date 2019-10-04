@@ -562,7 +562,7 @@
                         <tbody>
                             <tr>
                                 <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Helvetica; font-size: 14px; padding: 18px;">
-                                    <a class="mcnButton " title="Comece" href="https://app.atletasnow.com/#/dashboard?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #222222;">Comece</a>
+                                    <a class="mcnButton " title="Comece" href="https://app.atletasnow.com/#/dashboard?utm_source=email-boasvindas&utm_medium=email&utm_campaign=aplicativo" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #222222;">Comece</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -631,7 +631,7 @@
                                 <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
                                     
                                         
-                                    <a href="https://app.atletasnow.com/#/profile?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img align="center" alt="" src="https://atletasnow.com/wp-content/uploads/2019/06/complete-perfil.png" width="77" style="max-width:77px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage"></a>
+                                    <a href="https://app.atletasnow.com/#/profile/'. $data['id'] . '/?utm_source=email-boasvindas&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img align="center" alt="" src="https://atletasnow.com/wp-content/uploads/2019/06/complete-perfil.png" width="77" style="max-width:77px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage"></a>
                                         
                                     
                                 </td>
@@ -657,7 +657,7 @@
                             
                             <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
                             
-                                <h3 style="text-align: center;"><span style="font-size:13px">Complete seu perfil na AtletasNow</span>&nbsp;<a href="https://app.atletasnow.com/#/profile?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img data-file-id="3129189" height="20" src="https://atletasnow.com/wp-content/uploads/2019/06/right-arrow-angle.png" style="border: 0px initial ; width: 20px; height: 20px; margin: 0px;" width="20"></a></h3>
+                                <h3 style="text-align: center;"><span style="font-size:13px">Complete seu perfil na AtletasNow</span>&nbsp;<a href="https://app.atletasnow.com/#/profile/' . $data['id'] . '/?utm_source=email-boasvindas&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img data-file-id="3129189" height="20" src="https://atletasnow.com/wp-content/uploads/2019/06/right-arrow-angle.png" style="border: 0px initial ; width: 20px; height: 20px; margin: 0px;" width="20"></a></h3>
     
                             </td>
                         </tr>
@@ -735,7 +735,7 @@
                             <tbody><tr>
                                 <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
                                     
-                                    <a href="https://app.atletasnow.com/#/search?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img align="center" alt="" src="https://atletasnow.com/wp-content/uploads/2019/06/contrua-rede.png" width="77" style="max-width:77px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage"></a>
+                                    <a href="https://app.atletasnow.com/#/search?utm_source=email-boasvindas&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img align="center" alt="" src="https://atletasnow.com/wp-content/uploads/2019/06/contrua-rede.png" width="77" style="max-width:77px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage"></a>
                                         
                                     
                                 </td>
@@ -761,7 +761,7 @@
                             
                             <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
                             
-                                <h3 style="text-align: center;"><span style="font-size:13px">Construa sua rede!!!</span>&nbsp;<a href="https://app.atletasnow.com/#/search?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img data-file-id="3129189" height="20" src="https://atletasnow.com/wp-content/uploads/2019/06/right-arrow-angle.png" style="border: 0px initial ; width: 20px; height: 20px; margin: 0px;" width="20"></a></h3>
+                                <h3 style="text-align: center;"><span style="font-size:13px">Construa sua rede!!!</span>&nbsp;<a href="https://app.atletasnow.com/#/search?utm_source=email-boasvindas&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img data-file-id="3129189" height="20" src="https://atletasnow.com/wp-content/uploads/2019/06/right-arrow-angle.png" style="border: 0px initial ; width: 20px; height: 20px; margin: 0px;" width="20"></a></h3>
     
                             </td>
                         </tr>
@@ -876,7 +876,7 @@
                             <tbody><tr>
                                 <td class="mcnImageContent" valign="top" style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
                                     
-                                    <a href="https://atletasnow.com/beneficios?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img align="center" alt="" src="https://atletasnow.com/wp-content/uploads/2019/08/clube-beneficios-final-2.png" width="77" style="max-width:77px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage"></a>
+                                    <a href="https://atletasnow.com/beneficios?utm_source=email-boasvindas&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img align="center" alt="" src="https://atletasnow.com/wp-content/uploads/2019/08/clube-beneficios-final-2.png" width="77" style="max-width:77px; padding-bottom: 0; display: inline !important; vertical-align: bottom;" class="mcnImage"></a>
                                         
                                     
                                 </td>
@@ -902,7 +902,7 @@
                             
                             <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
                             
-                                <h3 style="text-align: center;"><span style="font-size:13px">Acesse seu clube de benefícios</span>&nbsp;<a href="https://atletasnow.com/beneficios?utm_source=cadastro&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img data-file-id="3129189" height="20" src="https://atletasnow.com/wp-content/uploads/2019/06/right-arrow-angle.png" style="border: 0px initial ; width: 20px; height: 20px; margin: 0px;" width="20"></a></h3>
+                                <h3 style="text-align: center;"><span style="font-size:13px">Acesse seu clube de benefícios</span>&nbsp;<a href="https://atletasnow.com/beneficios?utm_source=email-boasvindas&utm_medium=email&utm_campaign=aplicativo" style="outline-width: 0px !important; user-select: auto !important;" target="_blank"><img data-file-id="3129189" height="20" src="https://atletasnow.com/wp-content/uploads/2019/06/right-arrow-angle.png" style="border: 0px initial ; width: 20px; height: 20px; margin: 0px;" width="20"></a></h3>
     
                             </td>
                         </tr>
