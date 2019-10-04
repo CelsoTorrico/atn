@@ -86,23 +86,48 @@ class Login implements LoginInterface{
     private function socialLogin(array $userData){
 
         //Verifica se existem dados válidos
-        if(!count($userData) <= 0 && !array_key_exists('user_email', $userData)){
+        if (!count($userData) <= 0 && !array_key_exists('user_email', $userData)) {
             return ['error' => ['login' => 'Houve um erro em sua autenticação via Login Social. Tente mais tarde.']];
         }
         
         //Verifica se classe já esta instanciada na variavel
-        if(!is_a($this->model, 'Core\Database\LoginModel')){
+        if (!is_a($this->model, 'Core\Database\LoginModel')) {
             $this->model = new LoginModel();
             $this->model->load(['user_email' => $userData['user_email']]);
-        }
-        else{
+        } else {
             $this->model->getInstance(['user_email' => $userData['user_email']]);
         }
 
         //Verificar se usuário é existente
         if ($this->model->isFresh()) {
-            //Se não, retornar false
-            return false;
+            
+            //Atribuindo imagem de profile na chave válida
+            $userData = array_merge($userData, [
+                'profile_img'   => $userData['avatar'],
+                'user_pass'     => $userData['token'],
+                'confirm_pass'  => $userData['token']
+            ]);
+
+            //Cadastrar usuário
+            $user = new User();
+            $registerSuccess = $user->add($userData); 
+            
+            //Verificar se houve erro
+            if(!$registerSuccess) {
+                return ['error' => ['login' => 'Não foi possível registrar o usuário via social media.']];
+            }
+
+            //Carrega dados de usuários
+            $this->model->load(['user_email' => $userData['user_email']]);
+
+            //Ativar usuário e enviar mensagens de boas vindas
+            $confirm = $this->confirmUserEmail($this->model->user_activation_key);
+
+            //Verificar se houve erro
+            if(key_exists('error', $confirm)) {
+                return $confirm;
+            }
+
         }      
         
         //Retorna dados localizados

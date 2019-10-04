@@ -836,7 +836,7 @@ class User extends GenericUser{
             if( $data['user_pass'] != $data['confirm_pass'] ){
                 return ['error' => ['confirm_pass' => 'Confirme a senha corretamente.']];
             }   
-            $isUpdate = FALSE; 
+            $isUpdate = FALSE;
         }
         else{
             $isUpdate = TRUE;

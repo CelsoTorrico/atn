@@ -108,7 +108,7 @@ class LoginController extends Controller
      * @since 2.1   Adicionando email de boas-vindas no cadastro
      * @since 2.0
      * */
-    function register(Request $request){
+    function register(Request $request) {
         
         //Campos obrigatórios
         $require = ['type', 'display_name', 'sport', 'user_email', 'user_pass', 'confirm_pass'];
@@ -225,7 +225,7 @@ class LoginController extends Controller
     }
 
     //Retorna token na classe 'Login'
-    public function getUserData(){
+    public function getUserData() {
         return $this->login->getUserData();
     }
 

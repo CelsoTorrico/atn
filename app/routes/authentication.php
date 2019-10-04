@@ -21,7 +21,7 @@ $router->group(['prefix' => 'register'], function () use ($router) {
     $router->post('/exist', 'LoginController@isUserExist');
 
     //Registrar uma nova conta
-    $router->post('/', 'LoginController@register');
+    $router->post('/', ['as' => 'register', 'uses' => 'LoginController@register']);
 
 });
 

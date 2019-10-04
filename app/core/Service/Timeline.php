@@ -135,7 +135,7 @@ class Timeline {
         if (is_array($following) && count($following) > 0): 
             $following = ['posts.post_author' =>  $following];
         else: 
-            //senão adiciona '0' ao perfis para não exibir
+            //senão adiciona id inexistente ao perfis para não exibir
             $not_user_ids[] = 999999999999999999999;     
         endif;
             
