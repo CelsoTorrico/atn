@@ -888,8 +888,9 @@ class User extends GenericUser{
 
             //Atualiza os dados no banco informado as colunas
             $result = $this->model->update(array_keys($userData));
-        }
-        else{
+
+        } else {
+            
             /** New Register  */
             $this->model = new UserModel();
 
@@ -904,8 +905,8 @@ class User extends GenericUser{
             //Preenche colunas com valores
             $this->model->fill(array_only($filtered, $userColumns));             
 
-            //Salva os dados no banco
-            if( $result = $this->model->save() ) {
+            //Envia email de autenticação no caso de registro não for via redes sociais
+            if( $result = $this->model->save() && !$this->socialLogin ) {
                 //Envia email de confirmação para email cadastrado
                 $this->sendActivationKey($onlyRegister['user_activation_key'], $filtered['user_email'], $filtered['display_name'] );
             }     
