@@ -288,6 +288,11 @@ class Notify {
             'actions'   => null
         ];
 
+        /** Em caso de key 'ID' não vier setada, usar key 'user_id' para assmiliar corretamente. */
+        if(!isset($notify['ID']) && key_exists('user_id', $notify)) {
+            $notify['ID'] = $notify['user_id'];
+        }
+
         //Retorna conteúdo de notificação
         $content = $this->defineTypeContent($notify);
 
@@ -612,7 +617,7 @@ class Notify {
      */
     private function seeProfile(array $notify){
 
-        //Retorna dados do usuário
+        //Retorna dados do usuáriof
         $fromUser = (new User)->getMinProfile($notify['from_id']);
 
         //Pegar estilo da notificação
