@@ -622,7 +622,7 @@ class Timeline {
             ['[><]postmeta' => ['ID' => 'post_id']],
             ['posts.ID', 'posts.post_content', 'posts.post_date', 'posts.post_type', 'posts.post_author', 'postmeta.meta_value'], 
             [ 
-                'posts.post_author[!]'    => $this->currentUser->ID,
+                'posts.post_author[!]'    => [$this->currentUser->ID, 0],
                 'posts.post_type[!]'      => 'attachment',
                 'posts.post_status'   => [
                     'open', 'publish', '0'
