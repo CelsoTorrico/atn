@@ -343,9 +343,15 @@ class User extends GenericUser{
         
         //Inicializa modelo
         $metaModel = new UsermetaModel();
+        
+        //Array de usuários
+        $found = [];
 
         //Retornando lista de usuários já conectados
         $friendsList = $this->getFriends([], true);
+        
+        //Array para registrar chaves já utilizadas
+        $usedKey = [];
 
         //Monta query dois parametros, melhorar correspondência
         foreach ($random as $key => $value) {
@@ -353,81 +359,59 @@ class User extends GenericUser{
             //Atribui propriedade atual
             $k = $atributes[$value];
 
-            //Verifica se usuário tem a propriedade definida e com algum valor
-            while ( !property_exists($this, $k) || is_null($this->$k)) {
-                //Verifica a diferença de keys já usadas
-                $ignore = array_diff_key($atributes, $random);  
-                //Reatribui propriedade que exista e contenha valor
-                $k = $atributes[array_rand($ignore)];
-            }
+            //Se já foi utilizado
+            if (in_array($k, $usedKey)) continue;
 
             //Executa função para montagem de query
             $fn = $this->friendsSuggestionsLogic($k);
+            if (is_null($fn) || count($fn) <= 0) continue;
 
-            //Limitar em 20 usuários por vez
+            //Limitar em 10 usuários por key
             $fn['LIMIT'] = 10;
 
             //Adiciona criterio de sugestão
-            $users['success']['criterio'][] = $fn['meta_key'][0];
+            $users['success']['criterio'][] = $fn['meta_key'];
 
-            //Merge arrays de query
-            if(count($found = $metaModel->getIterator($fn)) <= 0){
+            //Adiciona parametro já pesquisado
+            $usedKey[] = $k;
+
+            //Verifica se houve algum resultado
+            $founded = $metaModel->load($fn);
+            if(!$founded){
                 continue;
             }
 
-            //Atribuir apenas ids
-            foreach($found as $key => $i) {
+            //Merge arrays de usuários
+            $found = array_merge($found, $metaModel->dump($fn));
 
-                //Se atual não é valido
-                if(!$found->valid()){
-                    continue;
-                }
-
-                //Retornando array de dados
-                $f = $i->getData();
-
-                try {                    
-                    //Verifica se usuario não foi excluido
-                    if(!$this->model->load(['ID' => $f['user_id']])) continue;
-                    
-                    //Atribui id do usuario encontrado
-                    $id = $i->user_id->ID;
-                } catch (\Throwable $th) {
-                    //throw $th;
-                    continue;
-                }                
-
-                //Se já conectado ou for mesmo que usuário atual, ir proximo
-                if (in_array($id, $friendsList) || $id == $this->ID) {
-                    continue;
-                }
-
-                //Atribui ID ao array
-                $query[$key][] = $id;
-                $user = new self();
-                $users['found'][] = $user->getMinProfile($id); 
-
-            }
-        }  
-
-        //Verifica se houve alguma inserção de ids
-        if(isset($query[0]) && isset($query[1]) && count($query[1]) > 0){
-            
-            //Verifica se algum usuário possui os 2 critérios
-            $a = array_intersect($query[0], $query[1]);
-
-            //Se não usuário repete
-            if(count($a) == 0) {
-                return;
-            }
-
-            //Rearranja ordem para usuários com 2 critérios
-            //TODO: Arrumar essa função
-            array_unshift($users['found'], $a);
         }
 
-        //Divide array para mostrar apenas 3 usuários
-        $users['found'] = array_slice($users['found'], 0, 4, false);
+        $repeteadUser = []; //Adicionar ids usuários a cada looping
+        
+        foreach($found as $key => $i) {
+
+            //Atribuindo Id de usuario encontrado
+            $id = (int) $i['user_id'];    
+
+            //Se já existir, pular para proximo
+            if (in_array($id, $repeteadUser)) continue;
+            
+            //Adicionado lista de repetição
+            $repeteadUser[] = $id;
+            
+            //Verifica se usuário existe
+            if (!$this->check_if_user_exist($id)) continue;
+
+            //Se já conectado ou for mesmo que usuário atual, ir proximo
+            if (in_array($id, $friendsList) || $id == $this->ID) {
+                continue;
+            }
+
+            //Atribui ID ao array
+            $user = $this->getUser($id);
+            $users['found'][] = $user->getMinProfile(); 
+
+        }
         
         //Retornando array de dados estatisticos
         return $users;
@@ -451,10 +435,15 @@ class User extends GenericUser{
             $i=0;
 
             //Verifica se usuário tem a propriedade definida e com algum valor
-            while ( !array_key_exists($k, $this->metadata) || is_null($this->metadata[$k])) {
+            while ($i < 4 && (!array_key_exists($k, $this->metadata) || is_null($this->metadata[$k]))) {
                 //Reatribui propriedade que exista e contenha valor
                 $k = array_rand(array_flip($metadata));
                 $i++;
+            }
+
+            //Se usuário não tiver os parametros, retorna null
+            if (!key_exists($k, $this->metadata)){
+                return [];
             }
 
             //Retorna usermeta do usuário de maneira randomica
@@ -474,7 +463,9 @@ class User extends GenericUser{
             }
 
             //Adiciona key
-            $composing = ['meta_key' => [$key]];
+            $composing = [
+                'meta_key' => $key
+            ];
 
             //Se valor for array
             foreach ($value as $i => $v) {    
@@ -485,17 +476,16 @@ class User extends GenericUser{
                 }
                 
                 //Se for nenhum desse tipo, retorna
-                if (!in_array($i, ['value', 'ID'])) 
-                {    continue;   }
+                if (!in_array($i, ['value', 'ID'])) continue;
 
                 //Removendo espaços no inicio e fim da string
                 $v = preg_replace('/(^\s|\s$)/', '', $v);
 
                 //Adiciona meta_value
-                ($i != 'ID')?  $composing['meta_value[~]'] = ['%'.$v.'%'] :  $composing['meta_value'] = [$v]; 
+                ($i != 'ID' || is_int($i))?  $composing['meta_value[~]'] = ['%'.$v.'%'] :  $composing['meta_value'] = [$v]; 
 
                 //Merge arrays
-                $query = array_merge($query, $composing);
+                $query = $composing;
 
             }
         }
@@ -803,12 +793,12 @@ class User extends GenericUser{
     }
 
     /* Addicionar um único usuário */
-    public function add($data){
+    public function add($data) {
         return $this->register($data);
     } 
 
     /* Atualizar um único usuário */
-    public function update( $data ){
+    public function update( $data ) {
         return $this->register($data, $this->ID);
     } 
     
@@ -823,35 +813,49 @@ class User extends GenericUser{
     }
 
     /* Adicionar um novo usuário ou atualizar existente no sistema */
-    protected function register(Array $data, $id = null):array{
+    protected function register(Array $data, int $id = null):array{
 
-        //Se existir um token via social login
+        //Se existir um token registro via social login
         if(array_key_exists('token', $data) && !empty($data['token'])){
             $this->socialLogin = TRUE;
         }
 
-        //Se for null, necessário senha serem confirmadas
-        if( is_null($id) ){
-            //Verifica se password está correta
+        /** 
+         *  Correção de erro identificado em 08.10.2019
+         *  Verificar se usuário existe antes de editar ou criar
+         * Se $id foi informado para update
+         * */
+        $isUpdate = TRUE; //update de usuario = default
+
+        if (isset($id) && !is_null($id)) {
+            //Verifica se usuário já existe
+            $isUpdate = $this->model->load(['ID' => $id]);
+        } else {  
+            
+            //Se submetido email para inserção verificar se usuário existe ou tem permissão a editar
+            if (key_exists('user_email', $data) && key_exists('error', $r = $this->can_update_user_email($data['user_email']))) {
+                return ['error' => ['register' => $r['error']['user_email']]];
+            }
+
+            //Verifica e válida se senha confere
             if( $data['user_pass'] != $data['confirm_pass'] ){
                 return ['error' => ['confirm_pass' => 'Confirme a senha corretamente.']];
-            }   
-            $isUpdate = FALSE;
+            }
+
+            $isUpdate = FALSE; //criação de usuário
         }
-        else{
-            $isUpdate = TRUE;
-        }  
 
         //Filtrar inputs e validação de dados
         $filtered = $this->verifySentData($data, $isUpdate);
 
         //Se houver algum campo inválidado obrigatório: display_name || user_email
-        if (array_key_exists('error', $filtered) && in_array(['display_name', 'user_email'], $filtered['error'])) {
+        if (key_exists('error', $filtered) 
+        && in_array(['user_email', 'display_name'], array_flip($filtered['error']))) {
             return array('error' => $filtered['error']);
         }
 
         //Verifica se houve envio de senha para gerar hash
-        if(array_key_exists('user_pass', $filtered)){
+        if(array_key_exists('user_pass', $filtered)) {
             //Converte password em hash
             $filtered['user_pass'] = $this->hashPassword($filtered['user_pass']);
         }
@@ -862,9 +866,9 @@ class User extends GenericUser{
         );
 
         //Verifica se usuário já existe no banco de atualiza
-        if (!is_null($id) && $this->model->load(['ID' => $id])) {
+        if ($isUpdate) {
+            
             /** Update Register */
-
             //Verifica se existe objeto para upload
             if (isset($filtered['profile_img']) && is_a($filtered['profile_img'], 'Illuminate\Http\UploadedFile')) {
 
@@ -935,6 +939,7 @@ class User extends GenericUser{
 
             //Retorna campos válidos para tipo de usuário
             $usermetaColumns = $this->onlyUsermetaValid($type);
+            $user = $this->getUser($primaryKey['ID']);
 
             //Percorre array
             foreach ($filtered as $key => $value) {
@@ -945,7 +950,7 @@ class User extends GenericUser{
                 }
 
                 //Registra usermetas enviados
-                $usermetaID[] = $this->register_usermeta($key, $value, $primaryKey['ID']);
+                $usermetaID[] = $user->register_usermeta($key, $value, $primaryKey['ID']);
 
             }
 
@@ -1075,7 +1080,7 @@ class User extends GenericUser{
         if (!is_null($meta) && !$meta->isFresh()) {
 
             //sport e clubes não necessitam de ['value', ''visibility] pois são sempre publicos
-            if (in_array($meta->meta_key, ['sport', 'clubes'])) {
+            if (in_array($meta->meta_key, ['sport', 'clubes', 'type'])) {
                 //Atribui array de IDS
                 $meta->meta_value = $meta_value;
             } else {
@@ -1087,7 +1092,7 @@ class User extends GenericUser{
             $fields = ['meta_value'];
 
             //Verifica se visibilidade foi definida e add novo valor
-            if(isset($meta_value['visibility']) && $meta_value != 0){
+            if(isset($meta_value['visibility']) && $meta_value != 0) {
                 //Verifica se visibilidade enviada é válida
                 $visibility = $this->appVal->check_user_input_visibility($meta_value['visibility']);
                 $meta->visibility = (string) $visibility;

@@ -193,7 +193,7 @@ class UserClub extends User {
         return $result;
     }
 
-    /** Adicionar usuário pertecente a usuário pai = instituto */
+    /** Adicionar usuário pertecente a usuário pai = instituição */
     public function addUser(Array $userData = [], User $user = null) {
 
         //Verifica se ainda é possível adicionar usuários
@@ -247,25 +247,22 @@ class UserClub extends User {
                 'type' => (!empty($userData['type']))? (int) $userData['type'] : self::TYPE_CHILD 
             ]);
 
-            //Adiciona usuário ou atualizar e atribuir resposta
-            $response = $this->add($userData);
+            //Instancia a classe de usuario  
+            $user = new User();        
+            
+            //Adiciona usuário ou atualizar e atribuir resposta  
+            $response = $user->add($userData);
 
             //Se houve algum erro na inserção de usuário
             if(key_exists('error', $response)){
                 return $response;
             }
-
-            //Carrega dados do usuário inserido
-            $user = new User($this->model->toArray());
             
             //Atribuindo ID do usuario
-            $user->ID = $this->model->ID;
+            $user->ID = $user_id = $user->model->ID;
 
             //Setando usermetas para usuário
             setUsermeta($addClubProperties, $user);
-
-            //Atribui ID do usuario
-            $user_id = $user->ID;
 
             //Envia email de bem vindo (apenas usuários criados)
             Login::welcomeEmail($userData['user_email'], $userData['display_name']);  
@@ -498,6 +495,22 @@ class UserClub extends User {
         //privatemetadados para retornar qtd de usuários permitidos
         $max = $this->privatemeta->load(['usertype' => $type['ID'], 'meta_key' => 'max_users']);
         return ($max) ? (int) $this->privatemeta->meta_value : null;
+    }
+
+    /** Checkar se clube pode editar dados do usuário */
+    private function can_edit_user(int $id):bool {
+        
+        //Carrega base e verifica se retorna sucesso
+        $usermeta = new UsermetaModel();
+        
+        //Faz requisição no modelo
+        $query = $usermeta->load([
+            'user_id'  => $id,
+            'meta_key' => 'parent_user'
+        ]);
+
+        //Retorna resposta booleana
+        return $query;
     }
 
 }

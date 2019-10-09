@@ -351,6 +351,9 @@ class Login implements LoginInterface{
 
         //Carregando modelo da base para inserir ID de usuário em url
         // @todo: Melhorar isso, não precisar invocar modelo de usuário novamente
+        if (!is_a($this->model, 'Core\Database\UserModel')){
+            $this->model = new UserModel();
+        }
         $this->model->load(['user_email' => $email]);
         
         //SETUP DE EMAIL

@@ -191,7 +191,13 @@ class ClubController extends Controller
      * 
      * @since 2.1
      */
-    private function search(Request $request, int $page = 0){
+    private function search(Request $request, int $page = 0) {
+
+        //Se usuário não tiver permissão
+        if(key_exists('error', $this->club)) {
+            return response()->json($this->club['error']);
+        }
+
         //Atribui aos parametros de busca a segmentação para apenas usuarios membros da instituição
         $params = array_merge($request->all(), ['parent_user' => (int) $this->club->ID]);
 
