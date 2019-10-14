@@ -75,6 +75,16 @@ class Sport {
         
     }  
 
+    /** Carrega lista de estatíticas de esportes - modelo de campos */
+    function getStats() {
+
+        //Carrega array de atributos dos esportes
+        $sportList = require(__DIR__ . '/stats/StatsModel.php');
+
+        //Retorna
+        return $sportList;
+    }
+
     /** 
      *  Retorna nomeclatura do esporte pelo ID
      * 

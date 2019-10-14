@@ -94,7 +94,10 @@ export class MyProfileStatsComponent {
             });
 
             //Preenche modelo com campos e valores já preenchidos
-            this.stats.value.push(this.compareAndFill());
+            //Carregar campos de estatísticas
+            this.statsList.load().then(() => {
+                this.stats.value.push(this.compareAndFill());
+            });            
 
             //Atribui visibilidade definida
             this.stats.visibility = atributes.metadata.stats.visibility;
@@ -201,6 +204,7 @@ export class MyProfileStatsComponent {
             this.stats.value.push({ [element]: this.statsList.getSportProperty(element) });
 
             //Percorre atributos do atleta e preenche os campos já anteriormente já preenchidos
+            //@todo: Fazer a verificação de usuário tem estatisticas (está gerando null)
             let sportCategory = this.user._user.metadata.stats.value[element]
 
             //percorre objetos e atribui valor

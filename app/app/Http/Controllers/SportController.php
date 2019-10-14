@@ -36,6 +36,13 @@ class SportController extends Controller
         return response()->json( $response );
     }
 
+    function getSportStats(Request $request){
+        
+        $response = $this->sport->getStats();
+        
+        return response()->json( $response );
+    }
+
     function add(Request $request){
 
         //Verifica se campos obrigatórios estão presentes

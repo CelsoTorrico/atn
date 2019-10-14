@@ -108,5 +108,8 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //LISTAGEM DE ESPORTES PARA ALIMENTAR CAMPOS DE CADASTRO
     $router->get('/sports', 'SportController@getAll');
 
+    //LISTAGEM DE ESPORTES PARA ALIMENTAR CAMPOS DE CADASTRO
+    $router->get('/sport-stats', 'SportController@getSportStats');
+
 
 });

@@ -81,7 +81,7 @@
 
         <ion-card-content>
 
-          <div *ngIf="performance.stats != (null || ''), else elseBlock">
+          <div *ngIf="performance && performance.stats != (null || ''), else elseBlock">
             <ion-item-group *ngFor="let sport of performance.stats | mapToIterable">
 
               <h3>{{ sport.key | translate | stringTitlecaseSpecialChars | removeTrace }}</h3>
