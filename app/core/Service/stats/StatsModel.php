@@ -2238,7 +2238,7 @@ return [
 			"V/D" => null
 		]
 	],
-	"fisioculturismo" => [
+	"fisiculturismo" => [
 		"Estatísticas Carreira" => [
 			"1st Lugar" => null,
 			"2st Lugar" => null,

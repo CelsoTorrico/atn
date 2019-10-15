@@ -34,6 +34,7 @@ export class DashboardPage implements OnInit {
     public currentUserData: any = {
         ID: '',
         display_name: '',
+        user_login: '',
         metadata: {
             profile_img: {
                 value: ''
@@ -344,10 +345,12 @@ export class DashboardPage implements OnInit {
     }
 
     //Abre uma nova página de profile
-    goToProfile($user_id: number) {
-        this.navCtrl.push('Profile', {
-            user_id: $user_id
-        });
+    goToProfile($user_id:number, $user_login:string = '') {
+
+        //Atribuir argumentos de usuário na navegação em caso de profile
+        let $data = { user_id: $user_id, user_login: $user_login };
+
+        this.navCtrl.push('Profile', $data);
     }
 
 }

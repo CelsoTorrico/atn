@@ -122,7 +122,7 @@
           </p>
           <p>&nbsp;</p>
 
-          <button ion-button full (click)="goToProfile(null);">{{ "WELCOME_BUTTON_PROFILE" | translate }}</button>
+          <button ion-button full (click)="goToProfile(currentUserData.ID, currentUserData.user_login);">{{ "WELCOME_BUTTON_PROFILE" | translate }}</button>
 
         </ion-card-content>
       </ion-card>
@@ -317,7 +317,7 @@
 
           <ion-scroll direction="y" scrollY="true" scrollbar-y="true" style="height: 400px;">
 
-            <ion-card class="btn-cursor" *ngFor="let i of activity" (click)="goToProfile(i.post_author.ID)">
+            <ion-card class="btn-cursor" *ngFor="let i of activity" (click)="goToProfile(i.post_author.ID, i.post_author.user_login)">
 
               <ion-card-content>
                 <p>
