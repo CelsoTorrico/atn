@@ -172,7 +172,8 @@ export class ProfileComponent {
 
     if (atributes.type != null) this.type = atributes.type.ID;
     if (atributes.sport != null) this.sport = atributes.sport;
-    if (atributes.clubs != null) this.clubes = atributes.clubs;
+    
+    this.clubes = atributes.clubs;
 
     //Apenas para instituições
     if (this.type > 3) {

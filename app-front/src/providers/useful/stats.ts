@@ -36,8 +36,6 @@ export class StatsList {
     load():Promise<void> {
         return this.getSportStats().then((resp: any) => {
 
-			console.log(resp);
-
 			this.sportList = resp;
             //Tabela de Esportes com ID e nome
             /*this.table = resp;

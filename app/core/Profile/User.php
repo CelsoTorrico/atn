@@ -1020,7 +1020,7 @@ class User extends GenericUser{
 
         /*Se valor for false (validação não permitida), 
         não registrar usermeta e encerrar execução da função */
-        if($meta_value == false){
+        if($meta_value == false && !in_array($meta_key, ['sport', 'clubes']) ){
             return;
         }
 
@@ -1857,15 +1857,12 @@ class User extends GenericUser{
         $exist = UserClub::isClubExist($clubID, $user_id);
 
         //Verifica se existe e retorna boolean
-        if($exist){
-            
-            //Envia notificação
-            $currentUser = new UserClub();
-            $notify = new Notify($currentUser->get($clubID));
+        if($exist) {
+            //Enviar notificação para clube
+            $userClub = $this->getUser($clubID);
+            $notify = new Notify($userClub);
             if ($notifyClub) $notify->add(3, $clubID, $user_id);
 
-        }else {
-            return;
         } 
 
         //Retorna marcação de informação não verificada

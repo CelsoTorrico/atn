@@ -65,6 +65,11 @@ export class Notify {
       if(Object.keys(resp).length < 0){
         return;
       }
+
+      //Se não houver notificações
+      if(resp.error != undefined) {
+        return;
+      }
         
       //Retorna array de timelines
       for (const element of resp.notifyList) {

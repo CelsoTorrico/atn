@@ -124,7 +124,7 @@ export class MyProfileStatsComponent {
     defineTypeInput($name: string) {
 
         //Verificar se tipo de campo deve ser
-        let string = $name.search(/(Evento|Especialidade|Resultado|Oponente|Grupo|Time)/); //text
+        let string = $name.search(/(Evento|Categoria|Especialidade|Resultado|Oponente|Grupo|Time|Tipo\/Partida|Barco)/); //text
         let date = $name.search(/Data/); //date
 
         //se encontrou string retorna tipo
@@ -205,7 +205,7 @@ export class MyProfileStatsComponent {
 
             //Percorre atributos do atleta e preenche os campos já anteriormente já preenchidos
             //@todo: Fazer a verificação de usuário tem estatisticas (está gerando null)
-            let sportCategory = this.user._user.metadata.stats.value[element]
+            let sportCategory = (this.user._user.metadata.stats.value)? this.user._user.metadata.stats.value[element] : {};            
 
             //percorre objetos e atribui valor
             for (const key in sportCategory) {

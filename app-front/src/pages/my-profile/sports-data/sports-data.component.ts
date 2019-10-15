@@ -172,7 +172,7 @@ export class MyProfileSportsComponent {
     savedSportList() {
         //Define ID's dos esportes selecionados
         this.$sportTable.forEach(element => {
-            this.setChoosed(element, this.sport, 'sport_name', '$sportsSelected');
+            this.setChoosed([null, element[1]], this.sport, 'sport_name', '$sportsSelected');
         });
     }
 
@@ -196,7 +196,7 @@ export class MyProfileSportsComponent {
             //Compara valores selecionados com tabela de esportes
             if (element[compare] == item[1]) {
                 //Atribui valor a array
-                this[selected].push(element[compare]);
+                this[selected].push({display: element[compare]});
                 break;
             }
         }

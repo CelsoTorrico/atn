@@ -10,9 +10,8 @@ return [
 			"3st Lugar" => null
 		],
 		"Estatística/Temporada" => [
-			[
-				"Tipo/Partida" => "V-D" //Formato Válido 99-9
-			],
+			"Tipo/Partida" => null,
+			"V-D" => null,
 			"Overall Vitórias/Derrotas" => null
 		],
 		"Estatística/Partida" => [
@@ -904,9 +903,8 @@ return [
 			"3st Lugar" => null
 		],
 		"Estatística/Temporada" => [
-			[
-				"Tipo/Partida" => "V-D"
-			],
+			"Tipo/Partida" => null,
+			"V-D" => null,
 			"Overall Vitórias/Derrotas" => null
 		],
 		"Estatística/Partida" => [
@@ -933,9 +931,8 @@ return [
 			"3st Lugar" => null
 		],
 		"Estatística/Temporada" => [
-			[
-				"Tipo/Partida" => "V-D"
-			],
+			"Tipo/Partida" => null,
+			"V-D" => null,
 			"Overall Vitórias/Derrotas" => null
 		],
 		"Estatística/Partida" => [
@@ -2221,9 +2218,8 @@ return [
 			"3st Lugar" => null
 		],
 		"Estatística/Temporada" => [
-			[
-				"Tipo/Partida"=> "V-D"
-			],
+			"Tipo/Partida" => null,
+			"V-D" => null,
 			"Overall Vitórias/Derrotas" => null
 		],
 		"Estatística/Partida" => [
