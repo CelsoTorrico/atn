@@ -19,15 +19,9 @@ class Cors
         $http_origin = ''; //Inicializando variavel vazia
         $match = [];
 
-        if(isset($_SERVER['HTTP_ORIGIN']) && !empty($_SERVER['HTTP_ORIGIN'])) {
-            //Atribuindo servidor de requisição
-            $http_origin = $_SERVER['HTTP_ORIGIN']; 
-        } else if(isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
+        if(isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
             //Atribuindo servidor de requisição
             $http_origin = $_SERVER['HTTP_REFERER'];
-        } else{
-            //Atribuindo servidor de requisição
-            $http_origin = $_SERVER['REQUEST_URI'];
         }
         
         //Remove ponto inicial no domínio (se existir)
