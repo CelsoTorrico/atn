@@ -25,10 +25,10 @@ class Cors
         }
         
         //Remove ponto inicial no domínio (se existir)
-        $domain = preg_replace('/^\./', '', env('APP_DOMAIN'), 1);
+        //$domain = preg_replace('/^\./', '', env('APP_DOMAIN'), 1);
 
         //Montando regex para aprovação de domínios
-        $regex = '/http(s)?:\/\/((app|api|admin).)?'. $domain .'/'; 
+        $regex = '/http(s)?:\/\/(app|api|admin)?'. env('APP_DOMAIN') .'/'; 
 
         if (!empty($http_origin) && preg_match($regex, $http_origin, $match)) {
                 $origin = $match[0];
