@@ -1469,7 +1469,7 @@ class User extends GenericUser{
         $allclubs = $model->getIterator(['ID' => $ids]);
 
         //Se nenhum clube foi encontrado
-        if ($allclubs->count() <= 0) {
+        if (!is_array($allclubs) || $allclubs->count() <= 0) {
             return null;
         }
 
