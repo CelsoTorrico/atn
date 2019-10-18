@@ -19,7 +19,7 @@ class Cors
         $http_origin = ''; //Inicializando variavel vazia
         $match = [];
 
-        if(isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
+        if(isset($_SERVER['HTTP_REFERER'])) {
             //Atribuindo servidor de requisição
             $http_origin = $_SERVER['HTTP_REFERER'];
         }
