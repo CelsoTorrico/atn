@@ -21,9 +21,13 @@ class Cors
 
         if(isset($_SERVER['HTTP_ORIGIN'])) {
             $http_origin = $_SERVER['HTTP_ORIGIN']; //Atribuindo servidor de requisição
-        }        
+        }
+        
+        //Remove ponto inicial no domínio (se existir)
+        $domain = preg_replace('/^\./', '', env('APP_DOMAIN'), 1);
 
-        $regex = '/http(s)?:\/\/(app|api|admin)?'. env('APP_DOMAIN') .'/'; 
+        //Montando regex para aprovação de domínios
+        $regex = '/http(s)?:\/\/((app|api|admin).)?'. $domain .'/'; 
 
         if (!empty($http_origin) && preg_match($regex, $http_origin, $match)) {
                 $origin = $match[0];
