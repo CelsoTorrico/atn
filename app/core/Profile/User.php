@@ -887,11 +887,17 @@ class User extends GenericUser{
             //Preenche array com dados enviados
             $userData = array_only($filtered, $userColumns);
 
-            //Preenche colunas com valores de array
-            $this->model->fill($userData); 
+            //Se houver dados padrões a atualizar
+            if(is_array($userData) && count($userData) > 0) {
+                //Preenche colunas com valores de array
+                $this->model->fill($userData); 
 
-            //Atualiza os dados no banco informado as colunas
-            $result = $this->model->update(array_keys($userData));
+                //Atualiza os dados no banco informado as colunas
+                $this->model->update(array_keys($userData));
+            }            
+
+            //Define true para continuar inserção de dados
+            $result = true;
 
         } else {
             

@@ -78,7 +78,7 @@ class Authenticate
                     env('APPCOOKIE'), 
                     $control->getToken(), 
                     '/', 
-                    'localhost', //env('APP_DOMAIN'), 
+                    preg_replace('/^\./', '', env('APP_DOMAIN'), 1), 
                     env('SSL_ENABLED'),
                     false, 
                     false, 
