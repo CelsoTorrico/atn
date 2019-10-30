@@ -989,6 +989,7 @@ class User extends GenericUser{
             'api_key'       => env('AFFINIBOX_KEY'),
             'secret_token'  => env('AFFINIBOX_SECRET'),
             'email'         => $this->user_email,
+            'name'          => $this->display_name,
             'password'      => $this->model->user_pass
         ];
 
@@ -1031,10 +1032,10 @@ class User extends GenericUser{
         }
 
         //Inicializa modelo
-        $this->metaModel = new UsermetaModel();
+        $meta = new UsermetaModel();
 
         //Retorna instancia de modelo
-        $meta = $this->metaModel->getInstance(['user_id' => $user_id,'meta_key' => $meta_key]);
+        $meta->load(['user_id' => $user_id,'meta_key' => $meta_key]);
 
         //Enviar notificação para clube e adicionar marcador 
         if($check && is_array($meta_value) && $meta_key == 'clubes') {

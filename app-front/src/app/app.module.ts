@@ -1,3 +1,4 @@
+import { ZipcodeService } from './../providers/zipcode/zipcode';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieService } from 'ng2-cookies';
 import { DashboardPageModule } from './../pages/dashboard/dashboard.module';
@@ -182,6 +183,7 @@ const deeplinkconfig:DeepLinkConfig = {
     VisibilityList,
     Cookie,
     CookieService,
+    ZipcodeService,
     PushNotifyService,
     { provide: Settings, useClass: IonicErrorHandler, useFactory: provideSettings, deps: [Storage] },
     // Keep this to enable Ionic's runtime error handling during development

@@ -99,6 +99,9 @@ export class DashboardPage implements OnInit {
         //Habilitar popup para permissão de notificação
         this.push.requestDesktopNotificationPermission();
 
+        //Retorna ultimas atividades
+        this.getLastActivity();
+
     }
 
     //Função que inicializa
@@ -127,8 +130,8 @@ export class DashboardPage implements OnInit {
 
         //Mostrar botao de reloading em tempos em tempos
         this.interval = setInterval(() => {
-            this.btn_refresh = true;
-        }, 1000 * 30);
+            this.doRefresh();            
+        }, 1000 * 60);
 
     }
 
@@ -143,46 +146,35 @@ export class DashboardPage implements OnInit {
 
         //Carrega dados das infos do painel
         this.setViews();
-
-        //Retorna ultimas atividades
-        this.getLastActivity();
     }
 
     //Recarrega dados
     doRefresh($refreshEvent = null) {
 
-        //Carregando
-        const loading = this.loading.create({
-            content: this.loading_placeholder
-        });
+        this.user.getUserData().then((resp:any) => {
 
-        //Carrega loading
-        loading.present().then(() => {
-            
-            this.user.getUserData().then((resp) => {
+            if (!resp) return;
 
-                if (!resp) return;
-    
-                //Recarregando dados da dashboard
-                this.setViews();
-                this.getLastActivity();
-                this.timeline.reload();
-                this.notify.query();
-    
+            //Recarregando dados da dashboard
+            this.setViews();
+            this.timeline.loadLasts();
+            this.notify.query();
+            this.getLastActivity(); 
+
+            if ($refreshEvent != null) {
+                //Fecha loading
+                $refreshEvent.complete();
+
                 //Limpa interval e esconde botão
                 clearInterval(this.interval);
-                this.btn_refresh = false;
 
-                if ($refreshEvent != null) $refreshEvent.complete();
-                loading.dismiss();
-    
+                //Mostrar botao de reloading em tempos em tempos
                 this.interval = setInterval(() => {
-                    this.btn_refresh = true;
-                }, 1000 * 30);
-    
-            });
+                    this.doRefresh();           
+                }, 1000 * 60);
+            }
 
-        });
+        });        
 
     }
 
@@ -209,9 +201,10 @@ export class DashboardPage implements OnInit {
         }
     }
 
+    //Carrega as últimas atividades
     private getLastActivity() {
         //Carrega as últimas atividades
-        this.lastActivity.load().then((res) => {
+        this.lastActivity.load().then(() => {
             this.activity = this.lastActivity.list;
         })
     }

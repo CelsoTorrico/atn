@@ -80,13 +80,6 @@
       refreshingSpinner="circles" [refreshingText]="'LOADING' | translate"></ion-refresher-content>
   </ion-refresher><!-- Puxando a tela -->
 
-  <p class="refresh" text-center *ngIf="btn_refresh">
-    {{ 'REFRESH_TEXT' | translate }}
-    <button ion-button small outline mr-15 (click)="doRefresh();">
-      {{ 'REFRESH_BUTTON' | translate }}
-    </button>
-  </p><!-- Botão que aparece a cada 30 segundos -->
-
   <ion-grid fixed>
 
     <h1 text-center no-margin margin-top margin-horizontal class="title">{{ "WELCOME_LOGIN" | translate }}</h1>

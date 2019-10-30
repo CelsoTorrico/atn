@@ -2,7 +2,7 @@
   <ion-col col-lg-2 col-12>
     <div class="statsGeneralData">
 
-      <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('generalData');">
+      <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editGeneralStats();"> 
         <ion-icon item-start name="create"></ion-icon>
         {{ "EDIT" | translate }}
       </button>
@@ -29,7 +29,7 @@
         <ion-card-header>
           <h2>{{ "IMPORTANT_ACHIEVEMENTS" | translate }}</h2>
 
-          <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('achievementsData');">
+          <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editAchievements();">
             <ion-icon item-start name="create"></ion-icon>
             {{ "EDIT" | translate }}
           </button>
@@ -72,7 +72,7 @@
         <ion-card-header>
           <h2>{{ "SPORTS_STATS" | translate }}</h2>
 
-          <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editData('statsData');">
+          <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)=" editSportsStats();">
             <ion-icon item-start name="create"></ion-icon>
             {{ "EDIT" | translate }}
           </button>

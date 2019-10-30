@@ -23,7 +23,7 @@
         </ion-list-header>
 
         <tag-input margin [(ngModel)]="$sportsSelected" [addOnBlur]="false" [onlyFromAutocomplete]="true"
-          placeholder="{{ 'WRITE_SPORT' | translate }}" name="sportSelected">
+          placeholder="{{ 'WRITE_SPORT' | translate }}" secondaryPlaceholder="{{ 'WHICH_SPORT' | translate }}" name="sportSelected">
           <tag-input-dropdown [autocompleteItems]="$sportList" [matchingFn]="tagInputChange" ></tag-input-dropdown>
         </tag-input>
 
@@ -40,7 +40,7 @@
         </ion-list-header>
 
         <tag-input margin [(ngModel)]="$clubsSelected" [addOnBlur]="false" [onlyFromAutocomplete]="true"
-          placeholder="{{ 'WRITE_CLUB' | translate}}" name="clubsSelected">
+          placeholder="{{ 'WRITE_CLUB' | translate}}" secondaryPlaceholder="{{ 'WHICH_CLUB' | translate }}" name="clubsSelected">
           <tag-input-dropdown [autocompleteItems]="$clubsList"></tag-input-dropdown>
         </tag-input>
 

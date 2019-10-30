@@ -1,7 +1,9 @@
+import { MyProfileAchievementsComponent } from './../../my-profile/achievements-data/achievements-data.component';
+import { MyProfileGeneralStatsComponent } from './../../my-profile/general-stats-data/general-stats-data.component';
 import { MyProfileCalendarComponent } from './../../my-profile/calendar-data/calendar-data.component';
 import { MyProfileAddMemberDataComponent } from './../../my-profile/team-data/team-data.component';
 import { MyProfileVideosComponent } from './../../my-profile/videos-data/videos-data.component';
-import { Component, Input } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { NavController, ToastController, ModalController, Alert, AlertController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -21,6 +23,8 @@ export class ProfileComponent {
   @Input() user: User
 
   @Input() type: number = null;
+
+  @Output() updateProfileEmiter = new EventEmitter();
 
   isLogged: boolean = false;
 
@@ -99,7 +103,9 @@ export class ProfileComponent {
     videosData:   MyProfileVideosComponent,
     statsData:    MyProfileStatsComponent,
     teamData:     MyProfileAddMemberDataComponent,
-    calendarData: MyProfileCalendarComponent
+    calendarData: MyProfileCalendarComponent,
+    generalData: MyProfileGeneralStatsComponent,
+    achievementsData: MyProfileAchievementsComponent
   }
 
   /** Membros paginação */
@@ -139,7 +145,7 @@ export class ProfileComponent {
     this.user.getUserData().then((resp:boolean) => {
         
       if (!resp) return;
-      this.loadUserLoadData(this.user._user, function(){
+      this.loadUserLoadData(this.user._user, function() {
         console.log('Dados recarregados!')
       });
 
@@ -344,10 +350,16 @@ export class ProfileComponent {
         position: "bottom"
       });
 
+      //Mostrar toaster
       toast.present();
 
       //Executar função
       $fn();
+
+      //Emite evento de que perfil foi atualizado
+      this.updateProfileEmiter.emit({
+        'update': true
+      });
 
     });
 

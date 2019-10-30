@@ -1,7 +1,9 @@
+import { DomSanitizer } from '@angular/platform-browser';
+import { Api } from './../../../providers/api/api';
+import { ProfileComponent } from './profile.component';
 import { MyProfileStatsComponent } from './../../my-profile/stats-data/stats-data.component';
-import { ModalController, ToastController } from 'ionic-angular';
-import { Component, Input } from '@angular/core';
-import { User } from '../../../providers';
+import { ModalController, ToastController, LoadingController, NavController, AlertController } from 'ionic-angular';
+import { Component } from '@angular/core';
 import { StatsList } from '../../../providers/useful/stats';
 import { MyProfileGeneralStatsComponent } from '../../my-profile/general-stats-data/general-stats-data.component';
 import { MyProfileAchievementsComponent } from '../../my-profile/achievements-data/achievements-data.component';
@@ -14,10 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 
   ]
 })
-export class StatsComponent {
-
-  @Input() user: User
-  @Input() type: number = null;
+export class StatsComponent extends ProfileComponent {
 
   isLogged: boolean = false;
 
@@ -34,17 +33,20 @@ export class StatsComponent {
     stats: null
   }
 
-  private ListComponents: any = {
-    generalData: MyProfileGeneralStatsComponent,
-    achievementsData: MyProfileAchievementsComponent,
-    statsData: MyProfileStatsComponent
-  }
+  reloadStats:any;
 
   constructor(
-    private modalCtrl: ModalController,
-    public statsList: StatsList,
-    private toastCtrl: ToastController,
-    public translateService: TranslateService) {
+    public statsList: StatsList,    
+    public navCtrl: NavController,
+    public api: Api,
+    public toastCtrl: ToastController,
+    public alert: AlertController,
+    public modalCtrl: ModalController,
+    public domSanitizer: DomSanitizer,
+    public translateService: TranslateService,
+    private loadingCtrl: LoadingController) {
+
+    super(navCtrl, api, toastCtrl, alert, modalCtrl, domSanitizer, translateService);
 
     this.translateService.setDefaultLang('pt-br');
 
@@ -52,16 +54,14 @@ export class StatsComponent {
 
   //Retorna
   ngOnInit() {
-    //Retorna s estatisticas do usuario
+    
+    //Atribuindo metódo a variavel
+    this.reloadStats = function() { 
+      console.log('teste de stats');
+      this.getStats();
+    };
+
     this.getStats();
-  }
-
-  ngAfterViewChecked() {
-
-  }
-
-  loadUserLoadData(userdata: any, $fn = () => { }) {
-
   }
 
   //Retorna estatisticas
@@ -88,62 +88,25 @@ export class StatsComponent {
     });
   }
 
-  //Abrir modal passando ID do usuário para alteração
-  editMember($user_id: number) {
-    this.editData('teamData', $user_id);
+  //Editar dados gerais e recarregar dados após atualização
+  editGeneralStats() {
+    this.editData('generalData', undefined, () => { 
+      this.getStats();
+    });    
   }
 
-  //Abrir modal com dados para atualizar perfil
-  editData($component: string, $data: any = undefined) {
-
-    //Criar modal do respectivo component
-    let modal = this.modalCtrl.create(this.ListComponents[$component], { data: $data });
-    modal.onDidDismiss((data) => {
-
-      if (data == null) {
-        return;
-      }
-
-      if (Object.keys(data).length <= 0) {
-        return;
-      }
-
-      if (data.error != undefined) {
-        return;
-      }
-
-      //Retorna mensagem proveninete do servidor
-      let responseText = data.success[Object.keys(data.success)[0]];
-
-      //Mostrar resposta
-      let toast = this.toastCtrl.create({
-        message: responseText,
-        duration: 3000,
-        position: "bottom"
-      });
-
-      toast.present();
-
-    });
-
-    //Inicializar modal
-    modal.present();
-
+  //Editar conquistas e recarregar dados após atualização
+  editAchievements() {
+    this.editData('achievementsData', undefined, () => { 
+      this.getStats();
+    });    
   }
 
-  private subsChar(c) {
-
-    let chars = {
-      'Š': 'S', 'š': 's', 'Ž': 'Z', 'ž': 'z', 'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Æ': 'A', 'Ç': 'C', 'È': 'E', 'É': 'E',
-      'Ê': 'E', 'Ë': 'E', 'Ì': 'I', 'Í': 'I', 'Î': 'I', 'Ï': 'I', 'Ñ': 'N', 'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O', 'Ø': 'O', 'Ù': 'U',
-      'Ú': 'U', 'Û': 'U', 'Ü': 'U', 'Ý': 'Y', 'Þ': 'B', 'ß': 'Ss', 'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a', 'æ': 'a', 'ç': 'c',
-      'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e', 'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i', 'ð': 'o', 'ñ': 'n', 'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o',
-      'ö': 'o', 'ø': 'o', 'ù': 'u', 'ú': 'u', 'û': 'u', 'ý': 'y', 'þ': 'b', 'ÿ': 'y',
-      ' ': '-'
-    };
-
-    return chars[c];
+  //Editar estatisticas de esportes e recarregar dados após atualização
+  editSportsStats() {
+    this.editData('statsData', undefined, () => { 
+      this.getStats();
+    });    
   }
-
 
 }

@@ -197,6 +197,12 @@ export class TimelineSingle {
 
   //Abre uma nova página de profile
   goToProfile($author:any) {
+    
+    //Se post for do administrador não redirecionar para usuário
+    if($author.type == 'administrator') {
+      return;
+    }
+
     this.navCtrl.push('Profile', {
       user_id: $author.ID,
       user_login: $author.user_login

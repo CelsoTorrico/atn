@@ -8,6 +8,8 @@ use Core\Service\Comment as Comment;
 use Core\Profile\User;
 
 use Closure;
+use DateTime;
+use DateTimeZone;
 
 class TimelineController extends Controller
 {
@@ -37,6 +39,21 @@ class TimelineController extends Controller
 
         $response = $this->timeline->getAll($paged);
 
+        return response()->json( $response );
+    }
+
+    function getAllLast(Request $request) {
+
+        //Criando data atual para filtragem de posts após determinada data
+        $current_time = ($request->has('current_time') && $request->filled('current_time'))? date_create($request->input('current_time')) : date_create();
+
+        //Montando filtro para requisição na database
+        $filter = ['post_date[>]' => $current_time->format('Y-m-d H:i:s')];
+
+        //Faz requisição dentro da classe passando o parametro
+        $response = $this->timeline->getAll(0, $filter);
+
+        //Retorna último item
         return response()->json( $response );
     }
 

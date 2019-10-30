@@ -81,19 +81,11 @@ class Timeline {
 
     }
 
-    /* Retorna lista de timeline */
+    /**
+     * 29-10-2019 - Pelo grande volume de cadastros e utilização da Plataforma, vamos liberar a TIMELINE GERAL, para todos  e não apenas para quem está selecionado como PERFIL à Seguir. Discutimos aqui para que desta forma, dê uma melhor impressão de conteúdo  logo no PRIMEIRO ACESSO. 
+     * Retorna lista de timeline 
+     * */
     function getAll(int $paged = 0, array $filter = []) {     
-
-        //Retorna lista de usuário que está conectado
-        $following = [];
-        $follow = new Follow($this->currentUser);
-        $following = $follow->getFollowing(true);
-
-        /**
-         * Atribuir posts dos administradores AtletasNow
-         * @since 2.1
-         **/ 
-        $following[] = '0';
 
         //Qtd de itens por página
         $perPage = 24;
@@ -118,6 +110,128 @@ class Timeline {
          * @since 2.1
          */
         if(is_array($this->currentUser->clubs) && count($this->currentUser->clubs) > 0) {
+            foreach ($this->currentUser->clubs as $key => $value) {
+                if (!key_exists('ID', $value)) continue;
+                //Adiciona ao filtro para localizar posts de clubes que pertence
+                $visibilityPosts['postmeta.meta_value'][] = (int) $value['ID'];
+            }
+        }
+
+        //Retorna todos posts de feed baseado nas conexões
+        $db = $this->model->getDatabase();
+
+        //Ids de usuário a não exibir posts
+        $not_user_ids = [$this->currentUser->ID];
+
+        $allTimelines = $db->select('posts',  
+            ['[><]postmeta' => ['ID' => 'post_id']],
+            ['posts.ID', 'postmeta.meta_key', 'postmeta.meta_value'], 
+            array_merge($filter,[ 
+                'posts.post_author[!]' => $not_user_ids,
+                'posts.post_type'      => static::TYPE,
+                'posts.post_status'    => [
+                    'open', 'publish', '0'
+                ],
+                'OR'     => $visibilityPosts,               
+                'LIMIT'  => $limit,
+                'ORDER'  => ['posts.post_date' => 'DESC'],
+                'GROUP'  => 'posts.ID'
+            ]));
+        
+        //Retorna resposta
+        if ( !is_null($allTimelines) && count($allTimelines) > 0) {
+
+            //Array para retornar dados
+            $timelines = [];
+            
+            foreach ($allTimelines as $key => $item) {
+
+                //Carrega modelo
+                $this->model->load(['ID' => $item['ID']]);
+
+                //Atribui dados do modelo
+                $timelineData = $this->model->getData();
+
+                //Verifica se usuário tem permissão de enxergar post
+                if (!$this->isVisibility($timelineData)) {
+                    continue;
+                }
+
+               //Inicializa classe de comentários passando ID do POST
+                $comment = new Comment($timelineData['ID']);
+
+                //Combina array timeline e comentários
+                $timeline = array_merge($timelineData, [
+                    'quantity_comments' => $comment->getQuantity(),
+                    'has_like' => $this->like->isPostLiked($timelineData['ID'])         
+                ]); 
+
+                //Atribuindo valor de visibilidade
+                $timeline[$item['meta_key']] = $item['meta_value'];
+
+                //Adiciona dados básico do autor do post timeline
+                $timeline['post_author'] = (new User)->getMinProfile($timelineData['post_author']);
+
+                //Se item tiver foto anexada
+                if ($attach = $this->model->getInstance(['post_parent' => $timelineData['ID'], 'post_type' => 'attachment'])) {
+                    $timeline['attachment'] = $attach->guid;
+                }
+
+                //Adiciona ao array de items
+                array_push($timelines, $timeline);
+                
+            }
+
+            //Retorna array de timelines
+            return $timelines;
+        } 
+        else{
+            //Retorna erro
+            return ['error' => ['timeline', 'Nenhum item a exibir.']];
+        }   
+        
+    }
+
+    /**
+     * Backup - Retorna lista de timelines baseado nos seguidores e etc.
+     * Retorna lista de timeline 
+     * */
+    /*function getAll(int $paged = 0, array $filter = []) {     
+
+        //Retorna lista de usuário que está conectado
+        $following = [];
+        $follow = new Follow($this->currentUser);
+        $following = $follow->getFollowing(true);
+
+        /**
+         * Atribuir posts dos administradores AtletasNow
+         * @since 2.1
+         **/ 
+        /*$following[] = '0';
+
+        //Qtd de itens por página
+        $perPage = 24;
+
+        //A partir de qual item contar
+        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
+
+        //Paginação de timeline
+        $limit = [$initPageCount, $perPage];
+
+        //Atribuir todos itens de timeline
+        $allTimelines   = [];
+
+        //Localiza posts com determinada visibilidade
+        $visibilityPosts = [
+            'postmeta.meta_key'      => 'post_visibility',
+            'postmeta.meta_value'    => [(int) $this->currentUser->type['ID']]
+        ];
+
+        /**
+         * Atribuir posts de clubes na requisição de timelines
+         * @since 2.1
+         */
+        /*if(is_array($this->currentUser->clubs) && count($this->currentUser->clubs) > 0) {
             foreach ($this->currentUser->clubs as $key => $value) {
                 if (!key_exists('ID', $value)) continue;
                 //Adiciona ao filtro para localizar posts de clubes que pertence
@@ -208,7 +322,7 @@ class Timeline {
             return ['error' => ['timeline', 'Nenhum item a exibir.']];
         }   
         
-    }  
+    }*/ 
 
     /* Retorna lista de timeline */
     function getUserAll(int $currentViewUser, int $paged = 0){     

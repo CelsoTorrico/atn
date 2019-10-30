@@ -11,8 +11,8 @@
         </ng-template>
       </ion-avatar>
 
-      <h2>{{ currentTimeline.post_author.display_name}}</h2>
-      <h3>{{ currentTimeline.post_date | date }}</h3>
+      <h2 class="btn-cursor" (click)="goToProfile(currentTimeline.post_author)">{{ currentTimeline.post_author.display_name}}</h2>
+      <h3 class="btn-cursor" (click)="goToProfile(currentTimeline.post_author)">{{ currentTimeline.post_date | date }}</h3>
     </ion-item>
   </ion-list>
 

@@ -29,6 +29,8 @@ export class Timeline {
   //Dados de usuário a injectar em componente filho
   public currentUser:any;
 
+  private $lastItemDatetime:string;
+
   constructor(
     public api: Api,
     public user:User,
@@ -73,18 +75,23 @@ export class Timeline {
         return;
       }
 
+      //Se houve erro
       if(resp.error){
-        $fn();
+        $fn(); //função personalizada
         return;
       }
+
+      //Atribui datetime de item mais novo requisitado pela query
+      //Será usado na atualização automática
+      this.$lastItemDatetime = resp[0].post_date;
         
       //Intera sobre elementos
-      resp.forEach(element => {
+      for (const element of resp) {
         //Retorna array de timelines
         this.currentItems.push(element);
-      });         
+      }       
       
-      $fn(); 
+      $fn();  //função personalizada
 
     }, err => { 
         return; 
@@ -123,6 +130,38 @@ export class Timeline {
     this.$paged = 1;
     this.currentItems = [];
     this.query();
+  }
+
+  //Retorna a lista de ultimas timelines baseadas no tempo
+  loadLasts() {    
+    
+    this.api.post(this.$getTimelineUrl + '/lasts', {
+      current_time : this.$lastItemDatetime
+    }).subscribe((resp:any) => {
+       
+      //Se não existir items a exibir
+      if(Object.keys(resp).length <= 0){
+        return;
+      }
+
+      //Retorna se houve erro na requisição
+      if(resp.error){
+        return;
+      }
+
+      //Atribui datetime de item mais novo requisitado pela query
+      //Será usado na atualização automática
+      this.$lastItemDatetime = resp[0].post_date;
+        
+      //Intera sobre elementos
+      for (const element of resp.reverse()) {
+        //Retorna array de timelines
+        this.currentItems.unshift(element);
+      }
+
+    }, err => { 
+        return; 
+    });
   }
 
   //Carrega mais items de timeline via infinescroll

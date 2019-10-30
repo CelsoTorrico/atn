@@ -36,11 +36,13 @@
             {{ gender | translate }}</li>
           <li *ngIf="telefone"><strong>{{ "TELEPHONE" | translate }}</strong>
             {{ telefone }}</li>
-          <li class="address" *ngIf="address">
+          <li class="address">
             <strong>{{ "ADDRESS" | translate}}</strong>
-            <span>{{ address }}</span><span>{{ neighbornhood }}</span>
-            <span>{{ city }}</span><span>{{ state }}</span>
-            <span>{{ country }}</span>
+            <span *ngIf="address">{{ address }}</span>
+            <span *ngIf="neighbornhood">{{ neighbornhood }}</span>
+            <span *ngIf="city">{{ city }}</span>
+            <span *ngIf="state">{{ state }}</span>
+            <span *ngIf="country">{{ country }}</span>
           </li>
         </ul>
 

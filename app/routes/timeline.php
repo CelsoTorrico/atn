@@ -16,6 +16,7 @@ $router->group(['prefix' => 'timeline'], function () use ($router) {
     $router->get('/', 'TimelineController@getAll');
     $router->get('/paged/{paged:[0-9]+}', 'TimelineController@getAll');
     $router->get('/user/{user_id:[0-9]+}[/paged/{paged:[0-9]+}]', 'TimelineController@getUserAll'); //Outros Usuários
+    $router->post('/lasts', 'TimelineController@getAllLast'); //Retornar posts após determinado horário
 
     //Adiciona timeline
     $router->post('/', 'TimelineController@add');

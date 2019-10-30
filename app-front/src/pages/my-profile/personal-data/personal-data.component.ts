@@ -1,3 +1,4 @@
+import { ZipcodeService } from './../../../providers/zipcode/zipcode';
 import { Component } from '@angular/core';
 import { NavController, ToastController, ViewController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -119,6 +120,7 @@ export class MyProfilePersonalDataComponent {
         public toastCtrl: ToastController,
         public viewCtrl: ViewController,
         public translateService: TranslateService,
+        public zipcodeService: ZipcodeService,
         statesList: BrazilStates,
         careerList: CareerList,
         visibilityList: VisibilityList) {
@@ -170,6 +172,32 @@ export class MyProfilePersonalDataComponent {
 
         });
         
+    }
+
+    //Fazer pesquisa de CEP (API) ao preencher todos numeros
+    queryZipcode($event) {
+        let input       = $event.target;
+        let validacao   = /^[0-9]{5}-[0-9]{3}/i;
+        let regex       = input.value.search(validacao); 
+    
+        if (regex == 0) {
+            this.zipcodeService.setCEP(input.value);
+            this.zipcodeService.getAdressData().subscribe((data:any) => {
+
+                //Se houve erro no retorno
+                if (data.erro  != undefined) {
+                    return this.toastCtrl.create({
+                        message: "CEP não válido. Preencha corretamento o cep de seu endereço.",
+                        duration: 2000
+                    }).present();
+                }
+
+                this.address.value       = data.logradouro;
+                this.neighbornhood.value = data.bairro;
+                this.city.value          = data.localidade;
+                this.state.value         = data.uf; 
+            })
+        }
     }
 
     //Salvar dados do formulário

@@ -10,7 +10,6 @@ import { StatsComponent } from './profile-components/stats.component';
 import { ClubComponent } from './profile-components/club.component';
 import { Meta } from '@angular/platform-browser';
 import { environment } from '../../environments/environment.prod';
-import { window } from 'rxjs/operator/window';
 
 @IonicPage()
 @Component({
@@ -227,6 +226,11 @@ export class ProfilePage {
   changeComponentView($event) {
     //Atribui dado proveninete da classe filho
     this.loadComponent(this.ListComponents[$event]);
+  }
+
+  /** Recarregar dados no resumo após update */
+  reloadResume() {
+    this.profileResume.loadUserData(this.user.getUserData()); //Carrega dados de usuário
   }
 
   /** 
