@@ -99,9 +99,6 @@ export class DashboardPage implements OnInit {
         //Habilitar popup para permissão de notificação
         this.push.requestDesktopNotificationPermission();
 
-        //Retorna ultimas atividades
-        this.getLastActivity();
-
     }
 
     //Função que inicializa
@@ -113,30 +110,29 @@ export class DashboardPage implements OnInit {
             if (!resp) {
                 return this.user.logout();
             }
-        });
+        }); 
 
-        //Se já foi feita requisição
-        if (this.user._user) {
-            //Popula parametros da classe
+    }
+
+    ionViewDidLoad(){
+        
+        //Se houve requisição anterior na classe user
+        this.user.dataReady.subscribe(() => {
+            //Recarregando dados da dashboard
             this.populateProperties();
-        }
-
-        //Verifica quando dados forem retornados em requisição
-        this.user.dataReady.subscribe((resp) => {
-            if (resp.status != 'ready') return;
-            //Popula a propriedade da classe
-            this.populateProperties();
+            this.timeline.loadLasts();
+            this.notify.query();
+            this.getLastActivity();
         });
+    }
 
-        //Mostrar botao de reloading em tempos em tempos
-        this.interval = setInterval(() => {
-            this.doRefresh();            
-        }, 1000 * 60);
-
+    ngAfterContentInit() {
+        this.doRefresh();
     }
 
     /* Popula a propriedade da classe*/
     private populateProperties() {
+        
         //Adicionando dados de usuário logado
         this.currentUserData = this.user._user;
 
@@ -149,14 +145,14 @@ export class DashboardPage implements OnInit {
     }
 
     //Recarrega dados
-    doRefresh($refreshEvent = null) {
+    doRefresh($refreshEvent:any = null) {
 
         this.user.getUserData().then((resp:any) => {
 
             if (!resp) return;
 
             //Recarregando dados da dashboard
-            this.setViews();
+            this.populateProperties();
             this.timeline.loadLasts();
             this.notify.query();
             this.getLastActivity(); 
@@ -164,15 +160,15 @@ export class DashboardPage implements OnInit {
             if ($refreshEvent != null) {
                 //Fecha loading
                 $refreshEvent.complete();
-
-                //Limpa interval e esconde botão
-                clearInterval(this.interval);
-
-                //Mostrar botao de reloading em tempos em tempos
-                this.interval = setInterval(() => {
-                    this.doRefresh();           
-                }, 1000 * 60);
             }
+
+            //Limpa interval e esconde botão
+            clearInterval(this.interval);
+
+            //Mostrar botao de reloading em tempos em tempos
+            this.interval = setInterval(() => {
+                this.doRefresh();           
+            }, 1000 * 60);
 
         });        
 

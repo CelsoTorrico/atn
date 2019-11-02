@@ -231,4 +231,12 @@ class UserController extends Controller
         return response()->json($this->user->loginAffinibox());
     }
 
+    /**
+     * Envia email de validação ao usuário para verificação de email cadastrado
+     * @version v2.2 - Criado
+     */
+    function validateEmail() {
+        return response()->json($this->user->sendActivationKey());
+    }
+
 }

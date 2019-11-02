@@ -71,7 +71,7 @@ class Friends {
 			$f = $user->getData(); 
 
 			/** Verificar a existencia do usuário na plataforma com status ativo */
-			if(!$usermodel->load(['ID' => $f['to_id'], 'user_status' => 0])) continue;
+			if(!$usermodel->load(['ID' => $f['to_id']])) continue;
 			
 			//Retorna apenas ids de usuário
 			if ($this->onlyIDS) {

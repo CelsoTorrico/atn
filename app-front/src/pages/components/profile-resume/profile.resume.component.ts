@@ -2,7 +2,10 @@ import { Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angu
 import { NavController, ToastController, LoadingController } from 'ionic-angular';
 import { Api, User } from '../../../providers';
 import { ChartComponent } from 'angular2-chartjs';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';  
+
+//Declarando variavel de biblioteca javascript
+declare var lightbox;
 
 @Component({
     selector: 'profile-resume',
@@ -85,10 +88,10 @@ export class ProfileResumeComponent {
     };
 
     constructor(
-        public navCtrl: NavController,
+        public  navCtrl: NavController,
         private api: Api,
         private toastCtrl: ToastController,
-        public translateService: TranslateService,
+        public  translateService: TranslateService,
         private loading: LoadingController) {
 
         this.translateService.setDefaultLang('pt-br');
@@ -107,11 +110,11 @@ export class ProfileResumeComponent {
         this.adminViews = [
             { title: 'MY_CLUB', component: 'clubView' }
         ];
-
     }
 
-    ngAfterViewChecked() {
-        
+    ionViewDidEnter() {
+        //Inicializar biblioteca de zoom
+        lightbox('figure.zoom-effect', { margin: 0});
     }
 
     //Adiciona valores a propriedades da classe
@@ -129,6 +132,11 @@ export class ProfileResumeComponent {
 
         if (atributes.metadata.hasOwnProperty('profile_img')) {
             this.profile_img = atributes.metadata.profile_img.value;
+            
+            //Após imagem ser requisitada, rodar função de zoom
+            setTimeout(function(){
+                lightbox('figure.zoom-effect', { margin: 0});
+            }, 1000)
         }
 
         if (atributes.metadata.hasOwnProperty('height')) {

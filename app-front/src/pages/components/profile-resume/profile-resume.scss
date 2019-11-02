@@ -38,7 +38,7 @@
       position: absolute;
       right: 10px;
       top: 10px;
-      z-index: 100000;
+      z-index: 700;
     }
 
   }
@@ -58,7 +58,7 @@
 
     margin-top: 30px !important;
     position: relative;
-    overflow: hidden;
+    //overflow: hidden;
 
     .change-photo {
       background-color: transparentize($titulos, 0.5);
@@ -79,6 +79,11 @@
     &:hover .change-photo {
       opacity: 1;
       visibility: visible;
+    }
+
+    figure.zoom-effect{
+      height: 100px;
+      width: 100px;
     }
 
   }

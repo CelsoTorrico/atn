@@ -49,6 +49,7 @@ class User extends GenericUser{
     public $totalMessages; //Selo de seguido
     public $totalNotifications; //Quantidade de notificações
     public $user_email; //email
+    public $user_status; //Status de verificação de email
     
     //Contrução da classe
     public function __construct($args = array()) {
@@ -94,7 +95,7 @@ class User extends GenericUser{
                 'myFavorites'   => $fav->getTotal()
             ],
             'totalMessages'         => $messages->getTotal(),
-            'totalNotifications'    => $notify->getTotal()
+            'totalNotifications'    => $notify->getTotal(),
         ]); 
 
         return $this;        
@@ -145,7 +146,7 @@ class User extends GenericUser{
     function get( int $id ) {
 
         //Filtro
-        $filter = ['ID' => $id, 'user_status' => 0];
+        $filter = ['ID' => $id];
 
         //Verifica se existe usuário
         if (!$this->model->load($filter)) {
@@ -556,7 +557,7 @@ class User extends GenericUser{
         $isMetaArray    = ['clubs','sport'];
 
         //Variavel para montar query
-        $where = ['user_status' => 0];
+        $where = ['user_status[!]' => null];
         $whereJoin = [];
         $content = [];
         $foundUsers = [];
@@ -913,13 +914,7 @@ class User extends GenericUser{
             $filtered = array_merge($filtered, $onlyRegister);
 
             //Preenche colunas com valores
-            $this->model->fill(array_only($filtered, $userColumns));             
-
-            //Envia email de autenticação no caso de registro não for via redes sociais
-            if( $result = $this->model->save() && !$this->socialLogin ) {
-                //Envia email de confirmação para email cadastrado
-                $this->sendActivationKey($onlyRegister['user_activation_key'], $filtered['user_email'], $filtered['display_name'] );
-            }     
+            $this->model->fill(array_only($filtered, $userColumns));    
 
         }
 
@@ -1607,6 +1602,7 @@ class User extends GenericUser{
             'sport'         => 'sport',
             'clubs'         => 'clubs',
             'user_email'    => 'user_email',
+            'user_status'   => 'user_status',
             'favorite'      => 'favorite',
             'following'     => 'following',
             'totalFavorite' => 'totalFavorite',
@@ -1929,7 +1925,7 @@ class User extends GenericUser{
         return $usermeta;
     } 
 
-    /** Formatando tipos de dados para grava no banco */
+    /** Formatando tipos de dados para gravar no banco */
     private function formatVarUsermeta($key, $value){
         
         $is_array   = self::getArrayUsermeta();
@@ -1976,7 +1972,21 @@ class User extends GenericUser{
     /**
      * Envia email com link de confirmação de cadastro
      */
-    private function sendActivationKey(string $activationKey, string $email, string $userName) {
+    public function sendActivationKey() {
+
+        //Carrega dados de usuário logado
+        $model = new UserModel(['ID' => $this->ID, 'user_status' => 1]);
+
+        /** Verifica se eiste código de verificação e atribui em caso de vazio
+         * @since 2.2 */
+        if(empty($activationKey = $model->user_activation_key)) {
+            $model->user_activation_key = str_random(64);
+            $model->update(['user_activation_key']);
+            $activationKey = $model->user_activation_key;
+        }
+
+        $email = $this->user_email;
+        $userName = $this->display_name;
 
         //SETUP DE EMAIL
         $phpmailer = new SendEmail();
@@ -1988,7 +1998,7 @@ class User extends GenericUser{
         $phpmailer->loadTemplate('activationKey', ['email' => $email, 'activationKey' => $activationKey]);
 
         //Envio do email
-        $result = $phpmailer->send();
+        return $phpmailer->send();
 
     }
 

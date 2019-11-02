@@ -57,7 +57,6 @@ export class StatsComponent extends ProfileComponent {
     
     //Atribuindo metódo a variavel
     this.reloadStats = function() { 
-      console.log('teste de stats');
       this.getStats();
     };
 

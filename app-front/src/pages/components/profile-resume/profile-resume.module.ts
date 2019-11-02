@@ -9,7 +9,7 @@ import { PipesModule } from '../../../pipes/pipes.module';
 @NgModule({
     declarations: [
         ProfileResumeComponent 
-      ],
+      ], 
       imports: [
         TranslateModule.forChild(),        
         IonicModule,
@@ -23,6 +23,8 @@ import { PipesModule } from '../../../pipes/pipes.module';
         ProfileResumeComponent
       ], 
       schemas: [],
-      providers: []
+      providers: [
+        
+      ]
 })
 export class ProfileResumeModule{}

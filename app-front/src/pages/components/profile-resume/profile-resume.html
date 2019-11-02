@@ -9,7 +9,14 @@
 
       <ion-list>
         <ion-avatar class="btn-cursor" item-start>
-          <img *ngIf="profile_img, else elseBlock" [src]="profile_img" />
+          
+          <figure *ngIf="profile_img, else elseBlock" class="zoom-effect full">
+            <div class="aspectRatioPlaceholder">
+              <div class="aspect-ratio-fill"></div>
+              <img [src]="profile_img" class="img" data-width="500" data-height="500" />
+            </div>
+          </figure>          
+          
           <ng-template #elseBlock>
             <img src="assets/img/user.png" />
           </ng-template>

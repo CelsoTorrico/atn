@@ -1,3 +1,5 @@
+import { TagInputModule } from 'ngx-chips';
+import { ProfileRequired } from './../pages/profile/profile-required.component';
 import { ZipcodeService } from './../providers/zipcode/zipcode';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CookieService } from 'ng2-cookies';
@@ -11,7 +13,7 @@ import { IonicStorageModule, Storage } from '@ionic/storage';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { IonicApp, IonicErrorHandler, IonicModule, IonicPageModule, DeepLinkConfig } from 'ionic-angular';
+import { IonicApp, IonicErrorHandler, IonicModule, IonicPageModule, DeepLinkConfig, Transition } from 'ionic-angular';
 import { Settings, Api, Cookie } from '../providers';
 import { MyApp } from './app.component'; 
 import { MenuPageModule } from '../pages/components/menu/menu.module';
@@ -39,7 +41,7 @@ import { VisibilityList } from '../providers/visibility/visibility';
 import { TranslateChar } from '../providers/useful/translateChar';
 
 //Habilita Angular em produção
-enableProdMode();
+//enableProdMode();
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -139,7 +141,7 @@ const deeplinkconfig:DeepLinkConfig = {
 
 @NgModule({
   declarations: [
-    MyApp
+    MyApp, ProfileRequired
   ],
   imports: [
     HttpClientModule,
@@ -163,12 +165,14 @@ const deeplinkconfig:DeepLinkConfig = {
     SignupStepsModule,
     DashboardPageModule,    
     PipesModule,
-    ChartModule        
+    ChartModule,
+    TagInputModule     
   ],
   exports: [],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp
+    MyApp,
+    ProfileRequired
   ],
   providers: [
     Api,

@@ -127,7 +127,7 @@ class Follow {
 
             /** Verifica se usuário está inativado, se sim não mostrar atualizações deste */
             $usermodel = new UserModel();
-            if (!$usermodel->load(['ID' => $item->from_id, 'user_status' => '0'])) {
+            if (!$usermodel->load(['ID' => $item->from_id])) {
                 continue;
             }
 

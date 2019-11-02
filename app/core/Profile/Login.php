@@ -40,7 +40,7 @@ class Login implements LoginInterface{
         $this->model = new LoginModel();
 
         //Verifica se existe usuário e se está ativo (user_status = 0), passando array de dados
-        if (!$this->model->load(['user_email' => $data['user_email'], 'user_status' => 0])) {
+        if (!$this->model->load(['user_email' => $data['user_email']])) {
             return ['error' => ['login' => 'Usuário inexistente.']];
         }
 

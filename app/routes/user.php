@@ -19,6 +19,9 @@ $router->group(['prefix' => 'user'], function () use ($router) {
     //Retorna usuário logado
     $router->get('/self', 'UserController@getSelf');
 
+    //Valida email de usuário logado
+    $router->get('/validate', 'UserController@validateEmail');
+
     //Retorna dashboard(dados basicos) do usuário logado
     $router->get('/dashboard', 'UserController@getSelfDash');
 

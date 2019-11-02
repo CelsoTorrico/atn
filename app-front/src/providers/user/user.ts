@@ -28,7 +28,7 @@ export class User {
   private filteredData = new Subject<any>();
 
   private requiredFields: string[] = [
-    'display_name', 'gender', 'country', 'user_email', 'cpf', 'rg', 'cnpj'
+    'display_name', 'gender', 'country', 'user_email', 'cpf', 'rg', 'cnpj', 'type', 'sport'
   ]
 
   constructor(
@@ -59,7 +59,7 @@ export class User {
   isLoggedUser(): Promise<boolean> {
 
     //Verifica a existencia do cookie
-    return this.api.get('login/cookie').toPromise().then((resp: any) => {
+    return this.api.get('login/cookie').share().toPromise().then((resp: any) => {
 
       //Se retornar erro, parar execução
       if (!resp || resp.error != undefined) return false;
@@ -183,7 +183,7 @@ export class User {
    * Atualiza dados de usuário logado
    * @param accountData 
    */
-  update(accountData: any, isPhoto: boolean = false) {
+  update(accountData: any, isPhoto: boolean = false):Observable <ArrayBuffer> {
 
     //Define método de update de dados de usuário
     let method = (isPhoto) ? 'post' : 'put';
@@ -223,12 +223,9 @@ export class User {
     let $user = new User(this.api, this.loadPageService, this.toast, this.cache);
 
     //Retorna observable
-    $user._userObservable   = this.api.get('user/' + $user_id);
-    $user._statsObservable  = this.api.get('user/stats/' + $user_id);
-    $user._teamObservable   = this.api.get('user/self/club_user/' + $user_id);
-    
-    //Carregar dados do usuário
-    $user.getUserData();
+    $user._userObservable   = this.api.get('user/' + $user_id).share();
+    $user._statsObservable  = this.api.get('user/stats/' + $user_id).share();
+    $user._teamObservable   = this.api.get('user/self/club_user/' + $user_id).share();
 
     //Retorna instancia da classe
     return $user;
@@ -291,7 +288,7 @@ export class User {
 
       //Se não existir items a exibir
       if (Object.keys(resp).length <= 0 || resp.error != undefined) {
-        return;
+        return false;
       }
 
       //Adicionando valores a classe user
@@ -322,7 +319,7 @@ export class User {
   private getSelfUserObservable(): Observable<ArrayBuffer> {
 
     //Setando Observable
-    return this._userObservable = this.api.get('user/self');
+    return this._userObservable = this.api.get('user/self').share();
 
   }
 
@@ -332,7 +329,7 @@ export class User {
   private getSelfStats(): Observable<ArrayBuffer> {
 
     //Retorna observable
-    return this._statsObservable = this.api.get('user/stats');
+    return this._statsObservable = this.api.get('user/stats').share();
 
   }
 
@@ -342,7 +339,7 @@ export class User {
   private getTeamMembers(): Observable<ArrayBuffer> {
 
     //Retorna observable
-    return this._teamObservable = this.api.get('user/self/club_user');
+    return this._teamObservable = this.api.get('user/self/club_user').share();
 
   }
 
@@ -353,14 +350,14 @@ export class User {
   public getTeamMembersByPage($paged:number): Observable<ArrayBuffer> {
 
     //Retorna observable
-    return this._teamObservable = this.api.get('user/self/club_user/'+ this._user.ID + '/paged/'+ $paged);
+    return this._teamObservable = this.api.get('user/self/club_user/'+ this._user.ID + '/paged/'+ $paged).share();
   }
 
   //Retorna observable de visibilidade
   private getSelfVisibility(): Observable<ArrayBuffer> {
 
     //Retorna observable
-    return this._visibilityObservable = this.api.get('timeline/visibility');
+    return this._visibilityObservable = this.api.get('timeline/visibility').share();
 
   }
 
@@ -369,19 +366,32 @@ export class User {
 
     //Retorna campos por tipo de usuaŕio
     let campos = this.userLoggedFields();
-    let userdata = this._user;
+    let userclass = this;
 
     //Percorre array de campos e adiciona valores para os campos de usuários necessário, 
     //incluindo os que não forem preenchidos
     campos.forEach(function (value, index, array) {
-      userdata.metadata[value] = {
-        value: (userdata.metadata[value] != undefined) ? userdata.metadata[value].value : null,
-        visibility: (userdata.metadata[value] != undefined) ? userdata.metadata[value].visibility : 0
+
+      //Atribui campos requeridos com dados vazios a elemento da classe
+      if (userclass.requiredFields.indexOf(value) > -1 && !userclass._user.metadata[value]) {
+          
+          //Definindo atributo para arquivar campos requiridos
+          if (!userclass._user.empty) userclass._user.empty = [];
+          
+          //Atribui campos faltantes
+          userclass._user.empty.push(value);
+      }     
+
+      //Atribui dados de cada metadado a classe
+      userclass._user.metadata[value] = {
+        value: (userclass._user.metadata[value] != undefined) ? userclass._user.metadata[value].value : null,
+        visibility: (userclass._user.metadata[value] != undefined) ? userclass._user.metadata[value].visibility : 0
       }
-    }, userdata);
+
+    }, userclass);
 
     //Adiciona a variavel global
-    return userdata;
+    return userclass._user;
 
   }
 
@@ -392,12 +402,17 @@ export class User {
 
     //Campos gerais
     let $fields: string[] = [
-      'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email', 'sport', 'clubes'
+      'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'user_email', 'user_status', 'sport', 'clubes'
     ]
 
     //Se usuário não tiver tipo definido, definir como usuário padrão
-    if (this._user.type == null) {
-      this._user.type = { ID: 1, type: 'Atleta' }
+    if (!this._user.type) {
+      
+      //Atribui perfil default para não quebrar a aplicação
+      this._user.type = { ID: 1, type: 'Atleta' };
+
+      //Adicionando o campo requerido porém não preenchido
+      this._user.empty = ['type'];
     }
 
     //Se usuario for atleta e profissional

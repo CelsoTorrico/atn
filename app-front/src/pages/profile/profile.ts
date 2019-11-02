@@ -62,6 +62,7 @@ export class ProfilePage {
   public title: any;
 
   loading:Loading;
+
   loadingMessage:string;
 
   constructor(
@@ -101,7 +102,7 @@ export class ProfilePage {
   ionViewWillLoad() {
     
     /** Verifica se usuário já esta logado anteriormente na plataforma */
-    this.user.isLoggedUser().then((resp) => {
+    this.user.isLoggedUser().then((resp:any) => {
 
       //Setando informações do usuário de contexto
       this.setCurrentUser();  
@@ -125,7 +126,7 @@ export class ProfilePage {
       
       //Verifica se usuário de contexto existe, ou seja, visita a um perfil
       if (this.$user_ID > 0 ) {
-        
+
         //Atribui classe de usuário definido pelo $user_id
         this.profileUser = this.user.getUser(this.$user_ID);
 
@@ -135,7 +136,7 @@ export class ProfilePage {
         });
 
         //Carrega dados de usuário do perfil
-        this.profileUser.getUserData().then((resp) => {
+        this.profileUser.getUserData().then((resp:any) => {
 
           if(!resp) return;
 
@@ -163,8 +164,8 @@ export class ProfilePage {
     //Se instanciado anteriormente com usuário de contexto
     if (this.user._user != undefined) {
 
-      this.loggedUser   = this.user._user;
-      this.siteVisitor  = false;
+      this.loggedUser   = this.user._user; //seta como usuário logado
+      this.siteVisitor  = false; //Seta se é usuario que visita perfil
 
     } else {
       this.user.dataReady.subscribe((resp) => {
@@ -416,6 +417,10 @@ export class ProfilePage {
     
   }
 
+  /**
+   * Abrir modal para compartilhar link do perfil 
+   * @param $event 
+   */
   shareProfile($event) {
     
     $event.preventDefault();
@@ -457,7 +462,7 @@ export class ProfilePage {
 
   }
 
-  /* Abre uma nova página */
+  /* Volta página anterior */
   backButton() {
     if (this.navCtrl.canSwipeBack()) {
       this.navCtrl.getPrevious();

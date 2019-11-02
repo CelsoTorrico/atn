@@ -1,5 +1,4 @@
 import { GenderList } from './../../../providers/gender/gender';
-import { SuccessStepPage } from './../success/success';
 import { User } from './../../../providers/user/user';
 import { Api } from './../../../providers/api/api';
 import { Component } from '@angular/core';
@@ -127,9 +126,15 @@ export class ProfileTypeStepPage {
             //Fecha loading
             loading.dismiss();
 
-            //Se cadastro realizado com sucesso direcionar para página 'sucesso'
+            //Se cadastro realizado com sucesso direcionar para página dashboard
             if ($resp) {
-                this.navCtrl.push(SuccessStepPage);
+                this.navCtrl.push('Dashboard');
+                
+                /**
+                 * Backup - 
+                 * this.navCtrl.push(SuccessStepPage); //Redireciona para página sucesso
+                 */
+                
             }
 
         }).catch((rej) => {
@@ -142,7 +147,6 @@ export class ProfileTypeStepPage {
      * 
      */
     private setChooseSports($sportChoose) {
-        console.log($sportChoose);
         //Intera sobre items
         for (const element of this.$sportTable) {
             //Compara valores selecionados com tabela de esportes
