@@ -41,9 +41,7 @@ export class loadNewPage{
     createToast(resp:string, positionMessage:string){
         return this.toastCtrl.create({
             message: resp,
-            position: positionMessage,
-            showCloseButton: true,
-            closeButtonText: 'Entendi'
+            position: positionMessage
           });
     }
 

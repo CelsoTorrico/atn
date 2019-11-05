@@ -1,3 +1,4 @@
+import { ToastController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { User } from './../../providers/user/user';
 import { profileTypeList } from './../../providers/profiletypes/profiletypes';
@@ -5,14 +6,13 @@ import { GenderList } from './../../providers/gender/gender';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { BrazilStates } from '../../providers/useful/states';
 import { SportList } from '../../providers/sport/sport';
-import { animate } from "@angular/animations";
 
 @Component({
   selector: 'profile-databox',
   template: `
       <div id="profile-required">
 
-        <h2>Preencha as informações faltantes!</h2>
+        <h2 margin>Preencha as informações faltantes!</h2>
 
         <form #updateRequiredForm="ngForm" (submit)="submitRegister(updateRequiredForm); $event.preventDefault()">
 
@@ -23,7 +23,7 @@ import { animate } from "@angular/animations";
                 {{ "PROFILE" | translate }}
               </ion-list-header>
 
-              <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full required>
+              <ion-select margin id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full required>
                 <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
                   {{item.texto}}
                 </ion-option>
@@ -37,7 +37,7 @@ import { animate } from "@angular/animations";
 
             <ion-list>
 
-              <ion-list-header stacked>
+              <ion-list-header  stacked>
                 {{ "SPORTS" | translate }}
               </ion-list-header>
 
@@ -71,10 +71,7 @@ import { animate } from "@angular/animations";
       position: relative;
       transform: translateY(-50%);
     }
-  `],
-  animations: [
-    animate('0.3s 0 ease-in')
-  ]
+  `]
 })
 export class ProfileRequired {
 
@@ -94,6 +91,7 @@ export class ProfileRequired {
   constructor(
     private user: User,
     private sport: SportList,
+    private toastCtrl: ToastController,
     states: BrazilStates,
     gender: GenderList,
     profileType: profileTypeList) {
@@ -126,8 +124,7 @@ export class ProfileRequired {
 
     //Se formulário estiver inválido, mostrar mensagem
     if (form.status == 'INVALID') {
-      this.$error = 'Por favor, preencha todos campos solicitados!'; 
-      return;
+      return this.$error = 'Por favor, preencha todos campos solicitados!'; 
     }
 
     //Campos válidos
@@ -144,17 +141,26 @@ export class ProfileRequired {
       saveFields['sport'].value.push(value);
     }    
 
+    //Preencher campos esporte obrigatório
     if(saveFields.sport.value.length <= 0) {
-      //mostrar erro
+      return this.$error = 'Por favor, preencha todos campos solicitados!';
     }
 
     //Realiza update de dados do usuario
     this.user.update(saveFields).subscribe((data:any) => {
       
       if(data.success != undefined) {
+        
+        //Fecha o painel de dados faltantes
         this.requiredFormSubmited.emit({
           update: true
-        })
+        });
+
+        //mostrar resposta do salvamento
+        this.toastCtrl.create({
+          message: data.success.register
+        }).present();
+
       }
 
     });

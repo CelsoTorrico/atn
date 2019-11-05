@@ -114,16 +114,8 @@ export class DashboardPage implements OnInit {
 
     }
 
-    ionViewDidLoad(){
+    ionViewDidLoad() {
         
-        //Se houve requisição anterior na classe user
-        this.user.dataReady.subscribe(() => {
-            //Recarregando dados da dashboard
-            this.populateProperties();
-            this.timeline.loadLasts();
-            this.notify.query();
-            this.getLastActivity();
-        });
     }
 
     ngAfterContentInit() {
@@ -208,9 +200,17 @@ export class DashboardPage implements OnInit {
     //Retorna dados do usuário
     private setViews() {
 
-        this.info.views = this.checkNull(this.user._user.metadata.views.value, this.info.views);
-        this.info.messages = this.checkNull(this.user._user.totalMessages, this.info.messages);
-        this.info.favorite = this.checkNull(this.user._user.totalFavorite, this.info.favorite);
+        //Se não houver dados ainda
+        if (this.user._user == undefined) {
+            return;
+        }
+
+        this.info.views     = (this.user._user.metadata != undefined)? this.checkNull(this.user._user.metadata.views.value, this.info.views) : 0;
+
+        this.info.messages  = this.checkNull(this.user._user.totalMessages, this.info.messages);
+        
+        this.info.favorite  = this.checkNull(this.user._user.totalFavorite, this.info.favorite);
+        
         this.info.notifications = this.checkNull(this.user._user.totalNotifications, this.info.notifications);
     }
 
