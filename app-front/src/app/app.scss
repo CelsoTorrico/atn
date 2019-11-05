@@ -708,8 +708,7 @@ figure.full {
   padding: 5px 15px;
   position: absolute;
   bottom: 60px;
-  right: 50%;
-  transform: translateX(50%);
+  right: 50px;
   display: block;
   background-color:  #fff;
   border: 2px solid $vermelho-contraste;
@@ -730,6 +729,8 @@ profile-databox {
   left:0;
   z-index: 999999;
   width: 100%;
-  background-color:rgba(0,0,0,0.8);
   height: 100%;
+  background-color:rgba(0,0,0,0.8);  
+  right: 50%;
+  transform: translateX(50%);
 }

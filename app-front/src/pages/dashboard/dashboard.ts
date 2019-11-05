@@ -282,7 +282,6 @@ export class DashboardPage implements OnInit {
 
                 let toast = this.toastCtrl.create({
                     message: resp.error.timeline,
-                    showCloseButton: true,
                     position: 'bottom'
                 });
 

@@ -24,17 +24,6 @@ export class LoginService{
             } //options           
         );
 
-         
-        
-        
-        /*.then(function(response) {
-            //Se resposta for true redireciona ao painel
-            if (response.data == true) {
-                window.location.assign('painel');
-            } else {
-                this.loginError = response.data;
-            } 
-        });*/
     }
 
     private validParamsToSerialize($object: any):string{   

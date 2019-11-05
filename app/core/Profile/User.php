@@ -914,7 +914,10 @@ class User extends GenericUser{
             $filtered = array_merge($filtered, $onlyRegister);
 
             //Preenche colunas com valores
-            $this->model->fill(array_only($filtered, $userColumns));    
+            $this->model->fill(array_only($filtered, $userColumns));   
+            
+            //Insere novo usuário no banco
+            $result = $this->model->save();
 
         }
 

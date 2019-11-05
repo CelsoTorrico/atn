@@ -41,7 +41,7 @@ import { VisibilityList } from '../providers/visibility/visibility';
 import { TranslateChar } from '../providers/useful/translateChar';
 
 //Habilita Angular em produção
-//enableProdMode();
+enableProdMode();
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.

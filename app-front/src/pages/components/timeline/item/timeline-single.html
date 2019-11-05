@@ -1,9 +1,9 @@
 <ion-card-header [ngClass]="{'post-institucional': currentTimeline.post_author.type == 'administrator'}" >
 
-  <ion-list>
+  <ion-list (click)="goToProfile(currentTimeline.post_author)">
     <ion-item>
 
-      <ion-avatar class="btn-cursor" item-start (click)="goToProfile(currentTimeline.post_author)">
+      <ion-avatar class="btn-cursor" item-start>
         <img *ngIf="currentTimeline.post_author.profile_img, else elseBlock" 
         [src]="currentTimeline.post_author.profile_img.value" />
         <ng-template #elseBlock>
@@ -11,8 +11,8 @@
         </ng-template>
       </ion-avatar>
 
-      <h2 class="btn-cursor" (click)="goToProfile(currentTimeline.post_author)">{{ currentTimeline.post_author.display_name}}</h2>
-      <h3 class="btn-cursor" (click)="goToProfile(currentTimeline.post_author)">{{ currentTimeline.post_date | date }}</h3>
+      <h2 class="btn-cursor">{{ currentTimeline.post_author.display_name}}</h2>
+      <h3 class="btn-cursor">{{ currentTimeline.post_date | date }}</h3>
     </ion-item>
   </ion-list>
 
@@ -24,7 +24,7 @@
 
 <ion-card-content [ngClass]="{'post-institucional': currentTimeline.post_author.type == 'administrator'}">
 
-  <div *ngIf="currentTimeline.post_author.type == 'administrator'; else noHtml" class="timeline-content" [innerHTML]="currentTimeline.post_content"></div>
+  <div *ngIf="currentTimeline.post_author.type == 'administrator'; else noHtml" class="timeline-content timeline-admin" (click)="clickOnInnerHTML($event)" [innerHTML]="currentTimeline.post_content"></div>
 
   <ng-template #noHtml>
     <div class="timeline-content">{{ currentTimeline.post_content }}</div>

@@ -69,8 +69,8 @@ export class TimelineSingle {
   }
 
   //Inicialização
-  ngOnInit() {
-
+  ionViewDidLoad() {
+    
   }
 
   //Setar url de requisição
@@ -207,6 +207,19 @@ export class TimelineSingle {
       user_id: $author.ID,
       user_login: $author.user_login
     });
+  }
+
+  //Permite o funcionamento de clique em links de posts administrativos
+  clickOnInnerHTML(event:any) {
+
+    //Apenas tags de link são redirecionadas
+    if (event.target.tagName == 'A' || event.target.href.length > 0) {
+      //Verifica se link definido para abrir na mesma aba ou em nova
+      let $target = (event.target.target != undefined && event.target.target == '_blank')? '_blank' : '_self';
+      //Abrir o link conforme parametros
+      window.open(event.target.href, $target);
+    }    
+
   }
 
   //Incorporar videos do Youtube 
