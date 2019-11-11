@@ -88,6 +88,9 @@ export class MyProfileSportsComponent {
 
     tagInputAdd:any;
 
+    /** Nomes de seção para tipo de usuário */
+    public $formacaoName = 'FORMATION';
+
     constructor(
         public navCtrl: NavController,
         public user: User,
@@ -143,6 +146,12 @@ export class MyProfileSportsComponent {
             this.type  = atributes.type.ID;
             this.sport = atributes.sport;
             this.clubes = atributes.clubs;
+
+            //Apenas para profissionais do esporte
+            if (this.type == 2) {
+                //Altera nome da seção
+                this.$formacaoName = 'ACADEMIC_RESUME';
+            }
 
             //Intervalo para correta assimilação dos campos esportes e clubes
             setTimeout(function($this){

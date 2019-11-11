@@ -26,8 +26,14 @@ import { Storage } from '@ionic/storage';
 })
 export class MemberCurrentMenu {
 
-    @Input() user: User
+
     pages: any
+
+    @Input() public member:any = {
+        ID: "",
+        user_login: "",
+        display_name: ""
+    };
 
     @Input() messageCount: number = 0;
 
@@ -38,20 +44,16 @@ export class MemberCurrentMenu {
         private toastCtrl: ToastController,
         public translateService: TranslateService,
         private loading: LoadingController,
+        private user: User,
         api: Api,
         loadNewPage: loadNewPage,
         cache:Storage) {
-
-        //Se classe user não estiver instanciada
-        if (this.user == undefined) {
-            this.user = new User(api, loadNewPage, toastCtrl, cache)
-        }
 
         this.translateService.setDefaultLang('pt-br');
 
         this.translateService.get('LOADING').subscribe((data: any) => {
             this.loading_placeholder = data;
-        })
+        });
 
         // used for an example of ngFor and navigation
         this.pages = {
@@ -64,6 +66,15 @@ export class MemberCurrentMenu {
             "FAQ": "",
             "SUPPORT": ""
         };
+
+        //Inscrever requisição de dados de usuario
+        this.user.dataReady.subscribe((resp) => {
+            this.member = this.user._user;
+        });
+    }
+
+    ngOnInit() {
+        
     }
 
     ionViewDidLoad() {
@@ -74,7 +85,10 @@ export class MemberCurrentMenu {
     goToPage($page: string) {
 
         //Atribuir argumentos de usuário na navegação em caso de profile
-        let $data = ($page == 'Profile')? { user_id: this.user._user.ID, user_login: this.user._user.user_login }: {};
+        let $data = ($page == 'Profile')? { 
+            user_id: this.member.ID, 
+            user_login: this.member.user_login 
+        } : {};
 
         this.navCtrl.push($page, $data);
     }

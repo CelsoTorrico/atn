@@ -111,7 +111,7 @@ class LoginController extends Controller
     function register(Request $request) {
         
         //Campos obrigatórios
-        $require = ['type', 'display_name', 'sport', 'user_email', 'user_pass', 'confirm_pass'];
+        $require = ['type', 'display_name', 'user_email', 'user_pass', 'confirm_pass'];
 
         //Verifica se campos obrigatórios estão presentes
         if(!$request->has($require)) {
@@ -123,6 +123,11 @@ class LoginController extends Controller
             return response(['error' =>["register", "Falta preencher campos obrigatórios!"]]); 
         }
 
+        //Todos os perfis, menos do profisional do esporte precisam do campo esporte preenchido
+        if($request->input('type') != 2 && !$request->filled('sport')) {
+            return response(['error' =>["register", "Falta preencher campos obrigatórios!"]]); 
+        }
+
         //Verifica se já existe usuário com mesmo email
         $exist = $this->isUserExist($request);
         
@@ -131,11 +136,14 @@ class LoginController extends Controller
             return response($response);
         }
 
-        //Enviar email de boas vindas ao novo usuário se cadastro realizado
-        $this->doWelcomeEmail($request->input('user_email'), $request->input('display_name')); 
+        //Se houve sucesso no login
+        if(key_exists('success', $response)) {
+            //Enviar email de boas vindas ao novo usuário se cadastro realizado
+            $this->doWelcomeEmail($request->input('user_email'), $request->input('display_name')); 
+        } 
 
-        //Retorna resposta
-        return response($response);  
+        //Realiza login após o cadastro
+        return $response;
         
     }
 

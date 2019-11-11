@@ -1,8 +1,10 @@
+import { ZipcodeService } from './../../../providers/zipcode/zipcode';
+import { CareerList } from './../../../providers/career/career';
 import { GenderList } from './../../../providers/gender/gender';
 import { User } from './../../../providers/user/user';
 import { Api } from './../../../providers/api/api';
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { BrazilStates } from '../../../providers/useful/states';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,6 +37,9 @@ export class ProfileTypeStepPage {
     //Lista de Estados
     protected $statesList = [];
 
+    //Lista de carreiras para profissionais do esporte
+    protected $careerList:any[];
+
     public $error = '';
 
     constructor(
@@ -44,6 +49,9 @@ export class ProfileTypeStepPage {
         private api: Api,
         private user: User,
         public  translateService: TranslateService,
+        private zipcodeService: ZipcodeService,
+        private toastCtrl: ToastController,
+        careerList: CareerList,
         states: BrazilStates,
         sport:  SportList,
         gender: GenderList,
@@ -76,6 +84,14 @@ export class ProfileTypeStepPage {
         //Atribui generos
         this.$genderList = gender.list;
 
+        //Carrega lista de profissões
+        this.$careerList = careerList.list;
+
+        //Adicionar item "Outros" para inserção de carreira não existente
+        if( this.$careerList.indexOf('Outros') <= -1) {
+            this.$careerList.push('Outros');
+        }
+
     }
 
     //Função que inicializa
@@ -99,6 +115,11 @@ export class ProfileTypeStepPage {
 
         //Adiciona tipo de usuário selecionado
         this.$account.type = this.$typeUserSelected;
+
+        //Em caso de usuário especificar carreira não presente na lista
+        if(this.$account.other_career != undefined) {
+            this.$account.career = this.$account.other_career;
+        }
 
         //Inicializa objeto com array
         this.$account.sport = [];
@@ -155,6 +176,32 @@ export class ProfileTypeStepPage {
                 this.$account.sport.push(element[0]);
                 break;
             }
+        }
+    }
+
+    //Fazer pesquisa de CEP (API) ao preencher todos numeros
+    queryZipcode($event) {
+        let input       = $event.target;
+        let validacao   = /^[0-9]{5}[0-9]{3}/i;
+        let regex       = input.value.search(validacao); 
+    
+        if (regex == 0) {
+            this.zipcodeService.setCEP(input.value);
+            this.zipcodeService.getAdressData().subscribe((data:any) => {
+
+                //Se houve erro no retorno
+                if (data.erro  != undefined) {
+                    return this.toastCtrl.create({
+                        message: "CEP não válido. Preencha corretamento o cep de seu endereço.",
+                        duration: 2000
+                    }).present();
+                }
+
+                this.$account.address       = data.logradouro;
+                this.$account.neighbornhood  = data.bairro;
+                this.$account.city          = data.localidade;
+                this.$account.state         = data.uf; 
+            });
         }
     }
 

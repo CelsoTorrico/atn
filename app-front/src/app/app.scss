@@ -185,6 +185,10 @@ ion-label,
   color: #111;
 }
 
+.item-label-stacked .text-input-md, .item-label-floating .text-input-md {
+  width: 100% !important;
+}
+
 .searchbar-md .searchbar-input,
 .searchbar-input,
 .text-input,
@@ -199,7 +203,7 @@ ion-select:not([visibility]) {
   padding: 10px 15px;
   margin: 10px 0px;
   background: $branco;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #808080;
   color: #555;
   box-shadow: none !important;
   font-weight: 100;

@@ -83,15 +83,21 @@ export class SearchPage {
 
     //Carrega lista de estados do provider
     this.$statesList = states.statesList;
-    this.$statesList.unshift('Qualquer Estado');
+    if( this.$statesList.indexOf('Qualquer Estado') <= -1) {
+      this.$statesList.unshift({valor: '', texto: 'Qualquer Estado' });
+    }
 
     //Lista de tipos de usuário
     this.$typeUserList = profileType.list;
-    this.$typeUserList.unshift('Qualquer Usuário');
+    if( this.$typeUserList.indexOf('Qualquer Usuário') <= -1) {
+      this.$typeUserList.unshift('Qualquer Usuário');
+    }
 
     //Lista de genêros
     this.$genderList = gender.list;
-    this.$genderList.unshift('Qualquer Genêro');
+    if( this.$genderList.indexOf('Qualquer Genêro') <= -1) {
+      this.$genderList.unshift('Qualquer Genêro');
+    }
 
     //Lista de Esportes
     sportList.load().then((resp) => {
@@ -278,6 +284,11 @@ export class SearchPage {
 
       return false;
       
+  }
+
+  //Verifica se variavel é ojecto e retorna boolean 
+  isObject($var:any) {
+    return (typeof $var == 'object')? true : false;
   }
 
 

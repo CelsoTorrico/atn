@@ -65,8 +65,11 @@
                   <ion-item>
                     <ion-label stacked>{{ "TYPE_USER" | translate }}</ion-label>
                     <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full>
-                      <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
-                        {{item.texto}}
+                      <ion-option 
+                      *ngFor="let item of $typeUserList" 
+                      [value]="(isObject(item))? item.valor : '' " 
+                      [selected]="!isObject(item)">
+                        {{ (isObject(item))? item.texto : item }}
                       </ion-option>
                     </ion-select>
                   </ion-item>
@@ -91,8 +94,11 @@
                   <ion-item>
                     <ion-label stacked>{{ "STATE" | translate }}</ion-label>
                     <ion-select id="state" [(ngModel)]="query.state" name='state' full>
-                      <ion-option *ngFor="let item of $statesList" [value]="item">
-                        {{item}}
+                      <ion-option 
+                      *ngFor="let item of $statesList" 
+                      [value]="(isObject(item))? item.valor : item " 
+                      [selected]="isObject(item)">
+                        {{ (isObject(item))? item.texto : item }}
                       </ion-option>
                     </ion-select>
                   </ion-item>
@@ -101,8 +107,11 @@
                   <ion-item>
                     <ion-label stacked>{{ "GENDER" | translate }}</ion-label>
                     <ion-select id="gender" [(ngModel)]="query.gender" name='gender' full>
-                      <ion-option *ngFor="let item of $genderList" [value]="item.valor">
-                        {{item.texto}}
+                      <ion-option 
+                      *ngFor="let item of $genderList" 
+                      [value]="(isObject(item))? item.valor : '' " 
+                      [selected]="!isObject(item)">
+                        {{ (isObject(item))? item.texto : item }}
                       </ion-option>
                     </ion-select>
                   </ion-item>

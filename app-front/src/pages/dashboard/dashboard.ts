@@ -31,7 +31,7 @@ export class DashboardPage implements OnInit {
     protected interval;
 
     //Informações básicas de usuário
-    public currentUserData: any = {
+    public currentUserData:any = {
         ID: '',
         display_name: '',
         user_login: '',
@@ -122,20 +122,6 @@ export class DashboardPage implements OnInit {
         this.doRefresh();
     }
 
-    /* Popula a propriedade da classe*/
-    private populateProperties() {
-        
-        //Adicionando dados de usuário logado
-        this.currentUserData = this.user._user;
-
-        //Atribui dados a componentes filhos
-        this.currentUser.member = this.currentUserData;
-        this.currentMenu.user = this.user;
-
-        //Carrega dados das infos do painel
-        this.setViews();
-    }
-
     //Recarrega dados
     doRefresh($refreshEvent:any = null) {
 
@@ -187,6 +173,20 @@ export class DashboardPage implements OnInit {
 
             reader.readAsDataURL(fileInput.target.files[0]);
         }
+    }
+
+    /* Popula a propriedade da classe*/
+    private populateProperties() {
+        
+        //Adicionando dados de usuário logado
+        this.currentUserData = this.user._user;
+
+        //Atribui dados a componentes filhos
+        this.currentUser.member = this.currentUserData;
+        this.currentMenu.member = this.currentUserData;
+
+        //Carrega dados das infos do painel
+        this.setViews();
     }
 
     //Carrega as últimas atividades

@@ -43,7 +43,7 @@
         </ng-template>
       </ul>
 
-      <ion-list no-margin *ngIf="views">
+      <ion-list no-margin *ngIf="views && type.ID != null">
         
         <button ion-button outline small *ngFor="let v of views"  (click)="loadView(v)">
             {{ v.title | translate }}

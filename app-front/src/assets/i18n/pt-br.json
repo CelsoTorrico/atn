@@ -49,6 +49,9 @@
   "NO_MEMBER_CHAT": "Você não iniciou nenhuma conversa.",
   "PROFILE": "Meu Perfil", 
   "STATS": "Minhas Estatísticas", 
+  "ACADEMIC_RESUME": "Resumo Acadêmico", 
+  "PROFISSIONAL_RESUME": "Resumo Profissional", 
+  "CAREER_OTHERS": "Escreva nome da carreira",
   "FOLLOW": "Seguir", 
   "DOWNLOAD_PROFILE": "Download Perfil", 
   "LAST_ACTIVITY": "Últimas Atividades", 
@@ -130,6 +133,7 @@
   "MY_VIDEOS": "Meus Vídeos",
   "male": "Masculino",
   "female": "Feminino",
+  "not_gender": "Prefere não informar",
   "SUBMIT_BUTTON": "Enviar",
   "PUT_YOUR_EMAIL_AND_RECEIVE_A_NEW_PASS": "Se você esqueceu sua senha de acesso insira seu email e receba uma nova.",
   "MY_TEAM": "Minha Equipe",
@@ -215,5 +219,7 @@
   "ERROR": "Erro",
   "VIDEO_ERROR": "Url inválida. Insira URL do Youtube corretamente.",
   "INVITATION_REGISTER": "Conecte-se à AtletasNow, faça login ou registre-se!",
-  "SHARE_PROFILE": "Compartilhar Perfil"
+  "SHARE_PROFILE": "Compartilhar Perfil",
+  "AWARDS": "Premiações",
+  "EVENT": "Evento"
 }

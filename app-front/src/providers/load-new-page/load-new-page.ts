@@ -41,6 +41,7 @@ export class loadNewPage{
     createToast(resp:string, positionMessage:string){
         return this.toastCtrl.create({
             message: resp,
+            duration: 3000,
             position: positionMessage
           });
     }

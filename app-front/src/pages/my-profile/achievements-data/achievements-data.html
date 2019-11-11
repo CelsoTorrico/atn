@@ -20,7 +20,7 @@
       <ion-list ngModelGroup="groupFormacao" #formacaoCtrl="ngModelGroup" ngControl="test">
 
         <ion-list-header>
-          {{ "FORMATION" | translate}}
+          {{ $awardsName | translate}}
         </ion-list-header>
 
         <ion-select visibility name="titulos_conquistas.visibility" [(ngModel)]="titulos_conquistas.visibility" interface="popover">
@@ -31,10 +31,10 @@
 
         <ion-grid>
           <ion-row *ngFor="let item of titulos_conquistas.value; let i = index; trackBy:customTrackBy">
-            <ion-col col-12 col-md-4 *ngFor="let n of ['POSITION','CHAMPIONSHIP','YEAR']; let a = index; first as isFirst;">
+            <ion-col col-12 col-md-4 *ngFor="let n of [ $positionName, $eventName,'YEAR']; let a = index; first as isFirst;">
               <ion-item>
                 <ion-label stacked>{{ n | translate}} </ion-label>
-                <ion-input [type]="(isFirst == true)? 'number' : 'text'" min="0" 
+                <ion-input [type]="(isFirst == true && type.ID != 2)? 'number' : 'text'" min="0" 
                 [(ngModel)]="titulos_conquistas.value[i][a]" [name]="'titulos_conquistas.value['+ i +']['+ a +'][]'"></ion-input>
               </ion-item> 
             </ion-col>

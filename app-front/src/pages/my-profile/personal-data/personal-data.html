@@ -22,7 +22,7 @@
             <ion-input [(ngModel)]="display_name" name="display_name" type="text"></ion-input>
           </ion-item>
         </ion-col>
-        <ion-col col-12 col-md-6>
+        <ion-col col-12 col-md-4>
           <ion-item>
             <ion-label stacked>{{ "TELEPHONE" | translate }}</ion-label>
             <ion-input [(ngModel)]="telefone.value" name="telefone" type="telefone"></ion-input>
@@ -35,11 +35,21 @@
 
           </ion-item>
         </ion-col>
-        <ion-col col-12 col-md-6>
+        <ion-col col-12 col-md-4>
           <ion-item>
             <ion-label stacked>{{ "EMAIL" | translate }}</ion-label>
             <ion-input [(ngModel)]="user_email" name="user_email" [email]="true" type="email"></ion-input>
           </ion-item>
+        </ion-col>
+        <ion-col col-12 col-md-4>
+            <ion-item>
+                <ion-label stacked>{{ 'GENDER' | translate}}</ion-label>
+                <ion-select id="gender" [(ngModel)]="gender.value" name='gender' full required>
+                  <ion-option *ngFor="let item of $genderList" [selected]="item.valor == 'male'" [value]="item.valor">
+                    {{item.texto}}
+                  </ion-option>
+                </ion-select>
+            </ion-item>
         </ion-col>
       </ion-row>
     </ion-item-group>
@@ -49,22 +59,38 @@
       <ion-input [(ngModel)]="biography.value" name="biography.value" type="text" maxlength="250"></ion-input>
     </ion-item>
 
-    <ion-item *ngIf="type == 2">
-      <ion-label stacked>{{ "CAREER" | translate}}</ion-label>
+    <ion-item-group *ngIf="type == 2">
+      <ion-row>
+        
+        <ion-col col-6>
+          <ion-item>
+            
+            <ion-label stacked>{{ "CAREER" | translate}}</ion-label>
+            <ion-select name="career.value" [(ngModel)]="career.value" interface="popover">
+              <ion-option *ngFor="let item of $careerList" [value]="item">
+                {{ item }}
+              </ion-option>
+            </ion-select>
 
-      <ion-select name="career.value" [(ngModel)]="career.value" interface="popover">
-          <ion-option *ngFor="let item of $careerList" [value]="item">
-            {{ item }}
-          </ion-option>
-      </ion-select>
+            <ion-select visibility name="career.visibility" [(ngModel)]="career.visibility" interface="popover">
+                <ion-option *ngFor="let item of visibility" [value]="item.value">
+                  {{item.option}}
+                </ion-option>
+            </ion-select>
 
-      <ion-select visibility name="career.visibility" [(ngModel)]="career.visibility" interface="popover">
-        <ion-option *ngFor="let item of visibility" [value]="item.value">
-          {{item.option}}
-        </ion-option>
-      </ion-select>
+          </ion-item>
+        </ion-col>
 
-    </ion-item>
+        <ion-col col-6>
+            <ng-container *ngIf="career.value == 'Outros'">
+              <ion-label stacked>&nbsp;</ion-label>
+              <ion-input id="other_career" [(ngModel)]="other_career" type="text" name="other_career"
+                placeholder="{{'CAREER_OTHERS' | translate}}" required full></ion-input>
+            </ng-container>
+        </ion-col>
+
+      </ion-row>
+    </ion-item-group>
 
     <ion-item-group *ngIf="type < 3">
       <!-- Dados para pessoas físicas -->
@@ -140,7 +166,8 @@
       <ion-col col-4>
         <ion-item>
           <ion-label stacked>{{ "ZIPCODE" | translate}}</ion-label>
-          <ion-input full [(ngModel)]="zipcode.value" name="zipcode" type="text" max="8" pattern="[0-9]{5}-[0-9]{3}" (keyup)="queryZipcode($event)" >
+          <ion-input full [(ngModel)]="zipcode.value" name="zipcode" type="text" max="8" pattern="[0-9]{5}[0-9]{3}"
+            (keyup)="queryZipcode($event)">
           </ion-input>
 
           <ion-select visibility [(ngModel)]="zipcode.visibility" name="zipcode.visibility" interface="popover">
@@ -155,7 +182,8 @@
       <ion-col>
         <ion-item>
           <ion-label stacked>{{ "ADDRESS" | translate }}</ion-label>
-          <ion-input [(ngModel)]="address.value" name="address" type="text" [disabled]="(address.value)? false : true"></ion-input>
+          <ion-input [(ngModel)]="address.value" name="address" type="text" [disabled]="(address.value)? false : true">
+          </ion-input>
 
           <ion-select visibility [(ngModel)]="address.visibility" name="address.visibility" interface="popover">
             <ion-option *ngFor="let item of visibility" [value]="item.value">
@@ -173,7 +201,8 @@
       <ion-col col-6>
         <ion-item>
           <ion-label stacked>{{ "NEIGHBORNHOOD" | translate}}</ion-label>
-          <ion-input [(ngModel)]="neighbornhood.value" name="neighborhood" type="text" full [disabled]="(neighbornhood.value)? false : true"></ion-input>
+          <ion-input [(ngModel)]="neighbornhood.value" name="neighborhood" type="text" full
+            [disabled]="(neighbornhood.value)? false : true"></ion-input>
 
           <ion-select visibility [(ngModel)]="neighbornhood.visibility" name="neighbornhood.visibility"
             interface="popover">
@@ -188,7 +217,8 @@
       <ion-col col-6>
         <ion-item>
           <ion-label stacked>{{ "CITY" | translate}}</ion-label>
-          <ion-input [(ngModel)]="city.value" name="city" type="text" [disabled]="(city.value)? false : true"></ion-input>
+          <ion-input [(ngModel)]="city.value" name="city" type="text" [disabled]="(city.value)? false : true">
+          </ion-input>
 
           <ion-select visibility [(ngModel)]="city.visibility" name="city.visibility" interface="popover">
             <ion-option *ngFor="let item of visibility" [value]="item.value">
@@ -206,7 +236,8 @@
         <ion-item>
           <ion-label stacked>{{ "STATE" | translate }}</ion-label>
 
-          <ion-select class="select-state" [(ngModel)]="state.value" name="state" full [disabled]="(state.value)? false : true">
+          <ion-select class="select-state" [(ngModel)]="state.value" name="state" full
+            [disabled]="(state.value)? false : true">
             <ion-option *ngFor="let item of $statesList" [value]="item" [selected]="state.value == item">
               {{item}}
             </ion-option>
@@ -225,7 +256,8 @@
       <ion-col col-6 col-md-4>
         <ion-item>
           <ion-label stacked>{{ "COUNTRY" | translate}}</ion-label>
-          <ion-input [(ngModel)]="country.value" name="country" pattern="[^0-9]+" type="text" value="Brasil"></ion-input>
+          <ion-input [(ngModel)]="country.value" name="country" pattern="[^0-9]+" type="text" value="Brasil">
+          </ion-input>
 
           <ion-select visibility [(ngModel)]="country.visibility" name="country.visibility" interface="popover">
             <ion-option *ngFor="let item of visibility" [value]="item.value">

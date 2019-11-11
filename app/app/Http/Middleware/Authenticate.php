@@ -49,7 +49,7 @@ class Authenticate
 
         //Se usuário estiver com perfil desativado, permitir requisição
         if (in_array($request->method(), ['POST', 'OPTIONS']) 
-            && ($request->is('login') || $request->is('confirm-email'))) {
+            && $request->is(['login', 'register', 'confirm-email'])) {
 
                 //Path
                 $uri = $request->path();
@@ -57,8 +57,18 @@ class Authenticate
                 //Login Controller
                 $control = $this->loginControl;
 
+                /**
+                 * @version 2.2 
+                 * Para efeito de login após cadastro, necessário que rota de registro seja por aqui
+                 * Em caso de novo usuário, registrar primeiro
+                 * */
+                if ($uri == 'register' && key_exists('error',
+                $registermessage = $control->register($request))) {
+                   return response($registermessage);
+                }
+
                 //Post credenciais de login
-                $msg = ($uri == 'login')? $control->login($request) : $control->confirmEmail($request);
+                $msg = (in_array($uri, ['login','register']))? $control->login($request) : $control->confirmEmail($request);
 
                 //Retorna dados de usuário encontrado
                 $userData = $control->getUserData();
@@ -180,7 +190,7 @@ class Authenticate
         }
 
         //Permitir logout mesmo se usuário não estiver logado
-        if ($request->method() == 'POST' && ($request->is('register/exist') || $request->is('register'))) {
+        if ($request->method() == 'POST' && $request->is('register/exist')) {
             //Retorna requisição com dados
             return $next($request);
         }

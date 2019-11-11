@@ -90,7 +90,7 @@
 
 
         <ion-item-group *ngIf="formacao != undefined && formacao != undefined">
-          {{ "FORMATION" | translate }}
+          {{ $formacaoName | translate }}
           <ion-list>
             <div class="about-item" *ngFor="let form of formacao">
               <h4><strong>{{ 'INSTITUTE' | translate }}</strong>: {{ form[0] }}</h4>

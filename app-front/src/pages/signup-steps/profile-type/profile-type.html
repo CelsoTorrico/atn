@@ -34,7 +34,7 @@
           </ion-row>
 
           <!-- Selecionar tipo de usuário -->
-          <ion-row no-padding>
+          <ion-row no-padding *ngIf="$typeUserSelected != (2||undefined)">
             <ion-col col-12>
               <ion-label stacked>{{ 'SPORT' | translate}}</ion-label>
               <tag-input [(ngModel)]="$sportSelected" 
@@ -48,72 +48,97 @@
           <!-- Campos especifícos para Atletas e Profissionais -->
           <ion-item-group *ngIf="$typeUserSelected != undefined" no-padding>
 
-            <!--<ion-row no-padding *ngIf="$typeUserSelected < 3">
-              <ion-col col-12>
-                <ion-label stacked>{{ 'GENDER' | translate}}</ion-label>
-                <ion-select id="gender" [(ngModel)]="$account.gender" name='gender' full required>
-                  <ion-option *ngFor="let item of $genderList" [selected]="item.valor == 'male'" [value]="item.valor">
-                    {{item.texto}}
-                  </ion-option>
-                </ion-select>
-              </ion-col>
-            </ion-row>-->
-
-            <ion-row no-padding *ngIf="$typeUserSelected >= 3">
-              <ion-col col-12>
-                <ion-label stacked>{{ 'CNPJ' | translate}}</ion-label>
-                <ion-input type="numero" [(ngModel)]="$account.cnpj" name="cnpj" placeholder="CNPJ"></ion-input>
-              </ion-col>
-            </ion-row>
-
-            <ion-col col-12>
-              <ion-item no-padding>
-                  <ion-label stacked>{{ 'TELEPHONE' | translate}}</ion-label>
-                <ion-input id="telefone" [(ngModel)]="$account.telefone" type="tel" name="telefone" placeholder="(XX) XXXXX-XXXX"
-                  required full></ion-input>
-              </ion-item>
-            </ion-col>
-
-            <!--<ion-row>
+            <ng-container *ngIf="$typeUserSelected >= 3">
+              
+              <ion-row no-padding>
+                <ion-col col-12>
+                  <ion-label stacked>{{ 'CNPJ' | translate}}</ion-label>
+                  <ion-input type="numero" [(ngModel)]="$account.cnpj" name="cnpj" placeholder="CNPJ"></ion-input>
+                </ion-col>
+              </ion-row>
+  
               <ion-col col-12>
                 <ion-item no-padding>
-                  <ion-input id="endereco" [(ngModel)]="$account.address" type="text" name="address" placeholder="{{'ADDRESS' | translate}}"
+                    <ion-label stacked>{{ 'TELEPHONE' | translate}}</ion-label>
+                  <ion-input id="telefone" [(ngModel)]="$account.telefone" type="tel" name="telefone" placeholder="(XX) XXXXX-XXXX"
                     required full></ion-input>
                 </ion-item>
               </ion-col>
-            </ion-row>
 
-            <ion-row>
-              <ion-col col-4>
-                <ion-input id="cep" [(ngModel)]="$account.zipcode" type="text" name="zipcode" placeholder="{{'ZIPCODE' | translate}}"
-                  required full></ion-input>
-              </ion-col>
-              <ion-col col-8>
-                <ion-input id="bairro" [(ngModel)]="$account.neighborhood" type="text" name="neighborhood" placeholder="{{'NEIGHBORNHOOD' | translate}}"
-                  required full></ion-input>
-              </ion-col>
-            </ion-row>
+            </ng-container>
 
-            <ion-row>
-              <ion-col col-4>
-                <ion-input type="text" [(ngModel)]="$account.city" name="city" placeholder="{{'CITY' | translate}}"></ion-input>
-              </ion-col>
-              <ion-col col-4>
-                <ion-item no-padding>
-                  <ion-select class="select-state" id="state" [(ngModel)]="$account.state" name="state" placeholder="{{ 'STATE' | translate }}"
-                    full required>
-                    <ion-option *ngFor="let item of $statesList" [value]="item">
-                      {{item}}
+            <ng-container *ngIf="$typeUserSelected == 2">
+
+              <ion-row no-padding>
+
+                <ion-col col-6>
+                    <ion-label stacked>{{ "CAREER" | translate}}</ion-label>
+                    <ion-select name="$account.career" [(ngModel)]="$account.career" interface="popover">
+                        <ion-option *ngFor="let item of $careerList" [value]="item">
+                          {{ item }}
+                        </ion-option>
+                    </ion-select>
+                </ion-col>
+
+                <ion-col col-6>
+                  <ng-container *ngIf="$account.career == 'Outros'">
+                    <ion-label stacked>&nbsp;</ion-label>
+                    <ion-input id="career" [(ngModel)]="$account.other_career" type="text" name="other_career" placeholder="{{'CAREER_OTHERS' | translate}}" required full></ion-input>
+                  </ng-container>
+                </ion-col>
+
+                <ion-col col-12>
+                  <ion-label stacked>{{ 'GENDER' | translate}}</ion-label>
+                  <ion-select id="gender" [(ngModel)]="$account.gender" name='gender' full required>
+                    <ion-option *ngFor="let item of $genderList" [selected]="item.valor == 'male'" [value]="item.valor">
+                      {{item.texto}}
                     </ion-option>
                   </ion-select>
-                </ion-item>
-              </ion-col>
-              <ion-col col-4>
-                <ion-item no-padding>
-                  <ion-input type="text" [(ngModel)]="$account.country" name="country" placeholder="{{'COUNTRY' | translate}}"></ion-input>
-                </ion-item>
-              </ion-col>
-            </ion-row>-->
+                </ion-col>
+              </ion-row>
+  
+              <ion-row>
+                <ion-col col-4>
+                    <ion-label stacked>{{ 'ZIPCODE' | translate}}</ion-label>
+                    <ion-input id="cep" [(ngModel)]="$account.zipcode" type="text" name="zipcode" placeholder="{{'ZIPCODE' | translate}}" max="8" pattern="[0-9]{5}[0-9]{3}" (keyup)="queryZipcode($event)"
+                      required full></ion-input>
+                </ion-col>
+                <ion-col col-8>
+                  <ion-label stacked>{{ 'ADDRESS' | translate}}</ion-label>
+                  <ion-input id="endereco" [(ngModel)]="$account.address" type="text" name="address" placeholder="{{'ADDRESS' | translate}}" [disabled]="($account.address)? false : true"
+                      required full></ion-input>
+                </ion-col>
+              </ion-row>
+  
+              <ion-row>                
+                <ion-col col-6>
+                  <ion-label stacked>{{ 'NEIGHBORNHOOD' | translate}}</ion-label>
+                  <ion-input id="bairro" [(ngModel)]="$account.neighbornhood" type="text" name="neighbornhood" placeholder="{{'NEIGHBORNHOOD' | translate}}" [disabled]="($account.neighbornhood)? false : true"
+                    required full></ion-input>
+                </ion-col>
+                <ion-col col-6>
+                    <ion-label stacked>{{ 'CITY' | translate}}</ion-label>
+                    <ion-input type="text" [(ngModel)]="$account.city" name="city" placeholder="{{'CITY' | translate}}" [disabled]="($account.city)? false : true" required></ion-input>
+                  </ion-col>
+              </ion-row>
+  
+              <ion-row>                
+                <ion-col col-5>
+                  <ion-label stacked>{{ 'STATE' | translate}}</ion-label>
+                  <ion-select class="select-state" id="state" [(ngModel)]="$account.state" name="state" placeholder="{{ 'STATE' | translate }}" [disabled]="($account.state)? false : true"
+                      full required>
+                      <ion-option *ngFor="let item of $statesList" [value]="item">
+                        {{item}}
+                      </ion-option>
+                    </ion-select>
+                </ion-col>
+                <ion-col col-7>
+                  <ion-label stacked>{{ 'COUNTRY' | translate}}</ion-label>
+                  <ion-input type="text" [(ngModel)]="$account.country" name="country" placeholder="{{'COUNTRY' | translate}}" value="Brasil" required></ion-input>
+                </ion-col>
+              </ion-row>
+
+            </ng-container>
 
           </ion-item-group>
 

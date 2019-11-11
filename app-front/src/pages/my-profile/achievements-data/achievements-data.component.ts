@@ -13,6 +13,10 @@ import { NgForm } from '@angular/forms';
 })
 export class MyProfileAchievementsComponent {
 
+    type:any = {
+        ID: null
+    }
+
     titulos_conquistas: any = {
         value: [],
         visibility: <number>0
@@ -23,6 +27,11 @@ export class MyProfileAchievementsComponent {
     public addFormData: any;
 
     public visibility: any;
+
+    /** Nomes de seção para tipo de usuário */
+    public $awardsName   = 'AWARDS';
+    public $eventName    = 'CHAMPIONSHIP';
+    public $positionName = 'POSITION';
 
     constructor(
         public user: User,
@@ -55,12 +64,22 @@ export class MyProfileAchievementsComponent {
             
             //Adicionando valores a classe user
             let atributes = this.user._user;
+        
+            //Atribuir tipo de usuário
+            this.type = atributes.type;
+
+            //Alterar nomeclaturas para profissionais do esporte
+            if (this.type != undefined && this.type.ID == 2) {
+                //Altera nome da seção
+                this.$eventName    = 'EVENT';
+                this.$positionName = 'CONTENT';
+            }
 
             //Verifica se dado já existe
             if (atributes.metadata['titulos-conquistas'] != undefined) {
                 //Atribuir data de usuário ao modelo
                 this.titulos_conquistas = atributes.metadata['titulos-conquistas'];
-            }            
+            }
 
         });
     }

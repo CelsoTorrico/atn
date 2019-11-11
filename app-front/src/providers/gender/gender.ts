@@ -8,8 +8,9 @@ export class GenderList{
     constructor() {
         //Lista de tipos de usuário
         this.list = [
-            {valor: 'male',   texto: 'Masculino'}, 
-            {valor: 'female', texto: 'Feminino'}
+            {valor: 'male',       texto: 'Masculino'}, 
+            {valor: 'female',     texto: 'Feminino'},
+            {valor: 'not_gender', texto: 'Prefiro não informar'}
         ];
     }
 

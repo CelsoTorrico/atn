@@ -106,7 +106,7 @@
       <ion-list ngModelGroup="groupFormacao" #formacaoCtrl="ngModelGroup" ngControl="test">
 
         <ion-list-header>
-          {{ "FORMATION" | translate}}
+          {{ $formacaoName | translate}}
         </ion-list-header>
 
         <ion-select visibility name="formacao.visibility" [(ngModel)]="formacao.visibility" interface="popover">

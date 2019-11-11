@@ -7,6 +7,7 @@ import { BrazilStates } from '../../../providers/useful/states';
 import { NgForm } from '@angular/forms';
 import { VisibilityList } from '../../../providers/visibility/visibility';
 import { CareerList } from '../../../providers/career/career';
+import { GenderList } from '../../../providers/gender/gender';
 
 @Component({
     selector: 'personal-data-edit',
@@ -36,6 +37,8 @@ export class MyProfilePersonalDataComponent {
         value: <string>'',
         visibility: <number>0
     }
+
+    other_career:string;
 
     birthdate: any = {
         value: <string>'',
@@ -104,13 +107,18 @@ export class MyProfilePersonalDataComponent {
     public visibility: any[];
 
     //Lista de Estados
+    protected $genderList:any[];
+
+    //Lista de Estados
     protected $statesList:any[];
 
+    //Lista de carreiros
     protected $careerList:any[];
 
     //Url de requisição de usuário
     private static readonly $getProfile: string = 'user/self';
 
+    //String de erro
     public loginErrorString;
 
     constructor(
@@ -121,17 +129,26 @@ export class MyProfilePersonalDataComponent {
         public viewCtrl: ViewController,
         public translateService: TranslateService,
         public zipcodeService: ZipcodeService,
+        genderList: GenderList,
         statesList: BrazilStates,
         careerList: CareerList,
         visibilityList: VisibilityList) {
 
         this.translateService.setDefaultLang('pt-br');
 
+        //Carrega lista de gêneros de usuários
+        this.$genderList = genderList.list;
+
         //Carrega lista de estados do provider
         this.$statesList = statesList.statesList;
 
         //Carrega lista de profissões
         this.$careerList = careerList.list;
+        
+        //Adicionar item "Outros" para inserção de carreira não existente
+        if( this.$careerList.indexOf('Outros') <= -1) {
+            this.$careerList.push('Outros');
+        }
 
         //Carregar campos de visibilidade
         visibilityList.load().then(() => {
@@ -163,6 +180,12 @@ export class MyProfilePersonalDataComponent {
             this.user_email = atributes.user_email;
             this.type = atributes.type.ID;
 
+            //Se cadastrado item "Outros" em profissão já abrir campo de input livre
+            if( this.$careerList.indexOf(atributes.metadata.career.value) <= -1) {
+                this.other_career = atributes.metadata.career.value; //atribuir valor salvo
+                this.career.value = 'Outros'; //abrir campo livre
+            }
+
             //Retorna seleção de visibilidade
             this.user._visibilityObservable.subscribe((resp: any) => {
                 if (Object.keys(resp).length > 0) {
@@ -177,7 +200,7 @@ export class MyProfilePersonalDataComponent {
     //Fazer pesquisa de CEP (API) ao preencher todos numeros
     queryZipcode($event) {
         let input       = $event.target;
-        let validacao   = /^[0-9]{5}-[0-9]{3}/i;
+        let validacao   = /^[0-9]{5}[0-9]{3}/i;
         let regex       = input.value.search(validacao); 
     
         if (regex == 0) {
@@ -272,6 +295,11 @@ export class MyProfilePersonalDataComponent {
             if (this.hasOwnProperty(key)) {
                 saveFields[key] = this[key];
             }
+        }
+
+        //Em caso de usuário especificar carreira não presente na lista
+        if(this.other_career != undefined) {
+            saveFields.career.value = this.other_career; //Adiciona valor novo
         }
 
         //Realiza update de dados do usuario

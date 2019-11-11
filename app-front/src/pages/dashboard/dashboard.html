@@ -1,5 +1,5 @@
 <!-- Menu-Mobile -->
-<ion-menu side="right" [content]="content">
+<ion-menu side="right" [content]="content" *ngIf="currentUserData">
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="end">
@@ -9,7 +9,7 @@
   </ion-header>
   <ion-content>
     <ion-list>
-      <member-current-menu [messageCount]="info.messages"></member-current-menu><!-- Menu-do-Usuário -->
+      <member-current-menu [member]="currentUserData" [messageCount]="info.messages"></member-current-menu><!-- Menu-do-Usuário -->
     </ion-list>
   </ion-content>
 </ion-menu>
@@ -37,7 +37,7 @@
                   <user-menu></user-menu><!-- Icones de navegação -->
                 </li>
                 <li class="hidden-mobile">
-                  <member-current-user [member]="currentUserData"></member-current-user><!-- Proprio User -->
+                  <member-current-user *ngIf="currentUserData" [member]="currentUserData"></member-current-user><!-- Proprio User -->
                 </li>
                 <li class="hidden-desktop"><button ion-button icon-only menuToggle>
                     <ion-icon name="menu"></ion-icon>

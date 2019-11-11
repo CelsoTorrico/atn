@@ -112,6 +112,9 @@ export class ProfileComponent {
   public $canPage:boolean   = true;
   public $pagedTeam:number  = 1;
 
+  /** Nomes de seção para tipo de usuário */
+  public $formacaoName = 'FORMATION';
+
   constructor(
     public navCtrl: NavController,
     public api: Api,
@@ -180,6 +183,12 @@ export class ProfileComponent {
     if (atributes.sport != null) this.sport = atributes.sport;
     
     this.clubes = atributes.clubs;
+  
+    //Apenas para profissionais do esporte
+    if (this.type == 2) {
+      //Altera nome da seção
+      this.$formacaoName = 'ACADEMIC_RESUME';
+    }
 
     //Apenas para instituições
     if (this.type > 3) {

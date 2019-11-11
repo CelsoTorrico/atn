@@ -316,7 +316,7 @@ class User extends GenericUser{
         }
 
         //Verifica se todos os campos tem informações para poder exibir
-        if( is_null($user->metadata) || is_null($user->type) || is_null($user->sport) ){
+        if( is_null($user->metadata) || is_null($user->type)) {
             return ['error' => ['stats' => 'Nenhuma estatística a exibir.']];
         }
         
@@ -1897,7 +1897,7 @@ class User extends GenericUser{
 
         //Colunas Gerais'
         $usermeta = array(
-            'type', 'sport', 'clubes', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'session_tokens'
+            'type', 'sport', 'clubes', 'telefone', 'city', 'state', 'country', 'neighbornhood', 'zipcode', 'telefone', 'address', 'profile_img', 'my-videos', 'views', 'searched_profile', 'biography', 'session_tokens', 'titulos-conquistas'
         );
 
         //Compartilhado entre Atleta e Profissional do Esporte
@@ -1912,7 +1912,7 @@ class User extends GenericUser{
 
         //Compartilhado entre Atleta e Clube
         if ($typeUser === true || in_array($typeUser, [1, 3, 4, 5])) {
-            $usermeta = array_merge($usermeta, ['empates', 'vitorias', 'derrotas', 'titulos', 'jogos', 'titulos-conquistas']);
+            $usermeta = array_merge($usermeta, ['empates', 'vitorias', 'derrotas', 'titulos', 'jogos']);
         }
 
         //Atleta

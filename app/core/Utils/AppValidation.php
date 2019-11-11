@@ -132,7 +132,7 @@ class AppValidation
         $user = array(
             'user_login'    => '([a-zA-Z0-9_-])+',
             'posicao'       => '.*',
-            'gender'        => '((fe)?male)',
+            'gender'        => '((fe)?male)|(not_gender)',
             'biography'     => '.*',
             'howknowus'     => '.*',
             'social_tokens' => '.*',

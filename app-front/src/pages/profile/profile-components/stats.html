@@ -1,6 +1,6 @@
 <ion-row>
   <ion-col col-lg-2 col-12>
-    <div class="statsGeneralData">
+    <div class="statsGeneralData" *ngIf="type != 2">
 
       <button *ngIf="isLogged" edit-profile ion-button small end clear icon-only (click)="editGeneralStats();"> 
         <ion-icon item-start name="create"></ion-icon>
@@ -41,10 +41,13 @@
           <ion-item-group *ngIf="general['titulos-conquistas'] != (null || undefined), else elseAchieve">
             <ion-row>
               <ion-col col-12 col-sm-6 col-md-4 class="box-titulo" *ngFor="let titulo of general['titulos-conquistas']">
-                <h4 class="box-stats">
+                <h4 *ngIf="type != 2; else AsDescription"  class="box-stats">
                   <ion-icon start name="medal" [ngClass]="{'gold': titulo[0] == 1, 'silver': titulo[0] == 2, 'bronze': titulo[0] == 3 }"></ion-icon>
                   {{ titulo[0] }}
                 </h4>
+                <ng-template #AsDescription>
+                  <h5>{{ titulo[0] }}</h5>
+                </ng-template>
                 <p class="championship">{{ titulo[1] }}</p>
                 <p>{{ titulo[2] }}</p>
               </ion-col>

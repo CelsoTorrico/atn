@@ -165,6 +165,12 @@ export class ProfileResumeComponent {
             this.enableAdminClubButton = true;
         }
 
+        //Alterar nomeclaturas dos botões de administração
+        if (this.type.ID == 2) {
+            //Habilita botão de admin
+            this.views[1].title = 'PROFISSIONAL_RESUME';
+        }
+
         //Pega os dados de estatística 
         this.getStats();
 

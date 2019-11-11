@@ -4,7 +4,7 @@
 $router->group(['prefix' => 'login'], function () use ($router) {
 
     //Post credenciais de login
-    $router->post('/', 'LoginController@login');
+    $router->post('/', ['as' => 'login', 'uses' => 'LoginController@login']);
 
     //SOCIAL LOGIN
     $router->get('/{social:facebook|google|authorized}',  'LoginController@socialProvider');
