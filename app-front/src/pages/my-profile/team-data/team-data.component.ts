@@ -95,16 +95,11 @@ export class MyProfileAddMemberDataComponent extends MyProfileSportsComponent {
     ngOnInit() {
         
         //No caso de editar usuário
-        if(this.$user_id != undefined){
-            
+        if(this.$user_id) {
+        
             //Atribui classe de usuário
             let user = this.user.getUser(this.$user_id);
-
-            //Faz requisição de dados de usuário
-            user.dataReady.subscribe((resp:any) => {
-
-                //Sem resposta retorna
-                if (resp.status != 'ready') return;
+            user.getUserData().then((resp:any) => {
 
                 //Atribuindo dados aos modelos
                 this.page_title     = "UPDATE_MEMBER";

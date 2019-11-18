@@ -546,16 +546,16 @@ class User extends GenericUser{
     public function searchUsers(array $search, int $paged = 0) {
 
         //Busca em user
-        $personal       = ['display_name'];
+        $personal     = ['display_name'];
 
         //Campos de busca do tipo String = LIKE
         $isMetaLike   = ['city', 'neighbornhood', 'formacao'];
 
         //Campos de busca do tipo string = '='
-        $isMetaEqual   = ['type', 'state', 'gender'];
+        $isMetaEqual  = ['type', 'state', 'gender', 'parent_user'];
 
         //Campos de busca do tipo array
-        $isMetaArray    = ['clubs','sport'];
+        $isMetaArray  = ['clubs','sport'];
 
         //Variaveis para montar query
         $whereUser  = ['users.user_status[!]' => null];
@@ -575,26 +575,6 @@ class User extends GenericUser{
 
         //Acesso direto a classe Medoo
         $usermeta = new UsermetaModel();
-
-        //No caso de pesquisa nos clubes, já retornar todos os usuários pertencentes
-        if (key_exists('parent_user', $search) && !empty($search['parent_user'])) {
-
-            //Acesso direto medoo
-            $db = $usermeta->getDatabase();
-
-            //Retornar lista de usuários do clube
-            $clubUsers = $db->select('usermeta', ['user_id'], ['meta_key' => 'parent_user', 'meta_value' => $search['parent_user']]);
-
-            //Lista de ids de usuários via table 'users'
-            if (count($clubUsers) > 0) {
-                $whereIn = array_merge($whereIn, $clubUsers);  
-            } else {
-                return ['error' => ['search' => 'Nenhum usuário encontrado.']];
-            }
-
-            //Remove do array
-            unset($search['parent_user']);
-        }
 
         //Intera sobre array de dados enviados para montar query
         foreach($search as $k => $v) {
@@ -684,9 +664,14 @@ class User extends GenericUser{
             
             //Acesso direto a classe Medoo
             $db = $this->model->getDatabase();
-            
+
+            //Se busca realizada por clube permitir visualizar usuários sem tipo definido
+            if (!is_a($this, 'Core\Profile\UserClub')) {
+                $whereUser = array_merge($whereUser, ['usermeta.meta_key' => "type", 'usermeta.meta_value[!]' => NULL]);
+            }
+
             //Ids de usuários para filtro
-            $ids = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], 'user_id', array_merge($whereUser, ['usermeta.meta_key' => "type", 'usermeta.meta_value[!]' => NULL]));
+            $ids = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], 'user_id', $whereUser);
 
             //Lista de ids de usuários via table 'users'
             $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'], [
@@ -710,7 +695,7 @@ class User extends GenericUser{
                     'usermeta.meta_key'        => 'type',
                     'usermeta.meta_value[!]'   => null,
                 ],
-                'LIMIT'     => $limit
+                'LIMIT' => $limit
             ]));
         }
 
