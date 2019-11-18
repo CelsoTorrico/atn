@@ -181,7 +181,7 @@ export class MyProfilePersonalDataComponent {
             this.type = atributes.type.ID;
 
             //Se cadastrado item "Outros" em profissão já abrir campo de input livre
-            if( this.$careerList.indexOf(atributes.metadata.career.value) <= -1) {
+            if( atributes.metadata.career != undefined && this.$careerList.indexOf(atributes.metadata.career.value) <= -1) {
                 this.other_career = atributes.metadata.career.value; //atribuir valor salvo
                 this.career.value = 'Outros'; //abrir campo livre
             }

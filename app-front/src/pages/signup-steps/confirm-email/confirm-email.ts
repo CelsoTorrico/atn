@@ -53,7 +53,7 @@ export class ConfirmEmailStepPage {
                 //Mostrar alerta
                 alertCtrl.create({
                     title:   this.title,
-                    message: resp.error.confirm_user 
+                    message: resp.error.confirm_user
                 }).present(); 
 
             } else {   

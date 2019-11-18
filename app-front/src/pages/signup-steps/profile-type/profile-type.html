@@ -23,7 +23,7 @@
 
           <!-- Selecionar tipo de usuário -->
           <ion-row no-padding>
-            <ion-col col-12>
+            <ion-col col-6>
               <ion-label stacked>{{ 'PROFILE' | translate}}</ion-label>
               <ion-select id="tipo" [(ngModel)]="$typeUserSelected" name='typeUserSelected' full required>
                 <ion-option *ngFor="let item of $typeUserList" [value]="item.valor">
@@ -31,6 +31,11 @@
                 </ion-option>
               </ion-select>
             </ion-col>
+            
+            <ion-col col-6 *ngIf="$typeUserSelected == 2">
+              <p><br /><small>Treinadores, Fisioterapeutas, Nutricionistas, Juízes e outros</small></p>
+            </ion-col>
+            
           </ion-row>
 
           <!-- Selecionar tipo de usuário -->

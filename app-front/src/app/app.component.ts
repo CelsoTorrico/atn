@@ -69,6 +69,10 @@ export class MyApp {
 
     //Verifica se usuário está inativado e exibe caixa flutuante
     this.user.dataReady.subscribe(() => {
+
+      //Se for página de confirmação de email não exibir
+      this.view = this.nav.getActive();
+      if (this.view.name == 'SignupStepsPage') return;
       
       //Mostrar floatbox para autenticação de email
       if (this.user._user != undefined && this.user._user.user_status == 1) {
@@ -89,7 +93,7 @@ export class MyApp {
           //Adicionando evento ao botão filho do alerta
           let button = this.floatbox.lastChild as HTMLElement;
           button.setAttribute("onclick", 'this.validateEmail()');
-          button.onclick = () => { this.validateEmail() };
+          button.onclick = () => { this.validateEmail };
 
           //Adicionado elemento a página
           app.appendChild(this.floatbox);
@@ -100,8 +104,17 @@ export class MyApp {
       //Redirecionar para página de profile em caso de campos obrigatórios não preenchidos
       if (this.user._user != undefined && (this.user._user.empty.indexOf('type') > -1 || this.user._user.empty.indexOf('sport') > -1 ))
       { 
-          //Atribui se houver dados de usuário definido como faltantes
-          this.hasRequiredEmpty = true;
+
+        //Exibir modal se inexistir tipo de usuário
+        if (!this.user._user.type) {
+          return this.hasRequiredEmpty = true;
+        }
+
+        //Atribui se houver dados de usuário definido como faltantes
+        if(!this.user._user.sport && (!this.user._user.type || (this.user._user.type != undefined && this.user._user.type.ID != 2))) {
+          return this.hasRequiredEmpty = true;
+        }
+
       }      
 
     });    

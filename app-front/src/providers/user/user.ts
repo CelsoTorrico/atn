@@ -46,7 +46,7 @@ export class User {
     //Quando inicializar a classe fazer requisição e alimentar propriedade _user
     if (Cookie.checkCookie()) { 
       this.getUserData().then((res: boolean) => {
-        console.log('User ' + this._user.display_name + ' is ready!');
+        //console.log('User ' + this._user.display_name + ' is ready!');
       });
     }
 

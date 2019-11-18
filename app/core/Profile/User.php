@@ -224,7 +224,7 @@ class User extends GenericUser{
 
 
     /**
-     *  Atribui um valor usermeta definida via parametros 
+     *  Retorna um valor usermeta definida via parametros 
      * 
      *  @param $key  usermeta key
      *  @param $value usermeta value
@@ -548,46 +548,48 @@ class User extends GenericUser{
         //Busca em user
         $personal       = ['display_name'];
 
-        //Campos de busca do tipo String
-        $isMetaString   = ['city','state','neighbornhood','gender','formacao'];
+        //Campos de busca do tipo String = LIKE
+        $isMetaLike   = ['city', 'neighbornhood', 'formacao'];
 
-        $isMetaNumber   = ['type'];
+        //Campos de busca do tipo string = '='
+        $isMetaEqual   = ['type', 'state', 'gender'];
 
-        //Campos usermeta em array
+        //Campos de busca do tipo array
         $isMetaArray    = ['clubs','sport'];
 
-        //Variavel para montar query
-        $where = ['user_status[!]' => null];
-        $whereJoin = [];
-        $content = [];
-        $foundUsers = [];
+        //Variaveis para montar query
+        $whereUser  = ['users.user_status[!]' => null];
+        $whereIn    = [];
+
+        //Quantidade de campos = Filtros
+        $fields  = 0;
+
+        //Qtd de itens por página
+        $perPage = 100;
+        
+        //A partir de qual item contar
+        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
+
+        //Paginação de timeline
+        $limit = [$initPageCount, $perPage];
+
+        //Acesso direto a classe Medoo
+        $usermeta = new UsermetaModel();
 
         //No caso de pesquisa nos clubes, já retornar todos os usuários pertencentes
         if (key_exists('parent_user', $search) && !empty($search['parent_user'])) {
-            
-            //Acesso direto a classe Medoo
-            $usermeta = new UsermetaModel();
+
+            //Acesso direto medoo
+            $db = $usermeta->getDatabase();
 
             //Retornar lista de usuários do clube
-            $clubUsers = $usermeta->getIterator(['meta_key' => 'parent_user', 'meta_value' => $search['parent_user']]);
-
-            //Intera e atribui a variavel
-            foreach ($clubUsers as $key => $value) {
-                
-                //Verifica se é valido
-                if(!$clubUsers->valid()){
-                    continue;
-                }
-
-                //Atribui dados do usuário
-                $user = $value->getData();
-                $foundUsers[] = (int) $user['user_id']; 
-
-            }
+            $clubUsers = $db->select('usermeta', ['user_id'], ['meta_key' => 'parent_user', 'meta_value' => $search['parent_user']]);
 
             //Lista de ids de usuários via table 'users'
-            if (count($foundUsers) > 0) {
-                $where = array_merge($where, ['users.ID' => $foundUsers]);  
+            if (count($clubUsers) > 0) {
+                $whereIn = array_merge($whereIn, $clubUsers);  
+            } else {
+                return ['error' => ['search' => 'Nenhum usuário encontrado.']];
             }
 
             //Remove do array
@@ -603,14 +605,18 @@ class User extends GenericUser{
             }
 
             //Busca por dados pessoais
-            if (in_array($k, $personal)) {                
+            if (in_array($k, $personal)) {  
+                
+                //Acessa classe medoo diretamente
+                $db = $this->model->getDatabase();
+
                 //Adiciona a query
-                $where = array_merge($where, ['users.'.$k.'[~]' => '%'.$v.'%']); 
+                $whereUser = array_merge($whereUser, ['users.'.$k.'[~]' => '%'.$v.'%']);
                 continue;
             }
 
             //Busca em usermetas
-            if (in_array($k, $isMetaNumber)) {
+            if (in_array($k, $isMetaEqual)) {
                 
                 //Adiciona a query
                 $content = [
@@ -620,7 +626,7 @@ class User extends GenericUser{
             }
 
             //Busca em usermetas
-            if (in_array($k, $isMetaString)) {
+            if (in_array($k, $isMetaLike)) {
                 
                 //Adiciona a query
                 $content = [
@@ -663,74 +669,56 @@ class User extends GenericUser{
                 ]; 
             }
 
-            //Atributos para join
-            $whereJoin['OR']['AND #'.$k] = $content;
-
-        }
-
-        //Qtd de itens por página
-        $perPage = 100;
-        
-        //A partir de qual item contar
-        $initPageCount = ($paged <= 1)? $paged = 0 : ($paged * $perPage) - $perPage;
-
-        //Paginação de timeline
-        $limit = [$initPageCount, $perPage];
-
-        //Inicializando classe
-        $result = null;
-
-        if (count($where) > 0) {
-
-            //Retorna ids de usuários encontrados
-            $user_found = $this->model->getIterator($where);
-            
-            //array de ids
-            $ids = [];                        
-            
-            //Atribuindo apenas valores
-            foreach ($user_found as $key => $value) {
-                
-                //Verifica se item é valido
-                if(!$user_found->valid()){
-                    continue;
-                }
-
-                //Atribui id ao array
-                $ids[] = $value->ID; 
-
-            }
-
-            //Adiciona ids como parametro de busca
-            $whereJoin = array_merge($whereJoin, ['user_id' => $ids]);
-        }
-
-        //Define o limite de posts
-        $whereJoin = array_merge($whereJoin,
-            ['GROUP'    => ['user_id'], 'LIMIT' => $limit]);
-            //'HAVING'    => ['user_id' => Medoo::raw('COUNT(<user_id>) > 1') ],
-
-        //Se existir outros filtros selecionados
-        if(count($whereJoin) > 0) {
-            
-            //Acesso direto a classe Medoo
-            $usermeta = new UsermetaModel();
+            //Acesso direto classe medoo
             $db = $usermeta->getDatabase();
-            //Executa query (Medoo)
-            $result = $db->select('usermeta', ['user_id'], $whereJoin);
+            
+            //Atribuindo arrays de ids encontrados em cada interação
+            $whereIn = array_merge(['AND #'.$k => $content], $whereIn);
+
+            //Atribui contagem de campo com dado a filtrar
+            $fields++;
         }
 
         //Em caso de não houver nenhum tipo de filtragem solicitada, retornar usuários
-        if(!$result) {
+        if(count($whereIn) > 0) {
+            
+            //Acesso direto a classe Medoo
+            $db = $this->model->getDatabase();
+            
+            //Ids de usuários para filtro
+            $ids = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], 'user_id', array_merge($whereUser, ['usermeta.meta_key' => "type", 'usermeta.meta_value[!]' => NULL]));
+
             //Lista de ids de usuários via table 'users'
-            $result = $usermeta->getIterator($whereJoin);
+            $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'], [
+                'user_id'   => $ids,
+                'OR'        => $whereIn,
+                'GROUP'     => ['ID'],
+                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields),
+                'LIMIT'     => $limit
+            ]);
+
+        } else {
+            
+            //Acesso direto a classe Medoo
+            $db = $this->model->getDatabase();
+            
+            //Lista de ids de usuários via table 'users'
+            $result = $db->select('users', [
+                '[>]usermeta' => ["ID" => "user_id"],
+            ], ['users.ID'], array_merge($whereUser, [
+                'AND' => [
+                    'usermeta.meta_key'        => 'type',
+                    'usermeta.meta_value[!]'   => null,
+                ],
+                'LIMIT'     => $limit
+            ]));
         }
 
         //Inicializa array
-        $users = [];
+        $users = [];      
 
         //Se foi encontrado algum usuário
-        if (!$result || count($result) > 0) {
+        if (is_array($result) && count($result) > 0) {
 
             $repeteadID = [];
 
@@ -738,18 +726,18 @@ class User extends GenericUser{
             foreach ($result as $key => $value) {
 
                 //Definindo key que contém id de usuário
-                $userid = (key_exists('ID', $value))? $value['ID'] : $value['user_id'];
+                $userid = $value['ID'];
 
                 //Verifica se id não é repetido
                 if (in_array($userid, $repeteadID)) {
                     continue;
                 }
 
-                //Instanciado classe ce usuário
+                //Instanciado classe de usuário
                 $user = new self();
                 
                 //Definir uma nova função que retorne apenas dados baseados para listagem
-                $users[] = $user->getMinProfile((int) $userid);
+                $users[] = $user->getMinProfile((int) $userid, ['gender', 'state']);
                 
                 $repeteadID[] = $userid;
             }

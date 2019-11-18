@@ -175,6 +175,7 @@ ion-input {
 
   input.text-input-md,
   input.text-input {
+    width: 100%;
     margin: 10px 0px;
   }
 }
@@ -185,8 +186,11 @@ ion-label,
   color: #111;
 }
 
-.item-label-stacked .text-input-md, .item-label-floating .text-input-md {
+.item-label-stacked .text-input-md, .item-label-floating .text-input-md, 
+ion-select:not([visibility]),
+ion-select:not([name="post_visibility"]) {
   width: 100% !important;
+  max-width: 100%;
 }
 
 .searchbar-md .searchbar-input,
@@ -535,6 +539,7 @@ ion-select[name="post_visibility"] {
   position: absolute;
   font-weight: bolder;
   color: $button-primary-color;
+  width: auto !important;
 
   .select-md .select-icon .select-icon-inner {
     color: $button-primary-color;
@@ -711,8 +716,8 @@ figure.full {
 .float-box {
   padding: 5px 15px;
   position: absolute;
-  bottom: 60px;
-  right: 50px;
+  bottom: 30px;
+  right: 30px;
   display: block;
   background-color:  #fff;
   border: 2px solid $vermelho-contraste;
@@ -720,9 +725,13 @@ figure.full {
   color:#444;
   font-size: 13px;
 
+  p{
+    display: inline-block;
+  }
+
   @media screen and (max-width: map-get($grid-breakpoints, sm) ){
     width: 100%;
-    max-width: 85%;
+    max-width: 90%;
     right: 50%;
     transform: translateX(50%);
   }
@@ -736,7 +745,7 @@ profile-databox {
   z-index: 999999;
   width: 100%;
   height: 100%;
-  background-color:rgba(0,0,0,0.8);  
+  background-color:rgba(100,100,100,0.5);  
 
   .list-header-md{
     border-top: 0px;

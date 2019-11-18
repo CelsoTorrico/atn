@@ -18,7 +18,11 @@ import { TranslateChar } from '../../../providers/useful/translateChar';
 })
 export class ProfileTypeStepPage {
 
-    public $account: any = {};
+    public $account: any = {
+        country: "Brasil",
+        career: "Coach",
+        gender: "male"
+    };
 
     public $typeUserSelected: number = 1;
 
