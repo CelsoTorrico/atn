@@ -705,13 +705,13 @@ class User extends GenericUser{
             $ids = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], 'user_id', $whereUser);
 
             //Lista de ids de usuários via table 'users'
-            $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'], array_merge([
+            $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'],[
                 'user_id'   => $ids,
-                /*'AND'       => $whereIn,
+                'OR'        => $whereIn,
                 'GROUP'     => ['ID'],
-                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields),
-                'LIMIT'     => $limit*/
-            ], $whereIn));
+                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. (count($ids) > 0)? $fields++ : $fields ),
+                'LIMIT'     => $limit
+            ]);
 
         } else {
             
