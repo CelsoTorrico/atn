@@ -583,7 +583,7 @@ class User extends GenericUser{
         foreach($search as $k => $v) {
 
             //para próximo se vazio
-            if (empty($v) || (is_bool($v) && $v != true)) {
+            if (empty($v) || (is_bool($v) && !$v)) {
                 continue;
             }
 
@@ -593,10 +593,10 @@ class User extends GenericUser{
                 //Acessa classe medoo diretamente
                 $db = $this->model->getDatabase();
 
-                $t = ($k == 'user_registered')? ['users.'.$k.'[<>]' => [$v[0], $v[1]]] : ['users.'.$k.'[~]' => '%'.$v.'%']; 
+                $q = ($k == 'user_registered')? ['users.'.$k.'[<>]' => [$v[0], $v[1]]] : ['users.'.$k.'[~]' => '%'.$v.'%']; 
 
                 //Adiciona a query
-                $whereUser = array_merge($whereUser, $t);
+                $whereUser = array_merge($whereUser, $q);
                 continue; 
             }
 
@@ -624,7 +624,7 @@ class User extends GenericUser{
             if (in_array($k, $isMetaBool)) {
 
                 //Se for false ir próximo
-                if (is_bool($v) && $v == false) continue;
+                if (is_bool($v) && !$v) continue;
 
                 //Se for array de dados, montar de grupo de ids a ser usado em regular expression
                 if ($k == 'photo') {
@@ -709,7 +709,7 @@ class User extends GenericUser{
                 'user_id'   => $ids,
                 'OR'        => $whereIn,
                 'GROUP'     => ['ID'],
-                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields++ ),
+                'HAVING'    => Medoo::raw('COUNT(<ID>) > '. $fields ),
                 'LIMIT'     => $limit
             ]);
 
