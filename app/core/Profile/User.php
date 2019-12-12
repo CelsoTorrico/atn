@@ -635,6 +635,7 @@ class User extends GenericUser{
                     $k = 'my-videos'; //Nome do meta key correto
                     //Monta expressão  = array serializado que possuem ao menos um vídeo
                     $meta_value = ['meta_value[REGEXP]' => '^a\:[1-9]{1}']; 
+
                 } elseif ($k = 'accept_assessments') {                    
                     //Monta expressão = termo de aceite de avaliações
                     $meta_value = ['meta_value' => 'true'];
@@ -705,7 +706,7 @@ class User extends GenericUser{
 
             //Lista de ids de usuários via table 'users'
             $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'], [
-                'user_id'   => $ids,
+                //'user_id'   => $ids,
                 'AND'       => ['OR' => $whereIn],
                 'GROUP'     => ['ID'],
                 'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields),
