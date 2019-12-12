@@ -718,7 +718,7 @@ class User extends GenericUser{
             $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'],[
                 'user_id'   => $ids,
                 'GROUP'     => ['ID'],
-                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields),
+                //'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields),
                 'LIMIT'     => $limit
             ]);
 
