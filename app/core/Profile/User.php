@@ -736,7 +736,7 @@ class User extends GenericUser{
                     'usermeta.meta_key'        => 'type',
                     'usermeta.meta_value[!]'   => null,
                 ],
-                'ORDER'     => 'users.display_name',
+                'ORDER'     => 'users.user_registered',
                 'LIMIT' => $limit
             ]));
         }
