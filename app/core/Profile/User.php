@@ -709,7 +709,7 @@ class User extends GenericUser{
                 'user_id'   => $ids,
                 'OR'        => $whereIn,
                 'GROUP'     => ['ID'],
-                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. (count($whereIn)) ),
+                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields ),
                 'LIMIT'     => $limit
             ]);
 
