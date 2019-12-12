@@ -32,6 +32,8 @@ export class ProfileComponent {
 
   display_name: string = '';
 
+  accept_assessments: boolean = false;
+
   sport: any = null
 
   clubes: any = null

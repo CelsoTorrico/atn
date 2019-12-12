@@ -88,12 +88,12 @@ export class MyApp {
           this.floatbox = document.createElement("div");
           this.floatbox.setAttribute("id","validate-email");
           this.floatbox.classList.add("float-box");
-          this.floatbox.innerHTML = "<p>É necessário autenticar seu email.</p><a icon-end='' ion-button='' outline='' small='' ng-reflect-small='' ng-reflect-outline='' class='button button-md button-outline button-outline-md button-small button-small-md'><span class='button-inner'>Valide agora mesmo</span><div class='button-effect' style='transform: translate3d(-2px, -63px, 0px) scale(1); height: 153px; width: 153px; opacity: 0; transition: transform 338ms ease 0s, opacity 236ms ease 102ms;'></div></a>";
+          this.floatbox.innerHTML = "<p>É necessário autenticar seu email.</p><a icon-end='' ion-button='' outline='' small='' ng-reflect-small='' ng-reflect-outline='' float-right='' class='button button-md button-outline button-outline-md button-small button-small-md'><span class='button-inner'>Valide agora mesmo</span><div class='button-effect' style='transform: translate3d(-2px, -63px, 0px) scale(1); height: 153px; width: 153px; opacity: 0; transition: transform 338ms ease 0s, opacity 236ms ease 102ms;'></div></a>";
 
           //Adicionando evento ao botão filho do alerta
           let button = this.floatbox.lastChild as HTMLElement;
+          button.onclick = () => { this.validateEmail.apply(this); };
           button.setAttribute("onclick", 'this.validateEmail()');
-          button.onclick = () => { this.validateEmail };
 
           //Adicionado elemento a página
           app.appendChild(this.floatbox);
@@ -101,7 +101,7 @@ export class MyApp {
 
       }
 
-      //Redirecionar para página de profile em caso de campos obrigatórios não preenchidos
+      //Exibir modal em caso de dados faltantes = type e sport
       if (this.user._user != undefined && (this.user._user.empty.indexOf('type') > -1 || this.user._user.empty.indexOf('sport') > -1 ))
       { 
 
@@ -115,7 +115,7 @@ export class MyApp {
           return this.hasRequiredEmpty = true;
         }
 
-      }      
+      }
 
     });    
 
@@ -156,7 +156,7 @@ export class MyApp {
 
   /** Função que envia email de verificação à usuário logado */
   validateEmail() {
-    
+
     this.api.get('user/validate').subscribe((data:any) => {
       
       if(data == null || data == false) return;

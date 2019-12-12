@@ -12,7 +12,7 @@ import { TranslateChar } from '../../providers/useful/translateChar';
 
 
 @IonicPage({
-  segment: 'search',
+  segment: 'search'
 })
 @Component({
   selector: 'page-search',
@@ -21,15 +21,20 @@ import { TranslateChar } from '../../providers/useful/translateChar';
 export class SearchPage {
 
   public query: any = {
-    display_name: <string>'',
+    display_name: <string>'', 
     sport: <any>[],
     clubs: <string>'',
-    type: <string>'',
-    city: <string>'',
+    type:  <string>'',
+    city:  <string>'',
     state: <string>'',
     neighbornhood: <string>'',
-    gender: <string>'',
-    formacao: <string>''
+    gender:   <string>'',
+    formacao: <string>'',
+    birthdate: <any>[],
+    user_registered: <any>[],
+    photo: <boolean>false,
+    video: <boolean>false,
+    accept_assessments: <boolean>false
   };
 
   public filter: boolean = false;

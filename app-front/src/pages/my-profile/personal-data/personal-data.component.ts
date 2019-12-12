@@ -33,6 +33,11 @@ export class MyProfilePersonalDataComponent {
         visibility: <number>0
     }
 
+    accept_assessments:any = {
+        value: <boolean>false,
+        visibility: <number>0
+    }
+
     career: any = {
         value: <string>'',
         visibility: <number>0
@@ -232,6 +237,10 @@ export class MyProfilePersonalDataComponent {
         let saveFields: any = {
             display_name: '',
             user_email: '',
+            accept_assessments: {
+                value: <string>'false',
+                visibility: <number>0
+            },
             telefone: {
                 value: <string>'',
                 visibility: <number>0
@@ -296,6 +305,9 @@ export class MyProfilePersonalDataComponent {
                 saveFields[key] = this[key];
             }
         }
+
+        //Em caso de usuário checkar disponibilidade para avaliações
+        saveFields.accept_assessments.value = (this.accept_assessments.value == true) ? 'true' : 'false';
 
         //Em caso de usuário especificar carreira não presente na lista
         if(this.other_career != undefined) {

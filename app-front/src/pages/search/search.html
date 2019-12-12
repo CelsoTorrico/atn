@@ -36,6 +36,7 @@
             
 
             <ion-grid [ngClass]="{show: filter == true, hide: filter == false }">
+              
               <ion-row>
                 <ion-col padding class="margin-input">
                   <ion-label stacked>{{ "SPORT" | translate }}</ion-label>
@@ -50,6 +51,16 @@
                   </ion-list>
                 </ion-col>
               </ion-row>
+
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label stacked>{{ "FORMATION" | translate }}</ion-label>
+                    <ion-input [(ngModel)]="query.formacao" name="formacao" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
               <ion-row>
                 <ion-col>
                   <ion-item>
@@ -75,6 +86,7 @@
                   </ion-item>
                 </ion-col>
               </ion-row>
+
               <ion-row>
                 <ion-col>
                   <ion-item>
@@ -89,6 +101,7 @@
                   </ion-item>
                 </ion-col>
               </ion-row>
+
               <ion-row>
                 <ion-col col-6>
                   <ion-item>
@@ -104,7 +117,7 @@
                   </ion-item>
                 </ion-col>
                 <ion-col>
-                  <ion-item>
+                  <ion-item> 
                     <ion-label stacked>{{ "GENDER" | translate }}</ion-label>
                     <ion-select id="gender" [(ngModel)]="query.gender" name='gender' full>
                       <ion-option 
@@ -117,16 +130,52 @@
                   </ion-item>
                 </ion-col>
               </ion-row>
-              <ion-row>
 
-                <ion-col>
+              <ion-row>
+                <ion-col col-6>
+                    <ion-item>                
+                      <ion-label stacked>{{ "BIRTHDATE" | translate }} (de)</ion-label> 
+                      <ion-input [(ngModel)]="query.birthdate[0]" name="query.birthdate[0]" type="date"></ion-input>   
+                    </ion-item>
+                </ion-col>
+                <ion-col col-6>
                   <ion-item>
-                    <ion-label stacked>{{ "FORMATION" | translate }}</ion-label>
-                    <ion-input [(ngModel)]="query.formacao" name="formacao" type="text"></ion-input>
+                      <ion-label stacked>{{ "BIRTHDATE" | translate }} (até)</ion-label> 
+                      <ion-input [(ngModel)]="query.birthdate[1]" name="query.birthdate[1]" type="date"></ion-input>
+                  </ion-item>                    
+                </ion-col>                  
+              </ion-row>
+
+              <ion-row>
+                <ion-col col-6>
+                  <ion-item>                
+                    <ion-label stacked>{{ "USER_REGISTERED" | translate }} (de)</ion-label>
+                    <ion-input [(ngModel)]="query.user_registered[0]" name="query.user_registered[0]" type="date"></ion-input>    
                   </ion-item>
                 </ion-col>
-
+                <ion-col col-6>
+                  <ion-item>
+                    <ion-label stacked>{{ "USER_REGISTERED" | translate }} (até)</ion-label>
+                    <ion-input [(ngModel)]="query.user_registered[1]" name="query.user_registered[1]" type="date"></ion-input>
+                  </ion-item>                    
+                </ion-col> 
               </ion-row>
+
+              <ion-list>
+                <ion-item>
+                  <ion-label stacked>{{ "HAS_PHOTO" | translate }}</ion-label>
+                  <ion-checkbox [(ngModel)]="query.photo" name="photo" checked="false"></ion-checkbox>
+                </ion-item>
+                <ion-item>
+                  <ion-label stacked>{{ "HAS_VIDEO" | translate }}</ion-label>
+                  <ion-checkbox [(ngModel)]="query.video" name="video" checked="false"></ion-checkbox>
+                </ion-item>
+                <ion-item>
+                  <ion-label stacked>{{ "ACCEPT_ASSESSMENTS" | translate }}</ion-label>
+                  <ion-checkbox [(ngModel)]="query.accept_assessments" name="accept_assessments" checked="false"></ion-checkbox>
+                </ion-item>
+              </ion-list>
+
             </ion-grid>            
 
           </ion-card>

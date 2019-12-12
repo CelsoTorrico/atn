@@ -1,5 +1,15 @@
 <ion-row>
   <ion-col col-12 col-lg-6>
+
+    <ng-container *ngIf="accept_assessments">
+        <ion-list margin>
+          <ion-badge icon-start class="accept_assessments">
+              <ion-icon name="clipboard"></ion-icon>
+              {{ "ACCEPT_ASSESSMENTS" | translate }}
+          </ion-badge>
+        </ion-list>
+    </ng-container>
+
     <ion-card class="personalData">
 
       <ion-card-header>

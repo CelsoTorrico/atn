@@ -40,21 +40,33 @@ import { SportList } from '../../providers/sport/sport';
           <ion-col col-12>
               <ion-label stacked>{{ "SPORTS" | translate }}</ion-label>
               <tag-input required [(ngModel)]="$sportsSelected" [addOnBlur]="false" [onlyFromAutocomplete]="true"
-                placeholder="{{ 'WRITE_SPORT' | translate }}" secondaryPlaceholder="{{ 'WHICH_SPORT' | translate }}" name="sportSelected">
+                placeholder="{{ 'WRITE_SPORT' | translate }}" secondaryPlaceholder="{{ 'WHICH_SPORT' | translate }}" name="sportSelected" required full>
                 <tag-input-dropdown [autocompleteItems]="$sportList" [matchingFn]="$tagInputChange" ></tag-input-dropdown>
               </tag-input>
           </ion-col>
 
         </ion-row>   
 
+        <ng-container *ngIf="$typeUserSelected == 1">
+          <ion-row>        
+            <ion-col col-12>
+              <ion-list>
+                <ion-item>
+                  <ion-label stacked>{{ "ACCEPT_ASSESSMENTS" | translate }}</ion-label>
+                  <ion-checkbox [(ngModel)]="accept_assessments" name="accept_assessments" checked="false"></ion-checkbox>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+
         <ng-container *ngIf="$typeUserSelected == 2">
 
-            <ion-row
-            >
+            <ion-row>
 
               <ion-col col-6>
                   <ion-label stacked>{{ "CAREER" | translate}}</ion-label>
-                  <ion-select name="$account.career" [(ngModel)]="$account.career" interface="popover">
+                  <ion-select name="$account.career" [(ngModel)]="$account.career" interface="popover" required full>
                       <ion-option *ngFor="let item of $careerList" [value]="item">
                         {{ item }}
                       </ion-option>
@@ -99,7 +111,7 @@ import { SportList } from '../../providers/sport/sport';
               </ion-col>
               <ion-col col-6>
                   <ion-label stacked>{{ 'CITY' | translate}}</ion-label>
-                  <ion-input type="text" [(ngModel)]="$account.city" name="city" placeholder="{{'CITY' | translate}}" [disabled]="($account.city)? false : true" required></ion-input>
+                  <ion-input type="text" [(ngModel)]="$account.city" name="city" placeholder="{{'CITY' | translate}}" [disabled]="($account.city)? false : true" required full></ion-input>
                 </ion-col>
             </ion-row>
 
@@ -115,7 +127,7 @@ import { SportList } from '../../providers/sport/sport';
               </ion-col>
               <ion-col col-7>
                 <ion-label stacked>{{ 'COUNTRY' | translate}}</ion-label>
-                <ion-input type="text" [(ngModel)]="$account.country" name="country" placeholder="{{'COUNTRY' | translate}}" required></ion-input>
+                <ion-input type="text" [(ngModel)]="$account.country" name="country" placeholder="{{'COUNTRY' | translate}}" required full></ion-input>
               </ion-col>
             </ion-row>
 
@@ -164,6 +176,8 @@ export class ProfileRequired {
     career:   "Coach",
     gender:   "male"
   };
+
+  public accept_assessments:boolean = false;
 
   $sportsSelected: any; //Esportes selecionados
   $typeUserSelected: number = 1; //Perfil Default
@@ -244,6 +258,9 @@ export class ProfileRequired {
     if(this.$account.other_career != undefined) {
         saveFields.career.value = this.$account.other_career;
     }
+
+    //Em caso de usuário checkar disponibilidade para avaliações
+    saveFields.accept_assessments = (this.accept_assessments == true) ? 'true' : 'false';
 
     //Define ID's dos esportes selecionados
     if (this.$sportsSelected) {

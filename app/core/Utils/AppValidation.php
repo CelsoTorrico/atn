@@ -137,7 +137,8 @@ class AppValidation
             'howknowus'     => '.*',
             'social_tokens' => '.*',
             'club_sede'     => '.*',
-            'career'        => '.*'
+            'career'        => '.*',
+            'accept_assessments'    => '(true|false)'
         );
 
         //Endereço

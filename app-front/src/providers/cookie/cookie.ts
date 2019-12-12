@@ -8,18 +8,23 @@ export class Cookie {
   constructor() {} 
 
   /** Verifica existencia cookie */
-  static checkCookie():boolean {
-    return (new CookieService).check(environment.cookieName);  
+  static checkCookie($name:string = environment.cookieName):boolean {
+    return (new CookieService).check($name);  
   }
 
   /** Retorna dados do cookie */
-  static getCookie() {
-    return (new CookieService).get(environment.cookieName);
+  static getCookie($name:string = environment.cookieName) {
+    return (new CookieService).get($name);
   }
 
   /** Remover cookie */
-  static deleteCookie() {
-    return (new CookieService).deleteAll('/', environment.domain);
+  static deleteCookie($name:string = undefined) {
+    return ($name == undefined)? (new CookieService).deleteAll('/', environment.domain) : (new CookieService).delete($name, '/', environment.domain) ;
+  }
+
+  /** Setar cookie */
+  static setCookie($name:string, $value:string) {
+    return (new CookieService).set($name, $value, 90000, '/', environment.domain, environment.socketSecure);
   }
 
 }

@@ -24,6 +24,8 @@ export class ProfileTypeStepPage {
         gender: "male"
     };
 
+    public accept_assessments:boolean = false;
+
     public $typeUserSelected: number = 1;
 
     public $sportSelected = [];
@@ -124,6 +126,9 @@ export class ProfileTypeStepPage {
         if(this.$account.other_career != undefined) {
             this.$account.career = this.$account.other_career;
         }
+
+        //Em caso de usuário checkar disponibilidade para avaliações
+        this.$account.accept_assessments = (this.accept_assessments == true) ? 'true' : 'false';
 
         //Inicializa objeto com array
         this.$account.sport = [];

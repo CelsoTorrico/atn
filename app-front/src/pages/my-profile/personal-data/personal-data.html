@@ -59,6 +59,19 @@
       <ion-input [(ngModel)]="biography.value" name="biography.value" type="text" maxlength="250"></ion-input>
     </ion-item>
 
+    <ion-item-group *ngIf="type == 1">
+      <ion-row>        
+        <ion-col col-12>
+          <ion-list>
+            <ion-item>
+              <ion-label stacked>{{ "ACCEPT_ASSESSMENTS" | translate }}</ion-label>
+              <ion-checkbox [(ngModel)]="accept_assessments.value" name="accept_assessments.value" checked="false"></ion-checkbox>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ion-item-group>
+
     <ion-item-group *ngIf="type == 2">
       <ion-row>
         

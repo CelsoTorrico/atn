@@ -221,5 +221,9 @@
   "INVITATION_REGISTER": "Conecte-se à AtletasNow, faça login ou registre-se!",
   "SHARE_PROFILE": "Compartilhar Perfil",
   "AWARDS": "Premiações",
-  "EVENT": "Evento"
+  "EVENT": "Evento",
+  "USER_REGISTERED": "Período (Cadastro)",
+  "HAS_PHOTO": "Possui foto de perfil",
+  "HAS_VIDEO": "Possui vídeos no perfil",
+  "ACCEPT_ASSESSMENTS": "Aceito participar de avaliações / peneiras"
 }

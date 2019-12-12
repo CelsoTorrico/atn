@@ -17,14 +17,14 @@
                 "ignore": "**/vendor/**"
             }
         },
-        {
+        { 
             "name": "Listen for XDebug",
             "type": "php",
             "request": "launch",
             "port": 9000,
-            "pathMappings": {
+            /*"pathMappings": {
                 "/mnt/f" : "f:/"
-            },
+            },*/
             "log": true
         },
         {

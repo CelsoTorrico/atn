@@ -1,4 +1,3 @@
-import { environment } from './../../environments/environment.prod';
 import { MemberCurrentMenu } from './../components/menu/member-current-menu';
 import { DashboardLastActivityService } from './dashboardactivity.service';
 import { VisibilityList } from '../../providers/visibility/visibility';
@@ -110,6 +109,7 @@ export class DashboardPage implements OnInit {
             if (!resp) {
                 return this.user.logout();
             }
+
         }); 
 
     }
@@ -134,6 +134,9 @@ export class DashboardPage implements OnInit {
             this.timeline.loadLasts();
             this.notify.query();
             this.getLastActivity(); 
+
+            //Anuncio Importante
+            this.showAnnunciamentModal();
 
             if ($refreshEvent != null) {
                 //Fecha loading
@@ -339,6 +342,60 @@ export class DashboardPage implements OnInit {
         let $data = { user_id: $user_id, user_login: $user_login };
 
         this.navCtrl.push('Profile', $data);
+    }
+
+    //Esconder modal criando a existência de um cookie para verificação
+    hideAnnunciamentModal() {
+        let annunciament = document.getElementById("important-annunciament");
+        annunciament.remove();
+
+        //Setando cookie para que modal não seja exibido novamente, até limpar cookies
+        Cookie.setCookie('closed-annunciament', 'true');
+    }
+
+    //Modal de anunciamento
+    showAnnunciamentModal() { 
+        
+        //Query de elementos para inserção em html
+        let c = document.getElementsByTagName('PAGE-DASHBOARD') as HTMLCollectionOf <HTMLElement>;
+        let a = c.item(0); 
+        let annunciament = document.getElementById("important-annunciament");
+
+        //Se existir cookie registrado informa que modal foi fechado
+        if (Cookie.checkCookie('closed-annunciament')) {
+            return;
+        }
+
+        if(!a.contains(annunciament)) {
+          
+          //Setando a floatbox com atributos e html
+          annunciament = document.createElement("div");
+          annunciament.setAttribute("id","important-annunciament");
+          annunciament.classList.add("float-box");
+          annunciament.classList.add("float-2");
+          annunciament.classList.add("gradiente");
+          annunciament.innerHTML = "<img float-left='' src='https://app-atletasnow.s3-sa-east-1.amazonaws.com/app-images/ribeirao-pires-futebol-clube-logotipo.png' alt='Ribeirão Pires Futebol Clube' style='max-width: 70px;' /><div text-center=''><h3>Avaliação Futsal Masculino</h3><h4>Ribeirão Pires Futebol Clube</h4><span><strong>#SuaHoraÉAgora</strong></span></div><ul><li>Preencha Completamente o seu Perfil (com VIDEOS) e Aumente suas Chances de ser Selecionado.</li><li>O cadastro ajudará o Clube a Visualizar e Selecionar previamente os atletas que colocaram seus VIDEOS demonstrando suas habilidades técnicas, jogando FUTSAL.</li><li>A Pré-Seleção não garante, nem exclui o candidato da Avaliação Técnica a ser realizada no dia 14/12.</li></ul><a icon-end='' ion-button='' outline='' small='' ng-reflect-small='' ng-reflect-outline='' float-right='' class='go-button button button-md button-outline button-outline-md button-small button-small-md'><span class='button-inner'>Ir Para Meu Perfil</span><div class='button-effect' style='transform: translate3d(-2px, -63px, 0px) scale(1); height: 153px; width: 153px; opacity: 0; transition: transform 338ms ease 0s, opacity 236ms ease 102ms;'></div></a><div class='close-button'><ion-icon name='close-circle' role='img' class='icon icon-md ion-md-close-circle' aria-label='close circle'></ion-icon></div>";
+
+          //Assimilando botões do modal
+          let close    = annunciament.querySelector('.close-button') as HTMLElement;
+          let button   = annunciament.querySelector('.go-button') as HTMLElement;
+
+          //Função ir para profile
+          let fnProfile = 'this.goToProfile('+ this.currentUserData.ID + ', "'+ this.currentUserData.user_login +'")';
+
+          //Adicionando eventos ao botões filhos do alerta
+          button.onclick = () => { this.goToProfile.apply(this, [this.currentUserData.ID, this.currentUserData.user_login]) };
+          button.setAttribute("onclick", fnProfile );
+
+          //Função de fechar modal
+          close.onclick = () => { this.hideAnnunciamentModal() };
+          close.setAttribute("onclick", 'this.hideAnnunciamentModal()' );
+
+          //Adicionado elemento a página
+          a.appendChild(annunciament);
+
+        }  
+
     }
 
 }

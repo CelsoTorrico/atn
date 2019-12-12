@@ -546,7 +546,7 @@ class User extends GenericUser{
     public function searchUsers(array $search, int $paged = 0) {
 
         //Busca em user
-        $personal     = ['display_name'];
+        $personal     = ['display_name', 'user_registered'];
 
         //Campos de busca do tipo String = LIKE
         $isMetaLike   = ['city', 'neighbornhood', 'formacao'];
@@ -555,7 +555,10 @@ class User extends GenericUser{
         $isMetaEqual  = ['type', 'state', 'gender', 'parent_user'];
 
         //Campos de busca do tipo array
-        $isMetaArray  = ['clubs','sport'];
+        $isMetaArray  = ['clubs','sport', 'birthdate'];
+
+        //Campos booleanos  = true or false
+        $isMetaBool   = ['accept_assessments','photo', 'video'];
 
         //Variaveis para montar query
         $whereUser  = ['users.user_status[!]' => null];
@@ -580,7 +583,7 @@ class User extends GenericUser{
         foreach($search as $k => $v) {
 
             //para próximo se vazio
-            if (empty($v)) {
+            if (empty($v) || (is_bool($v) && $v != true)) {
                 continue;
             }
 
@@ -590,9 +593,11 @@ class User extends GenericUser{
                 //Acessa classe medoo diretamente
                 $db = $this->model->getDatabase();
 
+                $t = ($k == 'user_registered')? ['users.'.$k.'[<>]' => [$v[0], $v[1]]] : ['users.'.$k.'[~]' => '%'.$v.'%']; 
+
                 //Adiciona a query
-                $whereUser = array_merge($whereUser, ['users.'.$k.'[~]' => '%'.$v.'%']);
-                continue;
+                $whereUser = array_merge($whereUser, $t);
+                continue; 
             }
 
             //Busca em usermetas
@@ -615,6 +620,30 @@ class User extends GenericUser{
                 ];                
             }
 
+            //Busca em usermetas
+            if (in_array($k, $isMetaBool)) {
+
+                //Se for false ir próximo
+                if (is_bool($v) && $v == false) continue;
+
+                //Se for array de dados, montar de grupo de ids a ser usado em regular expression
+                if ($k == 'photo') {
+                    $k = 'profile_img'; //Nome do meta key correto
+                    $meta_value = ['meta_value[~]' => 'https://app-atletasnow.s3.sa-east-1.amazonaws.com/uploaded-images%'];
+
+                } elseif ($k == 'video') {
+                    $k = 'my-videos'; //Nome do meta key correto
+                    //Monta expressão  = array serializado que possuem ao menos um vídeo
+                    $meta_value = ['meta_value[REGEXP]' => '^a\:[1-9]{1}']; 
+                } elseif ($k = 'accept_assessments') {                    
+                    //Monta expressão = termo de aceite de avaliações
+                    $meta_value = ['meta_value' => 'true'];
+                } 
+                
+                //Adiciona a query
+                $content = array_merge(['meta_key' => $k], $meta_value); 
+            }
+
             //Busca em usermetas como array
             if (in_array($k, $isMetaArray)) {
 
@@ -623,7 +652,7 @@ class User extends GenericUser{
                     $k = 'clubes';
 
                 //Se for array de dados, montar de grupo de ids a ser usado em regular expression
-                if (is_array($v)) {   
+                if (is_array($v) && $k != 'birthdate') {   
                     
                     //Inicio regular expression
                     $regex = '(';   $qtdItem = count($v);
@@ -634,19 +663,20 @@ class User extends GenericUser{
                         $regex .= '\"'. $itemID . '\"';
                     }
                     
-                    //Monta regular expression
+                    //Monta expressão = regular expression
                     $regex .= ')';
+                    $meta_value = ['meta_value[REGEXP]' => $regex];
 
+                } elseif ($k = 'birthdate') {
+                    //Monta expressão  = between
+                    $meta_value = ['meta_value[<>]' => [$v[0], $v[1]]]; 
                 } else {                    
-                    //Monta regular expression
-                    $regex = 's\:[0-9]+\:\"'.$v.'["\[]';
+                    //Monta expressão = regular expression
+                    $meta_value = ['meta_value[REGEXP]' => 's\:[0-9]+\:\"'.$v.'["\[]'];
                 }
                 
                 //Adiciona a query
-                $content = [
-                    'meta_key'             => $k,
-                    'meta_value[REGEXP]'   => $regex                 
-                ]; 
+                $content = array_merge(['meta_key' => $k], $meta_value); 
             }
 
             //Acesso direto classe medoo
@@ -667,7 +697,7 @@ class User extends GenericUser{
 
             //Se busca realizada por clube permitir visualizar usuários sem tipo definido
             if (!is_a($this, 'Core\Profile\UserClub')) {
-                $whereUser = array_merge($whereUser, ['usermeta.meta_key' => "type", 'usermeta.meta_value[!]' => NULL]);
+                $whereUser = array_merge($whereUser, ['AND' => ['usermeta.meta_key' => "type", 'usermeta.meta_value[!]' => NULL]]);
             }
 
             //Ids de usuários para filtro
@@ -676,7 +706,7 @@ class User extends GenericUser{
             //Lista de ids de usuários via table 'users'
             $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'], [
                 'user_id'   => $ids,
-                'OR'        => $whereIn,
+                'AND'        => $whereIn,
                 'GROUP'     => ['ID'],
                 'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields),
                 'LIMIT'     => $limit
@@ -700,7 +730,7 @@ class User extends GenericUser{
         }
 
         //Inicializa array
-        $users = [];      
+        $users = [];
 
         //Se foi encontrado algum usuário
         if (is_array($result) && count($result) > 0) {
@@ -1890,7 +1920,7 @@ class User extends GenericUser{
 
         //Atleta
         if($typeUser === true || $typeUser == 1){
-            $usermeta = array_merge($usermeta, ['weight', 'height','posicao', 'stats', 'stats-sports']);
+            $usermeta = array_merge($usermeta, ['weight', 'height','posicao', 'stats', 'stats-sports', 'accept_assessments']);
         }
 
         //Profissional do Esporte
