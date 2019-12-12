@@ -701,15 +701,24 @@ class User extends GenericUser{
                 $whereUser = array_merge($whereUser, ['AND' => ['usermeta.meta_key' => "type", 'usermeta.meta_value[!]' => NULL]]);
             }
 
-            //Ids de usuários para filtro
+            //Ids de usuários em primeiro filtro
             $ids = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], 'user_id', $whereUser);
 
-            //Lista de ids de usuários via table 'users'
+            //A cada array de filtro atribui resultados a var
+            foreach ($whereIn as $query) {
+                //Ids encontrados a cada usermeta
+                $found = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], 'user_id',
+                array_merge($query, ['user_id'=> $ids, 'GROUP' => 'user_id']));
+                
+                //Atribui ao array de ids
+                $ids = $found;
+            }
+
+            //Após filtragem de todos usermetas enviados, última query com resultados
             $result = $db->select('usermeta', ['[>]users' => ['user_id' => 'ID']], ['user_id(ID)'],[
                 'user_id'   => $ids,
-                'OR'        => $whereIn,
                 'GROUP'     => ['ID'],
-                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields ),
+                'HAVING'    => Medoo::raw('COUNT(<ID>) >= '. $fields),
                 'LIMIT'     => $limit
             ]);
 
