@@ -719,7 +719,7 @@ class User extends GenericUser{
                 'user_id'   => $ids,
                 'GROUP'     => ['ID'],
                 'HAVING'    => Medoo::raw('COUNT(<ID>) > '. $fields), 
-                'ORDERBY'   => 'ASC',
+                'ORDER'     => 'users.display_name',
                 'LIMIT'     => $limit
             ]);
 
