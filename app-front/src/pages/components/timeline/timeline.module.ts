@@ -2,6 +2,7 @@ import { TimelineSingle } from './item/timeline-single.component';
 import { CommentModule } from './../comment/comment.module';
 import { TimelineItem } from './item/timelineItem';
 import { Timeline } from './timeline';
+import { TimelineAdmin } from './timeline-admin';
 import { IonicModule } from 'ionic-angular';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,7 +11,7 @@ import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
-    Timeline, TimelineItem, TimelineSingle
+    Timeline, TimelineItem, TimelineSingle, TimelineAdmin
   ],
   imports: [
     TranslateModule.forChild(),
@@ -19,9 +20,9 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     CommentModule
   ],
-  exports: [Timeline],
-  bootstrap: [Timeline],
-  entryComponents:[Timeline, TimelineItem, TimelineSingle], 
+  exports: [Timeline, TimelineAdmin],
+  bootstrap: [Timeline, TimelineAdmin],
+  entryComponents:[Timeline, TimelineItem, TimelineSingle, TimelineAdmin], 
   schemas: [],
   providers: []
 })

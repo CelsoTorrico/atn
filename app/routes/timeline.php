@@ -7,6 +7,7 @@ $router->group(['prefix' => 'timeline'], function () use ($router) {
     //Retorna único
     $router->get('/visibility', 'TimelineController@getVisibility');
 
+    //Retorna ultimas atividades
     $router->get('/activity',  'TimelineController@getLastActivity');
 
     //Retorna único
@@ -15,8 +16,14 @@ $router->group(['prefix' => 'timeline'], function () use ($router) {
     //Retorna lista de timelines
     $router->get('/', 'TimelineController@getAll');
     $router->get('/paged/{paged:[0-9]+}', 'TimelineController@getAll');
-    $router->get('/user/{user_id:[0-9]+}[/paged/{paged:[0-9]+}]', 'TimelineController@getUserAll'); //Outros Usuários
-    $router->post('/lasts', 'TimelineController@getAllLast'); //Retornar posts após determinado horário
+    $router->get('/user/{user_id:[0-9]+}[/paged/{paged:[0-9]+}]', 'TimelineController@getUserAll'); 
+
+    //Administração
+    $router->get('/annunciaments', 'TimelineController@getLastAnnunciament');
+    $router->get('/annunciaments/paged/{paged:[0-9]+}', 'TimelineController@getLastAnnunciament');
+    
+    //Outros Usuários
+    $router->post('/lasts', 'TimelineController@getAllLast'); //Retornar posts após determinado tempo
 
     //Adiciona timeline
     $router->post('/', 'TimelineController@add');

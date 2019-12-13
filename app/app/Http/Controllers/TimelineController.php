@@ -57,6 +57,25 @@ class TimelineController extends Controller
         return response()->json( $response );
     }
 
+    function getLastAnnunciament(Request $request) {
+        
+        $filter = [
+            'posts.post_author[!]' => $this->currentUser->ID,
+            'posts.post_author' => 0,
+            'OR'     => [
+                'postmeta.meta_key'      => 'post_visibility',
+            ],               
+            'LIMIT'  => 1,
+            'ORDER'  => ['posts.post_date' => 'DESC']
+        ];
+
+        //Faz requisição dentro da classe passando o parametro
+        $response = $this->timeline->getAll(0, $filter);
+
+        //Retorna último item
+        return response()->json( $response );
+    }
+
     function getUserAll(int $user_id, int $paged = 0){
 
         //Classe de usuário

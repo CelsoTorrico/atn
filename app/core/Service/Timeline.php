@@ -121,12 +121,14 @@ class Timeline {
         $db = $this->model->getDatabase();
 
         //Ids de usuário a não exibir posts
+        // $this->currentUser->ID =  proprio usuário
+        // 0 = Admin da plataforma
         $not_user_ids = [$this->currentUser->ID];
 
         $allTimelines = $db->select('posts',  
             ['[><]postmeta' => ['ID' => 'post_id']],
             ['posts.ID', 'postmeta.meta_key', 'postmeta.meta_value'], 
-            array_merge($filter,[ 
+            array_merge([ 
                 'posts.post_author[!]' => $not_user_ids,
                 'posts.post_type'      => static::TYPE,
                 'posts.post_status'    => [
@@ -136,10 +138,10 @@ class Timeline {
                 'LIMIT'  => $limit,
                 'ORDER'  => ['posts.post_date' => 'DESC'],
                 'GROUP'  => 'posts.ID'
-            ]));
+            ], $filter));
         
         //Retorna resposta
-        if ( !is_null($allTimelines) && count($allTimelines) > 0) {
+        if (!is_bool($allTimelines) && !is_null($allTimelines) && count($allTimelines) > 0) {
 
             //Array para retornar dados
             $timelines = [];
