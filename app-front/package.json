@@ -33,7 +33,7 @@
     "http-proxy": "^1.17.0",
     "ionic-angular": "^3.9.3",
     "ionicons": "3.0.0",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.5.1",
     "ng-chartjs": "0.1.1",
     "ng-socket-io": "^0.2.4",
     "ng2-cookies": "^1.0.12",
